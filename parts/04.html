@@ -1,0 +1,239 @@
+<section class="lesson" id="bai-04" data-short="Bảy phân phối">
+<header>
+  <span class="num">04</span>
+  <h3>Bảy phân phối cần nắm vững</h3>
+  <p class="meta">14 phút · Ứng dụng: dòng lệnh đến, vỡ nợ, lợi suất, thời gian chờ · <a href="https://hft.md/learn/distributions/">Bài gốc (tiếng Anh)</a></p>
+</header>
+
+<p>Phần lớn câu hỏi phỏng vấn là một phân phối quen thuộc được nguỵ trang. Nhận ra đúng phân phối thì kỳ vọng và phương sai có ngay, không cần tính lại. Bài này gom bảy phân phối hay gặp nhất và mối liên hệ giữa chúng.</p>
+
+<h4>Ý chính</h4>
+<ul>
+  <li>Bốn phân phối <b>rời rạc</b> (discrete) dùng để đếm: Bernoulli, nhị thức (binomial), Poisson và hình học (geometric). Ba phân phối <b>liên tục</b> (continuous) dùng để đo: đều (uniform), chuẩn (normal) và mũ (exponential).</li>
+  <li>Với biến liên tục, mật độ f(x) không phải là xác suất. Xác suất là diện tích dưới đường mật độ, đọc qua <b>hàm phân phối tích luỹ</b> (cumulative distribution function) F(a) = P(X ≤ a).</li>
+  <li>Nhị thức với n rất lớn, p rất nhỏ và np = λ cố định thì gần với Poisson(λ). Đó là lý do các biến cố hiếm trong một tập lớn thường được mô hình bằng Poisson.</li>
+  <li>Nếu biến cố đến theo <b>quá trình Poisson</b> (Poisson process) cường độ λ, khoảng cách giữa hai biến cố liên tiếp có phân phối mũ, trung bình 1/λ. Số đếm và thời gian chờ là hai mặt của cùng một quá trình.</li>
+  <li>Hình học và mũ là hai phân phối duy nhất có tính <b>không nhớ</b> (memoryless). Đã chờ bao lâu thì thời gian chờ thêm kỳ vọng vẫn như lúc đầu.</li>
+  <li>Cộng nhiều thành phần độc lập nhỏ thì tổng tiến về phân phối chuẩn, bất kể từng thành phần có dạng gì. Đây là định lý giới hạn trung tâm, sẽ học ở bài 06.</li>
+</ul>
+
+<h4>Bảng tra nhanh</h4>
+<table class="t">
+  <tr><th>Phân phối</th><th>Mô tả</th><th>Hàm khối / mật độ</th><th>Kỳ vọng</th><th>Phương sai</th></tr>
+  <tr><td>Bernoulli(p)</td><td>một phép thử có/không</td><td>p<sup>x</sup>(1 − p)<sup>1 − x</sup>, x ∈ {0, 1}</td><td>p</td><td>p(1 − p)</td></tr>
+  <tr><td>Nhị thức(n, p)</td><td>số lần thành công trong n phép thử độc lập</td><td>C(n, x) p<sup>x</sup>(1 − p)<sup>n − x</sup></td><td>np</td><td>np(1 − p)</td></tr>
+  <tr><td>Poisson(λ)</td><td>số biến cố trong một khoảng cố định</td><td>λ<sup>x</sup> e<sup>−λ</sup> / x!</td><td>λ</td><td>λ</td></tr>
+  <tr><td>Hình học(p)</td><td>số phép thử cho tới lần thành công đầu tiên</td><td>(1 − p)<sup>x − 1</sup> p, x ≥ 1</td><td>1/p</td><td>(1 − p)/p<sup>2</sup></td></tr>
+  <tr><td>Đều(a, b)</td><td>giá trị có khả năng như nhau trên [a, b]</td><td>1/(b − a)</td><td>(a + b)/2</td><td>(b − a)<sup>2</sup>/12</td></tr>
+  <tr><td>Chuẩn(μ, σ<sup>2</sup>)</td><td>tổng, trung bình của nhiều tác động nhỏ</td><td>e<sup>−(x − μ)²/(2σ²)</sup> / (σ√(2π))</td><td>μ</td><td>σ<sup>2</sup></td></tr>
+  <tr><td>Mũ(λ)</td><td>thời gian chờ biến cố Poisson kế tiếp</td><td>λ e<sup>−λx</sup>, x ≥ 0</td><td>1/λ</td><td>1/λ<sup>2</sup></td></tr>
+</table>
+
+<h4>Công thức</h4>
+<div class="formula"><span class="lbl">Hàm phân phối tích luỹ của biến liên tục</span>F(a) = P(X ≤ a) = ∫<sub>−∞</sub><sup>a</sup> f(x) dx, &nbsp;&nbsp; P(a &lt; X ≤ b) = F(b) − F(a)</div>
+<div class="formula"><span class="lbl">Giới hạn nhị thức → Poisson, khi n → ∞, p → 0, np = λ</span>C(n, x) p<sup>x</sup>(1 − p)<sup>n − x</sup> &nbsp;→&nbsp; <span class="frac"><span>λ<sup>x</sup> e<sup>−λ</sup></span><span>x!</span></span></div>
+<div class="formula"><span class="lbl">Tính không nhớ của phân phối mũ (và hình học)</span>P(X &gt; s + t | X &gt; s) = <span class="frac"><span>e<sup>−λ(s + t)</sup></span><span>e<sup>−λs</sup></span></span> = e<sup>−λt</sup> = P(X &gt; t)</div>
+<div class="formula"><span class="lbl">Hàm của biến ngẫu nhiên: Y = g(X) với g tăng ngặt</span>F<sub>Y</sub>(a) = P(g(X) ≤ a) = F<sub>X</sub>(g<sup>−1</sup>(a)); &nbsp; ví dụ X chuẩn thì Y = e<sup>X</sup> có phân phối log-chuẩn (lognormal)</div>
+
+<h4>Ví dụ minh hoạ: danh mục cho vay và dòng lệnh</h4>
+<p>Một danh mục có 1.000 khoản vay. Mỗi khoản vỡ nợ độc lập với xác suất 0,4% trong năm.</p>
+<ol>
+  <li>Số khoản vỡ nợ X ~ Nhị thức(1.000; 0,004). Do đó E[X] = 4 và Var(X) = 1.000 · 0,004 · 0,996 = 3,984.</li>
+  <li>n lớn, p nhỏ nên X xấp xỉ Poisson(4). P(X = 3) ≈ 4<sup>3</sup>e<sup>−4</sup>/3! ≈ 0,1954. Giá trị nhị thức chính xác là 0,1956.</li>
+  <li>Xác suất có không quá 2 vụ: P(X ≤ 2) ≈ e<sup>−4</sup>(1 + 4 + 8) = 13e<sup>−4</sup> ≈ 0,238.</li>
+</ol>
+<p>Giao dịch khớp trên một mã theo quá trình Poisson, trung bình 3 lần mỗi phút.</p>
+<ol>
+  <li>Thời gian chờ T tới giao dịch kế tiếp có phân phối Mũ(3), trung bình 1/3 phút = 20 giây.</li>
+  <li>P(T &lt; 30 giây) = 1 − e<sup>−3 · 0,5</sup> = 1 − e<sup>−1,5</sup> ≈ 0,777.</li>
+  <li>Đã chờ 40 giây mà chưa có giao dịch. Do tính không nhớ, thời gian chờ thêm kỳ vọng vẫn là 20 giây.</li>
+</ol>
+<p>Một lệnh yết giá có xác suất được khớp 0,2 mỗi lần. Số lần yết cho tới khi khớp có phân phối Hình học(0,2), trung bình 1/0,2 = 5 lần.</p>
+
+<figure class="demo">
+  <div class="stage" id="demo-04"></div>
+  <div class="controls" id="ctl-04"></div>
+  <figcaption><b>Mô hình 4.1 – Cả họ phân phối trong không gian 3D.</b> Trục ngang là giá trị x, trục sâu là một tham số được quét (p, λ, σ hoặc độ rộng b − a), chiều cao là xác suất hoặc mật độ. Các lát cắt xám là các thành viên trong họ. Lát cắt xanh dương là tham số đang chọn; vạch xanh lá là kỳ vọng và dải trên sàn là ±1σ. Phân phối rời rạc hiện thành các cột, phân phối liên tục thành một tấm màn có diện tích bằng 1. Kéo để xoay.</figcaption>
+</figure>
+
+<figure class="demo">
+  <div class="stage" id="demo2-04"></div>
+  <div class="controls" id="ctl2-04"></div>
+  <div class="readout" id="out2-04"></div>
+  <figcaption><b>Mô hình 4.2 – Khối xác suất, mật độ và hàm tích luỹ.</b> Chọn phân phối và tham số. Vạch xanh lá là kỳ vọng, dải mờ là ±1σ. Nút “Hàm tích luỹ F(x)” chuyển sang đồ thị F. Với nhị thức, bật “Phủ Poisson(np)” rồi tăng n trong khi giữ np nhỏ: hai phân phối gần như trùng nhau. “Rút 2.000 mẫu” vẽ tần suất thực nghiệm (viền cam) để so với lý thuyết.</figcaption>
+</figure>
+
+<h4>Lưu ý khi phỏng vấn</h4>
+<ul>
+  <li>Trước khi tính, hãy hỏi “biến này đếm gì hay đo gì”. Đếm số lần thành công trong n lần là nhị thức; đếm số lần thử tới khi thành công là hình học; đếm biến cố trong một khoảng thời gian là Poisson.</li>
+  <li>Phân phối hình học có hai quy ước: đếm số phép thử (trung bình 1/p) hoặc số lần thất bại (trung bình (1 − p)/p). Nói rõ mình dùng quy ước nào.</li>
+  <li>Câu hỏi “đã chờ s phút, còn phải chờ bao lâu” là câu hỏi về tính không nhớ. Đáp án vẫn là 1/λ.</li>
+  <li>Nên thuộc lòng: P(|Z| &lt; 1,96) = 95% với Z chuẩn tắc, và lợi suất thực tế có đuôi dày hơn phân phối chuẩn. Vì thế các bàn giao dịch kiểm tra sức chịu đựng ở mức xa hơn mô hình chuẩn dự báo.</li>
+</ul>
+
+<script>
+(()=>{
+  /* ---------- Thư viện phân phối dùng chung cho hai mô hình ---------- */
+  const lf=[0]; for(let i=1;i<=400;i++) lf[i]=lf[i-1]+Math.log(i);
+  const erf=x=>{ const s=Math.sign(x); x=Math.abs(x); const t=1/(1+0.3275911*x);
+    return s*(1-(((((1.061405429*t-1.453152027)*t)+1.421413741)*t-0.284496736)*t+0.254829592)*t*Math.exp(-x*x)); };
+  const D={
+    bern:{label:'Bernoulli',disc:true,ps:[['p','p',0.01,0.99,0.01,0.3]],sw:'p',sr:[0.1,0.9],
+      f:(x,P)=>x===0?1-P.p:x===1?P.p:0, mean:P=>P.p, vr:P=>P.p*(1-P.p),
+      r2:P=>[0,1], r3:P=>[0,1], smp:(r,P)=>r()<P.p?1:0, desc:'một phép thử có/không'},
+    binom:{label:'Nhị thức',disc:true,ps:[['n','n',1,200,1,20],['p','p',0.01,0.99,0.01,0.3]],sw:'p',sr:[0.1,0.9],
+      f:(x,P)=>x<0||x>P.n?0:Math.exp(lf[P.n]-lf[x]-lf[P.n-x]+x*Math.log(P.p)+(P.n-x)*Math.log(1-P.p)),
+      mean:P=>P.n*P.p, vr:P=>P.n*P.p*(1-P.p), r2:P=>[0,P.n], r3:P=>[0,P.n],
+      smp:(r,P)=>{ let k=0; for(let i=0;i<P.n;i++) if(r()<P.p) k++; return k; }, desc:'số lần thành công trong n phép thử'},
+    pois:{label:'Poisson',disc:true,ps:[['l','λ',0.2,15,0.1,4]],sw:'l',sr:[0.5,15],
+      f:(x,P)=>x<0?0:Math.exp(x*Math.log(P.l)-P.l-lf[x]), mean:P=>P.l, vr:P=>P.l,
+      r2:P=>[0,Math.max(8,Math.ceil(P.l+4.5*Math.sqrt(P.l)+2))], r3:()=>[0,30],
+      smp:(r,P)=>{ const L=Math.exp(-P.l); let k=0,p=1; do{ k++; p*=r(); }while(p>L); return k-1; }, desc:'số biến cố trong một khoảng cố định'},
+    geom:{label:'Hình học',disc:true,ps:[['p','p',0.05,0.95,0.01,0.2]],sw:'p',sr:[0.1,0.9],
+      f:(x,P)=>x<1?0:Math.pow(1-P.p,x-1)*P.p, mean:P=>1/P.p, vr:P=>(1-P.p)/(P.p*P.p),
+      r2:P=>[1,Math.max(8,Math.min(100,Math.ceil(Math.log(0.003)/Math.log(1-P.p))))], r3:()=>[1,25],
+      smp:(r,P)=>Math.max(1,Math.ceil(Math.log(1-r())/Math.log(1-P.p))), desc:'số phép thử tới lần thành công đầu tiên', mem:true},
+    unif:{label:'Đều',disc:false,ps:[['a','a',-5,5,0.1,0],['w','b − a',0.5,10,0.1,4]],sw:'w',sr:[1,10],
+      f:(x,P)=>x>=P.a&&x<=P.a+P.w?1/P.w:0, mean:P=>P.a+P.w/2, vr:P=>P.w*P.w/12,
+      cdf:(x,P)=>Math.max(0,Math.min(1,(x-P.a)/P.w)), r2:P=>[-6,16], r3:P=>[P.a-1,P.a+11], smp:(r,P)=>P.a+P.w*r(), desc:'giá trị có khả năng như nhau trên [a, b]'},
+    norm:{label:'Chuẩn',disc:false,ps:[['m','μ',-3,3,0.1,0],['s','σ',0.3,3,0.05,1]],sw:'s',sr:[0.4,3],
+      f:(x,P)=>Math.exp(-0.5*((x-P.m)/P.s)**2)/(P.s*Math.sqrt(2*Math.PI)), mean:P=>P.m, vr:P=>P.s*P.s,
+      cdf:(x,P)=>0.5*(1+erf((x-P.m)/(P.s*Math.SQRT2))), r2:()=>[-9,9], r3:()=>[-9,9], smp:(r,P)=>P.m+P.s*Q.normal(r), desc:'tổng và trung bình của nhiều tác động nhỏ'},
+    expo:{label:'Mũ',disc:false,ps:[['l','λ',0.2,4,0.05,2]],sw:'l',sr:[0.25,4],
+      f:(x,P)=>x<0?0:P.l*Math.exp(-P.l*x), mean:P=>1/P.l, vr:P=>1/(P.l*P.l),
+      cdf:(x,P)=>x<0?0:1-Math.exp(-P.l*x), r2:()=>[0,10], r3:()=>[0,8], smp:(r,P)=>-Math.log(1-r())/P.l, desc:'thời gian chờ biến cố Poisson kế tiếp', mem:true},
+  };
+  const defaults=k=>{ const P={}; D[k].ps.forEach(q=>P[q[0]]=q[5]); return P; };
+  const fmtP=(k,P)=>D[k].ps.map(q=>q[1]+' = '+Q.fmt(P[q[0]],q[4]<1?2:0)).join(', ');
+  // Bảng điều khiển chung: nút chọn phân phối + thanh trượt tham số (dựng lại khi đổi phân phối)
+  function panel(ctl,st,onChange){
+    const bar=Q.el('span',{style:'display:contents'},ctl), box=Q.el('span',{style:'display:contents'},ctl), btns={};
+    Object.keys(D).forEach(k=>{ btns[k]=Q.button(bar,D[k].label,()=>{ st.d=k; st.P=defaults(k); build(); onChange(); }); });
+    function build(){
+      box.innerHTML=''; for(const k in btns) btns[k].className=k===st.d?'primary':'';
+      D[st.d].ps.forEach(([key,lab,mn,mx,stp])=>Q.slider(box,lab,mn,mx,stp,st.P[key],v=>{ st.P[key]=v; onChange(); },v=>Q.fmt(v,stp<1?2:0)));
+    }
+    build();
+  }
+  // Vạch chia trục: bước tròn 1, 2, 5, 10, ...
+  function ticks(d,lo,hi,n){ const raw=(hi-lo)/n, e=Math.pow(10,Math.floor(Math.log10(raw))); let st=[1,2,5,10].map(k=>k*e).find(k=>k>=raw)||10*e; if(d.disc) st=Math.max(1,Math.round(st));
+    const out=[]; for(let x=Math.ceil(lo/st)*st;x<=hi+1e-9;x+=st) out.push(Math.round(x*1e6)/1e6); return out; }
+  const poly=(ctx,pts)=>{ ctx.beginPath(); pts.forEach((p,j)=>j?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1])); ctx.closePath(); };
+
+  /* ---------- Mô hình 4.1: cả họ phân phối trong 3D ---------- */
+  {
+    const stage=document.getElementById('demo-04'), ctl=document.getElementById('ctl-04');
+    const st={d:'pois',P:defaults('pois')};
+    const view={yaw:-0.3,pitch:0.55,dist:12,auto:true};
+    const cv=Q.canvas(stage,400,draw);
+    function draw(ctx,w,h){
+      const C=Q.colors(); ctx.clearRect(0,0,w,h);
+      const d=D[st.d], P=st.P, [lo,hi]=d.r3(P), [s0,s1]=d.sr, K=9, Wx=7, Dy=4, H=2.3, zOff=-0.45;
+      const scale=Math.min(w/10.5,h/6.6), pr=p=>Q.project([p[0],p[1],p[2]+zOff],view,w,h,scale);
+      const span=d.disc?hi-lo+1:hi-lo, X=x=>-Wx/2+(d.disc?x-lo+0.5:x-lo)/span*Wx, Yp=v=>-Dy/2+(Math.max(s0,Math.min(s1,v))-s0)/(s1-s0)*Dy;
+      const xs=[]; if(d.disc) for(let x=lo;x<=hi;x++) xs.push(x); else for(let i=0;i<=140;i++) xs.push(lo+(hi-lo)*i/140);
+      const slices=[]; for(let k=0;k<K;k++) slices.push({v:s0+(s1-s0)*k/(K-1),cur:false});
+      slices.push({v:P[d.sw],cur:true});
+      let zmax=0;
+      for(const s of slices){ const Pp=Object.assign({},P,{[d.sw]:s.v}); s.P=Pp; s.ys=xs.map(x=>d.f(x,Pp)); s.y=Yp(s.v); s.depth=pr([0,s.y,0])[2]; s.mx=Math.max(...s.ys); }
+      // thang chiều cao theo lát hiện tại (các lát khác bị cắt ở 1,3H) để hình dạng luôn dễ đọc
+      const mxs=slices.map(s=>s.mx).sort((a,b)=>a-b); zmax=Math.max(slices[K].mx,mxs[Math.floor(K/2)]);
+      slices.sort((a,b)=>b.depth-a.depth);
+      const Z=v=>Math.min(1.3,v/zmax)*H, bw=0.72*Wx/span;
+      // sàn
+      ctx.fillStyle=C.line; ctx.globalAlpha=0.3; poly(ctx,[[-Wx/2,-Dy/2-0.3,0],[Wx/2,-Dy/2-0.3,0],[Wx/2,Dy/2+0.3,0],[-Wx/2,Dy/2+0.3,0]].map(pr)); ctx.fill(); ctx.globalAlpha=1;
+      for(const s of slices){
+        const y=s.y, col=s.cur?C.c:C.muted;
+        if(s.cur){ // dải ±1σ trên sàn
+          const m=d.mean(s.P), sd=Math.sqrt(d.vr(s.P)), xa=Math.max(-Wx/2,X(m-sd)), xb=Math.min(Wx/2,X(m+sd));
+          ctx.fillStyle=C.a; ctx.globalAlpha=0.3; poly(ctx,[[xa,y-0.18,0],[xb,y-0.18,0],[xb,y+0.18,0],[xa,y+0.18,0]].map(pr)); ctx.fill();
+        }
+        ctx.fillStyle=col; ctx.strokeStyle=col;
+        if(d.disc){
+          ctx.globalAlpha=s.cur?0.9:0.22;
+          xs.forEach((x,i)=>{ const z=Z(s.ys[i]); if(z<0.003) return; const cx=X(x); poly(ctx,[[cx-bw/2,y,0],[cx+bw/2,y,0],[cx+bw/2,y,z],[cx-bw/2,y,z]].map(pr)); ctx.fill(); });
+        } else {
+          const pts=xs.map((x,i)=>pr([X(x),y,Z(s.ys[i])]));
+          ctx.globalAlpha=s.cur?0.45:0.1; poly(ctx,[pr([X(lo),y,0]),...pts,pr([X(hi),y,0])]); ctx.fill();
+          ctx.globalAlpha=s.cur?1:0.45; ctx.lineWidth=s.cur?2:1; ctx.beginPath(); pts.forEach((p,j)=>j?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1])); ctx.stroke(); ctx.lineWidth=1;
+        }
+        if(s.cur){ const m=d.mean(s.P); if(m>=lo-0.5&&m<=hi+0.5){ const a=pr([X(m),y,0]), b=pr([X(m),y,H*1.08]); ctx.globalAlpha=1; ctx.strokeStyle=C.a; ctx.lineWidth=2.5; ctx.beginPath(); ctx.moveTo(a[0],a[1]); ctx.lineTo(b[0],b[1]); ctx.stroke(); ctx.lineWidth=1; } }
+      }
+      ctx.globalAlpha=1; ctx.font='12px -apple-system,sans-serif'; ctx.fillStyle=C.muted; ctx.textAlign='center';
+      for(const x of ticks(d,lo,hi,6)){ const p=pr([X(x),-Dy/2-0.55,0]); ctx.fillText(Q.fmt(x,d.disc?0:1),p[0],p[1]+4); }
+      const sname=d.ps.find(q=>q[0]===d.sw)[1];
+      [s0,s1].forEach(v=>{ const p=pr([Wx/2+0.5,Yp(v),0]); ctx.fillText(sname+' = '+Q.fmt(v,2),p[0],p[1]+4); });
+      ctx.textAlign='left'; ctx.fillStyle=C.ink;
+      ctx.fillText(`${d.label}(${fmtP(st.d,P)}) · E[X] = ${Q.fmt(d.mean(P),2)} · σ = ${Q.fmt(Math.sqrt(d.vr(P)),2)}`,12,20);
+      ctx.fillStyle=C.muted; ctx.fillText(`Trục sâu: quét ${sname} · lát xanh dương: tham số hiện tại`,12,38);
+    }
+    Q.orbit(cv.cv,view,()=>cv.redraw());
+    Q.loop(stage,()=>{ if(view.auto){ view.yaw+=0.003; cv.redraw(); } });
+    panel(ctl,st,()=>cv.redraw());
+  }
+
+  /* ---------- Mô hình 4.2: khối xác suất, mật độ, hàm tích luỹ ---------- */
+  {
+    const stage=document.getElementById('demo2-04'), ctl=document.getElementById('ctl2-04'), out=document.getElementById('out2-04');
+    const st={d:'binom',P:defaults('binom'),cdf:false,pois:false,smp:null};
+    const r=Q.rng(404), NS=2000;
+    const cdfDisc=(d,P,x)=>{ let s=0; for(let k=Math.min(0,x);k<=x;k++) s+=d.f(k,P); return Math.min(1,s); };
+    function report(){
+      const d=D[st.d], P=st.P, m=d.mean(P), v=d.vr(P);
+      let s=`${d.label}(${fmtP(st.d,P)}): ${d.desc}\nE[X] = ${Q.fmt(m,3)}   Var(X) = ${Q.fmt(v,3)}   σ = ${Q.fmt(Math.sqrt(v),3)}`;
+      if(st.smp){ const n=st.smp.length, a=st.smp.reduce((x,y)=>x+y,0)/n, b=st.smp.reduce((x,y)=>x+(y-a)**2,0)/(n-1); s+=`\nMẫu ${NS.toLocaleString('vi-VN')} quan sát: trung bình ${Q.fmt(a,3)}, phương sai ${Q.fmt(b,3)}`; }
+      if(st.d==='binom'&&st.pois){ const lam=P.n*P.p; let mx=0; for(let x=0;x<=P.n;x++) mx=Math.max(mx,Math.abs(d.f(x,P)-D.pois.f(x,{l:lam}))); s+=`\nSo với Poisson(np = ${Q.fmt(lam,2)}): chênh lệch lớn nhất giữa hai hàm khối = ${Q.fmt(mx,4)}`; }
+      if(d.mem){ const t=st.d==="geom"?Math.max(1,Math.round(d.mean(P))):Math.round(d.mean(P)*100)/100, dg=st.d==="geom"?0:2;
+        const sv=st.d==='expo'?(x=>Math.exp(-P.l*x)):(x=>Math.pow(1-P.p,Math.floor(x)));
+        s+=`\nKhông nhớ: P(X > ${Q.fmt(2*t,dg)} | X > ${Q.fmt(t,dg)}) = ${Q.fmt(sv(2*t)/sv(t),4)} = P(X > ${Q.fmt(t,dg)}) = ${Q.fmt(sv(t),4)}`; }
+      out.textContent=s;
+    }
+    const cv=Q.canvas(stage,320,draw);
+    function draw(ctx,w,h){
+      const C=Q.colors(); ctx.clearRect(0,0,w,h);
+      const d=D[st.d], P=st.P, [lo,hi]=d.r2(P), L=50, R=w-16, T=26, B=h-30;
+      const span=d.disc?hi-lo+1:hi-lo, X=x=>L+(d.disc?x-lo+0.5:x-lo)/span*(R-L);
+      const xs=[]; if(d.disc) for(let x=lo;x<=hi;x++) xs.push(x); else for(let i=0;i<=300;i++) xs.push(lo+(hi-lo)*i/300);
+      const ys=xs.map(x=>st.cdf?(d.disc?cdfDisc(d,P,x):d.cdf(x,P)):d.f(x,P));
+      // tần suất thực nghiệm
+      let emp=null;
+      if(st.smp){
+        if(d.disc){ emp=xs.map(()=>0); st.smp.forEach(v=>{ const i=v-lo; if(i>=0&&i<emp.length) emp[i]++; }); emp=emp.map(c=>c/NS); if(st.cdf){ let a=st.smp.filter(v=>v<lo).length/NS; emp=emp.map(c=>a+=c); } }
+        else { const nb=44, bw=(hi-lo)/nb; emp=new Array(nb).fill(0); st.smp.forEach(v=>{ const i=Math.floor((v-lo)/bw); if(i>=0&&i<nb) emp[i]++; });
+          if(st.cdf){ let a=st.smp.filter(v=>v<lo).length/NS; emp=emp.map(c=>a+=c/NS); } else emp=emp.map(c=>c/(NS*bw)); emp.bw=bw; }
+      }
+      const pz=(st.d==='binom'&&st.pois)?xs.map(x=>{ const lam=P.n*P.p; if(!st.cdf) return D.pois.f(x,{l:lam}); let s=0; for(let k=0;k<=x;k++) s+=D.pois.f(k,{l:lam}); return s; }):null;
+      let ymax=st.cdf?1:Math.max(...ys,...(pz||[0]),...(emp||[0]))*1.1||1;
+      const Y=v=>B-v/ymax*(B-T);
+      const m=d.mean(P), sd=Math.sqrt(d.vr(P));
+      ctx.fillStyle=C.a; ctx.globalAlpha=0.12; const xa=Math.max(L,X(m-sd)), xb=Math.min(R,X(m+sd)); if(xb>xa) ctx.fillRect(xa,T,xb-xa,B-T); ctx.globalAlpha=1;
+      ctx.strokeStyle=C.line; ctx.beginPath(); ctx.moveTo(L,T); ctx.lineTo(L,B); ctx.lineTo(R,B); ctx.stroke();
+      ctx.font='12px -apple-system,sans-serif'; ctx.fillStyle=C.muted; ctx.textAlign='right';
+      [0,0.5,1].forEach(f=>ctx.fillText(Q.fmt(ymax*f,st.cdf?1:3),L-5,Y(ymax*f)+4));
+      ctx.textAlign='center'; for(const x of ticks(d,lo,hi,8)){ ctx.fillText(Q.fmt(x,d.disc?0:1),X(x),B+16); }
+      ctx.textAlign='left'; ctx.fillText(st.cdf?'Hàm phân phối tích luỹ F(x)':(d.disc?'Hàm khối xác suất p(x)':'Hàm mật độ f(x)'),L+6,T-8);
+      if(d.disc){
+        const bw=Math.max(1,0.7*(R-L)/span);
+        if(st.cdf){ ctx.strokeStyle=C.c; ctx.lineWidth=2; ctx.beginPath(); xs.forEach((x,i)=>{ const x0=X(x)-(R-L)/span/2, x1=x0+(R-L)/span; i?ctx.lineTo(x0,Y(ys[i])):ctx.moveTo(x0,Y(ys[i])); ctx.lineTo(x1,Y(ys[i])); }); ctx.stroke(); }
+        else { ctx.fillStyle=C.c; ctx.globalAlpha=0.8; xs.forEach((x,i)=>ctx.fillRect(X(x)-bw/2,Y(ys[i]),bw,B-Y(ys[i]))); ctx.globalAlpha=1; }
+        if(emp){ ctx.strokeStyle=C.b; ctx.lineWidth=1.5; xs.forEach((x,i)=>{ if(st.cdf){ ctx.beginPath(); ctx.moveTo(X(x)-bw/2,Y(emp[i])); ctx.lineTo(X(x)+bw/2,Y(emp[i])); ctx.stroke(); } else ctx.strokeRect(X(x)-bw/2,Y(emp[i]),bw,B-Y(emp[i])); }); }
+      } else {
+        ctx.fillStyle=C.c; ctx.globalAlpha=0.15; ctx.beginPath(); ctx.moveTo(X(lo),B); xs.forEach((x,i)=>ctx.lineTo(X(x),Y(ys[i]))); ctx.lineTo(X(hi),B); ctx.closePath(); ctx.fill(); ctx.globalAlpha=1;
+        ctx.strokeStyle=C.c; ctx.lineWidth=2; ctx.beginPath(); xs.forEach((x,i)=>i?ctx.lineTo(X(x),Y(ys[i])):ctx.moveTo(X(x),Y(ys[i]))); ctx.stroke();
+        if(emp){ ctx.strokeStyle=C.b; ctx.lineWidth=1.5; ctx.beginPath(); emp.forEach((v,i)=>{ const x0=X(lo+i*emp.bw), x1=X(lo+(i+1)*emp.bw); i?ctx.lineTo(x0,Y(v)):ctx.moveTo(x0,Y(v)); ctx.lineTo(x1,Y(v)); }); ctx.stroke(); }
+      }
+      if(pz){ ctx.fillStyle=C.d; pz.forEach((v,i)=>{ ctx.beginPath(); ctx.arc(X(xs[i]),Y(v),3,0,7); ctx.fill(); }); }
+      ctx.lineWidth=1;
+      if(m>=lo&&m<=hi){ ctx.strokeStyle=C.a; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(X(m),T); ctx.lineTo(X(m),B); ctx.stroke(); ctx.lineWidth=1; ctx.fillStyle=C.a; ctx.fillText('E[X]',X(m)+4,T+12); }
+      if(pz){ ctx.fillStyle=C.d; ctx.textAlign='right'; ctx.fillText('● Poisson(np)',R,T-8); ctx.textAlign='left'; }
+    }
+    const redraw=()=>{ report(); cv.redraw(); };
+    panel(ctl,st,()=>{ st.smp=null; redraw(); });
+    const bc=Q.button(ctl,'Hàm tích luỹ F(x)',()=>{ st.cdf=!st.cdf; bc.className=st.cdf?'primary':''; redraw(); });
+    const bp=Q.button(ctl,'Phủ Poisson(np)',()=>{ st.pois=!st.pois; bp.className=st.pois?'primary':''; redraw(); });
+    Q.button(ctl,'Rút 2.000 mẫu',()=>{ const d=D[st.d]; st.smp=Array.from({length:NS},()=>d.smp(r,st.P)); redraw(); });
+    report();
+  }
+})();
+</script>
+</section>

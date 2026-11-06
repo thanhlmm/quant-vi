@@ -1,0 +1,215 @@
+<section class="lesson" id="bai-08" data-short="OLS và kNN">
+<header>
+  <span class="num">08</span>
+  <h3>Bình phương tối thiểu và láng giềng gần nhất</h3>
+  <p class="meta">12 phút · Ứng dụng: mô hình cơ sở cho mọi bài toán dự báo · <a href="https://hft.md/learn/least-squares-vs-knn/">Bài gốc (tiếng Anh)</a></p>
+</header>
+
+<p>Phần lớn công việc nghiên cứu định lượng là dự báo: lợi suất ngày mai, xác suất một lệnh được khớp, giá một căn nhà. Hai bộ dự báo đơn giản nhất, một cứng nhắc và một linh hoạt, đã chứa sẵn mọi sự đánh đổi sẽ gặp về sau. Phần này đi theo chương 2 của cuốn <i>The Elements of Statistical Learning</i> (ESL).</p>
+
+<h4>Ý chính</h4>
+<ul>
+  <li><b>Mô hình tuyến tính</b> (linear model) dự báo bằng một tổng có trọng số của các biến đầu vào cộng hệ số chặn. Các hệ số được chọn bằng <b>bình phương tối thiểu</b> (least squares), tức cực tiểu tổng bình phương phần dư (residual sum of squares, RSS).</li>
+  <li>RSS không phải lựa chọn tuỳ tiện. Với sai số bình phương, bộ dự báo tốt nhất là <b>kỳ vọng có điều kiện</b> E[Y | X]. Bình phương tối thiểu cho xấp xỉ tuyến tính tốt nhất của hàm đó.</li>
+  <li>Để phân loại, mã hoá hai lớp thành 0 và 1, khớp hồi quy, rồi gán lớp 1 khi Ŷ &gt; 0,5. Ranh giới quyết định khi đó là một đường thẳng.</li>
+  <li><b>Láng giềng gần nhất</b> (k-nearest neighbours, kNN) không khớp công thức nào. Nó giữ nguyên dữ liệu huấn luyện và lấy trung bình nhãn của k điểm gần nhất.</li>
+  <li>Với k = 1, mỗi điểm huấn luyện sở hữu vùng không gian gần nó nhất. Các vùng này tạo thành <b>phân hoạch Voronoi</b> (Voronoi tessellation), nên ranh giới lởm chởm và đầy “đảo” nhỏ. Tăng k làm ranh giới mượt hơn.</li>
+  <li>Dù chỉ có một tham số k, kNN hành xử như có khoảng N/k tham số, mỗi lân cận một tham số. k nhỏ nghĩa là mô hình rất linh hoạt.</li>
+</ul>
+
+<h4>Công thức</h4>
+<div class="formula"><span class="lbl">Mô hình tuyến tính với p biến đầu vào</span>Ŷ = β̂<sub>0</sub> + Σ<sub>j=1</sub><sup>p</sup> X<sub>j</sub> β̂<sub>j</sub></div>
+<div class="formula"><span class="lbl">Tổng bình phương phần dư và nghiệm bình phương tối thiểu (X là ma trận thiết kế có cột hằng số 1)</span>RSS(β) = Σ<sub>i=1</sub><sup>N</sup> ( y<sub>i</sub> − x<sub>i</sub><sup>⊤</sup>β )<sup>2</sup> &nbsp;&nbsp;&nbsp;&nbsp; β̂ = (X<sup>⊤</sup>X)<sup>−1</sup> X<sup>⊤</sup>y</div>
+<div class="formula"><span class="lbl">Dự báo kNN: N<sub>k</sub>(x) là tập k điểm huấn luyện gần x nhất</span>Ŷ(x) = <span class="frac"><span>1</span><span>k</span></span> Σ<sub>x<sub>i</sub> ∈ N<sub>k</sub>(x)</sub> y<sub>i</sub> &nbsp;&nbsp;&nbsp;&nbsp; số tham số hiệu dụng ≈ <span class="frac"><span>N</span><span>k</span></span></div>
+
+<h4>Ví dụ minh hoạ: hai bộ dự báo trên năm điểm</h4>
+<p>Dữ liệu gồm 5 điểm (x, y): (1, 1), (2, 3), (3, 2), (4, 5), (5, 4). Cần dự báo y tại x = 3,4.</p>
+<ol>
+  <li>Trung bình: x̄ = 3, ȳ = 3. Tổng tích chéo Σ(x − x̄)(y − ȳ) = 4 + 0 + 0 + 2 + 2 = 8. Tổng bình phương Σ(x − x̄)<sup>2</sup> = 10.</li>
+  <li>Hệ số góc β̂<sub>1</sub> = 8 / 10 = 0,8. Hệ số chặn β̂<sub>0</sub> = 3 − 0,8 × 3 = 0,6.</li>
+  <li>Dự báo tuyến tính tại 3,4: 0,6 + 0,8 × 3,4 = 3,32. RSS trên tập huấn luyện bằng 0,16 + 0,64 + 1 + 1,44 + 0,36 = 3,6.</li>
+  <li>Với kNN, khoảng cách từ 3,4 tới các điểm là 0,4 (x = 3), 0,6 (x = 4), 1,4 (x = 2), …</li>
+  <li>k = 1 cho dự báo 2. k = 3 cho (2 + 5 + 3) / 3 ≈ 3,33, rất gần dự báo tuyến tính.</li>
+  <li>1-NN có RSS huấn luyện bằng 0, vì mỗi điểm là láng giềng gần nhất của chính nó. Con số đó không nói gì về chất lượng trên dữ liệu mới.</li>
+</ol>
+
+<table class="t">
+  <tr><th></th><th>Mô hình tuyến tính (bình phương tối thiểu)</th><th>Láng giềng gần nhất</th></tr>
+  <tr><td>Độ chệch và phương sai</td><td>độ chệch cao, phương sai thấp</td><td>độ chệch thấp, phương sai cao</td></tr>
+  <tr><td>Giả định</td><td>quan hệ (gần) tuyến tính</td><td>gần như không có</td></tr>
+  <tr><td>Hợp nhất khi</td><td>mỗi lớp xấp xỉ một cụm Gauss</td><td>mỗi lớp là hỗn hợp của nhiều cụm nhỏ</td></tr>
+  <tr><td>Số chiều</td><td>chịu được nhiều biến đầu vào</td><td>cần ít chiều và nhiều dữ liệu</td></tr>
+</table>
+
+<figure class="demo">
+  <div class="stage" id="demo-08"></div>
+  <div class="controls" id="ctl-08"></div>
+  <div class="readout" id="out-08"></div>
+  <figcaption><b>Mô hình 8.1 – Bộ phân loại dưới dạng địa hình 3D.</b> Hai trục ngang là hai biến đầu vào. Độ cao là xác suất dự báo của lớp xanh dương. Điểm xanh dương nằm ở độ cao 1, điểm cam ở độ cao 0. Tấm kính màu xanh lá là ngưỡng quyết định 0,5. Với k = 1, địa hình là một rừng gai chạm vào từng điểm. Tăng k thì gai mòn thành đồi. Bình phương tối thiểu là một mặt phẳng nghiêng (cắt ở 0 và 1 khi hiển thị). Kéo để xoay.</figcaption>
+</figure>
+
+<figure class="demo">
+  <div class="stage" id="demo2-08"></div>
+  <div class="controls" id="ctl2-08"></div>
+  <div class="readout" id="out2-08"></div>
+  <figcaption><b>Mô hình 8.2 – Ranh giới quyết định nhìn từ trên xuống.</b> Mỗi lớp là hỗn hợp của 10 cụm Gauss, giống ví dụ trong chương 2 của ESL. Bên trái là vùng mà mô hình gán cho từng lớp. Bên phải là sai số trên 200 điểm huấn luyện (nét đứt) và trên 1.000 điểm kiểm tra mới (nét liền) theo k. Đường ngang xanh dương là sai số kiểm tra của bình phương tối thiểu, đường xanh lá là sai số Bayes, mức thấp nhất có thể đạt được. Kéo k về 1 để thấy sai số huấn luyện bằng 0 còn sai số kiểm tra tăng lên.</figcaption>
+</figure>
+
+<h4>Lưu ý khi phỏng vấn</h4>
+<ul>
+  <li>Câu hỏi hay gặp: mô hình nào chắc chắn có sai số huấn luyện bằng 0 (khi không có hai đầu vào trùng nhau mà khác nhãn)? Đáp án là 1-NN. Vì thế sai số huấn luyện của nó vô nghĩa.</li>
+  <li>Ở các quỹ định lượng, mọi mô hình alpha mới đều được so với hồi quy tuyến tính trên cùng tập đặc trưng. Nếu mô hình phức tạp không thắng được nó ngoài mẫu thì không được đưa vào chạy.</li>
+  <li>“Tìm 20 ngày quá khứ giống hôm nay nhất rồi lấy trung bình diễn biến sau đó” chính là kNN. Cách này dùng được với vài biến trạng thái thị trường, nhưng vô vọng với hàng trăm biến (xem bài 09).</li>
+  <li>Hãy nói được vì sao chọn sai số bình phương: nó dẫn tới E[Y | X], và có nghiệm dạng đóng β̂ = (X<sup>⊤</sup>X)<sup>−1</sup>X<sup>⊤</sup>y. Phương pháp hạt nhân (kernel) là bản mượt của kNN, đánh trọng số theo khoảng cách thay vì đếm đều k điểm.</li>
+</ul>
+
+<script>
+(()=>{
+  const stage1=document.getElementById('demo-08'), ctl1=document.getElementById('ctl-08'), out1=document.getElementById('out-08');
+  const stage2=document.getElementById('demo2-08'), ctl2=document.getElementById('ctl2-08'), out2=document.getElementById('out2-08');
+  const NC=100, NT=500, NTR=2*NC, G3=34, G2=90, KMAX=151;
+  const st={seed:2, m1:'knn', k1:15, m2:'knn', k2:15};
+  let D=null;
+  // ---------- tiện ích màu: nội suy giữa hai màu CSS ----------
+  function rgb(s){ s=(s||'').trim(); if(s[0]==='#'){ if(s.length===4) s='#'+s[1]+s[1]+s[2]+s[2]+s[3]+s[3]; const n=parseInt(s.slice(1,7),16); return [n>>16&255,n>>8&255,n&255]; }
+    const m=s.match(/[\d.]+/g); return m?m.slice(0,3).map(Number):[128,128,128]; }
+  const mix=(a,b,t)=>`rgb(${Math.round(a[0]+(b[0]-a[0])*t)},${Math.round(a[1]+(b[1]-a[1])*t)},${Math.round(a[2]+(b[2]-a[2])*t)})`;
+  // ---------- dữ liệu: mỗi lớp là hỗn hợp 10 cụm Gauss ----------
+  function gen(){
+    const r=Q.rng(st.seed*7919+1), ctr=[[1,0],[0,1]], means=[[],[]], s=Math.sqrt(0.2);
+    for(let c=0;c<2;c++) for(let i=0;i<10;i++) means[c].push([ctr[c][0]+Q.normal(r),ctr[c][1]+Q.normal(r)]);
+    const one=c=>{ const m=means[c][Math.floor(r()*10)]; return [m[0]+s*Q.normal(r),m[1]+s*Q.normal(r)]; };
+    const X=[],y=[],Xt=[],yt=[];
+    for(let c=0;c<2;c++) for(let i=0;i<NC;i++){ X.push(one(c)); y.push(c); }
+    for(let c=0;c<2;c++) for(let i=0;i<NT;i++){ Xt.push(one(c)); yt.push(c); }
+    // miền vẽ hình vuông bao quanh dữ liệu huấn luyện
+    let x0=Infinity,x1=-Infinity,y0=Infinity,y1=-Infinity; X.forEach(p=>{x0=Math.min(x0,p[0]);x1=Math.max(x1,p[0]);y0=Math.min(y0,p[1]);y1=Math.max(y1,p[1]);});
+    const span=Math.max(x1-x0,y1-y0)+0.6, cx=(x0+x1)/2, cy=(y0+y1)/2, box=[cx-span/2,cy-span/2,span];
+    // bình phương tối thiểu trên nhãn 0/1: giải hệ 3×3 (X'X)β = X'y
+    const A=[[0,0,0],[0,0,0],[0,0,0]], bv=[0,0,0];
+    X.forEach((p,i)=>{ const v=[1,p[0],p[1]]; for(let a=0;a<3;a++){ bv[a]+=v[a]*y[i]; for(let b=0;b<3;b++) A[a][b]+=v[a]*v[b]; } });
+    const beta=solve3(A,bv);
+    const lsP=p=>beta[0]+beta[1]*p[0]+beta[2]*p[1];
+    // quy tắc Bayes (biết trước các tâm cụm)
+    const dens=(c,p)=>means[c].reduce((t,m)=>t+Math.exp(-((p[0]-m[0])**2+(p[1]-m[1])**2)/(2*0.2)),0);
+    const bayesErr=Xt.reduce((e,p,i)=>e+(((dens(1,p)>dens(0,p))?1:0)!==yt[i]?1:0),0)/Xt.length;
+    const lsTrain=X.reduce((e,p,i)=>e+((lsP(p)>0.5?1:0)!==y[i]?1:0),0)/NTR;
+    const lsTest=Xt.reduce((e,p,i)=>e+((lsP(p)>0.5?1:0)!==yt[i]?1:0),0)/Xt.length;
+    D={X,y,Xt,yt,box,beta,lsP,bayesErr,lsTrain,lsTest};
+    // tổng tích luỹ của nhãn theo thứ tự láng giềng: dự báo kNN với mọi k chỉ còn là một phép chia
+    D.preTr=X.map(prefix); D.preTe=Xt.map(prefix);
+    D.g3=[]; for(let j=0;j<=G3;j++) for(let i=0;i<=G3;i++) D.g3.push(prefix(gridPt(i/G3,j/G3)));
+    D.g2=[]; for(let j=0;j<G2;j++) for(let i=0;i<G2;i++) D.g2.push(prefix(gridPt((i+0.5)/G2,(j+0.5)/G2)));
+    D.curve=[]; for(let k=1;k<=KMAX;k+=2) D.curve.push({k,tr:errK(D.preTr,D.y,k),te:errK(D.preTe,D.yt,k)});
+  }
+  function gridPt(u,v){ return [D.box[0]+u*D.box[2],D.box[1]+v*D.box[2]]; }
+  function solve3(A,b){ const M=A.map((r,i)=>[...r,b[i]]);
+    for(let c=0;c<3;c++){ let piv=c; for(let r=c+1;r<3;r++) if(Math.abs(M[r][c])>Math.abs(M[piv][c])) piv=r; [M[c],M[piv]]=[M[piv],M[c]];
+      for(let r=0;r<3;r++) if(r!==c){ const f=M[r][c]/M[c][c]; for(let k=c;k<4;k++) M[r][k]-=f*M[c][k]; } }
+    return [M[0][3]/M[0][0],M[1][3]/M[1][1],M[2][3]/M[2][2]]; }
+  const keys=new Float64Array(NTR);
+  function prefix(q){ const X=D.X, y=D.y;
+    for(let i=0;i<NTR;i++){ const d=(X[i][0]-q[0])**2+(X[i][1]-q[1])**2; keys[i]=Math.floor(d*1e6)*256+i; }
+    keys.sort(); const pre=new Uint8Array(KMAX+1);
+    for(let j=0;j<KMAX;j++) pre[j+1]=pre[j]+y[keys[j]%256]; return pre; }
+  const errK=(pres,lab,k)=>pres.reduce((e,pre,i)=>e+(((pre[k]/k>0.5)?1:0)!==lab[i]?1:0),0)/pres.length;
+  const predGrid=(pre,p,mode,k)=>mode==='ls'?D.lsP(p):pre[k]/k;
+  gen();
+
+  /* ---------- Mô hình 8.1: địa hình 3D ---------- */
+  const view={yaw:-0.7,pitch:0.55,dist:12,auto:true};
+  const c1=Q.canvas(stage1,400,draw1);
+  function draw1(ctx,w,h){
+    const C=Q.colors(); ctx.clearRect(0,0,w,h);
+    const scale=Math.min(w,h*1.4)/8.2, P=p=>Q.project(p,view,w,h,scale);
+    const cb=rgb(C.b), cc=rgb(C.c), cm=rgb(C.panel), S3=4.4, ZH=1.5;
+    const to3=(u,v,z)=>[(u-0.5)*S3,(v-0.5)*S3,(z-0.5)*ZH];
+    const H=new Float32Array((G3+1)*(G3+1));
+    for(let j=0;j<=G3;j++) for(let i=0;i<=G3;i++){ const id=j*(G3+1)+i; let z=predGrid(D.g3[id],gridPt(i/G3,j/G3),st.m1,st.k1); H[id]=Math.max(-0.12,Math.min(1.12,z)); }
+    const items=[];
+    for(let j=0;j<G3;j++) for(let i=0;i<G3;i++){
+      const ids=[j*(G3+1)+i,j*(G3+1)+i+1,(j+1)*(G3+1)+i+1,(j+1)*(G3+1)+i];
+      const uv=[[i,j],[i+1,j],[i+1,j+1],[i,j+1]];
+      const pts=ids.map((id,t)=>P(to3(uv[t][0]/G3,uv[t][1]/G3,H[id])));
+      const zm=(H[ids[0]]+H[ids[1]]+H[ids[2]]+H[ids[3]])/4;
+      items.push({t:0,pts,d:pts.reduce((s,q)=>s+q[2],0)/4,z:zm});
+    }
+    const GG=10; for(let j=0;j<GG;j++) for(let i=0;i<GG;i++){
+      const pts=[[i,j],[i+1,j],[i+1,j+1],[i,j+1]].map(q=>P(to3(q[0]/GG,q[1]/GG,0.5)));
+      items.push({t:1,pts,d:pts.reduce((s,q)=>s+q[2],0)/4}); }
+    D.X.forEach((p,i)=>{ const u=(p[0]-D.box[0])/D.box[2], v=(p[1]-D.box[1])/D.box[2]; const q=P(to3(u,v,D.y[i])); items.push({t:2,q,d:q[2]-0.02,c:D.y[i]}); });
+    items.sort((a,b)=>b.d-a.d);
+    for(const it of items){
+      if(it.t===2){ ctx.globalAlpha=1; ctx.fillStyle=it.c?C.c:C.b; ctx.strokeStyle=C.panel; ctx.lineWidth=1; ctx.beginPath(); ctx.arc(it.q[0],it.q[1],3.2,0,7); ctx.fill(); ctx.stroke(); continue; }
+      ctx.beginPath(); it.pts.forEach((q,j)=>j?ctx.lineTo(q[0],q[1]):ctx.moveTo(q[0],q[1])); ctx.closePath();
+      if(it.t===0){ ctx.globalAlpha=0.92; { const t=Math.max(0,Math.min(1,it.z)); ctx.fillStyle=t<0.5?mix(cb,cm,0.85*t*2):mix(cm,cc,1-0.85*(1-t)*2+0.0); } ctx.fill(); ctx.globalAlpha=0.18; ctx.strokeStyle=C.panel; ctx.lineWidth=0.5; ctx.stroke(); }
+      else { ctx.globalAlpha=0.16; ctx.fillStyle=C.a; ctx.fill(); }
+    }
+    ctx.globalAlpha=1; ctx.fillStyle=C.muted; ctx.font='12px -apple-system,sans-serif';
+    ctx.fillText(st.m1==='ls'?'Bình phương tối thiểu: một mặt phẳng nghiêng':`kNN với k = ${st.k1}: độ cao = tỉ lệ láng giềng xanh dương`,12,20);
+  }
+  function rep1(){ const k=st.k1;
+    out1.textContent=st.m1==='ls'
+      ? `Bình phương tối thiểu: 3 tham số (β̂₀, β̂₁, β̂₂) · sai số huấn luyện ${Q.pct(D.lsTrain,1)} · sai số kiểm tra ${Q.pct(D.lsTest,1)}`
+      : `kNN, k = ${k}: khoảng N/k = ${Math.round(NTR/k)} tham số hiệu dụng · sai số huấn luyện ${Q.pct(errK(D.preTr,D.y,k),1)} · sai số kiểm tra ${Q.pct(errK(D.preTe,D.yt,k),1)}`; }
+  Q.orbit(c1.cv,view,()=>c1.redraw());
+  Q.loop(stage1,()=>{ if(view.auto){ view.yaw+=0.003; c1.redraw(); } });
+  const b1={};
+  function setM1(m){ st.m1=m; b1.ls.className=m==='ls'?'primary':''; b1.knn.className=m==='knn'?'primary':''; rep1(); c1.redraw(); }
+  b1.ls=Q.button(ctl1,'Bình phương tối thiểu',()=>setM1('ls'));
+  b1.knn=Q.button(ctl1,'kNN',()=>setM1('knn'));
+  Q.slider(ctl1,'k',1,KMAX,2,st.k1,v=>{ st.k1=v; if(st.m1!=='knn') setM1('knn'); else { rep1(); c1.redraw(); } },v=>v);
+  Q.button(ctl1,'Mẫu mới',()=>{ st.seed++; gen(); setM1(st.m1); setM2(st.m2); });
+
+  /* ---------- Mô hình 8.2: ranh giới quyết định + đường sai số ---------- */
+  const c2=Q.canvas(stage2,380,draw2);
+  function draw2(ctx,w,h){
+    const C=Q.colors(); ctx.clearRect(0,0,w,h); ctx.font='12px -apple-system,sans-serif';
+    const narrow=w<620;
+    const side=narrow?Math.min(w-24,230):Math.min(h-30,w*0.5);
+    const M={x:12,y:22,s:side};
+    const Rg=narrow?{x:44,y:M.y+side+28,w:w-60,h:h-(M.y+side+28)-26}:{x:M.x+side+52,y:30,w:w-(M.x+side+52)-16,h:h-64};
+    // vùng quyết định
+    const cs=side/G2, cls=new Uint8Array(G2*G2);
+    for(let j=0;j<G2;j++) for(let i=0;i<G2;i++){ const id=j*G2+i; cls[id]=predGrid(D.g2[id],gridPt((i+0.5)/G2,(j+0.5)/G2),st.m2,st.k2)>0.5?1:0; }
+    const fB=mix(rgb(C.bg),rgb(C.c),0.22), fO=mix(rgb(C.bg),rgb(C.b),0.22);
+    for(let j=0;j<G2;j++) for(let i=0;i<G2;i++){ ctx.fillStyle=cls[j*G2+i]?fB:fO; ctx.fillRect(M.x+i*cs,M.y+(G2-1-j)*cs,cs+0.5,cs+0.5); }
+    ctx.globalAlpha=1; ctx.strokeStyle=C.ink; ctx.lineWidth=1.4; ctx.beginPath();
+    for(let j=0;j<G2;j++) for(let i=0;i<G2;i++){ const a=cls[j*G2+i], X0=M.x+(i+1)*cs, Y0=M.y+(G2-1-j)*cs;
+      if(i<G2-1&&cls[j*G2+i+1]!==a){ ctx.moveTo(X0,Y0); ctx.lineTo(X0,Y0+cs); }
+      if(j<G2-1&&cls[(j+1)*G2+i]!==a){ ctx.moveTo(X0-cs,Y0); ctx.lineTo(X0,Y0); } }
+    ctx.stroke();
+    D.X.forEach((p,i)=>{ const u=(p[0]-D.box[0])/D.box[2], v=(p[1]-D.box[1])/D.box[2];
+      ctx.fillStyle=D.y[i]?C.c:C.b; ctx.beginPath(); ctx.arc(M.x+u*side,M.y+(1-v)*side,2.8,0,7); ctx.fill(); });
+    ctx.strokeStyle=C.line; ctx.lineWidth=1; ctx.strokeRect(M.x,M.y,side,side);
+    ctx.fillStyle=C.ink; ctx.fillText(st.m2==='ls'?'Bình phương tối thiểu: ranh giới thẳng':`kNN, k = ${st.k2}`,M.x,M.y-8);
+    // đường sai số theo k (thang log, linh hoạt dần sang phải)
+    const crv=D.curve, emax=Math.max(0.3,...crv.map(e=>e.te))*1.1;
+    const X=k=>Rg.x+(1-Math.log(k)/Math.log(KMAX))*Rg.w, Y=e=>Rg.y+Rg.h-e/emax*Rg.h;
+    ctx.strokeStyle=C.line; ctx.strokeRect(Rg.x,Rg.y,Rg.w,Rg.h);
+    ctx.fillStyle=C.muted; ctx.textAlign='right';
+    for(let e=0;e<=emax;e+=0.1){ ctx.fillText(Q.pct(e,0),Rg.x-5,Y(e)+4); }
+    ctx.textAlign='center'; [151,51,15,5,1].forEach(k=>ctx.fillText(String(k),X(k),Rg.y+Rg.h+14));
+    ctx.fillText('k (thang log) · linh hoạt hơn về bên phải →',Rg.x+Rg.w/2,Rg.y+Rg.h+28);
+    const hline=(e,col,dash)=>{ ctx.strokeStyle=col; ctx.setLineDash(dash); ctx.lineWidth=1.6; ctx.beginPath(); ctx.moveTo(Rg.x,Y(e)); ctx.lineTo(Rg.x+Rg.w,Y(e)); ctx.stroke(); ctx.setLineDash([]); };
+    hline(D.bayesErr,C.a,[2,3]); hline(D.lsTest,C.c,[7,4]);
+    const path=(f,col,dash)=>{ ctx.strokeStyle=col; ctx.setLineDash(dash); ctx.lineWidth=2; ctx.beginPath(); crv.forEach((e,i)=>i?ctx.lineTo(X(e.k),Y(f(e))):ctx.moveTo(X(e.k),Y(f(e)))); ctx.stroke(); ctx.setLineDash([]); };
+    path(e=>e.tr,C.muted,[5,4]); path(e=>e.te,C.b,[]);
+    if(st.m2==='knn'){ const e=crv[(st.k2-1)/2]; ctx.fillStyle=C.b; ctx.beginPath(); ctx.arc(X(e.k),Y(e.te),4.5,0,7); ctx.fill(); ctx.fillStyle=C.muted; ctx.beginPath(); ctx.arc(X(e.k),Y(e.tr),3.5,0,7); ctx.fill(); }
+    ctx.textAlign='left'; ctx.fillStyle=C.ink; ctx.fillText('Sai số phân loại',Rg.x,Rg.y-8);
+  }
+  function rep2(){ const k=st.k2, e=D.curve[(k-1)/2];
+    out2.textContent=(st.m2==='ls'
+      ? `Bình phương tối thiểu · huấn luyện ${Q.pct(D.lsTrain,1)} · kiểm tra ${Q.pct(D.lsTest,1)}`
+      : `kNN, k = ${k} (≈ ${Math.round(NTR/k)} tham số hiệu dụng) · huấn luyện ${Q.pct(e.tr,1)} · kiểm tra ${Q.pct(e.te,1)}`)+
+      `\nTham chiếu: bình phương tối thiểu kiểm tra ${Q.pct(D.lsTest,1)} · sai số Bayes ${Q.pct(D.bayesErr,1)}`; }
+  const b2={};
+  function setM2(m){ st.m2=m; b2.ls.className=m==='ls'?'primary':''; b2.knn.className=m==='knn'?'primary':''; rep2(); c2.redraw(); }
+  b2.ls=Q.button(ctl2,'Bình phương tối thiểu',()=>setM2('ls'));
+  b2.knn=Q.button(ctl2,'kNN',()=>setM2('knn'));
+  Q.slider(ctl2,'k',1,KMAX,2,st.k2,v=>{ st.k2=v; if(st.m2!=='knn') setM2('knn'); else { rep2(); c2.redraw(); } },v=>v);
+  Q.button(ctl2,'Mẫu mới',()=>{ st.seed++; gen(); setM1(st.m1); setM2(st.m2); });
+  setM1('knn'); setM2('knn');
+})();
+</script>
+</section>

@@ -1,0 +1,198 @@
+<section class="lesson" id="bai-05" data-short="Tương quan">
+<header>
+  <span class="num">05</span>
+  <h3>Phân phối đồng thời, hiệp phương sai và hệ số tương quan</h3>
+  <p class="meta">12 phút · Ứng dụng: phòng ngừa rủi ro, giao dịch cặp, mô hình rủi ro · <a href="https://hft.md/learn/correlation/">Bài gốc (tiếng Anh)</a></p>
+</header>
+
+<p>Một biến ngẫu nhiên chỉ đủ để định giá một ván cược. Giao dịch thực tế xoay quanh các cặp và danh mục: một cổ phiếu và công cụ phòng ngừa của nó, một tín hiệu và lợi suất ngày hôm sau. Muốn làm việc với chúng, ta cần mô tả hai đại lượng ngẫu nhiên biến động cùng nhau thế nào.</p>
+
+<h4>Ý chính</h4>
+<ul>
+  <li><b>Phân phối đồng thời</b> (joint distribution) mô tả đầy đủ cặp (X, Y). Muốn lấy lại <b>phân phối biên</b> (marginal distribution) của X, ta cộng hoặc tích phân theo Y.</li>
+  <li>X và Y <b>độc lập</b> khi và chỉ khi phân phối đồng thời tách được thành tích hai phân phối biên, tại mọi điểm (x, y).</li>
+  <li><b>Hiệp phương sai</b> (covariance) bằng kỳ vọng của tích trừ tích các kỳ vọng. Nó dương khi hai biến có xu hướng cùng nằm trên trung bình.</li>
+  <li><b>Hệ số tương quan</b> (correlation) là hiệp phương sai đã chuẩn hoá, luôn nằm trong [−1, 1] và không phụ thuộc đơn vị đo. ρ = ±1 nghĩa là một biến là hàm tuyến tính chính xác của biến kia.</li>
+  <li>Độc lập thì tương quan bằng 0, nhưng chiều ngược lại sai. ρ = 0 chỉ nói không có quan hệ <i>tuyến tính</i>. Ví dụ Y = X<sup>2</sup> với X đối xứng quanh 0.</li>
+  <li>Mọi ma trận tương quan hợp lệ phải <b>nửa xác định dương</b> (positive semidefinite). Vì vậy ba hệ số tương quan của ba biến không thể chọn tuỳ ý.</li>
+</ul>
+
+<h4>Công thức</h4>
+<div class="formula"><span class="lbl">Phân phối biên và điều kiện độc lập</span>p<sub>X</sub>(x) = Σ<sub>y</sub> p<sub>X,Y</sub>(x, y), &nbsp; f<sub>X</sub>(x) = ∫ f<sub>X,Y</sub>(x, y) dy; &nbsp;&nbsp; độc lập ⇔ f<sub>X,Y</sub>(x, y) = f<sub>X</sub>(x) · f<sub>Y</sub>(y)</div>
+<div class="formula"><span class="lbl">Hiệp phương sai và các tính chất</span>Cov(X, Y) = E[(X − E[X])(Y − E[Y])] = E[XY] − E[X]E[Y]; &nbsp; Cov(X, X) = Var(X); &nbsp; Cov(aX<sub>1</sub> + bX<sub>2</sub>, Y) = a Cov(X<sub>1</sub>, Y) + b Cov(X<sub>2</sub>, Y)</div>
+<div class="formula"><span class="lbl">Hệ số tương quan</span>ρ(X, Y) = <span class="frac"><span>Cov(X, Y)</span><span>√(Var(X) · Var(Y))</span></span> ∈ [−1, 1]</div>
+<div class="formula"><span class="lbl">Tỉ lệ phòng ngừa tốt nhất của X bằng Y (cũng là hệ số góc hồi quy X theo Y)</span>h* = <span class="frac"><span>Cov(X, Y)</span><span>Var(Y)</span></span></div>
+<div class="formula"><span class="lbl">Ràng buộc cho ba biến: với ρ<sub>XY</sub> = a, ρ<sub>YZ</sub> = b, ρ<sub>XZ</sub> = c, cần det ≥ 0</span>det = 1 − a<sup>2</sup> − b<sup>2</sup> − c<sup>2</sup> + 2abc ≥ 0 &nbsp;⇔&nbsp; c ∈ [ ab − √((1 − a<sup>2</sup>)(1 − b<sup>2</sup>)), &nbsp;ab + √((1 − a<sup>2</sup>)(1 − b<sup>2</sup>)) ]</div>
+
+<h4>Ví dụ minh hoạ: từ bảng đồng thời tới bài toán ba tương quan</h4>
+<p>Hai mã cổ phiếu mỗi ngày tăng (1) hoặc không tăng (0). Phân phối đồng thời: P(0, 0) = 0,4; P(0, 1) = 0,1; P(1, 0) = 0,1; P(1, 1) = 0,4.</p>
+<ol>
+  <li>Phân phối biên: P(X = 1) = 0,1 + 0,4 = 0,5, tương tự P(Y = 1) = 0,5. Vậy E[X] = E[Y] = 0,5 và Var(X) = Var(Y) = 0,25.</li>
+  <li>E[XY] = P(1, 1) = 0,4, nên Cov(X, Y) = 0,4 − 0,5 · 0,5 = 0,15.</li>
+  <li>ρ = 0,15 / √(0,25 · 0,25) = 0,6. Hai biến không độc lập, vì P(1, 1) = 0,4 khác P(X = 1) · P(Y = 1) = 0,25.</li>
+</ol>
+<p>Cho X phân phối đều trên [−1, 1] và Y = |X|. Do đối xứng, E[XY] = E[X|X|] = 0 và E[X] = 0, nên Cov(X, Y) = 0. Thế nhưng biết X là biết chính xác Y. Hai biến không tương quan mà vẫn phụ thuộc hoàn toàn.</p>
+<p>Câu hỏi được ghi nhận ở Jane Street: Corr(X, Y) = 0,9 và Corr(Y, Z) = 0,8. Hỏi khoảng chặt nhất của c = Corr(X, Z)?</p>
+<ol>
+  <li>Ma trận tương quan phải nửa xác định dương. Riêng định thức của nó phải không âm.</li>
+  <li>det = 1 − 0,81 − 0,64 − c<sup>2</sup> + 2 · 0,72 · c = −c<sup>2</sup> + 1,44c − 0,45 ≥ 0.</li>
+  <li>Giải bất phương trình bậc hai: c ∈ 0,72 ± √(0,19 · 0,36) = 0,72 ± 0,2615, tức 0,458 ≤ c ≤ 0,982.</li>
+  <li>Kiểm tra bằng hình học (bài 03): X lệch Y một góc arccos 0,9 ≈ 25,8°, Z lệch Y một góc arccos 0,8 ≈ 36,9°. Góc giữa X và Z nằm trong [11,0°; 62,7°], và cos của hai đầu mút cho đúng hai cận trên.</li>
+</ol>
+
+<figure class="demo">
+  <div class="stage" id="demo-05"></div>
+  <div class="controls" id="ctl-05"></div>
+  <div class="readout" id="out-05"></div>
+  <figcaption><b>Mô hình 5.1 – Mặt mật độ chuẩn hai chiều trong không gian 3D.</b> Hai biến đã chuẩn hoá về trung bình 0, độ lệch chuẩn 1; chiều cao được co theo đỉnh của mặt. Tăng ρ thì ngọn đồi xoay về đường chéo, còn hai đường mật độ biên trên vách (xám) không đổi. Chấm trên sàn là 400 mẫu, vòng tím chứa khoảng 68% số mẫu. Đường cam trên mặt là lát cắt tại X = x₀, tức phân phối có điều kiện của Y; tâm của nó nằm trên đường hồi quy ρx (vạch đứt cam). Chế độ “Y = X²” cho thấy quan hệ phụ thuộc hoàn toàn mà tương quan gần 0. Kéo để xoay.</figcaption>
+</figure>
+
+<figure class="demo">
+  <div class="stage" id="demo2-05"></div>
+  <div class="controls" id="ctl2-05"></div>
+  <div class="readout" id="out2-05"></div>
+  <figcaption><b>Mô hình 5.2 – Bài toán ba tương quan.</b> Đồ thị bên trái là định thức của ma trận tương quan theo c = Corr(X, Z). Chỉ vùng xanh lá, nơi định thức không âm, là đạt được. Hình bên phải vẽ ba biến thành ba mũi tên đơn vị. Z có thể nằm cùng phía với X so với Y (Z₊, cho cận trên của c) hoặc khác phía (Z₋, cho cận dưới). Kéo thanh trượt c để thử một giá trị cụ thể.</figcaption>
+</figure>
+
+<h4>Lưu ý khi phỏng vấn</h4>
+<ul>
+  <li>Khi nói “không tương quan nên độc lập”, hãy dừng lại. Điều đó chỉ đúng nếu (X, Y) có phân phối chuẩn đồng thời.</li>
+  <li>Hệ số tương quan mẫu rất nhạy với ngoại lai. Vài điểm cực đoan có thể kéo r từ 0 lên mức cao, hoặc ngược lại.</li>
+  <li>Với bài toán ba tương quan, nêu cả hai cách: định thức không âm và góc giữa các mũi tên. Người phỏng vấn thường muốn thấy cách hình học.</li>
+  <li>Tương quan không phải là toàn bộ sự phụ thuộc. Hai tài sản có thể ít tương quan ngày thường nhưng cùng sụp đổ khi khủng hoảng. Vì vậy bàn giao dịch xem thêm phụ thuộc ở đuôi và kịch bản căng thẳng.</li>
+</ul>
+
+<script>
+(()=>{
+  /* ---------- Mô hình 5.1: mặt mật độ chuẩn hai chiều ---------- */
+  const stage=document.getElementById('demo-05'), ctl=document.getElementById('ctl-05'), out=document.getElementById('out-05');
+  const S={rho:0.6, x0:1, sq:false};
+  const view={yaw:-0.75,pitch:0.62,dist:13,auto:true};
+  const r=Q.rng(55), U=Array.from({length:400},()=>[Q.normal(r),Q.normal(r)]), R68=Math.sqrt(-2*Math.log(0.32));
+  const G=28, L=3, H=2.4, zOff=-0.45;
+  const pts=()=>U.map(([a,b])=>S.sq?[a,(a*a-1)/Math.SQRT2]:[a,S.rho*a+Math.sqrt(1-S.rho*S.rho)*b]);
+  // mật độ đã chia cho giá trị đỉnh, nên luôn nằm trong [0, 1]
+  const dens=(x,y)=>{ const q=1-S.rho*S.rho; return Math.exp(-(x*x-2*S.rho*x*y+y*y)/(2*q)); };
+  const phi=x=>Math.exp(-x*x/2);
+  function stats(P){
+    const n=P.length; let mx=0,my=0; P.forEach(p=>{mx+=p[0];my+=p[1];}); mx/=n; my/=n;
+    let sxx=0,syy=0,sxy=0; P.forEach(p=>{ const a=p[0]-mx,b=p[1]-my; sxx+=a*a; syy+=b*b; sxy+=a*b; });
+    return {r:sxy/Math.sqrt(sxx*syy), slope:sxy/sxx};
+  }
+  function report(){
+    const P=pts(), s=stats(P);
+    if(S.sq){ out.textContent=`Chế độ Y = (X² − 1)/√2: Y hoàn toàn xác định bởi X\nTương quan lý thuyết = E[X³]/√2 = 0;  tương quan mẫu (400 điểm) r = ${Q.fmt(s.r,3)}\nKết luận: ρ ≈ 0 nhưng hai biến phụ thuộc hoàn toàn`; return; }
+    const q=1-S.rho*S.rho; let inside=0; P.forEach(([x,y])=>{ if((x*x-2*S.rho*x*y+y*y)/q<R68*R68) inside++; });
+    out.textContent=`ρ lý thuyết = ${Q.fmt(S.rho,2)};  tương quan mẫu r = ${Q.fmt(s.r,3)};  hệ số góc OLS = Cov/Var(X) = ${Q.fmt(s.slope,3)}\n`+
+      `Lát cắt X = ${Q.fmt(S.x0,1)}:  E[Y | X] = ρx₀ = ${Q.fmt(S.rho*S.x0,3)},  Var(Y | X) = 1 − ρ² = ${Q.fmt(q,3)}\n`+
+      `Trong vòng 68%: ${inside}/400 điểm = ${Q.pct(inside/400,1)}`;
+  }
+  const cv=Q.canvas(stage,420,draw);
+  function draw(ctx,w,h){
+    const C=Q.colors(); ctx.clearRect(0,0,w,h);
+    const scale=Math.min(w/10.5,h/7), P=p=>Q.project([p[0],p[1],p[2]+zOff],view,w,h,scale);
+    const line=(arr,col,wd,dash)=>{ ctx.strokeStyle=col; ctx.lineWidth=wd; ctx.setLineDash(dash||[]); ctx.beginPath(); arr.forEach((p,j)=>{ const q=P(p); j?ctx.lineTo(q[0],q[1]):ctx.moveTo(q[0],q[1]); }); ctx.stroke(); ctx.setLineDash([]); ctx.lineWidth=1; };
+    // sàn và vách
+    ctx.fillStyle=C.line; ctx.globalAlpha=0.35; ctx.beginPath(); [[-L,-L],[L,-L],[L,L],[-L,L]].forEach((p,j)=>{ const q=P([p[0],p[1],0]); j?ctx.lineTo(q[0],q[1]):ctx.moveTo(q[0],q[1]); }); ctx.closePath(); ctx.fill(); ctx.globalAlpha=1;
+    line([[-L,L,0],[L,L,0],[L,L,H*0.9],[-L,L,H*0.9],[-L,L,0]],C.line,1);
+    line([[-L,-L,0],[-L,L,0],[-L,L,H*0.9],[-L,-L,H*0.9],[-L,-L,0]],C.line,1);
+    if(!S.sq){
+      const mg=[]; for(let i=0;i<=60;i++){ const t=-L+2*L*i/60; mg.push(t); }
+      line(mg.map(t=>[t,L,phi(t)*H*0.8]),C.muted,2); line(mg.map(t=>[-L,t,phi(t)*H*0.8]),C.muted,2);
+    }
+    // mẫu trên sàn
+    ctx.fillStyle=C.c; ctx.globalAlpha=0.7;
+    pts().forEach(([x,y])=>{ if(Math.abs(x)>L||Math.abs(y)>L) return; const q=P([x,y,0]); ctx.beginPath(); ctx.arc(q[0],q[1],1.8,0,7); ctx.fill(); });
+    ctx.globalAlpha=1;
+    ctx.font='12px -apple-system,sans-serif';
+    if(S.sq){
+      const par=[]; for(let i=0;i<=80;i++){ const x=-L+2*L*i/80, y=(x*x-1)/Math.SQRT2; if(Math.abs(y)<=L) par.push([x,y,0]); }
+      line(par,C.b,2.5);
+      ctx.fillStyle=C.muted; ctx.fillText('Y = (X² − 1)/√2: phụ thuộc hoàn toàn, tương quan ≈ 0',12,20);
+      return;
+    }
+    // vòng 68%
+    const ring=[]; for(let i=0;i<=72;i++){ const t=2*Math.PI*i/72, x=R68*Math.cos(t), y=S.rho*x+Math.sqrt(1-S.rho*S.rho)*R68*Math.sin(t); ring.push([x,y,0.01]); }
+    line(ring,C.d,2);
+    // đường hồi quy E[Y|X] = ρx trên sàn
+    const xm=Math.min(L,L/Math.max(Math.abs(S.rho),1e-9)); line([[-xm,-S.rho*xm,0.01],[xm,S.rho*xm,0.01]],C.b,1.5,[5,4]);
+    // mặt mật độ: các ô tứ giác, vẽ từ xa tới gần
+    const cell=2*L/G, quads=[];
+    for(let i=0;i<G;i++) for(let j=0;j<G;j++){
+      const x0=-L+i*cell, y0=-L+j*cell, c=[[x0,y0],[x0+cell,y0],[x0+cell,y0+cell],[x0,y0+cell]];
+      const zs=c.map(p=>dens(p[0],p[1])), za=(zs[0]+zs[1]+zs[2]+zs[3])/4; if(za<0.004) continue;
+      const pp=c.map((p,k)=>P([p[0],p[1],zs[k]*H])); quads.push({pp,za,d:(pp[0][2]+pp[1][2]+pp[2][2]+pp[3][2])/4});
+    }
+    quads.sort((a,b)=>b.d-a.d);
+    for(const q of quads){
+      ctx.beginPath(); q.pp.forEach((p,j)=>j?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1])); ctx.closePath();
+      ctx.globalAlpha=0.18+0.62*q.za; ctx.fillStyle=C.a; ctx.fill(); ctx.globalAlpha=0.25; ctx.strokeStyle=C.bg; ctx.stroke();
+    }
+    ctx.globalAlpha=1;
+    // lát cắt có điều kiện tại X = x0
+    const sl=[]; for(let i=0;i<=60;i++){ const y=-L+2*L*i/60; sl.push([S.x0,y,dens(S.x0,y)*H+0.02]); }
+    line(sl,C.b,3);
+    const my=S.rho*S.x0; if(Math.abs(my)<=L) line([[S.x0,my,0],[S.x0,my,dens(S.x0,my)*H+0.02]],C.b,1.5);
+    ctx.fillStyle=C.muted; ctx.fillText(`ρ = ${Q.fmt(S.rho,2)} · lát cắt cam: phân phối của Y khi X = ${Q.fmt(S.x0,1)}`,12,20);
+    const lx=P([L+0.3,0,0]), ly=P([0,L+0.3,0]); ctx.fillStyle=C.ink; ctx.fillText('X',lx[0],lx[1]); ctx.fillText('Y',ly[0],ly[1]);
+  }
+  Q.orbit(cv.cv,view,()=>cv.redraw());
+  Q.loop(stage,()=>{ if(view.auto){ view.yaw+=0.003; cv.redraw(); } });
+  const upd=()=>{ report(); cv.redraw(); };
+  Q.slider(ctl,'Tương quan ρ',-0.95,0.95,0.01,S.rho,v=>{S.rho=v;upd();},v=>Q.fmt(v,2));
+  Q.slider(ctl,'Lát cắt x₀',-2.5,2.5,0.1,S.x0,v=>{S.x0=v;upd();},v=>Q.fmt(v,1));
+  const bm=Q.button(ctl,'Chế độ: Y = X²',()=>{ S.sq=!S.sq; bm.textContent=S.sq?'Chế độ: chuẩn hai chiều':'Chế độ: Y = X²'; upd(); });
+  report();
+})();
+
+(()=>{
+  /* ---------- Mô hình 5.2: bài toán ba tương quan ---------- */
+  const stage=document.getElementById('demo2-05'), ctl=document.getElementById('ctl2-05'), out=document.getElementById('out2-05');
+  const S={a:0.9,b:0.8,c:0.7};
+  const det=c=>1-S.a*S.a-S.b*S.b-c*c+2*S.a*S.b*c;
+  const bounds=()=>{ const s=Math.sqrt((1-S.a*S.a)*(1-S.b*S.b)); return [S.a*S.b-s,S.a*S.b+s]; };
+  const deg=x=>x*180/Math.PI;
+  function report(){
+    const [lo,hi]=bounds(), ta=Math.acos(S.a), tb=Math.acos(S.b), d=det(S.c);
+    out.textContent=`det(c) = 1 − a² − b² − c² + 2abc với a = ${Q.fmt(S.a,2)}, b = ${Q.fmt(S.b,2)}\n`+
+      `Khoảng khả thi: ${Q.fmt(lo,3)} ≤ c ≤ ${Q.fmt(hi,3)}   (ab ± √((1 − a²)(1 − b²)), tâm ab = ${Q.fmt(S.a*S.b,3)})\n`+
+      `Góc: X–Y = ${Q.fmt(deg(ta),1)}°, Y–Z = ${Q.fmt(deg(tb),1)}°  ⇒  góc X–Z ∈ [${Q.fmt(deg(Math.abs(ta-tb)),1)}°; ${Q.fmt(deg(Math.min(Math.PI,ta+tb)),1)}°]\n`+
+      `Thử c = ${Q.fmt(S.c,2)}: det = ${Q.fmt(d,4)}  →  ${d>=-1e-12?'ma trận hợp lệ':'không tồn tại ba biến như vậy'}`;
+  }
+  const cv=Q.canvas(stage,320,draw);
+  function draw(ctx,w,h){
+    const C=Q.colors(); ctx.clearRect(0,0,w,h);
+    const split=w*0.62, L=50, R=split-16, T=24, B=h-34;
+    let ymin=-1, ymax=0.5; for(let i=0;i<=200;i++){ const v=det(-1+i/100); ymin=Math.min(ymin,v); ymax=Math.max(ymax,v); } ymax=Math.max(ymax*1.15,0.1);
+    const X=c=>L+(c+1)/2*(R-L), Y=v=>B-(v-ymin)/(ymax-ymin)*(B-T);
+    const [lo,hi]=bounds();
+    ctx.fillStyle=C.a; ctx.globalAlpha=0.15; ctx.fillRect(X(lo),T,X(hi)-X(lo),B-T); ctx.globalAlpha=1;
+    ctx.strokeStyle=C.line; ctx.beginPath(); ctx.moveTo(L,T); ctx.lineTo(L,B); ctx.lineTo(R,B); ctx.stroke();
+    ctx.strokeStyle=C.muted; ctx.setLineDash([4,4]); ctx.beginPath(); ctx.moveTo(L,Y(0)); ctx.lineTo(R,Y(0)); ctx.stroke(); ctx.setLineDash([]);
+    ctx.strokeStyle=C.c; ctx.lineWidth=2.2; ctx.beginPath(); for(let i=0;i<=200;i++){ const c=-1+i/100; i?ctx.lineTo(X(c),Y(det(c))):ctx.moveTo(X(c),Y(det(c))); } ctx.stroke(); ctx.lineWidth=1;
+    ctx.font='12px -apple-system,sans-serif'; ctx.fillStyle=C.muted; ctx.textAlign='center';
+    [-1,-0.5,0,0.5,1].forEach(c=>ctx.fillText(Q.fmt(c,1),X(c),B+16));
+    ctx.fillText('c = Corr(X, Z)',(L+R)/2,B+30);
+    ctx.textAlign='right'; ctx.fillText('0',L-6,Y(0)+4); ctx.fillText(Q.fmt(ymax,2),L-6,Y(ymax)+4); ctx.fillText(Q.fmt(ymin,2),L-6,Y(ymin)+4);
+    ctx.textAlign='left'; ctx.fillText('Định thức ma trận tương quan',L+6,T-8);
+    ctx.fillStyle=C.a; ctx.textAlign='center'; ctx.fillText(Q.fmt(lo,3),X(lo),T+14); ctx.fillText(Q.fmt(hi,3),X(hi),T+28); ctx.textAlign='left';
+    const ok=det(S.c)>=-1e-12; ctx.fillStyle=ok?C.a:C.b; ctx.beginPath(); ctx.arc(X(S.c),Y(det(S.c)),6,0,7); ctx.fill();
+    // hình mũi tên đơn vị
+    const cx=split+(w-split)*0.42, cy=h/2+10, rr=Math.min((w-split)*0.42-20,h/2-44), ta=Math.acos(S.a), tb=Math.acos(S.b);
+    const arr=(ang,col,lab,dash)=>{ const ex=cx+rr*Math.cos(ang), ey=cy-rr*Math.sin(ang); ctx.strokeStyle=col; ctx.fillStyle=col; ctx.lineWidth=2.5; ctx.setLineDash(dash||[]);
+      ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(ex,ey); ctx.stroke(); ctx.setLineDash([]); ctx.lineWidth=1;
+      const hl=10; ctx.beginPath(); ctx.moveTo(ex,ey); ctx.lineTo(ex-hl*Math.cos(ang-0.4),ey+hl*Math.sin(ang-0.4)); ctx.lineTo(ex-hl*Math.cos(ang+0.4),ey+hl*Math.sin(ang+0.4)); ctx.closePath(); ctx.fill();
+      ctx.fillText(lab,cx+(rr+12)*Math.cos(ang)-8,cy-(rr+12)*Math.sin(ang)+4); };
+    ctx.strokeStyle=C.line; ctx.beginPath(); ctx.arc(cx,cy,rr,0,7); ctx.stroke();
+    arr(0,C.ink,'Y'); arr(ta,C.c,'X'); arr(tb,C.b,'Z₊',[5,4]); arr(-tb,C.b,'Z₋',[2,3]);
+    ctx.fillStyle=C.muted; ctx.fillText('cos(góc) = tương quan',split+8,18); ctx.fillText('Z₊: c lớn nhất · Z₋: c nhỏ nhất',split+8,h-12);
+  }
+  const upd=()=>{ report(); cv.redraw(); };
+  const sA=Q.slider(ctl,'a = Corr(X, Y)',-0.99,0.99,0.01,S.a,v=>{S.a=v;upd();},v=>Q.fmt(v,2));
+  const sB=Q.slider(ctl,'b = Corr(Y, Z)',-0.99,0.99,0.01,S.b,v=>{S.b=v;upd();},v=>Q.fmt(v,2));
+  Q.slider(ctl,'Thử c = Corr(X, Z)',-1,1,0.01,S.c,v=>{S.c=v;upd();},v=>Q.fmt(v,2));
+  Q.button(ctl,'Đề Jane Street (0,9; 0,8)',()=>{ S.a=0.9; S.b=0.8; [[sA,0.9],[sB,0.8]].forEach(([el,v])=>{ el.value=v; el.dispatchEvent(new Event('input')); }); });
+  report();
+})();
+</script>
+</section>

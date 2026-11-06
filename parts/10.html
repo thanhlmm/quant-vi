@@ -1,0 +1,256 @@
+<section class="lesson" id="bai-10" data-short="Hồi quy tuyến tính">
+<header>
+  <span class="num">10</span>
+  <h3>Hồi quy tuyến tính: β, ma trận chiếu (hat matrix), kiểm định t và F</h3>
+  <p class="meta">16 phút · Ứng dụng: Mô hình nhân tố, tỉ lệ phòng ngừa, hệ số beta · <a href="https://hft.md/learn/regression/">Bài gốc (tiếng Anh)</a></p>
+</header>
+
+<p>Hệ số beta của cổ phiếu, tỉ lệ phòng ngừa trong giao dịch cặp, mô hình nhân tố và phần lớn tín hiệu alpha đầu tiên đều là hồi quy. Nếu chỉ thuộc lòng một công thức trước buổi phỏng vấn, hãy chọn β̂ = (XᵀX)⁻¹Xᵀy.</p>
+
+<h4>Ý chính</h4>
+<ul>
+  <li><b>Bình phương tối thiểu thông thường</b> (ordinary least squares, OLS) chọn β để tổng bình phương phần dư (residual sum of squares, RSS) nhỏ nhất. Cho đạo hàm bằng 0 ta được nghiệm đóng.</li>
+  <li><b>Ma trận chiếu</b> H (hat matrix) biến y thành ŷ. Về hình học, ŷ là hình chiếu vuông góc của y lên không gian cột của X. Phần dư vuông góc với mọi biến giải thích.</li>
+  <li>Khi một cột của X là tổ hợp tuyến tính của các cột khác, XᵀX suy biến. Hình chiếu ŷ vẫn duy nhất, nhưng hệ số β thì không.</li>
+  <li><b>Kiểm định t</b> (t-test) hỏi từng hệ số có khác 0 thật không. <b>Kiểm định F</b> (F-test) hỏi cả một nhóm hệ số cùng lúc. Nhóm biến tương quan có thể “cùng có ích” dù từng biến đều có |t| nhỏ.</li>
+  <li><b>Định lý Frisch–Waugh–Lovell</b>: hệ số của x<sub>j</sub> trong hồi quy bội chỉ dùng phần của x<sub>j</sub> mà các biến khác không giải thích được. Đó là tác động của x<sub>j</sub> sau khi đã kiểm soát mọi biến còn lại.</li>
+  <li><b>Đa cộng tuyến</b> (multicollinearity): nếu x<sub>j</sub> gần như được các biến khác giải thích hết, phần còn lại rất nhỏ nên sai số chuẩn (standard error) của β̂<sub>j</sub> phình to.</li>
+</ul>
+
+<h4>Công thức</h4>
+<div class="formula"><span class="lbl">Nghiệm OLS (X có kích thước N × (p + 1), cột đầu toàn số 1 cho hệ số chặn)</span>RSS(β) = (y − Xβ)ᵀ(y − Xβ),&nbsp;&nbsp; ∂RSS/∂β = −2Xᵀ(y − Xβ) = 0<br>⟹&nbsp; <b>β̂ = (XᵀX)<sup>−1</sup>Xᵀy</b></div>
+<div class="formula"><span class="lbl">Ma trận chiếu: đối xứng, luỹ đẳng (H² = H), vết bằng số tham số p + 1</span>ŷ = Xβ̂ = Hy,&nbsp;&nbsp; H = X(XᵀX)<sup>−1</sup>Xᵀ,&nbsp;&nbsp; Xᵀ(y − ŷ) = 0</div>
+<div class="formula"><span class="lbl">Một biến giải thích: độ dốc là hiệp phương sai chia phương sai</span>β̂<sub>1</sub> = <span class="frac"><span>Cov(X, Y)</span><span>Var(X)</span></span>,&nbsp;&nbsp; β̂<sub>0</sub> = ȳ − β̂<sub>1</sub>x̄</div>
+<div class="formula"><span class="lbl">Ước lượng phương sai nhiễu và thống kê t, với v<sub>j</sub> = [(XᵀX)<sup>−1</sup>]<sub>jj</sub></span>σ̂² = <span class="frac"><span>1</span><span>N − p − 1</span></span> Σ<sub>i</sub> (y<sub>i</sub> − ŷ<sub>i</sub>)²,&nbsp;&nbsp; Var(β̂) = σ²(XᵀX)<sup>−1</sup>,&nbsp;&nbsp; t<sub>j</sub> = <span class="frac"><span>β̂<sub>j</sub></span><span>σ̂ √v<sub>j</sub></span></span> ~ t<sub>N−p−1</sub></div>
+<div class="formula"><span class="lbl">Kiểm định F cho một nhóm: mô hình đầy đủ (p<sub>1</sub> biến) so với mô hình bỏ nhóm (p<sub>0</sub> biến)</span>F = <span class="frac"><span>(RSS<sub>0</sub> − RSS<sub>1</sub>) / (p<sub>1</sub> − p<sub>0</sub>)</span><span>RSS<sub>1</sub> / (N − p<sub>1</sub> − 1)</span></span></div>
+<div class="formula"><span class="lbl">Frisch–Waugh–Lovell: z<sub>j</sub> là phần dư khi hồi quy x<sub>j</sub> theo các biến còn lại</span>β̂<sub>j</sub> = <span class="frac"><span>⟨z<sub>j</sub>, y⟩</span><span>⟨z<sub>j</sub>, z<sub>j</sub>⟩</span></span>,&nbsp;&nbsp; se(β̂<sub>j</sub>) ≈ <span class="frac"><span>σ<sub>ε</sub></span><span>√N · σ<sub>X<sub>j</sub></sub> · √(1 − R<sub>j</sub>²)</span></span></div>
+<p>Ở công thức cuối, R<sub>j</sub>² là hệ số xác định khi hồi quy x<sub>j</sub> theo các biến còn lại. Thừa số 1/(1 − R<sub>j</sub>²) gọi là hệ số phóng đại phương sai (variance inflation factor, VIF). Sai số chuẩn nhỏ đi khi có nhiều dữ liệu, ít nhiễu và biến giải thích trải rộng.</p>
+
+<h4>Ví dụ minh hoạ: tính tay một hồi quy năm điểm</h4>
+<p>Cho x = (1, 2, 3, 4, 5) và y = (2, 4, 5, 4, 5). Hãy ước lượng đường thẳng, thống kê t của độ dốc, rồi xem điều gì xảy ra khi nhân đôi dữ liệu.</p>
+<ol>
+  <li>Trung bình: x̄ = 3, ȳ = 4. Các độ lệch của x là (−2, −1, 0, 1, 2), của y là (−2, 0, 1, 0, 1).</li>
+  <li>S<sub>xy</sub> = Σ(x − x̄)(y − ȳ) = 4 + 0 + 0 + 0 + 2 = 6. S<sub>xx</sub> = 4 + 1 + 0 + 1 + 4 = 10. S<sub>yy</sub> = 4 + 0 + 1 + 0 + 1 = 6.</li>
+  <li>β̂<sub>1</sub> = 6/10 = 0,6 và β̂<sub>0</sub> = 4 − 0,6 × 3 = 2,2. Giá trị khớp là (2,8; 3,4; 4,0; 4,6; 5,2).</li>
+  <li>Phần dư là (−0,8; 0,6; 1,0; −0,6; −0,2). Tổng của chúng bằng 0, đúng như điều kiện Xᵀ(y − ŷ) = 0. RSS = 2,4.</li>
+  <li>Có N − 2 = 3 bậc tự do, nên σ̂² = 2,4/3 = 0,8. Sai số chuẩn se(β̂<sub>1</sub>) = √(0,8/10) ≈ 0,283, suy ra t ≈ 0,6/0,283 ≈ 2,12.</li>
+  <li>Với 3 bậc tự do, ngưỡng hai phía 5% của phân phối t là 3,18. Quy tắc nhanh |t| &gt; 2 chỉ đúng khi N lớn. Ở đây độ dốc chưa có ý nghĩa thống kê.</li>
+  <li>Hồi quy ngược x theo y: độ dốc là S<sub>xy</sub>/S<sub>yy</sub> = 1. Tích hai độ dốc là 0,6 × 1 = 0,6 = r² = 36/60, chứ không phải 1.</li>
+  <li>Nhân đôi mọi điểm: S<sub>xx</sub> = 20, RSS = 4,8, bậc tự do 8. β̂<sub>1</sub> vẫn là 0,6, nhưng se = √(0,6/20) ≈ 0,173 và t ≈ 3,46. Ý nghĩa thống kê này là giả.</li>
+</ol>
+
+<figure class="demo">
+  <div class="stage" id="demo-10"></div>
+  <div class="controls" id="ctl-10"></div>
+  <div class="readout" id="out-10"></div>
+  <figcaption><b>Mô hình 10.1 – Mặt phẳng hồi quy và phân bố của (β̂<sub>1</sub>, β̂<sub>2</sub>).</b> Bên trái là đám mây 3D với y = 0,5 + 1,0·x<sub>1</sub> + 0,6·x<sub>2</sub> + nhiễu. Lưới xanh lá là mặt phẳng OLS, các que cam là phần dư theo phương thẳng đứng, các khung mờ là mặt phẳng của những lần lấy mẫu trước. Bên phải, mỗi chấm là một cặp ước lượng (β̂<sub>1</sub>, β̂<sub>2</sub>); dấu chữ thập là giá trị thật. Đẩy tương quan ρ giữa x<sub>1</sub> và x<sub>2</sub> lên gần 1: các mặt phẳng xoay quanh đường chéo, đám chấm kéo dài thành một elip dốc xuống. Đó là đa cộng tuyến. Kéo để xoay.</figcaption>
+</figure>
+
+<figure class="demo">
+  <div class="stage" id="demo2-10"></div>
+  <div class="controls" id="ctl2-10"></div>
+  <div class="readout" id="out2-10"></div>
+  <figcaption><b>Mô hình 10.2 – Hai đường hồi quy và dữ liệu nhân đôi.</b> Đường xanh lá là hồi quy y theo x, đoạn cam là phần dư theo chiều dọc. Bật “x theo y” để thấy đường tím, cực tiểu hoá phần dư theo chiều ngang. Hai đường chỉ trùng khi |r| = 1. Bấm vào khung để thêm điểm và xem một điểm xa trung tâm kéo đường thẳng mạnh thế nào. Nút “Nhân đôi dữ liệu” chép lại mọi điểm: β̂ giữ nguyên còn t tăng lên.</figcaption>
+</figure>
+
+<h4>Lưu ý khi phỏng vấn</h4>
+<ul>
+  <li><b>Giả định của hồi quy tuyến tính</b>: tuyến tính theo tham số (vẫn dùng được x² hay log x), nhiễu có kỳ vọng 0 khi biết X, không đa cộng tuyến hoàn hảo, phương sai nhiễu không đổi (homoskedasticity), nhiễu không tự tương quan. Nhiễu chuẩn chỉ cần cho kiểm định t chính xác. Nếu phương sai thay đổi, dùng sai số chuẩn vững (robust standard errors).</li>
+  <li><b>Hồi quy y theo x rồi x theo y, có β̂<sub>1</sub> = 1/β̂<sub>2</sub> không?</b> Không. β̂<sub>1</sub>β̂<sub>2</sub> = Cov(X, Y)²/(Var X · Var Y) = ρ². Câu hỏi của Citadel yêu cầu chặn tích này: đáp án chặt là [0, 1], không phải [−1, 1].</li>
+  <li><b>Nhân đôi dữ liệu</b>: XᵀX và Xᵀy cùng gấp đôi nên β̂ không đổi. Sai số chuẩn giảm khoảng √2 lần. Cửa sổ lợi suất chồng lấn (overlapping returns) gây ra đúng hiện tượng này.</li>
+  <li><b>Ba biến tương quan mạnh, một biến có sai số chuẩn rất lớn</b>: đó là đa cộng tuyến. Có thể bỏ bớt biến, gộp chúng (trung bình hoặc thành phần chính), hoặc dùng ridge, lasso, hồi quy thành phần chính. Trước khi bỏ cả nhóm có |t| &lt; 2, hãy kiểm định F cho nhóm đó.</li>
+</ul>
+
+<script>
+(()=>{
+  /* ---------- Mô hình 10.1: mặt phẳng hồi quy 3D ---------- */
+  const stage=document.getElementById('demo-10'), ctl=document.getElementById('ctl-10'), out=document.getElementById('out-10');
+  const S={rho:0.3, sig:1, n:60, seed:1};
+  const B=[0.5,1.0,0.6];
+  const view={yaw:-0.75,pitch:0.42,dist:7,auto:true};
+  const K=0.55, KZ=0.38, ZF=-1.7;
+  let data=[], fit=null, c=null; const hist=[];
+  function inv(A){
+    const n=A.length, M=A.map((r,i)=>[...r,...A.map((_,j)=>i===j?1:0)]);
+    for(let col=0;col<n;col++){
+      let p=col; for(let r=col+1;r<n;r++) if(Math.abs(M[r][col])>Math.abs(M[p][col])) p=r;
+      [M[col],M[p]]=[M[p],M[col]];
+      const d=M[col][col]; if(Math.abs(d)<1e-12) return null;
+      for(let j=0;j<2*n;j++) M[col][j]/=d;
+      for(let r=0;r<n;r++) if(r!==col){ const f=M[r][col]; for(let j=0;j<2*n;j++) M[r][j]-=f*M[col][j]; }
+    }
+    return M.map(r=>r.slice(n));
+  }
+  function ols(X,y){
+    const p=X[0].length, XtX=Array.from({length:p},()=>new Array(p).fill(0)), Xty=new Array(p).fill(0);
+    X.forEach((row,i)=>{ for(let a=0;a<p;a++){ Xty[a]+=row[a]*y[i]; for(let b=0;b<p;b++) XtX[a][b]+=row[a]*row[b]; } });
+    const V=inv(XtX); if(!V) return null;
+    const beta=V.map(r=>r.reduce((s,v,j)=>s+v*Xty[j],0));
+    let rss=0; X.forEach((row,i)=>{ const e=y[i]-row.reduce((s,v,j)=>s+v*beta[j],0); rss+=e*e; });
+    const s2=rss/(X.length-p);
+    return {beta, se:beta.map((_,j)=>Math.sqrt(V[j][j]*s2)), rss, s2};
+  }
+  function sampleOnce(){
+    const r=Q.rng(S.seed++*7919+13), pts=[], sq=Math.sqrt(1-S.rho*S.rho);
+    for(let i=0;i<S.n;i++){
+      const x1=Q.normal(r), x2=S.rho*x1+sq*Q.normal(r);
+      pts.push([x1,x2,B[0]+B[1]*x1+B[2]*x2+S.sig*Q.normal(r)]);
+    }
+    const f=ols(pts.map(p=>[1,p[0],p[1]]),pts.map(p=>p[2]));
+    if(!f) return;
+    data=pts; fit=f; hist.push(f.beta.slice()); if(hist.length>600) hist.shift();
+  }
+  function seTheory(){ return S.sig/(Math.sqrt(S.n)*Math.sqrt(1-S.rho*S.rho)); }
+  function report(){
+    if(!fit) return;
+    const b=fit.beta, se=fit.se, row=j=>`β̂${j===1?'₁':'₂'} = ${Q.fmt(b[j],3)}   se = ${Q.fmt(se[j],3)}   t = ${Q.fmt(b[j]/se[j],1)}   (thật: ${Q.fmt(B[j],1)})`;
+    let corr='chưa đủ mẫu';
+    if(hist.length>=5){
+      const m1=hist.reduce((s,h)=>s+h[1],0)/hist.length, m2=hist.reduce((s,h)=>s+h[2],0)/hist.length;
+      let a=0,bb=0,cc=0; hist.forEach(h=>{ a+=(h[1]-m1)*(h[2]-m2); bb+=(h[1]-m1)**2; cc+=(h[2]-m2)**2; });
+      corr=Q.fmt(a/Math.sqrt(bb*cc),2);
+    }
+    out.textContent=row(1)+'\n'+row(2)+'\n'+
+      `se lý thuyết ≈ σ/(√N·√(1−ρ²)) = ${Q.fmt(seTheory(),3)}   VIF = 1/(1−ρ²) = ${Q.fmt(1/(1-S.rho*S.rho),1)}\n`+
+      `Số lần lấy mẫu: ${hist.length}. Tương quan giữa β̂₁ và β̂₂ qua các lần: ${corr} (lý thuyết: ${Q.fmt(-S.rho,2)})`;
+  }
+  function W(x1,x2,y){ return [x1*K, x2*K, (y-B[0])*KZ]; }
+  function draw(ctx,w,h){
+    const C=Q.colors(); ctx.clearRect(0,0,w,h);
+    const wide=w>=600, w3=wide?w*0.62:w, scale=Math.min(w3,h*1.1)/3.9;
+    const P=p=>Q.project(p,view,w3,h,scale);
+    const line=(a,b)=>{ const A=P(a), Bp=P(b); ctx.beginPath(); ctx.moveTo(A[0],A[1]); ctx.lineTo(Bp[0],Bp[1]); ctx.stroke(); };
+    // sàn và trục
+    ctx.strokeStyle=C.line; ctx.lineWidth=1;
+    for(let t=-2.5;t<=2.501;t+=0.5){ line([t*K,-2.5*K,ZF],[t*K,2.5*K,ZF]); line([-2.5*K,t*K,ZF],[2.5*K,t*K,ZF]); }
+    ctx.strokeStyle=C.muted; line([-2.5*K,-2.5*K,ZF],[-2.5*K,-2.5*K,1.7]);
+    ctx.fillStyle=C.muted; ctx.font='12px -apple-system,sans-serif';
+    let L=P([2.8*K,-2.5*K,ZF]); ctx.fillText('x₁',L[0],L[1]);
+    L=P([-2.5*K,2.8*K,ZF]); ctx.fillText('x₂',L[0],L[1]);
+    L=P([-2.5*K,-2.5*K,1.85]); ctx.fillText('y',L[0],L[1]);
+    const zOf=(b,x1,x2)=>b[0]+b[1]*x1+b[2]*x2;
+    // các mặt phẳng cũ (khung mờ)
+    ctx.strokeStyle=C.a; ctx.globalAlpha=0.16;
+    hist.slice(-14,-1).forEach(b=>{
+      const cs=[[-2,-2],[2,-2],[2,2],[-2,2]].map(([u,v])=>P(W(u,v,zOf(b,u,v))));
+      ctx.beginPath(); cs.forEach((q,i)=>i?ctx.lineTo(q[0],q[1]):ctx.moveTo(q[0],q[1])); ctx.closePath(); ctx.stroke();
+    });
+    ctx.globalAlpha=1;
+    if(fit){
+      const b=fit.beta;
+      // mặt phẳng hiện tại: tô mờ + lưới
+      const cs=[[-2,-2],[2,-2],[2,2],[-2,2]].map(([u,v])=>P(W(u,v,zOf(b,u,v))));
+      ctx.fillStyle=C.a; ctx.globalAlpha=0.10; ctx.beginPath(); cs.forEach((q,i)=>i?ctx.lineTo(q[0],q[1]):ctx.moveTo(q[0],q[1])); ctx.closePath(); ctx.fill();
+      ctx.globalAlpha=0.55; ctx.strokeStyle=C.a;
+      for(let t=-2;t<=2.001;t+=0.5){ line(W(t,-2,zOf(b,t,-2)),W(t,2,zOf(b,t,2))); line(W(-2,t,zOf(b,-2,t)),W(2,t,zOf(b,2,t))); }
+      ctx.globalAlpha=1;
+      // điểm và que phần dư, vẽ từ xa tới gần
+      const items=data.map(p=>{ const q=P(W(p[0],p[1],p[2])); return {p,q}; }).sort((u,v)=>v.q[2]-u.q[2]);
+      for(const it of items){
+        const [x1,x2,y]=it.p, yh=zOf(b,x1,x2);
+        ctx.strokeStyle=C.b; ctx.globalAlpha=0.8; ctx.lineWidth=1.5; line(W(x1,x2,y),W(x1,x2,yh));
+        ctx.globalAlpha=1; ctx.fillStyle=y>=yh?C.c:C.d;
+        ctx.beginPath(); ctx.arc(it.q[0],it.q[1],3.2,0,7); ctx.fill();
+      }
+      ctx.lineWidth=1;
+    }
+    // khung phân bố (β̂1, β̂2)
+    let bx,by,bw,bh;
+    if(wide){ bx=w*0.66; bw=w*0.31; bh=Math.min(bw,h-60); by=(h-bh)/2; }
+    else { bw=bh=130; bx=w-bw-10; by=10; }
+    ctx.fillStyle=C.panel; ctx.strokeStyle=C.line; ctx.fillRect(bx,by,bw,bh); ctx.strokeRect(bx,by,bw,bh);
+    const R=Math.max(0.12,3.6*seTheory()), mx=v=>bx+bw/2+(v-B[1])/R*bw/2, my=v=>by+bh/2-(v-B[2])/R*bh/2;
+    ctx.strokeStyle=C.muted; ctx.beginPath(); ctx.moveTo(mx(B[1])-7,my(B[2])); ctx.lineTo(mx(B[1])+7,my(B[2])); ctx.moveTo(mx(B[1]),my(B[2])-7); ctx.lineTo(mx(B[1]),my(B[2])+7); ctx.stroke();
+    ctx.save(); ctx.beginPath(); ctx.rect(bx,by,bw,bh); ctx.clip();
+    ctx.fillStyle=C.c; ctx.globalAlpha=0.45;
+    hist.forEach(hh=>{ ctx.beginPath(); ctx.arc(mx(hh[1]),my(hh[2]),2.2,0,7); ctx.fill(); });
+    ctx.globalAlpha=1;
+    if(hist.length){ const hh=hist[hist.length-1]; ctx.fillStyle=C.b; ctx.beginPath(); ctx.arc(mx(hh[1]),my(hh[2]),4.5,0,7); ctx.fill(); }
+    ctx.restore();
+    ctx.fillStyle=C.muted; ctx.font='12px -apple-system,sans-serif';
+    ctx.fillText('β̂₁ →',bx+bw-40,by+bh+15); ctx.fillText('↑ β̂₂',bx+4,by-5>10?by-5:by+bh+15);
+    if(wide) ctx.fillText('Mỗi chấm: một lần lấy mẫu (± '+Q.fmt(R,2)+')',bx,by+bh+32);
+    ctx.fillText('● y trên mặt phẳng  ● y dưới mặt phẳng  | phần dư',12,18);
+    ctx.fillStyle=C.c; ctx.fillText('●',12,18); ctx.fillStyle=C.d; ctx.fillText('●',12+ctx.measureText('● y trên mặt phẳng  ').width,18);
+  }
+  function refresh(){ report(); c && c.redraw(); }
+  function reset(){ hist.length=0; sampleOnce(); refresh(); }
+  sampleOnce(); report();
+  c=Q.canvas(stage,400,draw);
+  Q.orbit(c.cv,view,()=>c.redraw());
+  Q.loop(stage,()=>{ if(view.auto){ view.yaw+=0.003; c.redraw(); } });
+  Q.slider(ctl,'Tương quan ρ(x₁, x₂)',0,0.99,0.01,S.rho,v=>{S.rho=v;reset();},v=>Q.fmt(v,2));
+  Q.slider(ctl,'Độ lệch nhiễu σ',0.2,2,0.1,S.sig,v=>{S.sig=v;reset();},v=>Q.fmt(v,1));
+  Q.slider(ctl,'Số quan sát N',15,200,5,S.n,v=>{S.n=v;reset();},v=>v);
+  Q.button(ctl,'Lấy mẫu mới',()=>{sampleOnce();refresh();},true);
+  Q.button(ctl,'Lấy thêm 100 mẫu',()=>{for(let i=0;i<100;i++)sampleOnce();refresh();});
+  Q.button(ctl,'Xoá lịch sử',reset);
+})();
+(()=>{
+  /* ---------- Mô hình 10.2: hồi quy y theo x, x theo y, nhân đôi dữ liệu ---------- */
+  const stage=document.getElementById('demo2-10'), ctl=document.getElementById('ctl2-10'), out=document.getElementById('out2-10');
+  const S={rho:0.6, n:25, seed:3, xy:false};
+  let pts=[], c=null, dupCount=1;
+  const XR=3.2;
+  function gen(){
+    const r=Q.rng(S.seed*104729+5), sq=Math.sqrt(1-S.rho*S.rho); pts=[]; dupCount=1;
+    for(let i=0;i<S.n;i++){ const x=Q.normal(r); pts.push([x, S.rho*x+sq*Q.normal(r)]); }
+  }
+  function stats(){
+    const n=pts.length; if(n<3) return null;
+    let mx=0,my=0; pts.forEach(p=>{mx+=p[0];my+=p[1];}); mx/=n; my/=n;
+    let sxx=0,syy=0,sxy=0; pts.forEach(p=>{ const a=p[0]-mx,b=p[1]-my; sxx+=a*a; syy+=b*b; sxy+=a*b; });
+    if(sxx<1e-12||syy<1e-12) return null;
+    const b1=sxy/sxx, a1=my-b1*mx, b2=sxy/syy, a2=mx-b2*my;
+    const rss=Math.max(0,syy-sxy*sxy/sxx), se=Math.sqrt(rss/(n-2)/sxx);
+    return {n,mx,my,b1,a1,b2,a2,se,t:b1/se,r2:sxy*sxy/(sxx*syy)};
+  }
+  function report(st){
+    if(!st){ out.textContent='Cần ít nhất 3 điểm không thẳng hàng theo một trục.'; return; }
+    out.textContent=`y theo x: β̂₁ = ${Q.fmt(st.b1,3)}   se = ${Q.fmt(st.se,3)}   t = ${Q.fmt(st.t,2)}   (N = ${st.n}${dupCount>1?', mỗi điểm lặp '+dupCount+' lần':''})\n`+
+      `x theo y: β̂₂ = ${Q.fmt(st.b2,3)}   nên 1/β̂₂ = ${Math.abs(st.b2)>1e-9?Q.fmt(1/st.b2,3):'∞'}, khác β̂₁\n`+
+      `β̂₁ · β̂₂ = ${Q.fmt(st.b1*st.b2,3)} = r² = ${Q.fmt(st.r2,3)}`;
+  }
+  function draw(ctx,w,h){
+    const C=Q.colors(); ctx.clearRect(0,0,w,h);
+    const pad=28, sx=v=>w/2+v/XR*(Math.min(w,h*1.6)/2-pad), sy=v=>h/2-v/XR*(h/2-pad);
+    ctx.strokeStyle=C.line; ctx.lineWidth=1;
+    for(let t=-3;t<=3;t++){ ctx.beginPath(); ctx.moveTo(sx(t),sy(-XR)); ctx.lineTo(sx(t),sy(XR)); ctx.moveTo(sx(-XR),sy(t)); ctx.lineTo(sx(XR),sy(t)); ctx.stroke(); }
+    ctx.strokeStyle=C.muted; ctx.beginPath(); ctx.moveTo(sx(-XR),sy(0)); ctx.lineTo(sx(XR),sy(0)); ctx.moveTo(sx(0),sy(-XR)); ctx.lineTo(sx(0),sy(XR)); ctx.stroke();
+    const st=stats(); report(st);
+    const uniq=pts.slice(0,pts.length/dupCount);
+    if(st){
+      ctx.strokeStyle=C.b; ctx.globalAlpha=0.6;
+      uniq.forEach(p=>{ ctx.beginPath(); ctx.moveTo(sx(p[0]),sy(p[1])); ctx.lineTo(sx(p[0]),sy(st.a1+st.b1*p[0])); ctx.stroke(); });
+      if(S.xy){ ctx.strokeStyle=C.d; uniq.forEach(p=>{ ctx.beginPath(); ctx.moveTo(sx(p[0]),sy(p[1])); ctx.lineTo(sx(st.a2+st.b2*p[1]),sy(p[1])); ctx.stroke(); }); }
+      ctx.globalAlpha=1; ctx.lineWidth=2.5;
+      ctx.strokeStyle=C.a; ctx.beginPath(); ctx.moveTo(sx(-XR),sy(st.a1-st.b1*XR)); ctx.lineTo(sx(XR),sy(st.a1+st.b1*XR)); ctx.stroke();
+      if(S.xy){ ctx.strokeStyle=C.d; ctx.beginPath(); ctx.moveTo(sx(st.a2-st.b2*XR),sy(-XR)); ctx.lineTo(sx(st.a2+st.b2*XR),sy(XR)); ctx.stroke(); }
+      ctx.lineWidth=1;
+    }
+    ctx.save(); ctx.beginPath(); ctx.rect(0,0,w,h); ctx.clip();
+    uniq.forEach(p=>{ ctx.fillStyle=C.c; ctx.beginPath(); ctx.arc(sx(p[0]),sy(p[1]),4,0,7); ctx.fill();
+      if(dupCount>1){ ctx.strokeStyle=C.c; ctx.beginPath(); ctx.arc(sx(p[0]),sy(p[1]),7,0,7); ctx.stroke(); } });
+    ctx.restore();
+    ctx.fillStyle=C.muted; ctx.font='12px -apple-system,sans-serif';
+    ctx.fillText('— y theo x'+(S.xy?'    — x theo y':'')+(dupCount>1?'    ◎ điểm được lặp '+dupCount+' lần':''),12,18);
+  }
+  gen();
+  c=Q.canvas(stage,340,draw);
+  c.cv.addEventListener('pointerdown',e=>{
+    const rect=c.cv.getBoundingClientRect(), w=rect.width, h=rect.height, pad=28;
+    const x=(e.clientX-rect.left-w/2)/(Math.min(w,h*1.6)/2-pad)*XR, y=-(e.clientY-rect.top-h/2)/(h/2-pad)*XR;
+    if(Math.abs(x)>XR||Math.abs(y)>XR) return;
+    const uniq=pts.slice(0,pts.length/dupCount); uniq.push([x,y]);
+    pts=[]; for(let k=0;k<dupCount;k++) pts.push(...uniq.map(p=>p.slice()));
+    c.redraw();
+  });
+  Q.slider(ctl,'Tương quan ρ',-0.95,0.95,0.05,S.rho,v=>{S.rho=v;gen();c.redraw();},v=>Q.fmt(v,2));
+  Q.slider(ctl,'Số điểm',5,80,1,S.n,v=>{S.n=v;gen();c.redraw();},v=>v);
+  Q.button(ctl,'Lấy mẫu mới',()=>{S.seed++;gen();c.redraw();},true);
+  const bxy=Q.button(ctl,'Bật x theo y',()=>{S.xy=!S.xy; bxy.textContent=S.xy?'Tắt x theo y':'Bật x theo y'; c.redraw();});
+  Q.button(ctl,'Nhân đôi dữ liệu',()=>{ if(pts.length>4000) return; pts=pts.concat(pts.map(p=>p.slice())); dupCount*=2; c.redraw(); });
+  Q.button(ctl,'Bỏ lặp',()=>{ pts=pts.slice(0,pts.length/dupCount); dupCount=1; c.redraw(); });
+})();
+</script>
+</section>

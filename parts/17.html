@@ -1,0 +1,192 @@
+<section class="lesson" id="bai-17" data-short="Nhà tạo lập thị trường">
+<header>
+  <span class="num">17</span>
+  <h3>Vai trò của nhà tạo lập thị trường</h3>
+  <p class="meta">12 phút · Ứng dụng: Công việc hằng ngày tại Jane Street, Optiver, SIG, IMC · <a href="https://hft.md/learn/market-making/">Bài gốc (tiếng Anh)</a></p>
+</header>
+
+<p>Có hàng trăm nghìn sản phẩm niêm yết, nên người muốn mua một quyền chọn không phải lúc nào cũng gặp ngay người muốn bán. Nhà tạo lập thị trường (market maker) lấp khoảng trống đó: họ luôn sẵn sàng mua và bán ở giá mình yết. Gần như mọi vòng phỏng vấn giao dịch đều có một trò chơi yết giá dựa trên ý tưởng này.</p>
+
+<h4>Ý chính</h4>
+<ul>
+  <li><b>Yết giá hai chiều</b> (two-sided market) viết là <i>bid @ ask</i>, ví dụ 99 @ 101. <b>Giá mua</b> (bid) 99 là giá họ mua, tức bạn bán được cho họ ở 99. <b>Giá bán</b> (ask, offer) 101 là giá họ bán. <b>Chênh lệch</b> (spread, width) là 2. Đã hiện giá thì phải chấp nhận mọi giao dịch ở giá đó.</li>
+  <li>Sàn hợp tác với nhà tạo lập để sản phẩm có <b>thanh khoản</b> (liquidity), tức giao dịch được mà giá không nhảy mạnh. Đổi lại, nhà tạo lập được hoàn phí và nhìn rõ hơn dòng lệnh. Spread là tiền công cho rủi ro: vừa mua xong là đang giữ vị thế mua (long) và sẽ lỗ nếu giá giảm. Rủi ro đó được <b>phòng hộ</b> (hedge) bằng cổ phiếu, hợp đồng tương lai hoặc quyền chọn liên quan.</li>
+  <li><b>Đầu vào 1, giá trị lý thuyết</b> (theoretical value): mức bạn tin là hợp lý. Biết rõ phân phối thì yết hẹp, như một lần tung xúc xắc với kỳ vọng 3,5. Biết ít thì yết rộng, như số quả bóng bàn chứa vừa tòa Empire State. Độ rộng phải phản ứng theo độ bất định.</li>
+  <li><b>Đầu vào 2, giá khớp gần nhất</b> (last traded price): nơi thị trường thực sự đang giao dịch. Lệch với giá trị của bạn thì phải cân giữa niềm tin vào mô hình và niềm tin vào thị trường. Trong trò chơi lặp lại, mỗi lệnh của người phỏng vấn là một mẩu thông tin.</li>
+  <li><b>Đầu vào 3, vị thế hiện tại</b>: nhà tạo lập thích ở trạng thái <b>phẳng</b> (flat), không có rủi ro ròng. Đang giữ nhiều hàng thì hạ cả hai giá, chấp nhận <b>lợi thế</b> (edge) nhỏ hơn ở phía bán để người khác dễ mua lại hàng tồn. Phẳng thì yết đối xứng quanh giá trị.</li>
+  <li>Đối tác biết nhiều hơn chỉ giao dịch khi có lợi cho họ. Đó là <b>lựa chọn bất lợi</b> (adverse selection). Trên thị trường thật, bid cao nhất và offer thấp nhất của mọi người tham gia tạo nên thị trường; báo giá hẹp nhất và nhanh nhất nhận phần lớn giao dịch.</li>
+</ul>
+
+<h4>Công thức</h4>
+<div class="formula"><span class="lbl">Độ rộng và giá giữa</span>spread = ask − bid,&nbsp;&nbsp; mid = <span class="frac"><span>bid + ask</span><span>2</span></span></div>
+<div class="formula"><span class="lbl">Lợi thế mỗi lô so với giá trị lý thuyết V</span>edge<sub>bán</sub> = ask − V,&nbsp;&nbsp; edge<sub>mua</sub> = V − bid</div>
+<div class="formula"><span class="lbl">Quy tắc yết giá đơn giản: nửa độ rộng h tăng theo độ bất định σ, giá giữa lệch ngược chiều vị thế q</span>h = h<sub>0</sub> + k · σ,&nbsp;&nbsp; m = V − γ · q,&nbsp;&nbsp; bid = m − h,&nbsp;&nbsp; ask = m + h</div>
+<div class="formula"><span class="lbl">Lãi/lỗ đánh giá theo thị trường (mark-to-market): tiền mặt cộng hàng tồn định giá ở mid</span>PnL<sub>t</sub> = tiền mặt<sub>t</sub> + q<sub>t</sub> · mid<sub>t</sub>,&nbsp;&nbsp; lãi của lệnh mua tại b khi giá trị thật là X: X − b</div>
+
+<h4>Ví dụ minh hoạ: yết giá, lệch giá và bị “bắt bài”</h4>
+<p><b>Phần 1, dựng báo giá.</b> Giá trị lý thuyết V = 100, độ bất định σ = 5, h<sub>0</sub> = 0,5, k = 0,5, γ = 0,6 mỗi lô.</p>
+<ol>
+  <li>Nửa độ rộng h = 0,5 + 0,5 × 5 = 3,0. Đang phẳng (q = 0) nên yết 97 @ 103. Lợi thế mỗi phía là 3.</li>
+  <li>Sau khi mua 4 lô (q = 4): giá giữa m = 100 − 0,6 × 4 = 97,6, báo giá thành 94,6 @ 100,6.</li>
+  <li>Phía bán giờ chỉ còn lợi thế 100,6 − 100 = 0,6, phía mua có 100 − 94,6 = 5,4. Bạn nhường 2,4 đơn vị lợi thế để dễ bán bớt hàng tồn và ít bị mua thêm.</li>
+</ol>
+<p><b>Phần 2, đếm cửa sổ.</b> Bạn yết số cửa sổ của một tòa nhà là 350 @ 370. Đáp án thật, bạn không biết, là 400.</p>
+<ol>
+  <li>Người phỏng vấn biết đáp án nên mua của bạn ở 370. Khi lộ đáp án, bạn lỗ 400 − 370 = 30.</li>
+  <li>Nếu họ bán cho bạn ở 350, bạn lãi 400 − 350 = 50. Nhưng người hiểu biết sẽ không bao giờ chọn phía đó.</li>
+  <li>Nếu biết giá trị thật, bạn sẽ yết rộng đến mức đối tác vẫn còn chịu giao dịch. Nếu đoán đối tác tin con số rất cao, chẳng hạn 600, bạn có thể yết 550 @ 600: bid cao hơn ước lượng của mình, nhưng họ gần như chắc chắn sẽ mua ở 600.</li>
+</ol>
+
+<figure class="demo">
+  <div class="stage" id="demo-17"></div>
+  <div class="controls" id="ctl-17"></div>
+  <div class="readout" id="out-17"></div>
+  <figcaption><b>Mô hình 17.1 – Dựng báo giá.</b> Đường xám là niềm tin của bạn về giá trị thật. Vạch xanh lá là bid, vạch cam là ask. Tăng độ bất định σ thì báo giá nới rộng. Bấm “Khách bán cho tôi” vài lần để tích hàng tồn: cả báo giá trượt xuống, nhường lợi thế ở phía bán. Thử các phương án mẫu: xúc xắc yết rất hẹp, đếm cửa sổ phải yết rộng.</figcaption>
+</figure>
+
+<figure class="demo">
+  <div class="stage" id="demob-17"></div>
+  <div class="controls" id="ctlb-17"></div>
+  <div class="readout" id="outb-17"></div>
+  <figcaption><b>Mô hình 17.2 – Sổ lệnh 3D và lệnh của bạn.</b> Mỗi hàng là một ảnh chụp sổ lệnh giới hạn (limit order book), hàng phía trước là hiện tại, các hàng phía sau là quá khứ. Cột xanh lá là lệnh mua chờ, cột cam là lệnh bán chờ. Hai cột xanh dương ở hàng đầu là bid và ask của bạn. Lệnh thị trường đến ngẫu nhiên và khớp vào giá tốt nhất: yết hẹp hơn thị trường thì được khớp nhiều nhưng lợi thế mỗi lệnh nhỏ. Một phần dòng lệnh có thông tin, nên giá thường đi ngược bạn sau khi khớp. Bật “Lệch theo vị thế” để giữ hàng tồn quanh 0. Kéo để xoay.</figcaption>
+</figure>
+
+<h4>Lưu ý khi phỏng vấn</h4>
+<ul>
+  <li>Câu hỏi kiểm tra hay gặp: đang phẳng, yết 49 @ 51 cho thứ bạn định giá 50, rồi bị khớp ở bid ba lần liên tiếp. Báo giá tiếp theo nên thấp hơn hẳn, chẳng hạn 46,5 @ 48,5. Hai lý do cùng chiều: ba lệnh bán là bằng chứng giá trị thấp hơn, và bạn đang long 3 lô.</li>
+  <li>Khi được hỏi khoảng tin cậy 90%, hãy làm như yết giá: rộng khi biết ít nhưng phải thực tế. Khoảng 0 @ 1 tỉ chắc chắn chứa đáp án nhưng không có giá trị.</li>
+  <li>Luôn giải thích vì sao độ rộng của bạn như vậy, và nói luôn cách phòng hộ vị thế bằng sản phẩm liên quan.</li>
+  <li>Hệ thống thật tính giá trị lý thuyết từ mô hình (định giá quyền chọn, rổ ETF), yết giá hàng nghìn lần mỗi giây, lệch theo tồn kho, nới rộng khi biến động tăng và phòng hộ liên tục. Trò chơi xúc xắc trong phỏng vấn nén cùng phán đoán đó vào một cuộc trò chuyện.</li>
+</ul>
+
+<script>
+(()=>{
+  /* ---------- Mô hình 17.1: dựng báo giá ---------- */
+  const stA=document.getElementById('demo-17'), ctA=document.getElementById('ctl-17'), ouA=document.getElementById('out-17');
+  const A={V:100, sigma:5, h0:0.5, k:0.5, s:0.2, q:0, dec:1};
+  // γ (lệch mỗi lô) tính bằng tỉ lệ s của nửa độ rộng, để cùng một thanh trượt dùng được cho mọi thang giá
+  const quote=()=>{ const h=A.h0+A.k*A.sigma, g=A.s*h, m=A.V-g*A.q; return {h,g,m,bid:m-h,ask:m+h}; };
+  const cA=Q.canvas(stA,280,drawA);
+  function drawA(ctx,w,h){
+    const C=Q.colors(); ctx.clearRect(0,0,w,h);
+    const z=quote(), L=24,R=24,T=48,B=40, pw=w-L-R, ph=h-T-B;
+    const span=Math.max(4*A.sigma, z.h+Math.abs(z.g*A.q))*1.25+1e-9, lo=A.V-span, hi=A.V+span;
+    const X=x=>L+(x-lo)/(hi-lo)*pw;
+    const pdf=x=>Math.exp(-0.5*((x-A.V)/A.sigma)**2);
+    const Y=y=>T+ph-y*ph*0.9;
+    // vùng giữa bid và ask
+    ctx.fillStyle=C.soft; ctx.fillRect(X(z.bid),T,X(z.ask)-X(z.bid),ph);
+    ctx.strokeStyle=C.line; ctx.beginPath(); ctx.moveTo(L,T+ph); ctx.lineTo(L+pw,T+ph); ctx.stroke();
+    ctx.strokeStyle=C.muted; ctx.lineWidth=2; ctx.beginPath();
+    for(let i=0;i<=240;i++){ const x=lo+(hi-lo)*i/240; i?ctx.lineTo(X(x),Y(pdf(x))):ctx.moveTo(X(x),Y(pdf(x))); } ctx.stroke();
+    const vl=(x,col,lab,dash,dy)=>{ ctx.strokeStyle=col; ctx.lineWidth=dash?1.5:3; ctx.setLineDash(dash?[5,4]:[]); ctx.beginPath(); ctx.moveTo(X(x),T-4); ctx.lineTo(X(x),T+ph); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle=col; ctx.font='600 12px -apple-system,sans-serif'; const tw=ctx.measureText(lab).width; ctx.fillText(lab,Math.min(w-tw-4,Math.max(4,X(x)-tw/2)),T-10+dy); };
+    vl(A.V,C.ink,'V = '+Q.fmt(A.V,A.dec),true,0);
+    vl(z.bid,C.a,'bid '+Q.fmt(z.bid,A.dec+1),false,ph+30);
+    vl(z.ask,C.b,'ask '+Q.fmt(z.ask,A.dec+1),false,ph+30);
+    if(A.q){ ctx.strokeStyle=C.c; ctx.fillStyle=C.c; ctx.lineWidth=2; const y=T+ph*0.5, x0=X(A.V), x1=X(z.m);
+      ctx.beginPath(); ctx.moveTo(x0,y); ctx.lineTo(x1,y); ctx.stroke(); ctx.beginPath(); const d=Math.sign(x1-x0)*7; ctx.moveTo(x1,y); ctx.lineTo(x1-d,y-5); ctx.lineTo(x1-d,y+5); ctx.fill();
+      ctx.font='12px -apple-system,sans-serif'; ctx.fillText('lệch '+Q.fmt(z.m-A.V,A.dec+1),Math.min(x0,x1)+4,y-8); }
+    ctx.fillStyle=C.muted; ctx.font='12px -apple-system,sans-serif';
+    ctx.fillText('xám: niềm tin về giá trị thật   nền nhạt: vùng giữa bid và ask',L,16);
+  }
+  function reportA(){
+    const z=quote(), d=A.dec+1;
+    ouA.textContent=`Báo giá: ${Q.fmt(z.bid,d)} @ ${Q.fmt(z.ask,d)}   spread = ${Q.fmt(2*z.h,d)}   vị thế q = ${A.q>0?'+':''}${A.q}\n`+
+      `h = h₀ + k·σ = ${Q.fmt(A.h0,d)} + ${Q.fmt(A.k,2)} × ${Q.fmt(A.sigma,d)} = ${Q.fmt(z.h,d)}   γ = ${Q.fmt(z.g,d)} mỗi lô   m = V − γ·q = ${Q.fmt(z.m,d)}\n`+
+      `Lợi thế phía mua V − bid = ${Q.fmt(A.V-z.bid,d)}   Lợi thế phía bán ask − V = ${Q.fmt(z.ask-A.V,d)}`;
+    cA.redraw();
+  }
+  const sSig=Q.slider(ctA,'Độ bất định σ',0.05,10,0.05,A.sigma,v=>{A.sigma=v; reportA();},v=>Q.fmt(v,2));
+  const sS=Q.slider(ctA,'Lệch mỗi lô (phần của h)',0,0.4,0.01,A.s,v=>{A.s=v; reportA();},v=>Q.pct(v,0));
+  Q.button(ctA,'Khách bán cho tôi (+1)',()=>{A.q=Math.min(10,A.q+1); reportA();});
+  Q.button(ctA,'Khách mua của tôi (−1)',()=>{A.q=Math.max(-10,A.q-1); reportA();});
+  Q.button(ctA,'Về phẳng',()=>{A.q=0; reportA();});
+  const preset=(V,sig,h0,k,dec)=>{ A.V=V; A.h0=h0; A.k=k; A.dec=dec; A.q=0;
+    sSig.min=String(sig/50); sSig.max=String(sig*3); sSig.step=String(sig/100); sSig.value=String(sig); sSig.dispatchEvent(new Event('input')); };
+  Q.button(ctA,'Mặc định (V = 100)',()=>preset(100,5,0.5,0.5,1));
+  Q.button(ctA,'Xúc xắc (V = 3,5)',()=>preset(3.5,0.05,0.05,0.5,2));
+  Q.button(ctA,'Đếm cửa sổ (V = 350)',()=>preset(350,60,2,0.5,0));
+  reportA();
+
+  /* ---------- Mô hình 17.2: sổ lệnh 3D theo thời gian ---------- */
+  const stB=document.getElementById('demob-17'), ctB=document.getElementById('ctlb-17'), ouB=document.getElementById('outb-17');
+  const LV=8, DEPTH=26, TICK=0.1;
+  const B={half:1, skew:false, run:true, inf:0.35};
+  const g=Q.rng(1717);
+  let mid=1000, snaps=[], my={bid:0,ask:0}, pos=0, cash=0, fills=0, edgeSum=0, frame=0, flash=null;
+  function book(){ // kích thước lệnh chờ ở mỗi mức giá quanh tâm c = round(mid)
+    const c=Math.round(mid), bids=[], asks=[];
+    for(let i=2;i<=LV+1;i++){ bids.push(Math.max(0.3,(2+i*0.9)*(0.55+0.9*g()))); asks.push(Math.max(0.3,(2+i*0.9)*(0.55+0.9*g()))); }
+    return {c,bids,asks};
+  }
+  function place(){ const c=Math.round(mid), sk=B.skew?Math.round(0.5*pos):0; my.bid=c-B.half-sk; my.ask=c+B.half-sk; }
+  function step(){
+    const b=book(); place();
+    // lệnh thị trường: dấu ngẫu nhiên; phần "có thông tin" kéo giá theo cùng chiều sau đó
+    const side=g()<0.5?1:-1; // +1: khách mua (khớp vào ask), −1: khách bán (khớp vào bid)
+    const mBid=b.c-2, mAsk=b.c+2; let hit=false;
+    if(side>0){ if(my.ask<mAsk || (my.ask===mAsk && g()<0.5)){ hit=true; pos--; cash+=my.ask*TICK; edgeSum+=(my.ask-mid)*TICK; } }
+    else { if(my.bid>mBid || (my.bid===mBid && g()<0.5)){ hit=true; pos++; cash-=my.bid*TICK; edgeSum+=(mid-my.bid)*TICK; } }
+    if(hit){ fills++; flash={side,t:20}; }
+    mid+=side*B.inf*1.2+0.8*Q.normal(g); place();
+    snaps.unshift({c:Math.round(mid),bids:b.bids,asks:b.asks,mid,my:{...my},side}); if(snaps.length>DEPTH) snaps.pop();
+    reportB();
+  }
+  function reportB(){
+    const mtm=cash+pos*mid*TICK;
+    ouB.textContent=`Thị trường: ${Q.fmt((Math.round(mid)-2)*TICK,1)} @ ${Q.fmt((Math.round(mid)+2)*TICK,1)}   Bạn: ${Q.fmt(my.bid*TICK,1)} @ ${Q.fmt(my.ask*TICK,1)}   (nửa độ rộng ${B.half} bước giá)\n`+
+      `Số lần khớp: ${fills}   Vị thế: ${pos>0?'+':''}${pos} lô   Lợi thế thu khi khớp: ${Q.fmt(edgeSum,2)}   Lãi/lỗ theo thị trường: ${Q.fmt(mtm,2)}\n`+
+      `Phần chênh giữa hai con số cuối là thiệt hại do lựa chọn bất lợi và do giá trượt khi đang giữ hàng.`;
+  }
+  const cB=Q.canvas(stB,380,drawB);
+  const view={yaw:-0.35,pitch:0.6,dist:22,auto:false};
+  function drawB(ctx,w,h){
+    const C=Q.colors(); ctx.clearRect(0,0,w,h); if(!snaps.length) return;
+    const sc=Math.min(w/15,h/8.5), ZS=0.11;
+    const c0=snaps[0].c;
+    const P=(x,y,z)=>Q.project([x*0.55,y*0.4-5.2,z*ZS+0.4],view,w,h,sc);
+    const items=[];
+    snaps.forEach((s,t)=>{
+      const shift=s.c-c0; // giá cố định theo trục x, nên ảnh chụp cũ dịch theo tâm của nó
+      for(let i=1;i<=LV;i++){
+        for(const [side,size] of [[-1,s.bids[i-1]],[1,s.asks[i-1]]]){
+          const x=shift+side*(i+1); if(Math.abs(x)>LV+3) continue;
+          items.push({x,y:t+1,z:size,col:side<0?'a':'b',al:Math.max(0.15,0.85-t*0.025)});
+        }
+      }
+    });
+    // lệnh của bạn ở hàng đầu
+    const me=snaps[0].my; items.push({x:me.bid-c0,y:0,z:6,col:'c',al:1,me:true},{x:me.ask-c0,y:0,z:6,col:'c',al:1,me:true});
+    for(const it of items){ it.d=P(it.x,it.y,it.z/2)[2]; }
+    items.sort((a,b)=>b.d-a.d);
+    // sàn và đường mid theo thời gian
+    ctx.strokeStyle=C.line; ctx.lineWidth=1;
+    for(const x of [-LV-2,0,LV+2]){ const a=P(x,0,0), b=P(x,DEPTH,0); ctx.beginPath(); ctx.moveTo(a[0],a[1]); ctx.lineTo(b[0],b[1]); ctx.stroke(); }
+    ctx.strokeStyle=C.ink; ctx.lineWidth=1.6; ctx.beginPath();
+    snaps.forEach((s,t)=>{ const q=P(s.mid-c0,t+1,0); t?ctx.lineTo(q[0],q[1]):ctx.moveTo(q[0],q[1]); }); ctx.stroke();
+    for(const it of items){
+      const a=P(it.x,it.y,0), b=P(it.x,it.y,it.z), f=view.dist/(view.dist+a[2]);
+      ctx.strokeStyle=C[it.col]; ctx.globalAlpha=it.al; ctx.lineWidth=Math.max(2,(it.me?8:5)*f*sc/45);
+      ctx.beginPath(); ctx.moveTo(a[0],a[1]); ctx.lineTo(b[0],b[1]); ctx.stroke();
+    }
+    ctx.globalAlpha=1;
+    if(flash && flash.t>0){ const x=flash.side>0?me.ask-c0:me.bid-c0, q=P(x,0,7.5); ctx.fillStyle=C.c; ctx.font='600 13px -apple-system,sans-serif';
+      ctx.fillText(flash.side>0?'khách mua của bạn':'khách bán cho bạn',q[0]-50,q[1]-6); }
+    const lab=(x,y,t)=>{ const q=P(x,y,0); ctx.fillText(t,q[0]-20,q[1]+16); };
+    ctx.fillStyle=C.muted; ctx.font='12px -apple-system,sans-serif';
+    lab(-LV/2,0,'phía mua (bid)'); lab(LV/2,0,'phía bán (ask)'); const qq=P(LV+1.5,DEPTH,0); ctx.fillText('quá khứ',qq[0],qq[1]);
+    ctx.fillText('xanh lá: lệnh mua chờ   cam: lệnh bán chờ   xanh dương: lệnh của bạn   đường đen: giá giữa',12,20);
+  }
+  Q.orbit(cB.cv,view,()=>cB.redraw());
+  for(let i=0;i<DEPTH;i++) step();
+  pos=0; cash=0; fills=0; edgeSum=0; reportB();
+  Q.loop(stB,()=>{ if(!B.run) return; frame++; if(flash) flash.t--; if(frame%14===0) step(); cB.redraw(); });
+  Q.slider(ctB,'Nửa độ rộng của bạn (bước giá)',1,5,1,B.half,v=>{B.half=v; place(); reportB(); cB.redraw();},v=>v);
+  Q.slider(ctB,'Mức thông tin của dòng lệnh',0,1,0.05,B.inf,v=>{B.inf=v;},v=>Q.pct(v,0));
+  const bSk=Q.button(ctB,'Lệch theo vị thế: tắt',()=>{ B.skew=!B.skew; bSk.textContent='Lệch theo vị thế: '+(B.skew?'bật':'tắt'); bSk.className=B.skew?'primary':''; });
+  const bRun=Q.button(ctB,'Tạm dừng',()=>{ B.run=!B.run; bRun.textContent=B.run?'Tạm dừng':'Chạy tiếp'; });
+  Q.button(ctB,'Đặt lại sổ',()=>{ pos=0; cash=0; fills=0; edgeSum=0; reportB(); });
+})();
+</script>
+</section>

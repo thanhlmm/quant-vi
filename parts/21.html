@@ -1,0 +1,202 @@
+<section class="lesson" id="bai-21" data-short="Giao dịch tần suất cao">
+<header>
+  <span class="num">21</span>
+  <h3>Bên trong giao dịch tần suất cao (HFT)</h3>
+  <p class="meta">14 phút · Ứng dụng: Hoạt động kinh doanh cốt lõi của nhà tạo lập thị trường điện tử · <a href="https://hft.md/learn/hft/">Bài gốc (tiếng Anh)</a></p>
+</header>
+
+<p>Mọi công cụ của giáo trình này gặp nhau ở giao dịch tần suất cao. Một công ty tạo lập thị trường điện tử cập nhật Bayes sau mỗi lần khớp, định giá bằng kỳ vọng, đo rủi ro bằng phương sai và dựa vào luật số lớn để biến lợi thế rất nhỏ thành lợi nhuận đều đặn, tất cả trong vài micro giây.</p>
+
+<h4>Ý chính</h4>
+<ul>
+  <li><b>Giao dịch tần suất cao</b> (high-frequency trading) là các chiến lược tự động ra quyết định trong micro giây, giữ vị thế vài giây hoặc ít hơn. Có ba nhóm chính: tạo lập thị trường, <b>kinh doanh chênh lệch giá</b> (arbitrage) giữa các tài sản liên quan, và tín hiệu ngắn hạn đọc từ chính sổ lệnh.</li>
+  <li><b>Sổ lệnh giới hạn</b> (limit order book) xếp mọi lệnh mua và bán đang chờ theo giá. Khoảng cách giữa giá mua cao nhất và giá bán thấp nhất là chênh lệch giá (spread); khối lượng ở mỗi mức giá là độ sâu (depth).</li>
+  <li>Lệnh giới hạn không vượt qua chênh lệch thì nằm chờ và <b>cung cấp thanh khoản</b> (maker). Lệnh thị trường <b>lấy thanh khoản</b> (taker): nó khớp ở mức giá tốt nhất, hết thì sang mức kế tiếp. Đó là “đi xuyên sổ lệnh” (walking the book).</li>
+  <li>Phần lớn sàn dùng <b>ưu tiên giá – thời gian</b> (price–time priority): cùng giá thì lệnh đến trước khớp trước. Vị trí trong hàng đợi có giá trị bằng tiền.</li>
+  <li>Lợi nhuận mỗi lần khớp bằng nửa chênh lệch trừ <b>lựa chọn bất lợi</b> (adverse selection), trừ phí, cộng khoản hoàn phí (rebate). Con số này rất nhỏ, và chỉ thành công việc kinh doanh nhờ hàng triệu lần khớp.</li>
+  <li>Tốc độ mua được ba thứ: chỗ đứng đầu hàng đợi, khả năng huỷ giá cũ trước khi bị “bắt” (picked off), và cơ hội chênh lệch giá cho người thấy trước. Giới hạn cuối cùng là tốc độ ánh sáng.</li>
+</ul>
+
+<h4>Công thức</h4>
+<div class="formula"><span class="lbl">Giá vi mô (microprice) và độ mất cân bằng sổ lệnh (imbalance); b, a là giá mua và bán tốt nhất, Q<sub>b</sub>, Q<sub>a</sub> là khối lượng tại đó</span>microprice = <span class="frac"><span>b·Q<sub>a</sub> + a·Q<sub>b</sub></span><span>Q<sub>a</sub> + Q<sub>b</sub></span></span>,&nbsp;&nbsp;&nbsp; I = <span class="frac"><span>Q<sub>b</sub> − Q<sub>a</sub></span><span>Q<sub>b</sub> + Q<sub>a</sub></span></span></div>
+<div class="formula"><span class="lbl">Lãi kỳ vọng mỗi lần khớp của nhà tạo lập (s là chênh lệch giá)</span>E[PnL mỗi lần khớp] ≈ <span class="frac"><span>s</span><span>2</span></span> − E[giá chạy ngược sau khi khớp] − phí + hoàn phí</div>
+<div class="formula"><span class="lbl">Luật số lớn: n lần khớp, mỗi lần lợi thế e và nhiễu σ, độc lập</span>trung bình = n·e,&nbsp;&nbsp; độ lệch chuẩn = √n·σ,&nbsp;&nbsp; P(ngày lỗ) ≈ Φ(−√n · e/σ)</div>
+<div class="formula"><span class="lbl">Độ trễ do khoảng cách d trong môi trường có chiết suất n (cáp quang n ≈ 1,47; không khí n ≈ 1)</span>t = <span class="frac"><span>d·n</span><span>c</span></span>,&nbsp;&nbsp;&nbsp; <span class="frac"><span>1 km × 1,47</span><span>299.792 km/s</span></span> ≈ 4,9 μs</div>
+
+<h4>Ví dụ minh hoạ: đọc sổ lệnh và tính lợi thế</h4>
+<ol>
+  <li><b>Giá vi mô.</b> Giá mua tốt nhất 99,99 với 900 lô, giá bán tốt nhất 100,01 với 100 lô. Giá giữa thường là 100,00.</li>
+  <li>Giá vi mô = (99,99 × 100 + 100,01 × 900) / 1.000 = 100.008 / 1.000 = 100,008. Nó nằm sát giá bán, vì bên mua dày gấp chín lần.</li>
+  <li>Độ mất cân bằng I = (900 − 100) / 1.000 = 0,8. Giao dịch kế tiếp nhiều khả năng sẽ ăn vào giá bán.</li>
+  <li><b>Lợi thế mỗi lần khớp.</b> Nhà tạo lập yết 99,99 @ 100,01, không phí, không hoàn phí. Nửa chênh lệch là 1 cent. Sau khi khớp, giá trung bình chạy ngược 0,6 cent. Lãi kỳ vọng còn 1 − 0,6 = 0,4 cent.</li>
+  <li><b>Luật số lớn.</b> Lấy lợi thế 0,05 cent và nhiễu 5 cent mỗi lần khớp, thì √n·e/σ = 0,01·√n. Với 1.000 lần khớp mỗi ngày, P(ngày lỗ) ≈ Φ(−0,32) ≈ 38%. Với 10.000 lần: Φ(−1) ≈ 16%. Với 100.000 lần: Φ(−3,16) ≈ 0,08%.</li>
+  <li><b>Tốc độ ánh sáng.</b> Chicago (hợp đồng tương lai) cách các trung tâm dữ liệu ở New Jersey (cổ phiếu) khoảng 1.150 km theo đường thẳng. Qua không khí mất 1.150 / 299.792 ≈ 3,84 ms. Trong cáp quang mất 3,84 × 1,47 ≈ 5,64 ms, và tuyến cáp thật còn dài hơn. Vì thế các công ty dựng chuỗi tháp vi ba.</li>
+</ol>
+<table class="t">
+  <tr><th>Bậc thang độ trễ</th><th>Cỡ thời gian</th></tr>
+  <tr><td>Một chu kỳ xung nhịp CPU 3 GHz</td><td>≈ 0,3 ns</td></tr>
+  <tr><td>Một lần đọc bộ nhớ chính (RAM)</td><td>≈ 100 ns</td></tr>
+  <tr><td>Ánh sáng đi qua 1 km cáp quang</td><td>≈ 4,9 μs</td></tr>
+  <tr><td>Chicago – New Jersey, đường thẳng qua không khí / trong cáp quang</td><td>≈ 3,84 ms / 5,64 ms</td></tr>
+  <tr><td>Một cái chớp mắt</td><td>≈ 100–400 ms</td></tr>
+</table>
+<p>Quãng từ lúc gói dữ liệu thị trường đến tới lúc lệnh rời máy gọi là <b>tick-to-trade</b>: nhận gói, giải mã, cập nhật sổ lệnh, ra quyết định, kiểm tra rủi ro, gửi lệnh. Các công ty rút ngắn nó bằng đặt máy chủ cạnh sàn (colocation), mạng bỏ qua nhân hệ điều hành (kernel bypass), C++ viết kỹ, và FPGA chạy toàn bộ vòng lặp trên phần cứng.</p>
+
+<figure class="demo">
+  <div class="stage" id="demo-21"></div>
+  <div class="controls" id="ctl-21"></div>
+  <div class="readout" id="out-21"></div>
+  <figcaption><b>Mô hình 21.1 – Sổ lệnh sống trong không gian 3D.</b> Một cổ phiếu giao dịch quanh 100 USD. Cột xanh lá là lệnh mua đang chờ, cột cam là lệnh bán; hàng trước nhất là hiện tại, các hàng phía sau là những thời điểm trước đó. Chấm tím là giao dịch khớp; vạch đen ở hàng trước là giá vi mô. Bấm gửi lệnh thị trường 300 lô để thấy nó ăn qua nhiều mức giá và làm chênh lệch giãn ra, rồi nhà tạo lập lấp đầy lại. Giảm “Tốc độ lấp lại” để chênh lệch hồi phục chậm hơn. Kéo để xoay.</figcaption>
+</figure>
+
+<figure class="demo">
+  <div class="stage" id="demo2-21"></div>
+  <div class="controls" id="ctl2-21"></div>
+  <div class="readout" id="out2-21"></div>
+  <figcaption><b>Mô hình 21.2 – Lợi thế nhỏ, số lần khớp lớn.</b> Chọn nửa chênh lệch, lựa chọn bất lợi, phí ròng và nhiễu mỗi lần khớp. Bên trái là phân phối lãi/lỗ một ngày (vùng cam là ngày lỗ). Bên phải là lãi/lỗ cộng dồn của 250 ngày giao dịch mô phỏng. Tăng số lần khớp mỗi ngày để thấy trung bình tăng theo n còn nhiễu chỉ tăng theo √n.</figcaption>
+</figure>
+
+<h4>Lưu ý khi phỏng vấn</h4>
+<ul>
+  <li>Công ty HFT phỏng vấn cả toán lẫn hệ thống. Hãy chuẩn bị câu hỏi xác suất, kỳ vọng và tính nhẩm nhanh. Vị trí lập trình còn hỏi về bộ nhớ đệm (cache), cấu trúc dữ liệu cho sổ lệnh và cách đo độ trễ.</li>
+  <li>Cấu trúc sổ lệnh chuẩn: một mảng đánh chỉ số theo giá, hoặc một cây có thứ tự các mức giá, mỗi mức là một hàng đợi vào trước ra trước (FIFO).</li>
+  <li>Kiểm soát rủi ro là một phần của công việc: kiểm tra trước giao dịch (hạn mức vị thế, kích thước lệnh, biên giá) và nút ngắt khẩn cấp (kill switch). Ngày 1/8/2012, Knight Capital mất khoảng 440 triệu USD trong chừng 45 phút vì một lần triển khai phần mềm lỗi.</li>
+  <li>Nói được vì sao lựa chọn bất lợi là định lý Bayes: bị khớp là bằng chứng rằng người bên kia biết điều gì đó. Đây là cầu nối từ bài 01 đến bài này.</li>
+</ul>
+
+<script>
+(()=>{
+  const stage=document.getElementById('demo-21'), ctl=document.getElementById('ctl-21'), out=document.getElementById('out-21');
+  const NL=30, ROWS=16, P0=99.85, TICK=0.01, r=Q.rng(2112);
+  const S={F:15.1, refill:0.25, flow:0.55, run:true, frame:0, msg:'', trades:[]};
+  const bid=new Float64Array(NL), ask=new Float64Array(NL), hist=[];
+  const view={yaw:-0.28,pitch:0.62,dist:10,auto:false};
+  const px=k=>P0+k*TICK;
+  const bestBid=()=>{ for(let k=NL-1;k>=0;k--) if(bid[k]>=1) return k; return -1; };
+  const bestAsk=()=>{ for(let k=0;k<NL;k++) if(ask[k]>=1) return k; return NL; };
+  const target=d=>70+28*Math.min(d-1,5);
+  // nhà tạo lập: lấp lại về độ sâu mục tiêu, huỷ lệnh đã lỗi thời so với giá trị thật F
+  function makers(rate){
+    for(let k=0;k<NL;k++){
+      if(k<S.F-0.5){ const d=S.F-k; bid[k]+=rate*(target(d)-bid[k])+(r()-0.5)*8; } else bid[k]*=0.2;
+      if(k>S.F+0.5){ const d=k-S.F; ask[k]+=rate*(target(d)-ask[k])+(r()-0.5)*8; } else ask[k]*=0.2;
+      if(bid[k]<1) bid[k]=0; if(ask[k]<1) ask[k]=0;
+    }
+  }
+  function sweep(side,qty){ let left=qty, cost=0, levels=0;
+    if(side==='buy'){ for(let k=0;k<NL&&left>0;k++){ if(ask[k]<1) continue; const q=Math.min(left,ask[k]); ask[k]-=q; left-=q; cost+=q*px(k); levels++; S.trades.push({k,q}); } }
+    else { for(let k=NL-1;k>=0&&left>0;k--){ if(bid[k]<1) continue; const q=Math.min(left,bid[k]); bid[k]-=q; left-=q; cost+=q*px(k); levels++; S.trades.push({k,q}); } }
+    const done=qty-left; return {done,avg:done?cost/done:0,levels};
+  }
+  function step(){
+    S.F+=0.04*(15.1-S.F)+0.28*Q.normal(r); S.F=Math.max(7,Math.min(23,S.F));
+    makers(S.refill);
+    if(r()<S.flow){ // lệnh thị trường nhỏ; hơi nghiêng về phía giá trị thật (có thông tin)
+      const bb=bestBid(), ba=bestAsk(), mid=(bb+ba)/2, pBuy=0.5+0.35*Math.tanh(S.F-mid);
+      sweep(r()<pBuy?'buy':'sell',10+Math.floor(r()*70)); }
+    hist.unshift({bid:Float64Array.from(bid),ask:Float64Array.from(ask),tr:S.trades}); S.trades=[];
+    if(hist.length>ROWS) hist.pop();
+  }
+  for(let i=0;i<40;i++){ makers(0.5); }
+  for(let i=0;i<ROWS;i++) step();
+  function report(){
+    const bb=bestBid(), ba=bestAsk(); if(bb<0||ba>=NL){ out.textContent='Sổ lệnh đang trống một phía.'; return; }
+    const b=px(bb), a=px(ba), qb=bid[bb], qa=ask[ba], micro=(b*qa+a*qb)/(qa+qb), imb=(qb-qa)/(qb+qa);
+    out.textContent=`Giá mua tốt nhất ${Q.fmt(b,2)} × ${Math.round(qb)} lô · giá bán tốt nhất ${Q.fmt(a,2)} × ${Math.round(qa)} lô · chênh lệch ${Math.round((ba-bb))} cent\n`+
+      `Giá giữa ${Q.fmt((a+b)/2,3)} · giá vi mô ${Q.fmt(micro,4)} · độ mất cân bằng ${Q.fmt(imb,2)}`+(S.msg?`\n${S.msg}`:'');
+  }
+  const c=Q.canvas(stage,400,draw);
+  function draw(ctx,w,h){
+    const C=Q.colors(); ctx.clearRect(0,0,w,h); const sc=Math.min(w,h*1.6)/7.4;
+    const X=k=>(k-NL/2)*0.17, Yr=i=>-1.75+i*0.26, Zs=q=>q*0.0036, hw=0.065, hd=0.11;
+    const P=p=>Q.project(p,view,w,h+10,sc);
+    // sàn
+    ctx.strokeStyle=C.line; ctx.lineWidth=1;
+    for(let k=0;k<=NL;k+=5){ const a=P([X(k)-0.085,Yr(0)-0.2,0]), b=P([X(k)-0.085,Yr(ROWS-1)+0.2,0]); ctx.beginPath(); ctx.moveTo(a[0],a[1]); ctx.lineTo(b[0],b[1]); ctx.stroke(); }
+    const faces=[];
+    hist.forEach((row,i)=>{ const al=1-i/(ROWS+2);
+      for(let k=0;k<NL;k++){ for(const [arr,col] of [[row.bid,C.a],[row.ask,C.b]]){ const q=arr[k]; if(q<1) continue;
+        const x=X(k), y=Yr(i), z=Zs(q), v=[[x-hw,y-hd],[x+hw,y-hd],[x+hw,y+hd],[x-hw,y+hd]];
+        const top=v.map(p=>P([p[0],p[1],z])), bot=v.map(p=>P([p[0],p[1],0]));
+        const add=(pts,sh)=>faces.push({pts,col,al,sh,d:pts.reduce((s,p)=>s+p[2],0)/pts.length});
+        add(top,0); for(let j=0;j<4;j++){ const n=(j+1)%4; add([bot[j],bot[n],top[n],top[j]],j%2?0.18:0.3); } } }
+      for(const t of row.tr){ const p=P([X(t.k),Yr(i),Zs(30)+0.15]); faces.push({bead:true,p,q:t.q,al,d:p[2]-0.01}); }
+    });
+    faces.sort((a,b)=>b.d-a.d);
+    for(const f of faces){
+      if(f.bead){ ctx.globalAlpha=f.al; ctx.fillStyle=C.d; ctx.beginPath(); ctx.arc(f.p[0],f.p[1],2.5+Math.sqrt(f.q)*0.5,0,7); ctx.fill(); continue; }
+      ctx.beginPath(); f.pts.forEach((p,j)=>j?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1])); ctx.closePath();
+      ctx.globalAlpha=f.al*0.92; ctx.fillStyle=f.col; ctx.fill();
+      if(f.sh){ ctx.fillStyle=`rgba(0,0,0,${f.sh})`; ctx.fill(); }
+    }
+    ctx.globalAlpha=1;
+    // giá vi mô ở hàng hiện tại
+    const bb=bestBid(), ba=bestAsk();
+    if(bb>=0&&ba<NL){ const qb=bid[bb], qa=ask[ba], km=(bb*qa+ba*qb)/(qa+qb);
+      const a=P([X(km),Yr(0)-0.3,0]), b=P([X(km),Yr(0)-0.3,0.9]); ctx.strokeStyle=C.ink; ctx.lineWidth=2.5; ctx.beginPath(); ctx.moveTo(a[0],a[1]); ctx.lineTo(b[0],b[1]); ctx.stroke(); ctx.lineWidth=1; }
+    ctx.font='12px -apple-system,sans-serif'; ctx.fillStyle=C.muted; ctx.textAlign='center';
+    for(let k=0;k<NL;k+=5){ const p=P([X(k),Yr(0)-0.55,0]); ctx.fillText(Q.fmt(px(k),2),p[0],p[1]); }
+    const pb=P([X(0)-0.4,Yr(0),0]), pa=P([X(0)-0.4,Yr(ROWS-1),0]); ctx.fillText('hiện tại',pb[0],pb[1]); ctx.fillText('quá khứ',pa[0],pa[1]);
+    ctx.textAlign='left'; ctx.fillText('■ lệnh mua chờ (xanh lá)   ■ lệnh bán chờ (cam)   ● giao dịch (tím)   | giá vi mô',12,18);
+  }
+  Q.orbit(c.cv,view,()=>c.redraw());
+  Q.loop(stage,()=>{ if(!S.run) return; if(++S.frame%7===0){ step(); report(); c.redraw(); } });
+  function market(side){ const bb0=bestBid(), ba0=bestAsk(), res=sweep(side,300);
+    const bb=bestBid(), ba=bestAsk();
+    S.msg=`Lệnh ${side==='buy'?'mua':'bán'} thị trường 300 lô: khớp ${Math.round(res.done)} lô qua ${res.levels} mức giá, giá trung bình ${Q.fmt(res.avg,4)}. Chênh lệch: ${ba0-bb0} → ${ba-bb} cent.`;
+    hist[0]={bid:Float64Array.from(bid),ask:Float64Array.from(ask),tr:hist[0].tr.concat(S.trades)}; S.trades=[]; report(); c.redraw(); }
+  Q.button(ctl,'Mua thị trường 300 lô',()=>market('buy'),true);
+  Q.button(ctl,'Bán thị trường 300 lô',()=>market('sell'));
+  const bRun=Q.button(ctl,'Tạm dừng',()=>{ S.run=!S.run; bRun.textContent=S.run?'Tạm dừng':'Chạy tiếp'; });
+  Q.slider(ctl,'Tốc độ lấp lại',0.03,0.6,0.01,S.refill,v=>{S.refill=v;},v=>Q.fmt(v,2));
+  Q.slider(ctl,'Lệnh thị trường nền',0,1,0.05,S.flow,v=>{S.flow=v;},v=>Q.pct(v,0));
+  report();
+})();
+(()=>{
+  const stage=document.getElementById('demo2-21'), ctl=document.getElementById('ctl2-21'), out=document.getElementById('out2-21');
+  const S={half:1, adv:0.95, fee:0, lgn:4, noise:5, seed:21};
+  const Phi=x=>{ const t=1/(1+0.3275911*Math.abs(x)/Math.SQRT2); const y=1-((((1.061405429*t-1.453152027)*t+1.421413741)*t-0.284496736)*t+0.254829592)*t*Math.exp(-x*x/2); return x>=0?(1+y)/2:(1-y)/2; };
+  let days=[];
+  function calc(){ const n=Math.round(Math.pow(10,S.lgn)), e=S.half-S.adv+S.fee, m=n*e/100, sd=Math.sqrt(n)*S.noise/100; // USD/cổ phiếu-lần khớp → USD
+    return {n,e,m,sd,pl:Phi(-m/sd)}; }
+  function sim(){ const r=Q.rng(S.seed), {m,sd}=calc(); days=[]; let cum=0; for(let i=0;i<250;i++){ cum+=m+sd*Q.normal(r); days.push(cum); } }
+  function report(){ sim(); const {n,e,m,sd,pl}=calc(), lost=days.reduce((a,v,i)=>a+((v-(i?days[i-1]:0))<0?1:0),0);
+    out.textContent=`Lợi thế mỗi lần khớp: ${Q.fmt(S.half,2)} − ${Q.fmt(S.adv,2)} ${S.fee>=0?'+':'−'} ${Q.fmt(Math.abs(S.fee),2)} = ${Q.fmt(e,2)} cent · ${Q.fmt(n,0)} lần khớp mỗi ngày (1 cổ phiếu mỗi lần)\n`+
+      `Lãi/lỗ một ngày: trung bình ${Q.fmt(m,2)} USD, độ lệch chuẩn ${Q.fmt(sd,2)} USD · P(ngày lỗ) = Φ(${Q.fmt(-m/sd,2)}) = ${Q.pct(pl,2)}\n`+
+      `Mô phỏng 250 ngày: ${lost} ngày lỗ · tỉ số Sharpe năm ≈ ${Q.fmt(m/sd*Math.sqrt(250),1)}`;
+    c.redraw(); }
+  const c=Q.canvas(stage,300,draw);
+  function draw(ctx,w,h){
+    const C=Q.colors(), {m,sd}=calc(); ctx.clearRect(0,0,w,h); ctx.font='12px -apple-system,sans-serif';
+    const T=26,B=h-30, L1=16, R1=Math.max(180,w*0.42), L2=R1+60, R2=w-14;
+    // trái: mật độ chuẩn của lãi/lỗ ngày
+    const lo=Math.min(m-4*sd,-0.5*sd), hi=Math.max(m+4*sd,0.5*sd), xs=v=>L1+(v-lo)/(hi-lo)*(R1-L1), pk=1/(sd*Math.sqrt(2*Math.PI));
+    const dens=v=>Math.exp(-0.5*((v-m)/sd)**2)/(sd*Math.sqrt(2*Math.PI)), ys=d=>B-d/pk*(B-T-6);
+    ctx.fillStyle=C.b; ctx.globalAlpha=0.35; ctx.beginPath(); ctx.moveTo(xs(lo),B);
+    for(let i=0;i<=200;i++){ const v=lo+(hi-lo)*i/200; if(v>0) break; ctx.lineTo(xs(v),ys(dens(v))); } ctx.lineTo(xs(Math.min(0,hi)),B); ctx.closePath(); ctx.fill(); ctx.globalAlpha=1;
+    ctx.strokeStyle=C.c; ctx.lineWidth=2.5; ctx.beginPath(); for(let i=0;i<=200;i++){ const v=lo+(hi-lo)*i/200; i?ctx.lineTo(xs(v),ys(dens(v))):ctx.moveTo(xs(v),ys(dens(v))); } ctx.stroke(); ctx.lineWidth=1;
+    ctx.strokeStyle=C.muted; ctx.beginPath(); ctx.moveTo(L1,B); ctx.lineTo(R1,B); ctx.stroke();
+    ctx.strokeStyle=C.ink; ctx.beginPath(); ctx.moveTo(xs(0),T); ctx.lineTo(xs(0),B); ctx.stroke();
+    ctx.fillStyle=C.muted; ctx.textAlign='center'; ctx.fillText('0',xs(0),B+14); ctx.fillText('lãi/lỗ một ngày (USD)',(L1+R1)/2,h-4);
+    ctx.fillText(Q.fmt(lo,1),L1+14,B+14); ctx.fillText(Q.fmt(hi,1),R1-14,B+14);
+    // phải: 250 ngày cộng dồn
+    const mn=Math.min(0,...days), mx=Math.max(0,...days), pad=(mx-mn)*0.08||1, y0=mn-pad, y1=mx+pad;
+    const xd=i=>L2+i/249*(R2-L2), yd=v=>B-(v-y0)/(y1-y0)*(B-T);
+    ctx.strokeStyle=C.line; ctx.strokeRect(L2,T,R2-L2,B-T); ctx.strokeStyle=C.muted; ctx.beginPath(); ctx.moveTo(L2,yd(0)); ctx.lineTo(R2,yd(0)); ctx.stroke();
+    ctx.strokeStyle=C.d; ctx.setLineDash([5,4]); ctx.beginPath(); ctx.moveTo(xd(0),yd(m)); ctx.lineTo(xd(249),yd(250*m)); ctx.stroke(); ctx.setLineDash([]);
+    ctx.strokeStyle=C.a; ctx.lineWidth=2; ctx.beginPath(); days.forEach((v,i)=>i?ctx.lineTo(xd(i),yd(v)):ctx.moveTo(xd(i),yd(v))); ctx.stroke(); ctx.lineWidth=1;
+    ctx.fillStyle=C.muted; ctx.textAlign='right'; ctx.fillText(Q.fmt(y1,0),L2-6,T+8); ctx.fillText(Q.fmt(y0,0),L2-6,B); ctx.fillText('0',L2-6,yd(0)+4);
+    ctx.textAlign='center'; ctx.fillText('250 ngày: lãi/lỗ cộng dồn (USD), đường tím = kỳ vọng',(L2+R2)/2,h-4);
+    ctx.textAlign='left'; ctx.fillText('phân phối lãi/lỗ một ngày · vùng cam: ngày lỗ',L1,14);
+  }
+  const f2=v=>Q.fmt(v,2)+' ¢';
+  Q.slider(ctl,'Nửa chênh lệch',0.1,2,0.05,S.half,v=>{S.half=v;report();},f2);
+  Q.slider(ctl,'Lựa chọn bất lợi',0,2,0.05,S.adv,v=>{S.adv=v;report();},f2);
+  Q.slider(ctl,'Hoàn phí − phí',-0.5,0.5,0.05,S.fee,v=>{S.fee=v;report();},f2);
+  Q.slider(ctl,'Nhiễu mỗi lần khớp',1,10,0.5,S.noise,v=>{S.noise=v;report();},f2);
+  Q.slider(ctl,'Số lần khớp mỗi ngày',2,6,0.1,S.lgn,v=>{S.lgn=v;report();},v=>Q.fmt(Math.round(Math.pow(10,v)),0));
+  Q.button(ctl,'Mô phỏng lại',()=>{S.seed++;report();});
+  report();
+})();
+</script>
+</section>

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Giáo trình Quant trực quan – 21 bài (tiếng Việt)</title>
+<style>
+:root{
+  --bg:#f6f7f4; --panel:#ffffff; --ink:#18201c; --muted:#5d6a63; --line:#dde3dd;
+  --accent:#0f7a5a; --accent2:#c2410c; --accent3:#2563eb; --accent4:#a21caf;
+  --soft:#e8f2ec; --code:#eef1ed;
+  --serif: "Iowan Old Style","Palatino Linotype","Book Antiqua",Georgia,"Times New Roman",serif;
+  --sans: -apple-system,BlinkMacSystemFont,"Segoe UI","Helvetica Neue",Arial,sans-serif;
+  --mono: ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root{ --bg:#0e1311; --panel:#151c19; --ink:#e6ece8; --muted:#97a69e; --line:#26312c;
+    --accent:#34d399; --accent2:#fb923c; --accent3:#60a5fa; --accent4:#e879f9; --soft:#17261f; --code:#1b2420; }
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.65 var(--serif);-webkit-font-smoothing:antialiased}
+a{color:var(--accent)}
+.wrap{max-width:1180px;margin:0 auto;padding:0 24px;display:grid;grid-template-columns:240px minmax(0,1fr);gap:48px}
+@media (max-width:900px){.wrap{grid-template-columns:1fr}.toc{position:static!important;max-height:none!important}}
+.hero{max-width:1180px;margin:0 auto;padding:56px 24px 28px}
+.hero .kicker{font:600 12px/1 var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
+.hero h1{font-size:44px;line-height:1.12;margin:12px 0 14px;letter-spacing:-.01em}
+.hero p{max-width:760px;color:var(--muted);margin:0 0 10px}
+.stats{display:flex;gap:28px;margin-top:22px;font-family:var(--sans)}
+.stats div{border-left:2px solid var(--accent);padding-left:12px}
+.stats b{display:block;font-size:26px;line-height:1.1}
+.stats span{font-size:13px;color:var(--muted)}
+.toc{position:sticky;top:16px;align-self:start;max-height:calc(100vh - 32px);overflow:auto;font:14px/1.45 var(--sans);padding:8px 0 24px}
+.toc .p{font-weight:700;margin:16px 0 6px;color:var(--ink);font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+.toc a{display:block;color:var(--muted);text-decoration:none;padding:3px 0 3px 10px;border-left:2px solid var(--line)}
+.toc a:hover,.toc a.on{color:var(--accent);border-left-color:var(--accent)}
+.toc .n{font-family:var(--mono);font-size:12px;margin-right:6px}
+main{min-width:0;padding-bottom:80px}
+.part{margin:28px 0 8px;padding-top:24px;border-top:1px solid var(--line)}
+.part .tag{font:600 12px/1 var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--accent2)}
+.part h2{font-size:32px;margin:8px 0 6px;line-height:1.2}
+.part p{color:var(--muted);margin:0}
+.lesson{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:28px 32px;margin:22px 0}
+@media (max-width:600px){.lesson{padding:20px 16px}}
+.lesson>header{display:grid;grid-template-columns:auto 1fr;gap:4px 16px;align-items:baseline;margin-bottom:12px}
+.lesson>header .num{font:700 30px/1 var(--mono);color:var(--accent);grid-row:span 2}
+.lesson>header h3{margin:0;font-size:25px;line-height:1.25}
+.lesson>header .meta{margin:0;font:13px/1.5 var(--sans);color:var(--muted)}
+.lesson>header .meta a{color:var(--muted)}
+.lesson h4{font:700 13px/1.3 var(--sans);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:22px 0 8px}
+.lesson ul,.lesson ol{padding-left:22px;margin:6px 0}
+.lesson li{margin:4px 0}
+.formula{background:var(--code);border-radius:10px;padding:12px 16px;margin:10px 0;font:18px/1.6 var(--serif);overflow-x:auto;text-align:center}
+.formula .lbl{display:block;text-align:left;font:12px/1.4 var(--sans);color:var(--muted);margin-bottom:2px}
+.frac{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;margin:0 .15em}
+.frac>span:first-child{border-bottom:1px solid currentColor;padding:0 .2em}
+.frac>span:last-child{padding:0 .2em}
+.note{border-left:3px solid var(--accent2);background:var(--soft);padding:10px 14px;border-radius:0 10px 10px 0;margin:12px 0}
+.demo{margin:20px -8px 6px;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:var(--bg)}
+.demo .stage{position:relative;width:100%;min-height:300px}
+.demo canvas{display:block;width:100%;touch-action:none}
+.demo .stage.grab canvas{cursor:grab}
+.demo .stage.grab canvas:active{cursor:grabbing}
+.demo figcaption{font:13px/1.5 var(--sans);color:var(--muted);padding:10px 16px;border-top:1px solid var(--line)}
+.demo figcaption b{color:var(--ink)}
+.controls{display:flex;flex-wrap:wrap;gap:12px 22px;padding:12px 16px;border-top:1px solid var(--line);font:13px/1.3 var(--sans);align-items:center}
+.controls label{display:flex;align-items:center;gap:8px;color:var(--muted)}
+.controls input[type=range]{width:150px;accent-color:var(--accent)}
+.controls output{font-family:var(--mono);color:var(--ink);min-width:3.5em}
+.controls button{font:600 13px/1 var(--sans);border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:8px 12px;border-radius:8px;cursor:pointer}
+.controls button:hover{border-color:var(--accent);color:var(--accent)}
+.controls button.primary{background:var(--accent);border-color:var(--accent);color:var(--bg)}
+.readout{font:13px/1.5 var(--mono);color:var(--ink);padding:10px 16px;border-top:1px solid var(--line);background:var(--panel);white-space:pre-wrap}
+.kbd{font:12px var(--mono);background:var(--code);padding:1px 6px;border-radius:5px}
+table.t{border-collapse:collapse;width:100%;font:14px/1.45 var(--sans);margin:10px 0}
+table.t th,table.t td{border-bottom:1px solid var(--line);padding:7px 8px;text-align:left;vertical-align:top}
+table.t th{color:var(--muted);font-weight:600}
+footer{max-width:1180px;margin:0 auto;padding:32px 24px 60px;border-top:1px solid var(--line);font:14px/1.6 var(--sans);color:var(--muted)}
+.overview{width:100%;border-collapse:collapse;font:14px/1.45 var(--sans);margin:18px 0}
+.overview td,.overview th{padding:8px;border-bottom:1px solid var(--line);text-align:left}
+</style>
+<script>
+/* ---------- Thư viện trợ giúp dùng chung cho mọi mô hình ---------- */
+window.Q = (function(){
+  const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  const colors = () => ({bg:css('--bg'),panel:css('--panel'),ink:css('--ink'),muted:css('--muted'),line:css('--line'),
+    a:css('--accent'),b:css('--accent2'),c:css('--accent3'),d:css('--accent4'),soft:css('--soft')});
+  // PRNG có hạt giống (mulberry32)
+  function rng(seed){ let s = (seed>>>0)||1; return function(){ s|=0; s=s+0x6D2B79F5|0; let t=Math.imul(s^s>>>15,1|s); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }; }
+  function normal(r){ r=r||Math.random; let u=0,v=0; while(!u)u=r(); while(!v)v=r(); return Math.sqrt(-2*Math.log(u))*Math.cos(2*Math.PI*v); }
+  // Canvas tự co giãn theo khung, có hỗ trợ màn hình retina. draw(ctx,w,h) được gọi lại khi đổi kích thước.
+  function canvas(stage, height, draw){
+    const cv=document.createElement('canvas'); stage.appendChild(cv);
+    const ctx=cv.getContext('2d'); const st={cv,ctx,w:0,h:height,draw};
+    function fit(){ const w=stage.clientWidth||600, d=window.devicePixelRatio||1;
+      cv.width=Math.round(w*d); cv.height=Math.round(height*d); cv.style.height=height+'px';
+      ctx.setTransform(d,0,0,d,0,0); st.w=w; st.h=height; st.draw && st.draw(ctx,w,height); }
+    st.redraw=()=>{ st.draw && st.draw(ctx,st.w,st.h); };
+    new ResizeObserver(fit).observe(stage); fit();
+    matchMedia('(prefers-color-scheme: dark)').addEventListener('change',st.redraw);
+    return st;
+  }
+  function el(tag,attrs,parent){ const e=document.createElement(tag); for(const k in (attrs||{})){ if(k==='text')e.textContent=attrs[k]; else if(k==='html')e.innerHTML=attrs[k]; else e.setAttribute(k,attrs[k]); } if(parent)parent.appendChild(e); return e; }
+  // Thanh trượt có nhãn. fmt định dạng giá trị hiển thị.
+  function slider(parent,label,min,max,step,val,onInput,fmt){
+    fmt=fmt||(v=>v); const l=el('label',{},parent); l.append(label+' ');
+    const i=el('input',{type:'range',min,max,step,value:val},l); const o=el('output',{},l); o.textContent=fmt(+val);
+    i.addEventListener('input',()=>{ o.textContent=fmt(+i.value); onInput(+i.value); });
+    return i;
+  }
+  function button(parent,label,onClick,primary){ const b=el('button',{type:'button',text:label},parent); if(primary)b.className='primary'; b.addEventListener('click',onClick); return b; }
+  // Xoay 3D bằng kéo chuột/chạm. Trả về đối tượng góc nhìn {yaw,pitch}; onChange gọi khi xoay.
+  function orbit(cv, view, onChange){
+    let drag=null; cv.parentElement.classList.add('grab');
+    cv.addEventListener('pointerdown',e=>{drag={x:e.clientX,y:e.clientY,yaw:view.yaw,pitch:view.pitch}; cv.setPointerCapture(e.pointerId); view.auto=false;});
+    cv.addEventListener('pointermove',e=>{ if(!drag)return; view.yaw=drag.yaw+(e.clientX-drag.x)*0.01; view.pitch=Math.max(-1.4,Math.min(1.4,drag.pitch+(e.clientY-drag.y)*0.01)); onChange(); });
+    cv.addEventListener('pointerup',()=>drag=null); cv.addEventListener('pointercancel',()=>drag=null);
+    return view;
+  }
+  // Chiếu phối cảnh điểm 3D (x,y,z) – trục z hướng lên – ra toạ độ màn hình.
+  function project(p, view, w, h, scale){
+    const cy=Math.cos(view.yaw), sy=Math.sin(view.yaw), cp=Math.cos(view.pitch), sp=Math.sin(view.pitch);
+    let x=p[0]*cy-p[1]*sy, y=p[0]*sy+p[1]*cy, z=p[2];
+    let y2=y*cp-z*sp, z2=y*sp+z*cp;           // y2: độ sâu, z2: chiều cao
+    const dist=view.dist||6, f=dist/(dist+y2);
+    return [w/2 + x*f*scale, h/2 - z2*f*scale, y2];
+  }
+  // Vòng lặp hoạt hình chỉ chạy khi khung đang hiện trên màn hình.
+  function loop(stage, step){
+    let vis=false, raf=0; const tick=t=>{ if(!vis)return; step(t); raf=requestAnimationFrame(tick); };
+    new IntersectionObserver(es=>{ vis=es[0].isIntersecting; if(vis){cancelAnimationFrame(raf); raf=requestAnimationFrame(tick);} }).observe(stage);
+  }
+  const fmt=(x,d=2)=>Number(x).toLocaleString('vi-VN',{minimumFractionDigits:d,maximumFractionDigits:d});
+  const pct=(x,d=1)=>fmt(100*x,d)+'%';
+  return {css,colors,rng,normal,canvas,el,slider,button,orbit,project,loop,fmt,pct};
+})();
+</script>
+</head>
+<body>
+<section class="hero">
+  <div class="kicker">Giáo trình Quant trực quan · Bản tiếng Việt</div>
+  <h1>Từ định lý Bayes đến tạo lập thị trường</h1>
+  <p>21 bài học theo một lộ trình duy nhất, khoảng 4 giờ: xác suất, thống kê, khoa học dữ liệu cho nghiên cứu định lượng, các nghiên cứu tình huống phỏng vấn, và giao dịch định lượng. Mỗi bài gồm ghi chú, công thức, ví dụ có lời giải, lưu ý khi phỏng vấn và một mô hình tương tác.</p>
+  <p>Có thể học tuần tự từ bài 01, hoặc nhảy thẳng tới chủ đề mà vòng phỏng vấn sắp tới cần.</p>
+  <div class="stats"><div><b>21</b><span>bài học</span></div><div><b>≈ 4 giờ</b><span>tổng thời lượng</span></div><div><b>6</b><span>phần</span></div></div>
+</section>
+<div class="wrap">
+<nav class="toc" id="toc"></nav>
+<main id="main">
+<!--CONTENT-->
+</main>
+</div>
+<footer>
+  <p><b>Nguồn và ghi công.</b> Lộ trình 21 bài bám theo mục lục của <a href="https://hft.md/learn/">hft.md</a>. hft.md chuyển thể nội dung từ <i>Quant Bible</i> của MIT Sloan Business Club, với đóng góp của Ravi Raghavan, Guang Cui, Evan Vogelbaum và Kyri Chen. Ghi chú tiếng Việt và toàn bộ mô hình tương tác trong trang này được viết mới, không sao chép văn bản hay mã nguồn của hft.md. Mỗi bài có liên kết tới bài gốc.</p>
+  <p>Tên các công ty chỉ dùng để cho biết nơi câu hỏi phỏng vấn được ghi nhận và thuộc quyền sở hữu của chủ thể tương ứng. Đây là tài liệu giáo dục, không phải khuyến nghị đầu tư.</p>
+</footer>
+<script>
+/* Mục lục tự sinh + đánh dấu bài đang đọc */
+(function(){
+  const toc=document.getElementById('toc');
+  document.querySelectorAll('.part, .lesson').forEach(s=>{
+    if(s.classList.contains('part')){ Q.el('div',{class:'p',text:s.dataset.short||s.querySelector('h2').textContent},toc); }
+    else { const a=Q.el('a',{href:'#'+s.id},toc); a.innerHTML='<span class="n">'+s.querySelector('.num').textContent+'</span>'+s.dataset.short; }
+  });
+  const links=[...toc.querySelectorAll('a')];
+  const io=new IntersectionObserver(es=>{ es.forEach(e=>{ if(e.isIntersecting) links.forEach(l=>l.classList.toggle('on',l.getAttribute('href')==='#'+e.target.id)); }); },{rootMargin:'-30% 0px -60% 0px'});
+  document.querySelectorAll('.lesson').forEach(s=>io.observe(s));
+})();
+</script>
+</body>
+</html>

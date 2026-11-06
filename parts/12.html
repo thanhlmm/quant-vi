@@ -1,0 +1,228 @@
+<section class="lesson" id="bai-12" data-short="Thành phần chính">
+<header>
+  <span class="num">12</span>
+  <h3>Thành phần chính (PCA)</h3>
+  <p class="meta">10 phút · Ứng dụng: Nhân tố đường cong lợi suất, phần dư trong kinh doanh chênh lệch thống kê · <a href="https://hft.md/learn/pca/">Bài gốc (tiếng Anh)</a></p>
+</header>
+
+<p>Mười kỳ hạn trên đường cong lợi suất hay năm trăm cổ phiếu thường cùng biến động theo một vài hướng chung. Phân tích thành phần chính (principal component analysis, PCA) tìm ra các hướng đó. Bàn lãi suất dùng chúng để phòng ngừa rủi ro, còn chiến lược chênh lệch thống kê giao dịch phần còn lại.</p>
+
+<h4>Ý chính</h4>
+<ul>
+  <li>PCA <b>xoay hệ trục</b> của dữ liệu đã trừ trung bình. Trục mới thứ nhất là hướng có phương sai lớn nhất. Trục thứ hai có phương sai lớn nhất trong phần còn lại và vuông góc với trục thứ nhất, cứ thế tiếp tục.</li>
+  <li>Các trục mới là <b>véc-tơ riêng</b> (eigenvector) của ma trận hiệp phương sai. Phương sai dọc mỗi trục là <b>giá trị riêng</b> (eigenvalue) tương ứng. Phân tích giá trị kỳ dị (singular value decomposition, SVD) cho cả hai thứ cùng lúc.</li>
+  <li>Giữ M thành phần đầu là cách <b>xấp xỉ hạng thấp</b> tốt nhất theo nghĩa bình phương. Tỉ lệ phương sai giữ lại bằng tổng M giá trị riêng đầu chia tổng tất cả.</li>
+  <li>Ba cách dùng: nén dữ liệu không cần biến mục tiêu; <b>hồi quy thành phần chính</b> (principal components regression, PCR); và cách nhìn lại ridge. Ridge co mạnh các thành phần nhỏ, còn PCR bỏ hẳn chúng.</li>
+  <li>Với biến động lợi suất trái phiếu, ba thành phần đầu là <b>mức</b> (level), <b>độ dốc</b> (slope) và <b>độ cong</b> (curvature). Với lợi suất cổ phiếu, thành phần đầu thường là cả thị trường, các thành phần kế tiếp là nhóm ngành.</li>
+  <li>PCA nhạy với đơn vị đo. Nếu các biến có thang đo khác nhau, hãy chuẩn hoá trước, tức là làm PCA trên ma trận tương quan.</li>
+</ul>
+
+<h4>Công thức</h4>
+<div class="formula"><span class="lbl">SVD của ma trận dữ liệu đã trừ trung bình theo cột (N × p)</span>X = U D Vᵀ,&nbsp;&nbsp; XᵀX = V D² Vᵀ,&nbsp;&nbsp; d<sub>1</sub> ≥ d<sub>2</sub> ≥ … ≥ d<sub>p</sub> ≥ 0</div>
+<div class="formula"><span class="lbl">Thành phần chính thứ j và phương sai của nó</span>z<sub>j</sub> = X v<sub>j</sub>,&nbsp;&nbsp; Var(z<sub>j</sub>) = <span class="frac"><span>d<sub>j</sub>²</span><span>N − 1</span></span> = λ<sub>j</sub>,&nbsp;&nbsp; Σ̂ v<sub>j</sub> = λ<sub>j</sub> v<sub>j</sub></div>
+<div class="formula"><span class="lbl">Tỉ lệ phương sai giữ lại và xấp xỉ hạng M</span><span class="frac"><span>λ<sub>1</sub> + … + λ<sub>M</sub></span><span>λ<sub>1</sub> + … + λ<sub>p</sub></span></span>,&nbsp;&nbsp; x̂ = Σ<sub>j ≤ M</sub> (xᵀv<sub>j</sub>) v<sub>j</sub>,&nbsp;&nbsp; phần dư x − x̂ = Σ<sub>j &gt; M</sub> (xᵀv<sub>j</sub>) v<sub>j</sub></div>
+<div class="formula"><span class="lbl">Ridge nhìn qua PCA: thừa số co của thành phần j. PCR thay nó bằng 1 nếu j ≤ M và 0 nếu j &gt; M</span><span class="frac"><span>d<sub>j</sub>²</span><span>d<sub>j</sub>² + λ</span></span></div>
+
+<h4>Ví dụ minh hoạ: PCA tay cho hai kỳ hạn</h4>
+<p>Biến động ngày của lợi suất 2 năm và 10 năm (đơn vị bp) có phương sai 5 và 2, hiệp phương sai 2. Tìm các thành phần chính và tách một ngày cụ thể.</p>
+<ol>
+  <li>Σ = [[5, 2], [2, 2]]. Vết bằng 7, định thức bằng 5 × 2 − 2 × 2 = 6. Giá trị riêng là nghiệm của λ² − 7λ + 6 = 0, tức λ<sub>1</sub> = 6 và λ<sub>2</sub> = 1.</li>
+  <li>Véc-tơ riêng của λ<sub>1</sub>: (5 − 6)a + 2b = 0 nên b = a/2. Chuẩn hoá: v<sub>1</sub> = (2, 1)/√5 ≈ (0,894; 0,447). Vuông góc với nó là v<sub>2</sub> = (−1, 2)/√5.</li>
+  <li>PC1 giải thích 6/7 ≈ 85,7% phương sai. Cả hai trọng số đều dương, nên đây là nhân tố “mức”: hai kỳ hạn cùng lên hoặc cùng xuống.</li>
+  <li>Một ngày có x = (3, 1) bp so với trung bình. Điểm số: z<sub>1</sub> = (3·2 + 1·1)/√5 = 7/√5 ≈ 3,13 và z<sub>2</sub> = (−3 + 2)/√5 ≈ −0,447.</li>
+  <li>Xấp xỉ bằng PC1: z<sub>1</sub>v<sub>1</sub> = (7/5)·(2, 1) = (2,8; 1,4). Phần dư là (0,2; −0,4), có bình phương độ dài 0,2 = z<sub>2</sub>². Phần dư này chính là thứ chiến lược chênh lệch thống kê đặt cược sẽ hồi về.</li>
+</ol>
+
+<figure class="demo">
+  <div class="stage" id="demo-12"></div>
+  <div class="controls" id="ctl-12"></div>
+  <div class="readout" id="out-12"></div>
+  <figcaption><b>Mô hình 12.1 – Đám mây biến động lợi suất 2, 10 và 30 năm trong không gian 3D.</b> Mỗi chấm là một ngày, sinh từ ba nhân tố mức, độ dốc, độ cong cộng nhiễu. Ba mũi tên là các véc-tơ riêng, dài 2 độ lệch chuẩn. Chọn “Giữ PC1 + PC2” để mọi điểm trượt xuống mặt phẳng mà hai thành phần đầu tạo ra; đoạn mảnh nối mỗi điểm với vị trí cũ là phần dư. Giảm độ lệch của nhân tố độ dốc để thấy PC2 co lại. Kéo để xoay.</figcaption>
+</figure>
+
+<figure class="demo">
+  <div class="stage" id="demo2-12"></div>
+  <div class="controls" id="ctl2-12"></div>
+  <div class="readout" id="out2-12"></div>
+  <figcaption><b>Mô hình 12.2 – Hệ số tải theo kỳ hạn và biểu đồ phương sai.</b> PCA trên 1.000 ngày biến động của mười kỳ hạn, từ 3 tháng đến 30 năm. Khung trái vẽ ba véc-tơ riêng đầu theo kỳ hạn: gần phẳng (mức), đơn điệu (độ dốc) và hình bướu (độ cong). Gạch đứt là hình dạng nhân tố dùng để sinh dữ liệu, đã chuẩn hoá. Khung phải là tỉ lệ phương sai của từng thành phần và đường tích luỹ. Tăng nhiễu riêng từng kỳ hạn để thấy PC3 nhoè đi trước tiên.</figcaption>
+</figure>
+
+<h4>Lưu ý khi phỏng vấn</h4>
+<ul>
+  <li><b>PCA trên 50 cổ phiếu, PC1 có trọng số dương gần bằng nhau</b>: đó là nhân tố thị trường, danh mục nắm mọi mã cùng lúc. Nó thường giải thích phần phương sai lớn nhất.</li>
+  <li>Dấu của véc-tơ riêng là tuỳ ý. Đổi dấu v<sub>j</sub> và z<sub>j</sub> cùng lúc không thay đổi gì. Khi so sánh qua thời gian, hãy cố định một quy ước dấu.</li>
+  <li>PCA không phải hồi quy. Nó cực tiểu khoảng cách vuông góc tới không gian con và không biết gì về biến mục tiêu. Thành phần có phương sai nhỏ vẫn có thể là thành phần dự báo tốt nhất cho y.</li>
+  <li>Ứng dụng: phòng ngừa danh mục trái phiếu theo ba nhân tố mức, độ dốc, độ cong; mô hình rủi ro dùng vài chục nhân tố thay cho ma trận hiệp phương sai 3.000 × 3.000; chênh lệch thống kê giao dịch phần dư sau khi bỏ vài thành phần đầu.</li>
+</ul>
+
+<script>
+(()=>{
+  // Phân rã riêng ma trận đối xứng bằng phép quay Jacobi; trả về giá trị riêng giảm dần và véc-tơ riêng.
+  function eig(A){
+    const n=A.length, a=A.map(r=>r.slice()), V=a.map((_,i)=>a.map((_,j)=>i===j?1:0));
+    for(let sw=0;sw<60;sw++){
+      let off=0; for(let p=0;p<n;p++) for(let q=p+1;q<n;q++) off+=a[p][q]*a[p][q];
+      if(off<1e-20) break;
+      for(let p=0;p<n;p++) for(let q=p+1;q<n;q++){
+        if(Math.abs(a[p][q])<1e-300) continue;
+        const th=(a[q][q]-a[p][p])/(2*a[p][q]), t=(th>=0?1:-1)/(Math.abs(th)+Math.sqrt(th*th+1)), c=1/Math.sqrt(t*t+1), s=t*c;
+        for(let k=0;k<n;k++){ const x=a[k][p], y=a[k][q]; a[k][p]=c*x-s*y; a[k][q]=s*x+c*y; }
+        for(let k=0;k<n;k++){ const x=a[p][k], y=a[q][k]; a[p][k]=c*x-s*y; a[q][k]=s*x+c*y; }
+        for(let k=0;k<n;k++){ const x=V[k][p], y=V[k][q]; V[k][p]=c*x-s*y; V[k][q]=s*x+c*y; }
+      }
+    }
+    const idx=[...Array(n).keys()].sort((i,j)=>a[j][j]-a[i][i]);
+    return {val:idx.map(i=>Math.max(0,a[i][i])), vec:idx.map(i=>V.map(r=>r[i]))};
+  }
+  function cov(X){
+    const n=X.length, p=X[0].length, m=new Array(p).fill(0);
+    X.forEach(x=>x.forEach((v,j)=>m[j]+=v/n));
+    const C=Array.from({length:p},()=>new Array(p).fill(0));
+    X.forEach(x=>{ for(let i=0;i<p;i++){ const a=x[i]-m[i]; for(let j=i;j<p;j++) C[i][j]+=a*(x[j]-m[j]); } });
+    for(let i=0;i<p;i++) for(let j=i;j<p;j++){ C[i][j]/=(n-1); C[j][i]=C[i][j]; }
+    return {C,m};
+  }
+  // Quy ước dấu: PC1 tổng dương, PC2 kỳ hạn dài trừ ngắn dương, PC3 giữa đường cong dương.
+  function fixSigns(vec,mid){
+    const flip=v=>v.map(x=>-x);
+    if(vec[0].reduce((s,x)=>s+x,0)<0) vec[0]=flip(vec[0]);
+    if(vec[1] && vec[1][vec[1].length-1]-vec[1][0]<0) vec[1]=flip(vec[1]);
+    if(vec[2] && vec[2][mid]<0) vec[2]=flip(vec[2]);
+    return vec;
+  }
+
+  /* ---------- Mô hình 12.1: đám mây 3D của ba kỳ hạn ---------- */
+  {
+    const stage=document.getElementById('demo-12'), ctl=document.getElementById('ctl-12'), out=document.getElementById('out-12');
+    const LV=[1,1,1], SL=[-1,0.3,1], CV=[-0.6,1,-0.4], N=350;
+    const S={sL:8, sS:4, sC:2, sE:0.8, seed:1, M:3};
+    const view={yaw:-0.8,pitch:0.4,dist:7,auto:true};
+    let X=[], E=null, mu=[0,0,0], pos=[], tgt=[], c=null;
+    function gen(){
+      const r=Q.rng(S.seed*3301+9); X=[];
+      for(let i=0;i<N;i++){ const a=S.sL*Q.normal(r), b=S.sS*Q.normal(r), g=S.sC*Q.normal(r);
+        X.push([0,1,2].map(k=>a*LV[k]+b*SL[k]+g*CV[k]+S.sE*Q.normal(r))); }
+      const cv=cov(X); mu=cv.m; E=eig(cv.C); E.vec=fixSigns(E.vec,1);
+      pos=X.map(x=>x.map((v,k)=>v-mu[k]));
+      target();
+    }
+    function target(){
+      tgt=X.map(x=>{ const d=x.map((v,k)=>v-mu[k]), h=[0,0,0];
+        for(let j=0;j<S.M;j++){ const z=d[0]*E.vec[j][0]+d[1]*E.vec[j][1]+d[2]*E.vec[j][2]; for(let k=0;k<3;k++) h[k]+=z*E.vec[j][k]; }
+        return h; });
+      report();
+    }
+    function report(){
+      const tot=E.val.reduce((s,v)=>s+v,0), nm=['2 năm','10 năm','30 năm'];
+      const lines=E.val.map((v,j)=>`PC${j+1}: λ = ${Q.fmt(v,2)} bp²  (${Q.pct(v/tot,1)})   hệ số tải (${nm.join('; ')}) = (${E.vec[j].map(x=>Q.fmt(x,2)).join('; ')})`);
+      const kept=E.val.slice(0,S.M).reduce((s,v)=>s+v,0);
+      out.textContent=lines.join('\n')+`\nGiữ ${S.M} thành phần: còn ${Q.pct(kept/tot,1)} phương sai; phương sai phần dư = ${Q.fmt(tot-kept,2)} bp²`;
+    }
+    function draw(ctx,w,h){
+      const C=Q.colors(); ctx.clearRect(0,0,w,h);
+      const scale=Math.min(w,h*1.3)/3.5, K=1.25/(2.2*Math.sqrt(E.val[0]||1)), P=p=>Q.project([p[0]*K,p[1]*K,p[2]*K],view,w,h,scale);
+      const seg=(a,b)=>{ const A=P(a), B=P(b); ctx.beginPath(); ctx.moveTo(A[0],A[1]); ctx.lineTo(B[0],B[1]); ctx.stroke(); };
+      const R=1.15/K;
+      ctx.strokeStyle=C.line; ctx.lineWidth=1;
+      const nm=['Δ 2 năm','Δ 10 năm','Δ 30 năm'];
+      ctx.font='12px -apple-system,sans-serif';
+      for(let k=0;k<3;k++){ const a=[0,0,0], b=[0,0,0]; a[k]=-R; b[k]=R; ctx.strokeStyle=C.muted; ctx.globalAlpha=0.6; seg(a,b); ctx.globalAlpha=1;
+        const L=P(b); ctx.fillStyle=C.muted; ctx.fillText(nm[k],L[0]+3,L[1]); }
+      // mặt phẳng hoặc đường thẳng được giữ lại
+      const s1=2.6*Math.sqrt(E.val[0]), s2=2.6*Math.sqrt(E.val[1]), v1=E.vec[0], v2=E.vec[1];
+      if(S.M===2){
+        const cs=[[1,1],[1,-1],[-1,-1],[-1,1]].map(([u,v])=>P([0,1,2].map(k=>u*s1*v1[k]+v*s2*v2[k])));
+        ctx.fillStyle=C.a; ctx.globalAlpha=0.12; ctx.beginPath(); cs.forEach((q,i)=>i?ctx.lineTo(q[0],q[1]):ctx.moveTo(q[0],q[1])); ctx.closePath(); ctx.fill();
+        ctx.globalAlpha=0.4; ctx.strokeStyle=C.a; ctx.stroke(); ctx.globalAlpha=1;
+      } else if(S.M===1){ ctx.strokeStyle=C.a; ctx.globalAlpha=0.4; ctx.lineWidth=2; seg(v1.map(x=>-s1*x),v1.map(x=>s1*x)); ctx.lineWidth=1; ctx.globalAlpha=1; }
+      // phần dư và điểm
+      const orig=X.map(x=>x.map((v,k)=>v-mu[k]));
+      if(S.M<3){ ctx.strokeStyle=C.b; ctx.globalAlpha=0.35; orig.forEach((o,i)=>seg(o,pos[i])); ctx.globalAlpha=1; }
+      const items=pos.map((p,i)=>({q:P(p),i})).sort((a,b)=>b.q[2]-a.q[2]);
+      ctx.fillStyle=C.c;
+      items.forEach(it=>{ ctx.globalAlpha=0.8; ctx.beginPath(); ctx.arc(it.q[0],it.q[1],2.6,0,7); ctx.fill(); });
+      ctx.globalAlpha=1;
+      // mũi tên véc-tơ riêng, dài 2σ
+      const cols=[C.a,C.d,C.b];
+      E.vec.forEach((v,j)=>{ const L=2*Math.sqrt(E.val[j]), tip=v.map(x=>x*L), A=P([0,0,0]), B=P(tip);
+        ctx.strokeStyle=cols[j]; ctx.fillStyle=cols[j]; ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(A[0],A[1]); ctx.lineTo(B[0],B[1]); ctx.stroke();
+        const ang=Math.atan2(B[1]-A[1],B[0]-A[0]); ctx.beginPath(); ctx.moveTo(B[0],B[1]); ctx.lineTo(B[0]-9*Math.cos(ang-0.4),B[1]-9*Math.sin(ang-0.4)); ctx.lineTo(B[0]-9*Math.cos(ang+0.4),B[1]-9*Math.sin(ang+0.4)); ctx.closePath(); ctx.fill();
+        ctx.font='bold 12px -apple-system,sans-serif'; ctx.fillText('PC'+(j+1),B[0]+5,B[1]-5); });
+      ctx.lineWidth=1; ctx.font='12px -apple-system,sans-serif'; ctx.fillStyle=C.muted;
+      ctx.fillText('Mũi tên: véc-tơ riêng × 2σ.  Đoạn cam: phần dư khi bỏ bớt thành phần.',12,18);
+    }
+    gen();
+    c=Q.canvas(stage,400,draw);
+    Q.orbit(c.cv,view,()=>c.redraw());
+    Q.loop(stage,()=>{ let mv=false;
+      for(let i=0;i<pos.length;i++) for(let k=0;k<3;k++){ const d=tgt[i][k]-pos[i][k]; if(Math.abs(d)>1e-3){ pos[i][k]+=d*0.1; mv=true; } else pos[i][k]=tgt[i][k]; }
+      if(view.auto){ view.yaw+=0.003; mv=true; } if(mv) c.redraw(); });
+    const keep=m=>()=>{ S.M=m; target(); c.redraw(); };
+    Q.button(ctl,'Giữ cả 3',keep(3),true); Q.button(ctl,'Giữ PC1 + PC2',keep(2)); Q.button(ctl,'Chỉ giữ PC1',keep(1));
+    const re=()=>{ gen(); c.redraw(); };
+    Q.slider(ctl,'σ nhân tố mức',1,12,0.5,S.sL,v=>{S.sL=v;re();},v=>Q.fmt(v,1)+' bp');
+    Q.slider(ctl,'σ độ dốc',0,8,0.5,S.sS,v=>{S.sS=v;re();},v=>Q.fmt(v,1)+' bp');
+    Q.slider(ctl,'σ độ cong',0,6,0.5,S.sC,v=>{S.sC=v;re();},v=>Q.fmt(v,1)+' bp');
+    Q.slider(ctl,'σ nhiễu riêng',0,3,0.1,S.sE,v=>{S.sE=v;re();},v=>Q.fmt(v,1)+' bp');
+    Q.button(ctl,'Lấy mẫu mới',()=>{S.seed++;re();});
+  }
+
+  /* ---------- Mô hình 12.2: hệ số tải theo kỳ hạn ---------- */
+  {
+    const stage=document.getElementById('demo2-12'), ctl=document.getElementById('ctl2-12'), out=document.getElementById('out2-12');
+    const T=[0.25,0.5,1,2,3,5,7,10,20,30], NAMES=['3T','6T','1N','2N','3N','5N','7N','10N','20N','30N'], ND=1000;
+    const lt=T.map(t=>Math.log(t/3));
+    const F=[T.map(()=>1), lt.map(x=>x/2.4), lt.map(x=>1-(x/1.6)**2)];
+    const S={s:[8,4,2], e:0.8, seed:1, truth:true};
+    let E=null, c=null;
+    function run(){
+      const r=Q.rng(S.seed*911+3), X=[];
+      for(let i=0;i<ND;i++){ const f=S.s.map(s=>s*Q.normal(r)); X.push(T.map((_,k)=>f[0]*F[0][k]+f[1]*F[1][k]+f[2]*F[2][k]+S.e*Q.normal(r))); }
+      E=eig(cov(X).C); E.vec=fixSigns(E.vec,4);
+      const tot=E.val.reduce((s,v)=>s+v,0); let cum=0;
+      out.textContent=[0,1,2].map(j=>{ cum+=E.val[j]; return `PC${j+1}: ${Q.pct(E.val[j]/tot,1)} phương sai, tích luỹ ${Q.pct(cum/tot,1)}`; }).join('\n')+
+        `\nHệ số tải PC2 từ 3 tháng đến 30 năm: ${Q.fmt(E.vec[1][0],2)} → ${Q.fmt(E.vec[1][T.length-1],2)}.  Các thành phần 4 đến 10 cộng lại: ${Q.pct(1-cum/tot,1)}`;
+    }
+    function draw(ctx,w,h){
+      const C=Q.colors(); ctx.clearRect(0,0,w,h); ctx.font='12px -apple-system,sans-serif';
+      const cols=[C.a,C.d,C.b];
+      // khung trái: hệ số tải
+      const l=40, r=w*0.62, t=30, b=h-34, X=k=>l+(r-l)*(lt[k]-lt[0])/(lt[T.length-1]-lt[0]), Y=v=>(t+b)/2-v/0.75*(b-t)/2;
+      ctx.strokeStyle=C.line; ctx.strokeRect(l,t,r-l,b-t); ctx.beginPath(); ctx.moveTo(l,Y(0)); ctx.lineTo(r,Y(0)); ctx.stroke();
+      ctx.fillStyle=C.muted; ctx.fillText('Hệ số tải theo kỳ hạn',l,t-10);
+      T.forEach((_,k)=>{ if(k%2===0||k===T.length-1) ctx.fillText(NAMES[k],X(k)-10,b+16); });
+      [0.5,-0.5].forEach(v=>ctx.fillText(Q.fmt(v,1),6,Y(v)+4));
+      if(S.truth){ ctx.setLineDash([4,4]); ctx.lineWidth=1.2;
+        F.forEach((f,j)=>{ const m=Math.sqrt(f.reduce((s,x)=>s+x*x,0)); ctx.strokeStyle=cols[j]; ctx.globalAlpha=0.7; ctx.beginPath(); f.forEach((x,k)=>k?ctx.lineTo(X(k),Y(x/m)):ctx.moveTo(X(k),Y(x/m))); ctx.stroke(); });
+        ctx.setLineDash([]); ctx.globalAlpha=1; }
+      const lab=['PC1 mức','PC2 độ dốc','PC3 độ cong'];
+      for(let j=0;j<3;j++){ ctx.strokeStyle=cols[j]; ctx.fillStyle=cols[j]; ctx.lineWidth=2.5; ctx.beginPath();
+        E.vec[j].forEach((x,k)=>k?ctx.lineTo(X(k),Y(x)):ctx.moveTo(X(k),Y(x))); ctx.stroke();
+        E.vec[j].forEach((x,k)=>{ ctx.beginPath(); ctx.arc(X(k),Y(x),3,0,7); ctx.fill(); });
+        ctx.fillText(lab[j],l+8+j*92,t+16); }
+      ctx.lineWidth=1;
+      // khung phải: tỉ lệ phương sai
+      const l2=w*0.68, r2=w-16, nb=6, tot=E.val.reduce((s,v)=>s+v,0), bw=(r2-l2)/nb, Y2=v=>b-v*(b-t);
+      ctx.strokeStyle=C.line; ctx.strokeRect(l2,t,r2-l2,b-t);
+      ctx.fillStyle=C.muted; ctx.fillText('Tỉ lệ phương sai',l2,t-10);
+      let cum=0; const pts=[];
+      for(let j=0;j<nb;j++){ const f=E.val[j]/tot; cum+=f; ctx.fillStyle=j<3?cols[j]:C.muted; ctx.globalAlpha=0.85;
+        ctx.fillRect(l2+j*bw+4,Y2(f),bw-8,b-Y2(f)); ctx.globalAlpha=1; ctx.fillStyle=C.muted; ctx.fillText(String(j+1),l2+j*bw+bw/2-3,b+16);
+        pts.push([l2+j*bw+bw/2,Y2(cum)]); }
+      ctx.strokeStyle=C.ink; ctx.beginPath(); pts.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1])); ctx.stroke();
+      pts.forEach(p=>{ ctx.fillStyle=C.ink; ctx.beginPath(); ctx.arc(p[0],p[1],2.5,0,7); ctx.fill(); });
+      ctx.fillStyle=C.muted; ctx.fillText('100%',l2-34,Y2(1)+4); ctx.fillText('0%',l2-20,b+4); ctx.fillText('— tích luỹ',r2-72,t+50);
+    }
+    run();
+    c=Q.canvas(stage,320,draw);
+    const re=()=>{ run(); c.redraw(); };
+    Q.slider(ctl,'σ mức',0.5,12,0.5,S.s[0],v=>{S.s[0]=v;re();},v=>Q.fmt(v,1));
+    Q.slider(ctl,'σ độ dốc',0,8,0.5,S.s[1],v=>{S.s[1]=v;re();},v=>Q.fmt(v,1));
+    Q.slider(ctl,'σ độ cong',0,6,0.5,S.s[2],v=>{S.s[2]=v;re();},v=>Q.fmt(v,1));
+    Q.slider(ctl,'σ nhiễu riêng',0,4,0.1,S.e,v=>{S.e=v;re();},v=>Q.fmt(v,1));
+    const bt=Q.button(ctl,'Ẩn nhân tố thật',()=>{ S.truth=!S.truth; bt.textContent=S.truth?'Ẩn nhân tố thật':'Hiện nhân tố thật'; c.redraw(); });
+    Q.button(ctl,'Lấy mẫu mới',()=>{S.seed++;re();});
+  }
+})();
+</script>
+</section>

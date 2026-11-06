@@ -1,0 +1,188 @@
+<section class="lesson" id="bai-03" data-short="Phương sai">
+<header>
+  <span class="num">03</span>
+  <h3>Phương sai và cơ sở của đa dạng hoá</h3>
+  <p class="meta">10 phút · Ứng dụng: rủi ro danh mục và đa dạng hoá · <a href="https://hft.md/learn/variance/">Bài gốc (tiếng Anh)</a></p>
+</header>
+
+<p>Kỳ vọng cho biết trung bình một chiến lược kiếm được bao nhiêu. Phương sai cho biết kết quả dao động quanh mức đó ra sao. Hai chiến lược cùng lợi thế có thể khác hẳn nhau: một cái chạy được lâu dài, cái kia cháy tài khoản trước khi lợi thế kịp thể hiện.</p>
+
+<h4>Ý chính</h4>
+<ul>
+  <li><b>Phương sai</b> (variance) là kỳ vọng của bình phương khoảng cách tới trung bình. <b>Độ lệch chuẩn</b> (standard deviation) σ là căn bậc hai của nó, có cùng đơn vị với X.</li>
+  <li>Cộng một hằng số không làm thay đổi độ phân tán. Nhân với a thì phương sai nhân với a<sup>2</sup>.</li>
+  <li>Phương sai của tổng có thêm số hạng chéo 2·Cov(X, Y). Chỉ bỏ được số hạng này khi X và Y không tương quan.</li>
+  <li>Có thể coi mỗi độ lệch chuẩn là một mũi tên. Góc giữa hai mũi tên có cos bằng hệ số tương quan ρ. Độ biến động của tổng là độ dài mũi tên tổng hợp, theo định lý cos.</li>
+  <li><b>Quy tắc căn n</b>: trung bình của n biến độc lập có độ lệch chuẩn σ/√n. Muốn giảm sai số một nửa phải có gấp bốn lần dữ liệu.</li>
+  <li>Khi các biến có cùng tương quan ρ &gt; 0, đa dạng hoá có giới hạn. Độ lệch chuẩn của trung bình không xuống dưới σ√ρ, dù n lớn tới đâu.</li>
+</ul>
+
+<h4>Công thức</h4>
+<div class="formula"><span class="lbl">Định nghĩa và dạng tiện tính toán</span>Var(X) = E[(X − μ)<sup>2</sup>] = E[X<sup>2</sup>] − (E[X])<sup>2</sup>, &nbsp;&nbsp; σ = √Var(X)</div>
+<div class="formula"><span class="lbl">Biến đổi tuyến tính: hằng số b biến mất</span>Var(aX + b) = a<sup>2</sup> · Var(X)</div>
+<div class="formula"><span class="lbl">Tổng và hiệu của hai biến, với Cov(X, Y) = ρ σ<sub>X</sub> σ<sub>Y</sub></span>σ<sup>2</sup><sub>X ± Y</sub> = σ<sup>2</sup><sub>X</sub> + σ<sup>2</sup><sub>Y</sub> ± 2ρ σ<sub>X</sub> σ<sub>Y</sub></div>
+<div class="formula"><span class="lbl">Trung bình của n biến cùng phương sai σ<sup>2</sup>, mọi cặp có tương quan ρ (ρ = 0 là trường hợp độc lập)</span>Var(X̄) = σ<sup>2</sup> · [ <span class="frac"><span>1</span><span>n</span></span> + (1 − <span class="frac"><span>1</span><span>n</span></span>) · ρ ] &nbsp;→&nbsp; ρσ<sup>2</sup> khi n → ∞</div>
+<div class="formula"><span class="lbl">Tỉ lệ phòng ngừa tối thiểu hoá phương sai của X − hY</span>h* = <span class="frac"><span>ρ σ<sub>X</sub></span><span>σ<sub>Y</sub></span></span>, &nbsp;&nbsp; σ<sub>X − h*Y</sub> = σ<sub>X</sub> √(1 − ρ<sup>2</sup>)</div>
+
+<h4>Ví dụ minh hoạ: từ xúc xắc tới danh mục hai chiến lược</h4>
+<ol>
+  <li>Xúc xắc cân đối: E[X<sup>2</sup>] = (1 + 4 + 9 + 16 + 25 + 36)/6 = 91/6. Mà (E[X])<sup>2</sup> = 3,5<sup>2</sup> = 12,25. Vậy Var(X) = 91/6 − 12,25 = 35/12 ≈ 2,92, và σ ≈ 1,71.</li>
+  <li>Hai tài sản có σ<sub>X</sub> = 3, σ<sub>Y</sub> = 2, ρ = 0,3. Khi nắm cả hai: σ<sub>X+Y</sub> = √(9 + 4 + 2 · 0,3 · 6) = √16,6 ≈ 4,07. Con số này nhỏ hơn 3 + 2 = 5.</li>
+  <li>Mua X và bán Y: σ<sub>X−Y</sub> = √(13 − 3,6) = √9,4 ≈ 3,07. Tương quan thấp nên phòng ngừa không giảm rủi ro được bao nhiêu.</li>
+  <li>Nếu ρ = 0,8, tỉ lệ phòng ngừa tối ưu là h* = 0,8 · 3/2 = 1,2. Rủi ro còn lại là 3 · √(1 − 0,64) = 3 · 0,6 = 1,8.</li>
+  <li>Hai chiến lược cùng độ biến động năm 10%, tương quan 0,5, chia vốn đều. Var = 0,25 · 0,01 + 0,25 · 0,01 + 2 · 0,5 · 0,5 · 0,5 · 0,01 = 0,0075, nên σ ≈ 8,7%. Nếu không tương quan thì σ ≈ 7,1%; tương quan hoàn hảo thì vẫn là 10%.</li>
+</ol>
+
+<figure class="demo">
+  <div class="stage" id="demo-03"></div>
+  <div class="controls" id="ctl-03"></div>
+  <div class="readout" id="out-03"></div>
+  <figcaption><b>Mô hình 3.1 – Độ lệch chuẩn là mũi tên trong không gian 3D.</b> Mũi tên xanh dương dài σ<sub>X</sub>, mũi tên cam dài σ<sub>Y</sub>, góc giữa chúng là arccos ρ. Mũi tên xanh lá là độ biến động của danh mục. Ở chế độ phòng ngừa X − hY, mũi tên cam đổi chiều và co giãn theo h. Mũi tên xanh lá ngắn nhất khi nó vuông góc với Y, đó là h*. Kéo để xoay; bấm “Đặt h = h*” để xem phòng ngừa tối ưu.</figcaption>
+</figure>
+
+<figure class="demo">
+  <div class="stage" id="demo2-03"></div>
+  <div class="controls" id="ctl2-03"></div>
+  <div class="readout" id="out2-03"></div>
+  <figcaption><b>Mô hình 3.2 – Quy tắc căn n và mức sàn của đa dạng hoá.</b> Nửa trên: 150 lần rút một biến đơn lẻ (cam) đặt cạnh 150 trung bình của n biến (xanh dương); dải mờ là ±1σ lý thuyết. Nửa dưới: σ của trung bình theo n trên trục log; chấm là ước lượng từ mô phỏng. Tăng ρ để thấy đường cong nằm bẹt trên mức sàn √ρ.</figcaption>
+</figure>
+
+<h4>Lưu ý khi phỏng vấn</h4>
+<ul>
+  <li>Khi viết Var(X + Y) = Var(X) + Var(Y), hãy nói rõ “với điều kiện X và Y không tương quan”. Quên điều kiện này là lỗi rất hay gặp.</li>
+  <li>Đừng cộng độ lệch chuẩn. Cộng phương sai rồi mới lấy căn. Độ lệch chuẩn chỉ cộng thẳng được khi ρ = 1.</li>
+  <li>Var(aX + b) không có thành phần b. Thêm 5 đô vào mọi kết quả chỉ dời trung bình.</li>
+  <li>Câu hỏi về danh mục n chiến lược: nếu không tương quan thì rủi ro giảm theo 1/√n. Nếu tương quan ρ thì rủi ro dừng ở khoảng σ√ρ. Vì vậy quỹ định lượng cần nhiều lệnh nhỏ, tương quan yếu.</li>
+</ul>
+
+<script>
+(()=>{
+  /* ---------- Mô hình 3.1: mũi tên độ lệch chuẩn ---------- */
+  const stage=document.getElementById('demo-03'), ctl=document.getElementById('ctl-03'), out=document.getElementById('out-03');
+  const S={sx:3, sy:2, rho:0.3, hedge:false, h:1};
+  const view={yaw:-0.35,pitch:0.35,dist:14,auto:true};
+  const add=(a,b)=>[a[0]+b[0],a[1]+b[1],a[2]+b[2]], mul=(a,k)=>[a[0]*k,a[1]*k,a[2]*k];
+  function vecs(){
+    const th=Math.acos(S.rho), X=[S.sx,0,0], Y=[S.sy*Math.cos(th),0,S.sy*Math.sin(th)];
+    const w=S.hedge?-S.h:1, Yw=mul(Y,w);
+    return {th,X,Y,Yw,R:add(X,Yw)};
+  }
+  function len(v){ return Math.hypot(v[0],v[1],v[2]); }
+  function report(){
+    const {R}=vecs(), w=S.hedge?-S.h:1;
+    const v=S.sx*S.sx+w*w*S.sy*S.sy+2*w*S.rho*S.sx*S.sy;
+    const name=S.hedge?`X − ${Q.fmt(S.h,2)}·Y`:'X + Y';
+    let s=`Góc giữa hai mũi tên: arccos(${Q.fmt(S.rho,2)}) = ${Q.fmt(Math.acos(S.rho)*180/Math.PI,1)}°\n`+
+      `σ²(${name}) = ${Q.fmt(S.sx*S.sx,2)} + ${Q.fmt(w*w*S.sy*S.sy,2)} ${w<0?'−':'+'} ${Q.fmt(Math.abs(2*w*S.rho*S.sx*S.sy),2)} = ${Q.fmt(v,3)}  →  σ = ${Q.fmt(Math.sqrt(Math.max(0,v)),3)} (độ dài mũi tên: ${Q.fmt(len(R),3)})\n`;
+    const hs=S.rho*S.sx/S.sy;
+    s+=`Phòng ngừa tối ưu: h* = ρσX/σY = ${Q.fmt(hs,3)}, rủi ro còn lại σX√(1 − ρ²) = ${Q.fmt(S.sx*Math.sqrt(1-S.rho*S.rho),3)}`;
+    out.textContent=s;
+  }
+  const cv=Q.canvas(stage,380,draw);
+  function arrow(ctx,a,b,col,wid,w,h,scale){
+    const P=p=>Q.project([p[0]-1.6,p[1],p[2]-1.1],view,w,h,scale), A=P(a), B=P(b);
+    ctx.strokeStyle=col; ctx.fillStyle=col; ctx.lineWidth=wid; ctx.beginPath(); ctx.moveTo(A[0],A[1]); ctx.lineTo(B[0],B[1]); ctx.stroke();
+    const ang=Math.atan2(B[1]-A[1],B[0]-A[0]), L=Math.hypot(B[0]-A[0],B[1]-A[1]); if(L<4) return;
+    const hl=Math.min(14,L*0.4); ctx.beginPath(); ctx.moveTo(B[0],B[1]);
+    ctx.lineTo(B[0]-hl*Math.cos(ang-0.4),B[1]-hl*Math.sin(ang-0.4)); ctx.lineTo(B[0]-hl*Math.cos(ang+0.4),B[1]-hl*Math.sin(ang+0.4)); ctx.closePath(); ctx.fill();
+  }
+  function draw(ctx,w,h){
+    const C=Q.colors(); ctx.clearRect(0,0,w,h);
+    const scale=Math.min(w,h*1.5)/8.5, P=p=>Q.project([p[0]-1.6,p[1],p[2]-1.1],view,w,h,scale);
+    const {th,X,Y,Yw,R}=vecs();
+    // lưới sàn mờ (mặt phẳng y–x tại z = 0)
+    ctx.strokeStyle=C.line; ctx.lineWidth=1;
+    for(let i=-4;i<=4;i++){ let a=P([i,-4,0]),b=P([i,4,0]); ctx.beginPath(); ctx.moveTo(a[0],a[1]); ctx.lineTo(b[0],b[1]); ctx.stroke();
+      a=P([-4,i,0]); b=P([4,i,0]); ctx.beginPath(); ctx.moveTo(a[0],a[1]); ctx.lineTo(b[0],b[1]); ctx.stroke(); }
+    // hình bình hành
+    const pg=[[0,0,0],X,R,Yw].map(P);
+    ctx.fillStyle=C.a; ctx.globalAlpha=0.12; ctx.beginPath(); pg.forEach((p,j)=>j?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1])); ctx.closePath(); ctx.fill(); ctx.globalAlpha=1;
+    ctx.setLineDash([4,4]); ctx.strokeStyle=C.muted;
+    [[X,R],[Yw,R]].forEach(([a,b])=>{ const A=P(a),B=P(b); ctx.beginPath(); ctx.moveTo(A[0],A[1]); ctx.lineTo(B[0],B[1]); ctx.stroke(); });
+    // trong chế độ phòng ngừa: hướng của Y kéo dài, để thấy chân đường vuông góc
+    if(S.hedge){ const A=P(mul(Y,-3)),B=P(mul(Y,1.5)); ctx.beginPath(); ctx.moveTo(A[0],A[1]); ctx.lineTo(B[0],B[1]); ctx.stroke(); }
+    ctx.setLineDash([]);
+    // cung góc giữa X và Y
+    ctx.strokeStyle=C.ink; ctx.lineWidth=1.2; ctx.beginPath();
+    for(let k=0;k<=24;k++){ const a=th*k/24, p=P([0.8*Math.cos(a),0,0.8*Math.sin(a)]); k?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]); } ctx.stroke();
+    const o=[0,0,0];
+    arrow(ctx,o,X,C.c,3,w,h,scale); arrow(ctx,o,Yw,C.b,3,w,h,scale); arrow(ctx,o,R,C.a,4,w,h,scale);
+    ctx.font='13px -apple-system,sans-serif'; ctx.lineWidth=1;
+    const lab=(v,t,col)=>{ const p=P(mul(v,1.08)); ctx.fillStyle=col; ctx.fillText(t,p[0]+6,p[1]-6); };
+    lab(X,'σX',C.c); lab(Yw,S.hedge?'−h·σY':'σY',C.b); lab(R,S.hedge?'σ(X − hY)':'σ(X + Y)',C.a);
+    ctx.fillStyle=C.muted; ctx.fillText('Góc giữa σX và σY: cos(góc) = ρ',12,20);
+  }
+  Q.orbit(cv.cv,view,()=>cv.redraw());
+  Q.loop(stage,()=>{ if(view.auto){ view.yaw+=0.004; cv.redraw(); } });
+  const upd=()=>{ report(); cv.redraw(); };
+  Q.slider(ctl,'σX',0.5,4,0.1,S.sx,v=>{S.sx=v;upd();},v=>Q.fmt(v,1));
+  Q.slider(ctl,'σY',0.5,4,0.1,S.sy,v=>{S.sy=v;upd();},v=>Q.fmt(v,1));
+  Q.slider(ctl,'Tương quan ρ',-1,1,0.01,S.rho,v=>{S.rho=v;upd();},v=>Q.fmt(v,2));
+  const sh=Q.slider(ctl,'Tỉ lệ phòng ngừa h',0,2.5,0.01,S.h,v=>{S.h=v;upd();},v=>Q.fmt(v,2));
+  const bm=Q.button(ctl,'Chế độ: X + Y',()=>{ S.hedge=!S.hedge; bm.textContent=S.hedge?'Chế độ: X − hY':'Chế độ: X + Y'; upd(); });
+  Q.button(ctl,'Đặt h = h*',()=>{ if(!S.hedge){ S.hedge=true; bm.textContent='Chế độ: X − hY'; } const hs=Math.max(0,Math.min(2.5,S.rho*S.sx/S.sy)); sh.value=hs; sh.dispatchEvent(new Event('input')); },true);
+  report();
+})();
+
+(()=>{
+  /* ---------- Mô hình 3.2: quy tắc căn n và mức sàn ---------- */
+  const stage=document.getElementById('demo2-03'), ctl=document.getElementById('ctl2-03'), out=document.getElementById('out2-03');
+  const S={n:16, rho:0, seed:5};
+  const M=150, NMAX=128, NS=[1,2,4,8,16,32,64,128];
+  let singles=[], avgs=[], emp=[];
+  const sdT=(n,rho)=>Math.sqrt(1/n+(1-1/n)*rho);
+  // Mô hình một nhân tố: X_i = √ρ·F + √(1−ρ)·e_i, mỗi biến có σ = 1, mọi cặp có tương quan ρ
+  function sample(){
+    const r=Q.rng(S.seed); singles=[]; avgs=[];
+    for(let m=0;m<M;m++){ const F=Q.normal(r); let s=0, first=0;
+      for(let i=0;i<S.n;i++){ const x=Math.sqrt(S.rho)*F+Math.sqrt(1-S.rho)*Q.normal(r); if(!i) first=x; s+=x; }
+      singles.push(first); avgs.push(s/S.n); }
+    // σ thực nghiệm của trung bình tại một số n, mỗi điểm 400 lần lặp
+    emp=NS.map(n=>{ let a=0,b=0; const K=400; for(let k=0;k<K;k++){ const F=Q.normal(r); let s=0; for(let i=0;i<n;i++) s+=Math.sqrt(S.rho)*F+Math.sqrt(1-S.rho)*Q.normal(r); const v=s/n; a+=v; b+=v*v; } return Math.sqrt(b/K-(a/K)**2); });
+  }
+  function report(){
+    const sd=x=>{ const m=x.reduce((a,b)=>a+b,0)/x.length; return Math.sqrt(x.reduce((a,b)=>a+(b-m)**2,0)/x.length); };
+    out.textContent=`n = ${S.n}, ρ = ${Q.fmt(S.rho,2)}, σ của một biến = 1\n`+
+      `Lý thuyết: σ(X̄) = √(1/n + (1 − 1/n)ρ) = ${Q.fmt(sdT(S.n,S.rho),3)}   (độc lập: 1/√n = ${Q.fmt(1/Math.sqrt(S.n),3)};  sàn √ρ = ${Q.fmt(Math.sqrt(S.rho),3)})\n`+
+      `Mẫu 150 trung bình: σ ≈ ${Q.fmt(sd(avgs),3)};   mẫu 150 biến đơn lẻ: σ ≈ ${Q.fmt(sd(singles),3)}`;
+  }
+  sample();
+  const cv=Q.canvas(stage,400,draw);
+  function draw(ctx,w,h){
+    const C=Q.colors(); ctx.clearRect(0,0,w,h);
+    const L=52, Rr=w-16, mid=180;
+    ctx.font='12px -apple-system,sans-serif';
+    // nửa trên: hai dải điểm
+    const Yv=v=>mid/2+10-Math.max(-3.5,Math.min(3.5,v))*(mid/2-20)/3.5;
+    const cols=[[singles,1,C.b,L+(Rr-L)*0.08,(Rr-L)*0.38,'Một biến đơn lẻ'],[avgs,sdT(S.n,S.rho),C.c,L+(Rr-L)*0.54,(Rr-L)*0.38,'Trung bình của n biến']];
+    for(const [arr,sd,col,x0,wd,lab] of cols){
+      ctx.fillStyle=col; ctx.globalAlpha=0.13; ctx.fillRect(x0,Yv(sd),wd,Yv(-sd)-Yv(sd));
+      ctx.globalAlpha=0.8; arr.forEach((v,i)=>{ ctx.beginPath(); ctx.arc(x0+(i+0.5)/arr.length*wd,Yv(v),2.4,0,7); ctx.fill(); });
+      ctx.globalAlpha=1; ctx.fillStyle=C.muted; ctx.fillText(lab,x0,16);
+    }
+    ctx.strokeStyle=C.line; ctx.beginPath(); ctx.moveTo(L,Yv(0)); ctx.lineTo(Rr,Yv(0)); ctx.stroke();
+    // nửa dưới: σ(X̄) theo n, trục log
+    const top=mid+24, bot=h-30, X=n=>L+Math.log(n)/Math.log(NMAX)*(Rr-L), Y=s=>bot-s*(bot-top);
+    ctx.strokeStyle=C.line; ctx.beginPath(); ctx.moveTo(L,top); ctx.lineTo(L,bot); ctx.lineTo(Rr,bot); ctx.stroke();
+    ctx.fillStyle=C.muted; ctx.textAlign='right'; [0,0.5,1].forEach(s=>ctx.fillText(Q.fmt(s,1),L-6,Y(s)+4));
+    ctx.textAlign='center'; NS.forEach(n=>ctx.fillText(n,X(n),bot+16)); ctx.textAlign='left';
+    ctx.fillText('σ(X̄) theo n (trục log)',L+6,top-6);
+    // đường độc lập để so sánh
+    ctx.strokeStyle=C.muted; ctx.setLineDash([3,4]); ctx.beginPath();
+    for(let n=1;n<=NMAX;n++){ const p=[X(n),Y(1/Math.sqrt(n))]; n>1?ctx.lineTo(...p):ctx.moveTo(...p); } ctx.stroke();
+    // mức sàn √ρ
+    if(S.rho>0){ ctx.strokeStyle=C.b; ctx.beginPath(); ctx.moveTo(L,Y(Math.sqrt(S.rho))); ctx.lineTo(Rr,Y(Math.sqrt(S.rho))); ctx.stroke(); ctx.fillStyle=C.b; ctx.fillText('sàn √ρ',Rr-48,Y(Math.sqrt(S.rho))-5); }
+    ctx.setLineDash([]);
+    ctx.strokeStyle=C.c; ctx.lineWidth=2.2; ctx.beginPath();
+    for(let n=1;n<=NMAX;n++){ const p=[X(n),Y(sdT(n,S.rho))]; n>1?ctx.lineTo(...p):ctx.moveTo(...p); } ctx.stroke(); ctx.lineWidth=1;
+    ctx.fillStyle=C.a; emp.forEach((s,i)=>{ ctx.beginPath(); ctx.arc(X(NS[i]),Y(s),4,0,7); ctx.fill(); });
+    ctx.strokeStyle=C.ink; ctx.beginPath(); ctx.arc(X(S.n),Y(sdT(S.n,S.rho)),7,0,7); ctx.stroke();
+  }
+  const upd=()=>{ sample(); report(); cv.redraw(); };
+  Q.slider(ctl,'Số biến n',1,NMAX,1,S.n,v=>{S.n=v;upd();});
+  Q.slider(ctl,'Tương quan ρ',0,0.9,0.01,S.rho,v=>{S.rho=v;upd();},v=>Q.fmt(v,2));
+  Q.button(ctl,'Rút mẫu mới',()=>{S.seed++;upd();},true);
+  report();
+})();
+</script>
+</section>

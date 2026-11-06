@@ -1,0 +1,194 @@
+<section class="lesson" id="bai-14" data-short="Giá nhà New York">
+<header>
+  <span class="num">14</span>
+  <h3>Tình huống: dự báo giá nhà ở New York</h3>
+  <p class="meta">10 phút · Ứng dụng: Xây dựng đặc trưng trên dữ liệu lệch · <a href="https://hft.md/learn/case-housing/">Bài gốc (tiếng Anh)</a></p>
+</header>
+
+<p>Vòng phỏng vấn nghiên cứu định lượng (quant research) thường khép lại bằng một câu hỏi mô hình hoá mở. Không có đáp án duy nhất. Người phỏng vấn theo dõi cách bạn biến dữ liệu thô thành một mô hình mà chính bạn dám tin.</p>
+
+<div class="note"><b>Đề bài.</b> Có dữ liệu các giao dịch nhà ở New York: giá bán, số phòng ngủ, số phòng tắm, diện tích (ft²), năm xây, quận (borough), khu phố, cùng vài thông tin phụ như diện tích lô đất, loại nhà, số nhà hàng gần đó. Hãy dự báo giá cho những căn chưa bán.</div>
+
+<h4>Ý chính</h4>
+<ul>
+  <li>Nói ngay phương án nền: <b>hồi quy bội</b> (multiple regression) của giá theo diện tích, số phòng, năm xây và vị trí. Mọi bước sau chỉ nhằm làm hồi quy này hợp lệ và hữu ích.</li>
+  <li><b>Mã hoá từng biến.</b> Diện tích và năm xây có rất nhiều giá trị nên coi như biến liên tục. Số phòng là biến đếm nhỏ có thứ tự, vẫn đưa vào dạng số được. Quận và khu phố là biến định danh, dùng <b>mã hoá one-hot</b> (one-hot encoding) và bỏ một nhóm làm mốc.</li>
+  <li><b>Nhìn hình dạng phân phối trước khi chuẩn hoá.</b> Diện tích luôn dương, tập trung quanh cỡ nhà phổ biến, có đuôi phải rất dài. Đó là dáng của <b>phân phối log-chuẩn</b> (lognormal). Lấy logarit trước, rồi mới trừ trung bình và chia độ lệch chuẩn.</li>
+  <li>Giá bán cũng gần log-chuẩn. Hồi quy log(giá) theo log(diện tích) cho hệ số đọc được như <b>độ co giãn</b> (elasticity), tức tác động tính theo phần trăm.</li>
+  <li>Diện tích, phòng ngủ, phòng tắm đi cùng nhau. Đo mức đó bằng <b>tương quan hạng Spearman</b> (Spearman rank correlation) khi có biến rời rạc. <b>Đa cộng tuyến</b> (multicollinearity) làm sai số chuẩn phình to; xử lý bằng ridge, lasso, trực giao hoá tuần tự hoặc kiểm định F cho cả nhóm.</li>
+  <li>Một câu trả lời mạnh còn thêm: kiểm tra trên các giao dịch gần nhất (out-of-time), mô tả vị trí bằng toạ độ hoặc giá các căn lân cận, và thêm xu hướng theo ngày bán.</li>
+</ul>
+
+<h4>Công thức</h4>
+<div class="formula"><span class="lbl">Mô hình nền, quận làm mốc là Staten Island</span>log(giá)<sub>i</sub> = β<sub>0</sub> + β<sub>1</sub> log(diện tích)<sub>i</sub> + β<sub>2</sub> phòng ngủ<sub>i</sub> + β<sub>3</sub> phòng tắm<sub>i</sub> + Σ<sub>k</sub> γ<sub>k</sub> · 𝟙[quận<sub>i</sub> = k] + ε<sub>i</sub></div>
+<div class="formula"><span class="lbl">Log-chuẩn: nếu ln X ~ N(μ, σ²) thì trung bình luôn lớn hơn trung vị</span>trung vị = e<sup>μ</sup>,&nbsp;&nbsp; E[X] = e<sup>μ + σ²/2</sup></div>
+<div class="formula"><span class="lbl">Độ co giãn: diện tích nhân k lần thì giá nhân k<sup>β₁</sup></span>β<sub>1</sub> = <span class="frac"><span>∂ log(giá)</span><span>∂ log(diện tích)</span></span> ≈ <span class="frac"><span>% thay đổi của giá</span><span>% thay đổi của diện tích</span></span></div>
+<div class="formula"><span class="lbl">Tương quan hạng Spearman (không có giá trị trùng), d<sub>i</sub> là chênh lệch hạng</span>ρ<sub>S</sub> = 1 − <span class="frac"><span>6 Σ d<sub>i</sub>²</span><span>n(n² − 1)</span></span></div>
+<div class="formula"><span class="lbl">Hệ số phóng đại phương sai; với hai biến chuẩn hoá tương quan ρ thì R²<sub>j</sub> = ρ²</span>VIF<sub>j</sub> = <span class="frac"><span>1</span><span>1 − R<sub>j</sub>²</span></span>,&nbsp;&nbsp; Var(β̂<sub>1</sub>) ≈ <span class="frac"><span>σ²</span><span>n (1 − ρ²)</span></span></div>
+<div class="formula"><span class="lbl">Ridge: kéo các hệ số tương quan về gần nhau</span>β̂<sub>ridge</sub> = (XᵀX + λI)<sup>−1</sup> Xᵀy</div>
+
+<h4>Ví dụ minh hoạ: đọc kết quả hồi quy</h4>
+<p>Giả sử mô hình ước lượng được: log(giá) = 6,2 + 0,9 · ln(diện tích) + 0,05 · phòng tắm + γ<sub>quận</sub>. Phụ trội quận so với mốc là γ = 0,3 cho Brooklyn và γ = 0,6 cho Manhattan. Độ lệch chuẩn phần dư là 0,2.</p>
+<ol>
+  <li>Căn 1.200 ft², 2 phòng tắm, ở Brooklyn: ln 1.200 ≈ 7,090, nên 0,9 × 7,090 ≈ 6,381.</li>
+  <li>Cộng các thành phần: 6,2 + 6,381 + 0,05 × 2 + 0,3 ≈ 12,981. Giá dự báo ≈ e<sup>12,981</sup> ≈ 434.000 USD.</li>
+  <li>Cùng căn đó ở Manhattan: log tăng thêm 0,3, giá nhân e<sup>0,3</sup> ≈ 1,35, thành khoảng 586.000 USD.</li>
+  <li>Diện tích tăng 10%: giá nhân 1,1<sup>0,9</sup> ≈ 1,090, tức đắt hơn khoảng 9,0%. Gấp đôi diện tích thì giá nhân 2<sup>0,9</sup> ≈ 1,87, không phải 2.</li>
+  <li>Lưu ý: e<sup>ŷ</sup> là trung vị dự báo. Muốn trung bình thì nhân thêm e<sup>σ²/2</sup> = e<sup>0,02</sup> ≈ 1,02.</li>
+</ol>
+<p>Cùng lý do, nếu ln(diện tích) có trung vị 900 ft² và σ = 0,55 thì diện tích trung bình là 900 · e<sup>0,151</sup> ≈ 1.047 ft². Vài căn biệt thự kéo trung bình cao hơn trung vị khoảng 16%.</p>
+
+<figure class="demo">
+  <div class="stage" id="demo-14"></div>
+  <div class="controls" id="ctl-14"></div>
+  <div class="readout" id="out-14"></div>
+  <figcaption><b>Mô hình 14.1 – Lấy log một biến lệch phải.</b> Biểu đồ tần suất của 4.000 diện tích nhà mô phỏng. Đường nét là phân phối chuẩn có cùng trung bình và độ lệch chuẩn. Ở thang gốc, trung bình nằm bên phải trung vị và đường chuẩn khớp kém. Chuyển sang thang log, hai đường gần trùng nhau và độ lệch (skewness) về gần 0. Tăng độ phân tán σ để thấy hiệu ứng rõ hơn.</figcaption>
+</figure>
+
+<figure class="demo">
+  <div class="stage" id="demob-14"></div>
+  <div class="controls" id="ctlb-14"></div>
+  <div class="readout" id="outb-14"></div>
+  <figcaption><b>Mô hình 14.2 – Mặt phẳng hồi quy chao đảo khi hai biến tương quan.</b> Mỗi điểm là một căn nhà: trục x<sub>1</sub> là log diện tích, trục x<sub>2</sub> là số phòng ngủ (đều đã chuẩn hoá), trục đứng là log giá. Giá thật = x<sub>1</sub> + x<sub>2</sub> + nhiễu. Khi ρ gần 1, các điểm dồn về một đường chéo và mặt phẳng ước lượng xoay quanh đường đó sau mỗi lần lấy mẫu. Ô góc phải ghi lại các cặp (β̂<sub>1</sub>, β̂<sub>2</sub>): chúng trải dài theo đường β̂<sub>1</sub> + β̂<sub>2</sub> = 2. Tăng λ của ridge để thấy đám điểm co lại. Kéo để xoay.</figcaption>
+</figure>
+
+<h4>Lưu ý khi phỏng vấn</h4>
+<ul>
+  <li>Nói phương án nền trong một câu trước, rồi mới đi vào chi tiết. Người phỏng vấn muốn thấy bạn có khung sườn.</li>
+  <li>Khi mã hoá one-hot, nhớ bỏ một nhóm. Giữ đủ năm cột quận cùng hệ số chặn thì ma trận XᵀX suy biến (bẫy biến giả, dummy variable trap).</li>
+  <li>Câu hỏi kiểm tra hay gặp: hệ số 0,9 trong hồi quy log–log nghĩa là gì? Đáp: căn rộng hơn 1% thì giá cao hơn khoảng 0,9%, các yếu tố khác giữ nguyên. Đó không phải R² hay hệ số tương quan.</li>
+  <li>Trên bàn giao dịch, vốn hoá, khối lượng và độ biến động đều gần log-chuẩn. Không ai đưa chúng vào mô hình dự báo lợi suất ở dạng thô.</li>
+</ul>
+
+<script>
+(()=>{
+  /* ---------- Mô hình 14.1: biểu đồ tần suất thang gốc và thang log ---------- */
+  const stA=document.getElementById('demo-14'), ctA=document.getElementById('ctl-14'), ouA=document.getElementById('out-14');
+  const N=4000, r=Q.rng(1414), z=Array.from({length:N},()=>Q.normal(r));
+  const A={sigma:0.55, log:false};
+  let vals=[], stats={};
+  function moments(v){ const n=v.length; let m=0; for(const x of v)m+=x; m/=n; let s2=0,s3=0; for(const x of v){const d=x-m; s2+=d*d; s3+=d*d*d;} s2/=n; s3/=n; return {m, sd:Math.sqrt(s2), sk:s3/Math.pow(s2,1.5)}; }
+  function median(v){ const s=[...v].sort((a,b)=>a-b); return s[Math.floor(s.length/2)]; }
+  function recompute(){
+    vals=z.map(q=>A.log? Math.log(900)+A.sigma*q : 900*Math.exp(A.sigma*q));
+    stats=moments(vals); stats.med=median(vals);
+    const unit=A.log?'':' ft²', d=A.log?3:0;
+    ouA.textContent=`Thang ${A.log?'log: ln(diện tích)':'gốc: diện tích'}\n`+
+      `Trung bình = ${Q.fmt(stats.m,d)}${unit}   Trung vị = ${Q.fmt(stats.med,d)}${unit}   Độ lệch chuẩn = ${Q.fmt(stats.sd,A.log?3:0)}${unit}\n`+
+      `Độ lệch (skewness) = ${Q.fmt(stats.sk,2)}`+(A.log?'   (gần 0: đối xứng)':'   (dương: đuôi phải dài)');
+    cA && cA.redraw();
+  }
+  const cA=Q.canvas(stA,300,drawA);
+  function drawA(ctx,w,h){
+    const C=Q.colors(); ctx.clearRect(0,0,w,h);
+    if(!vals.length) return;
+    const L=46,R=16,T=28,B=34, pw=w-L-R, ph=h-T-B;
+    // khoảng hiển thị: thang gốc cắt ở phân vị 99,5% để đuôi vẫn thấy
+    const sorted=[...vals].sort((a,b)=>a-b);
+    let lo=A.log? sorted[0] : 0, hi=sorted[Math.floor(N*0.995)];
+    if(A.log){ lo=stats.m-4*stats.sd; hi=stats.m+4*stats.sd; }
+    const NB=50, bw=(hi-lo)/NB, cnt=new Array(NB).fill(0);
+    for(const x of vals){ const k=Math.floor((x-lo)/bw); if(k>=0&&k<NB)cnt[k]++; }
+    const dens=cnt.map(c=>c/(N*bw));
+    const pdf=x=>Math.exp(-0.5*((x-stats.m)/stats.sd)**2)/(stats.sd*Math.sqrt(2*Math.PI));
+    const ymax=Math.max(...dens, pdf(stats.m))*1.1;
+    const X=x=>L+(x-lo)/(hi-lo)*pw, Y=y=>T+ph-y/ymax*ph;
+    ctx.strokeStyle=C.line; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(L,T+ph); ctx.lineTo(L+pw,T+ph); ctx.stroke();
+    ctx.fillStyle=C.c; ctx.globalAlpha=0.55;
+    dens.forEach((d,k)=>{ const x0=X(lo+k*bw), x1=X(lo+(k+1)*bw); ctx.fillRect(x0+0.5,Y(d),Math.max(1,x1-x0-1),T+ph-Y(d)); });
+    ctx.globalAlpha=1; ctx.strokeStyle=C.ink; ctx.lineWidth=1.6; ctx.setLineDash([5,4]); ctx.beginPath();
+    for(let i=0;i<=200;i++){ const x=lo+(hi-lo)*i/200, y=pdf(x); i?ctx.lineTo(X(x),Y(y)):ctx.moveTo(X(x),Y(y)); }
+    ctx.stroke(); ctx.setLineDash([]);
+    // trung bình và trung vị
+    const vline=(x,col,lab,dy)=>{ ctx.strokeStyle=col; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(X(x),T); ctx.lineTo(X(x),T+ph); ctx.stroke(); ctx.fillStyle=col; ctx.font='12px -apple-system,sans-serif'; ctx.fillText(lab,X(x)+4,T+12+dy); };
+    vline(stats.med,C.a,'trung vị',0); vline(stats.m,C.b,'trung bình',16);
+    ctx.fillStyle=C.muted; ctx.font='12px -apple-system,sans-serif';
+    for(let i=0;i<=5;i++){ const x=lo+(hi-lo)*i/5; ctx.fillText(A.log?Q.fmt(x,2):Q.fmt(x,0),X(x)-14,T+ph+16); }
+    ctx.fillText(A.log?'ln(diện tích)':'diện tích (ft²), cắt ở phân vị 99,5%',L,h-4);
+    ctx.fillText('cột: tần suất   nét đứt: phân phối chuẩn cùng trung bình và độ lệch chuẩn',L,16);
+  }
+  const bRaw=Q.button(ctA,'Thang gốc',()=>{A.log=false; bRaw.className='primary'; bLog.className=''; recompute();},true);
+  const bLog=Q.button(ctA,'Thang log',()=>{A.log=true; bLog.className='primary'; bRaw.className=''; recompute();});
+  Q.slider(ctA,'Độ phân tán σ của ln(diện tích)',0.15,1.0,0.01,A.sigma,v=>{A.sigma=v; recompute();},v=>Q.fmt(v,2));
+  recompute();
+
+  /* ---------- Mô hình 14.2: mặt phẳng hồi quy 3D và đa cộng tuyến ---------- */
+  const stB=document.getElementById('demob-14'), ctB=document.getElementById('ctlb-14'), ouB=document.getElementById('outb-14');
+  const n=60, B={rho:0.9, lam:0, noise:1, auto:false};
+  const view={yaw:-0.75,pitch:0.35,dist:16,auto:true};
+  let seed=1, pts=[], beta=[1,1], shown=[1,1], hist=[], tick=0;
+  function sample(){
+    const g=Q.rng(seed++*7919); const s=Math.sqrt(1-B.rho*B.rho);
+    pts=[]; for(let i=0;i<n;i++){ const z1=Q.normal(g), z2=Q.normal(g); const x1=z1, x2=B.rho*z1+s*z2; pts.push([x1,x2,x1+x2+B.noise*Q.normal(g)]); }
+    fit();
+  }
+  function fit(){
+    // hồi quy không hệ số chặn trên dữ liệu đã quy tâm, thêm phạt ridge λ·n
+    let m=[0,0,0]; for(const p of pts) for(let j=0;j<3;j++) m[j]+=p[j]/n;
+    let a=0,b=0,c=0,u=0,v=0;
+    for(const p of pts){ const x1=p[0]-m[0], x2=p[1]-m[1], y=p[2]-m[2]; a+=x1*x1; b+=x1*x2; c+=x2*x2; u+=x1*y; v+=x2*y; }
+    a+=B.lam*n; c+=B.lam*n; const det=a*c-b*b;
+    beta=[(c*u-b*v)/det,(a*v-b*u)/det];
+    hist.push(beta.slice()); if(hist.length>120) hist.shift();
+    report();
+  }
+  function report(){
+    const vif=1/(1-B.rho*B.rho), se=B.noise/Math.sqrt(n*(1-B.rho*B.rho));
+    let s1=0,s2=0,q1=0,q2=0; for(const h of hist){s1+=h[0];s2+=h[1];q1+=h[0]*h[0];q2+=h[1]*h[1];} const k=hist.length;
+    const sd1=k>1?Math.sqrt(Math.max(0,(q1-s1*s1/k)/(k-1))):NaN, sd2=k>1?Math.sqrt(Math.max(0,(q2-s2*s2/k)/(k-1))):NaN;
+    ouB.textContent=`Mẫu này: β̂₁ = ${Q.fmt(beta[0],2)}   β̂₂ = ${Q.fmt(beta[1],2)}   β̂₁ + β̂₂ = ${Q.fmt(beta[0]+beta[1],2)}   (giá trị thật: 1, 1, 2)\n`+
+      `VIF = 1/(1 − ρ²) = ${Q.fmt(vif,2)}   Sai số chuẩn lý thuyết của β̂₁ (OLS) ≈ ${Q.fmt(se,3)}\n`+
+      `Qua ${k} lần lấy mẫu: độ lệch chuẩn thực nghiệm của β̂₁ = ${isNaN(sd1)?'–':Q.fmt(sd1,3)}, của β̂₂ = ${isNaN(sd2)?'–':Q.fmt(sd2,3)}`+(B.lam>0?`   (ridge λ = ${Q.fmt(B.lam,2)})`:'');
+  }
+  const cB=Q.canvas(stB,400,drawB);
+  function drawB(ctx,w,h){
+    const C=Q.colors(); ctx.clearRect(0,0,w,h);
+    const sc=Math.min(w*0.8,h*1.5)/12.5, E=2.5, ZS=0.45; // trục đứng co lại cho vừa khung
+    const P=p=>Q.project([p[0],p[1],p[2]*ZS+0.9],view,w,h,sc);
+    const line=(p,q,col,lw,al)=>{ const A1=P(p),B1=P(q); ctx.strokeStyle=col; ctx.lineWidth=lw||1; ctx.globalAlpha=al==null?1:al; ctx.beginPath(); ctx.moveTo(A1[0],A1[1]); ctx.lineTo(B1[0],B1[1]); ctx.stroke(); ctx.globalAlpha=1; };
+    // sàn
+    for(let i=-E;i<=E+1e-9;i+=1.25){ line([i,-E,-6],[i,E,-6],C.line); line([-E,i,-6],[E,i,-6],C.line); }
+    line([-E,-E,-6],[E+0.6,-E,-6],C.muted,1.5); line([-E,-E,-6],[-E,E+0.6,-6],C.muted,1.5); line([-E,-E,-6],[-E,-E,6],C.muted,1.5);
+    ctx.fillStyle=C.muted; ctx.font='12px -apple-system,sans-serif';
+    let t=P([E+0.9,-E,-6]); ctx.fillText('x₁ log diện tích',t[0],t[1]);
+    t=P([-E,E+0.9,-6]); ctx.fillText('x₂ phòng ngủ',t[0],t[1]);
+    t=P([-E,-E,6.5]); ctx.fillText('log giá',t[0]-16,t[1]);
+    // mặt phẳng ước lượng (dạng lưới)
+    const f=(x,y)=>shown[0]*x+shown[1]*y;
+    // vẽ từng đoạn ngắn, bỏ phần mặt phẳng vượt ra ngoài hộp |z| ≤ 6
+    const seg=(a,b)=>{ for(let k=0;k<20;k++){ const p=[a[0]+(b[0]-a[0])*k/20,a[1]+(b[1]-a[1])*k/20], q=[a[0]+(b[0]-a[0])*(k+1)/20,a[1]+(b[1]-a[1])*(k+1)/20];
+      const zp=f(p[0],p[1]), zq=f(q[0],q[1]); if(Math.abs(zp)<=6&&Math.abs(zq)<=6) line([p[0],p[1],zp],[q[0],q[1],zq],C.b,1,0.55); } };
+    for(let i=-E;i<=E+1e-9;i+=0.5){ seg([i,-E],[i,E]); seg([-E,i],[E,i]); }
+    // điểm dữ liệu, có bóng chiếu xuống sàn
+    const items=pts.map(p=>({p,d:P(p)[2]})).sort((a,b)=>b.d-a.d);
+    for(const it of items){
+      const s=P([it.p[0],it.p[1],-6]); ctx.fillStyle=C.muted; ctx.globalAlpha=0.35; ctx.beginPath(); ctx.arc(s[0],s[1],1.6,0,7); ctx.fill();
+      const q=P(it.p); ctx.globalAlpha=1; ctx.fillStyle=C.c; ctx.beginPath(); ctx.arc(q[0],q[1],3.2,0,7); ctx.fill();
+    }
+    // ô nhỏ: đám (β̂1, β̂2)
+    const bx=w-170, by=12, bs=150;
+    const Xb=v=>bx+(v-(-1))/4*bs, Yb=v=>by+bs-(v-(-1))/4*bs; // miền β ∈ [−1, 3]
+    ctx.fillStyle=C.panel; ctx.globalAlpha=0.92; ctx.fillRect(bx,by,bs,bs); ctx.globalAlpha=1; ctx.strokeStyle=C.line; ctx.strokeRect(bx,by,bs,bs);
+    ctx.strokeStyle=C.muted; ctx.setLineDash([3,3]); ctx.beginPath(); ctx.moveTo(Xb(-1),Yb(3)); ctx.lineTo(Xb(3),Yb(-1)); ctx.stroke(); ctx.setLineDash([]);
+    hist.forEach((hh,i)=>{ const last=i===hist.length-1; ctx.fillStyle=last?C.b:C.c; ctx.globalAlpha=last?1:0.5; ctx.beginPath(); ctx.arc(Math.min(bx+bs,Math.max(bx,Xb(hh[0]))),Math.min(by+bs,Math.max(by,Yb(hh[1]))),last?4:2.4,0,7); ctx.fill(); });
+    ctx.globalAlpha=1; ctx.fillStyle=C.ink; ctx.beginPath(); ctx.arc(Xb(1),Yb(1),3,0,7); ctx.fill();
+    ctx.fillStyle=C.muted; ctx.font='11px -apple-system,sans-serif'; ctx.fillText('β̂₁ →',bx+bs-34,by+bs-4); ctx.fillText('β̂₂ ↑',bx+4,by+12); ctx.fillText('[−1; 3]²',bx+4,by+bs-4);
+    ctx.font='12px -apple-system,sans-serif'; ctx.fillText('lưới cam: mặt phẳng ước lượng   chấm xanh: dữ liệu',12,h-10);
+  }
+  Q.orbit(cB.cv,view,()=>cB.redraw());
+  Q.loop(stB,()=>{
+    let moving=false;
+    for(let j=0;j<2;j++){ const d=beta[j]-shown[j]; if(Math.abs(d)>1e-3){ shown[j]+=d*0.15; moving=true; } else shown[j]=beta[j]; }
+    if(B.auto && ++tick%40===0){ sample(); moving=true; }
+    if(view.auto){ view.yaw+=0.003; moving=true; }
+    if(moving) cB.redraw();
+  });
+  const reset=()=>{ hist=[]; sample(); };
+  Q.slider(ctB,'Tương quan ρ giữa x₁ và x₂',0,0.99,0.01,B.rho,v=>{B.rho=v; reset();},v=>Q.fmt(v,2));
+  Q.slider(ctB,'Ridge λ',0,1,0.01,B.lam,v=>{B.lam=v; hist=[]; fit();},v=>Q.fmt(v,2));
+  Q.button(ctB,'Lấy mẫu mới',()=>sample(),true);
+  const bAuto=Q.button(ctB,'Tự lấy mẫu liên tục',()=>{ B.auto=!B.auto; bAuto.textContent=B.auto?'Dừng':'Tự lấy mẫu liên tục'; });
+  sample();
+})();
+</script>
+</section>

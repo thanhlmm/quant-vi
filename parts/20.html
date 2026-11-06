@@ -1,0 +1,163 @@
+<section class="lesson" id="bai-20" data-short="Tiêu chí Kelly">
+<header>
+  <span class="num">20</span>
+  <h3>Xác định quy mô cược: tiêu chí Kelly</h3>
+  <p class="meta">10 phút · Ứng dụng: Xác định quy mô vị thế và hạn mức rủi ro · <a href="https://hft.md/learn/kelly/">Bài gốc (tiếng Anh)</a></p>
+</header>
+
+<p>Tìm ra lợi thế mới là một nửa bài toán. Nửa còn lại là cược bao nhiêu: cược quá ít thì bỏ phí lợi thế, cược quá nhiều thì một chuỗi xui có thể xoá sạch vốn dù mọi ván đều có lợi.</p>
+
+<h4>Ý chính</h4>
+<ul>
+  <li>Tài sản tăng theo <b>cấp số nhân</b>: mỗi ván nhân vốn với (1 + lợi suất). Vì vậy tốc độ tăng dài hạn là trung bình của log(1 + lợi suất), không phải trung bình lợi suất.</li>
+  <li><b>Tiêu chí Kelly</b> (Kelly criterion) chọn tỉ lệ vốn f để cực đại tăng trưởng log kỳ vọng mỗi ván. Về dài hạn, nó cho tài sản lớn hơn mọi chiến lược cố định khác với xác suất tiến tới 1.</li>
+  <li>Nếu f* ≤ 0 thì bạn không có lợi thế: đừng cược, hoặc đứng về phía bên kia.</li>
+  <li>Cược gấp đôi Kelly cho tăng trưởng xấp xỉ bằng 0 và dao động dữ dội hơn nhiều, dù từng ván vẫn có kỳ vọng dương. Vượt quá mức đó thì vốn teo dần.</li>
+  <li><b>Kelly phân số</b> (fractional Kelly): lợi thế thật chỉ là ước lượng, ước lượng cao quá sẽ đẩy bạn vượt Kelly. Cược nửa Kelly giữ khoảng 75% tốc độ tăng trưởng mà mức sụt giảm vốn (drawdown) nhỏ hơn nhiều.</li>
+  <li>Với một chiến lược liên tục, Kelly thành đòn bẩy μ/σ². Với nhiều vị thế tương quan, Kelly thành bài toán danh mục, và tương quan quan trọng ngang với lợi thế.</li>
+</ul>
+
+<h4>Công thức</h4>
+<div class="formula"><span class="lbl">Thắng thì được b lần tiền cược (xác suất p), thua thì mất tiền cược (xác suất q = 1 − p); mỗi ván cược tỉ lệ f của vốn</span>W<sub>n</sub> = W<sub>0</sub> · (1 + bf)<sup>số ván thắng</sup> · (1 − f)<sup>số ván thua</sup></div>
+<div class="formula"><span class="lbl">Tăng trưởng log kỳ vọng mỗi ván và nghiệm Kelly (giải g′(f) = 0)</span>g(f) = p·ln(1 + bf) + q·ln(1 − f),&nbsp;&nbsp;&nbsp; f* = p − <span class="frac"><span>q</span><span>b</span></span></div>
+<div class="formula"><span class="lbl">Tổng quát: thua mất tỉ lệ a của tiền cược</span>f* = <span class="frac"><span>p</span><span>a</span></span> − <span class="frac"><span>q</span><span>b</span></span></div>
+<div class="formula"><span class="lbl">Kelly phân số c·f*: xấp xỉ bậc hai quanh đỉnh</span>g(c·f*) ≈ g(f*) · (2c − c<sup>2</sup>),&nbsp;&nbsp; c = ½ ⇒ 75%,&nbsp;&nbsp; c = 2 ⇒ 0</div>
+<div class="formula"><span class="lbl">Chiến lược liên tục (lợi suất vượt trội μ, độ biến động σ) và danh mục (véc-tơ lợi thế μ, ma trận hiệp phương sai Σ)</span>f* = <span class="frac"><span>μ</span><span>σ<sup>2</sup></span></span>,&nbsp;&nbsp;&nbsp; <b>f</b>* = Σ<sup>−1</sup><b>μ</b></div>
+
+<h4>Ví dụ minh hoạ: đồng xu lệch và trò chơi ghép tất</h4>
+<ol>
+  <li><b>Đồng xu lệch.</b> p = 0,6, b = 1. Ta có f* = 0,6 − 0,4 = 0,2, tức cược 20% vốn mỗi ván.</li>
+  <li>Tăng trưởng mỗi ván: g(0,2) = 0,6·ln 1,2 + 0,4·ln 0,8 ≈ 0,1094 − 0,0893 = 0,0201. Sau 250 ván, trung vị tài sản ≈ e<sup>250 × 0,0201</sup> ≈ 154 lần vốn.</li>
+  <li>Nửa Kelly (f = 0,1): g ≈ 0,0150, khoảng 75% của 0,0201. Trung vị sau 250 ván ≈ 43 lần.</li>
+  <li>Gấp đôi Kelly (f = 0,4): g = 0,6·ln 1,4 + 0,4·ln 0,6 ≈ −0,0024. Trung vị sau 250 ván ≈ 0,54 lần, tức mất gần nửa vốn.</li>
+  <li><b>Trò chơi ghép tất.</b> Có ba đôi tất được đánh số 1, 2, 3. Sáu chiếc được ghép ngẫu nhiên thành ba cặp. Bạn thắng nếu mọi cặp có số lệch nhau không quá 1.</li>
+  <li>Có 5 × 3 × 1 = 15 cách ghép đồng khả năng. Chỉ 5 cách thắng: một cách ghép đúng từng đôi, và 4 cách dạng {1,2}, {1,2}, {3,3} hoặc {1,1}, {2,3}, {2,3}. Vậy P(thắng) = 1/3.</li>
+  <li>Bài gốc ghi nhận rằng tài liệu ban đầu ghi nhầm 2/3. Công thức truy hồi P<sub>n</sub> = P<sub>n−1</sub>/(2n − 1) + 2P<sub>n−2</sub>/((2n − 1)(2n − 3)), với P<sub>1</sub> = P<sub>2</sub> = 1, cho P<sub>3</sub> = 1/5 + 2/15 = 1/3.</li>
+  <li>Vì vậy nên cược <b>chống lại</b> trò chơi: p = 2/3, b = 1, f* = 2/3 − 1/3 = 1/3. Với vốn 100 USD, ván đầu cược khoảng 33 USD.</li>
+</ol>
+<p>Kiểm tra nhanh: cược trả 2 : 1 (b = 2) và thắng 40% số lần. Kelly cho f* = 0,4 − 0,6/2 = 0,1, tức 10%. Lợi thế dương (0,4 × 2 − 0,6 = 0,2 trên mỗi đồng cược), nhưng phần lớn số ván là thua, nên mức cược nhỏ.</p>
+
+<figure class="demo">
+  <div class="stage" id="demo-20"></div>
+  <div class="controls" id="ctl-20"></div>
+  <div class="readout" id="out-20"></div>
+  <figcaption><b>Mô hình 20.1 – Bề mặt tăng trưởng g(f, p) trong không gian 3D.</b> Trục ngang là tỉ lệ cược f, trục sâu là xác suất thắng p, chiều cao là tăng trưởng log kỳ vọng (chuẩn hoá theo giá trị lớn nhất). Phần xanh lá là tăng trưởng dương, phần cam là âm. Đường tím là sống núi Kelly f* = p − q/b; đường cam đứt đoạn là 2f*, nơi tăng trưởng gần về 0. Chấm tím là điểm bạn chọn. Kéo để xoay; đổi b để thấy cả bề mặt dịch chuyển.</figcaption>
+</figure>
+
+<figure class="demo">
+  <div class="stage" id="demo2-20"></div>
+  <div class="controls" id="ctl2-20"></div>
+  <div class="readout" id="out2-20"></div>
+  <figcaption><b>Mô hình 20.2 – 30 đường tài sản qua 300 ván, thang log.</b> Cả ba mức cược dùng chung một chuỗi thắng thua, nên khác biệt chỉ đến từ quy mô cược. Bấm ½ Kelly, Kelly và 2× Kelly để so sánh: 2× Kelly có trung vị gần như đứng yên nhưng các đường toả ra rất rộng. Đường đậm là trung vị lý thuyết e<sup>n·g(f)</sup>.</figcaption>
+</figure>
+
+<h4>Lưu ý khi phỏng vấn</h4>
+<ul>
+  <li>Câu hỏi từng gặp ở Five Rings: bạn có 100 USD và cược với người phỏng vấn ở tỉ lệ ngang nhau. Cược bao nhiêu? Với một ván duy nhất không có đáp án đúng; họ muốn nghe bạn lập luận về rủi ro so với tổng tài sản. Với vô số ván, đáp án là Kelly.</li>
+  <li>Luôn kiểm tra lại xác suất thắng trước khi cược. Trò chơi ghép tất cho thấy tính sai p có thể đổi hẳn phía cần đứng.</li>
+  <li>Giải thích được vì sao dùng log: lợi suất kết hợp theo phép nhân, log biến tích thành tổng, và luật số lớn áp dụng cho tổng đó.</li>
+  <li>Trên bàn giao dịch, hạn mức rủi ro của mỗi chiến lược tỉ lệ với lợi thế ước lượng chia phương sai, bị cắt giảm khi ước lượng kém chắc chắn, và có trần cứng. Ed Thorp dùng Kelly cho blackjack rồi cho một trong những quỹ định lượng đầu tiên.</li>
+</ul>
+
+<script>
+(()=>{
+  const stage=document.getElementById('demo-20'), ctl=document.getElementById('ctl-20'), out=document.getElementById('out-20');
+  const S={b:1, p:0.6, f:0.2};
+  const view={yaw:-0.75,pitch:0.55,dist:11,auto:true};
+  const P0=0.35, P1=0.9, NF=34, NP=22;
+  const g=(f,p,b)=>p*Math.log(1+b*f)+(1-p)*Math.log(1-f);
+  const kel=(p,b)=>p-(1-p)/b;
+  let zmax=1;
+  function rescale(){ zmax=1e-9; for(let j=0;j<=NP;j++){ const p=P0+(P1-P0)*j/NP, k=kel(p,S.b); if(k>0) zmax=Math.max(zmax,g(Math.min(k,0.99),p,S.b)); } }
+  const X=f=>(f-0.5)*4.4, Y=p=>((p-P0)/(P1-P0)-0.5)*3.2, Z=v=>Math.max(-0.9,Math.min(1.5,v/zmax*1.5));
+  const c=Q.canvas(stage,400,draw);
+  function draw(ctx,w,h){
+    const C=Q.colors(); ctx.clearRect(0,0,w,h); const sc=Math.min(w,h*1.5)/8;
+    const P=(x,y,z)=>Q.project([x,y,z],view,w,h-70,sc);
+    // mặt phẳng g = 0 và trục
+    ctx.strokeStyle=C.line; ctx.lineWidth=1;
+    for(let i=0;i<=10;i++){ const f=i/10*0.99, a=P(X(f),Y(P0),0), b2=P(X(f),Y(P1),0); ctx.beginPath(); ctx.moveTo(a[0],a[1]); ctx.lineTo(b2[0],b2[1]); ctx.stroke(); }
+    const quads=[];
+    for(let i=0;i<NF;i++) for(let j=0;j<NP;j++){
+      const f0=i/NF*0.98, f1=(i+1)/NF*0.98, p0=P0+(P1-P0)*j/NP, p1=P0+(P1-P0)*(j+1)/NP;
+      const cs=[[f0,p0],[f1,p0],[f1,p1],[f0,p1]], vals=cs.map(([f,p])=>g(f,p,S.b));
+      const pts=cs.map(([f,p],k)=>P(X(f),Y(p),Z(vals[k])));
+      quads.push({pts,v:(vals[0]+vals[1]+vals[2]+vals[3])/4,d:pts.reduce((s,q)=>s+q[2],0)/4});
+    }
+    quads.sort((a,b)=>b.d-a.d);
+    for(const q of quads){ ctx.beginPath(); q.pts.forEach((p,k)=>k?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1])); ctx.closePath();
+      ctx.globalAlpha=0.55+0.35*Math.min(1,Math.abs(q.v)/zmax); ctx.fillStyle=q.v>=0?C.a:C.b; ctx.fill();
+      ctx.globalAlpha=0.35; ctx.strokeStyle=C.panel; ctx.stroke(); ctx.globalAlpha=1; }
+    // sống núi Kelly và đường 2f*
+    const ridge=(m,col,dash)=>{ ctx.strokeStyle=col; ctx.lineWidth=2.5; ctx.setLineDash(dash); ctx.beginPath(); let on=false;
+      for(let j=0;j<=60;j++){ const p=P0+(P1-P0)*j/60, f=m*kel(p,S.b); if(f<=0||f>=0.98){on=false;continue;}
+        const q=P(X(f),Y(p),Z(g(f,p,S.b))+0.02); if(on) ctx.lineTo(q[0],q[1]); else {ctx.moveTo(q[0],q[1]); on=true;} }
+      ctx.stroke(); ctx.setLineDash([]); ctx.lineWidth=1; };
+    ridge(1,C.d,[]); ridge(2,C.b,[6,4]);
+    const m=P(X(S.f),Y(S.p),Z(g(S.f,S.p,S.b))+0.03), m0=P(X(S.f),Y(S.p),0);
+    ctx.strokeStyle=C.ink; ctx.beginPath(); ctx.moveTo(m0[0],m0[1]); ctx.lineTo(m[0],m[1]); ctx.stroke();
+    ctx.fillStyle=C.d; ctx.strokeStyle=C.panel; ctx.lineWidth=2; ctx.beginPath(); ctx.arc(m[0],m[1],7,0,7); ctx.fill(); ctx.stroke(); ctx.lineWidth=1;
+    // nhãn trục
+    ctx.font='12px -apple-system,sans-serif'; ctx.fillStyle=C.muted; ctx.textAlign='center';
+    const lab=(x,y,z,t)=>{ const q=P(x,y,z); ctx.fillText(t,q[0],q[1]); };
+    lab(X(0),Y(P0)-0.35,0,'f = 0'); lab(X(0.98),Y(P0)-0.35,0,'f = 1'); lab(X(0.5),Y(P0)-0.6,0,'tỉ lệ cược f →');
+    lab(X(0)-0.5,Y(P0),0,'p = '+Q.fmt(P0,2)); lab(X(0)-0.5,Y(P1),0,'p = '+Q.fmt(P1,2));
+    ctx.textAlign='left'; ctx.fillText('■ g > 0 (xanh lá)   ■ g < 0 (cam)   — f* (tím)   - - 2f* (cam)',12,18);
+  }
+  function report(){ rescale();
+    const k=kel(S.p,S.b), q=1-S.p, gf=g(S.f,S.p,S.b), gk=k>0?g(k,S.p,S.b):0, ev=S.p*S.b-q;
+    out.textContent=`f* = p − q/b = ${Q.fmt(S.p,2)} − ${Q.fmt(q,2)}/${Q.fmt(S.b,2)} = ${Q.fmt(k,3)}`+(k<=0?'  (không có lợi thế: đừng cược)':'')+'\n'+
+      `Lợi nhuận kỳ vọng mỗi đồng cược: p·b − q = ${Q.fmt(ev,3)}\n`+
+      `Tại f = ${Q.fmt(S.f,2)}: g = ${Q.fmt(gf,4)} mỗi ván`+(k>0?` · bằng ${Q.pct(gf/gk,0)} của mức Kelly g(f*) = ${Q.fmt(gk,4)} · f/f* = ${Q.fmt(S.f/k,2)}`:'');
+    c.redraw(); }
+  Q.orbit(c.cv,view,()=>c.redraw());
+  Q.loop(stage,()=>{ if(view.auto){ view.yaw+=0.002; c.redraw(); } });
+  Q.slider(ctl,'Tỉ lệ trả thưởng b',0.5,3,0.1,S.b,v=>{S.b=v;report();},v=>Q.fmt(v,1));
+  Q.slider(ctl,'Xác suất thắng p',P0,P1,0.01,S.p,v=>{S.p=v;report();},v=>Q.fmt(v,2));
+  const sF=Q.slider(ctl,'Tỉ lệ cược f',0,0.95,0.01,S.f,v=>{S.f=v;report();},v=>Q.fmt(v,2));
+  const setF=m=>{ const k=Math.max(0,Math.min(0.95,m*kel(S.p,S.b))); sF.value=k; sF.dispatchEvent(new Event('input')); };
+  Q.button(ctl,'f = f*',()=>setF(1)); Q.button(ctl,'f = 2f*',()=>setF(2));
+  report();
+})();
+(()=>{
+  const stage=document.getElementById('demo2-20'), ctl=document.getElementById('ctl2-20'), out=document.getElementById('out2-20');
+  const S={p:0.6, b:1, m:1, n:300, paths:30, seed:21, t:0};
+  const kel=()=>S.p-(1-S.p)/S.b, g=f=>S.p*Math.log(1+S.b*f)+(1-S.p)*Math.log(1-f);
+  let U=[];
+  function gen(){ const r=Q.rng(S.seed); U=Array.from({length:S.paths},()=>Float64Array.from({length:S.n},()=>r())); S.t=0; }
+  function paths(){ const f=Math.max(0,Math.min(0.99,S.m*kel())), res=[];
+    for(const u of U){ let lw=0; const a=[0]; for(let i=0;i<S.n;i++){ lw+=u[i]<S.p?Math.log(1+S.b*f):Math.log(1-f); a.push(lw); } res.push(a); }
+    return {f,res}; }
+  let cache=null;
+  function recompute(){ cache=paths(); const {f,res}=cache, fin=res.map(a=>a[S.n]).sort((x,y)=>x-y);
+    const med=Math.exp(fin[Math.floor(fin.length/2)]), below=fin.filter(x=>x<0).length;
+    let dd=0; for(const a of res){ let pk=0,m=0; for(const v of a){ pk=Math.max(pk,v); m=Math.max(m,1-Math.exp(v-pk)); } dd+=m; }
+    out.textContent=`f* = ${Q.fmt(kel(),3)} · bạn cược ${Q.fmt(S.m,2)} × f* = ${Q.fmt(f,3)} vốn mỗi ván · g(f) = ${Q.fmt(g(f),4)}\n`+
+      `Sau ${S.n} ván: trung vị mô phỏng ${Q.fmt(med,2)} lần vốn (lý thuyết e^(n·g) = ${Q.fmt(Math.exp(S.n*g(f)),2)}) · ${below}/${S.paths} đường dưới mức vốn ban đầu\n`+
+      `Mức sụt giảm lớn nhất (max drawdown) trung bình: ${Q.pct(dd/S.paths,1)}`;
+    S.t=0; }
+  const c=Q.canvas(stage,340,draw);
+  function draw(ctx,w,h){
+    const C=Q.colors(); ctx.clearRect(0,0,w,h); if(!cache) return; ctx.font='12px -apple-system,sans-serif';
+    const L=70,R=w-14,T=16,B=h-30, LO=-4, HI=6; // log10 tài sản
+    const xs=i=>L+i/S.n*(R-L), ys=v=>B-(Math.max(LO,Math.min(HI,v/Math.LN10))-LO)/(HI-LO)*(B-T);
+    for(let e=LO;e<=HI;e++){ const y=B-(e-LO)/(HI-LO)*(B-T); ctx.strokeStyle=e===0?C.muted:C.line; ctx.beginPath(); ctx.moveTo(L,y); ctx.lineTo(R,y); ctx.stroke();
+      ctx.fillStyle=C.muted; ctx.textAlign='right'; ctx.fillText(e>=0?Q.fmt(Math.pow(10,e),0):'0,'+'0'.repeat(-e-1)+'1',L-6,y+4); }
+    ctx.textAlign='center'; for(let i=0;i<=S.n;i+=50) ctx.fillText(i,xs(i),B+16); ctx.fillText('số ván',(L+R)/2,h-2);
+    const upto=Math.min(S.n,Math.floor(S.t));
+    ctx.globalAlpha=0.45; ctx.strokeStyle=S.m>1.5?C.b:C.c; ctx.lineWidth=1.2;
+    for(const a of cache.res){ ctx.beginPath(); for(let i=0;i<=upto;i++){ const x=xs(i),y=ys(a[i]); i?ctx.lineTo(x,y):ctx.moveTo(x,y); } ctx.stroke(); }
+    ctx.globalAlpha=1; ctx.strokeStyle=C.d; ctx.lineWidth=3; const gf=g(cache.f);
+    ctx.beginPath(); ctx.moveTo(xs(0),ys(0)); ctx.lineTo(xs(upto),ys(upto*gf)); ctx.stroke(); ctx.lineWidth=1;
+    ctx.textAlign='left'; ctx.fillStyle=C.ink; ctx.fillText(`f = ${Q.fmt(S.m,2)} × Kelly`,L+8,T+14);
+  }
+  Q.loop(stage,()=>{ if(S.t<S.n){ S.t+=4; c.redraw(); } });
+  const sM=Q.slider(ctl,'Bội số Kelly',0,3,0.05,S.m,v=>{S.m=v;recompute();},v=>Q.fmt(v,2)+'×');
+  const setM=v=>{ sM.value=v; sM.dispatchEvent(new Event('input')); };
+  Q.button(ctl,'½ Kelly',()=>setM(0.5)); Q.button(ctl,'Kelly',()=>setM(1),true); Q.button(ctl,'2× Kelly',()=>setM(2));
+  Q.slider(ctl,'p',0.52,0.75,0.01,S.p,v=>{S.p=v;recompute();},v=>Q.fmt(v,2));
+  Q.button(ctl,'Chuỗi thắng thua mới',()=>{ S.seed++; gen(); recompute(); });
+  gen(); recompute();
+})();
+</script>
+</section>

@@ -1,0 +1,223 @@
+<section class="lesson" id="bai-18" data-short="Tình huống tạo lập">
+<header>
+  <span class="num">18</span>
+  <h3>Các tình huống tạo lập thị trường, từng giao dịch một</h3>
+  <p class="meta">14 phút · Ứng dụng: Vòng phỏng vấn giao dịch · <a href="https://hft.md/learn/market-making-cases/">Bài gốc (tiếng Anh)</a></p>
+</header>
+
+<p>Nhiều công ty giao dịch kiểm tra ứng viên bằng một trò chơi trực tiếp: bạn yết giá, người phỏng vấn mua hoặc bán, bạn yết lại. Cuối buổi họ hỏi vị thế và lãi/lỗ của bạn, nên khả năng ghi nhớ giao dịch (trader memory) quan trọng không kém phần toán.</p>
+
+<h4>Ý chính</h4>
+<ul>
+  <li><b>Giá trị lý thuyết</b> (theoretical value) phải đi kèm giả định được nói rõ. Người phỏng vấn chấm cách lập luận nhiều hơn chấm con số.</li>
+  <li>Độ rộng thị trường và <b>khoảng tin cậy</b> (confidence interval) phải khớp với mức độ không chắc chắn của bạn. Khoảng 90% rộng gần gấp 2,5 lần khoảng 50%.</li>
+  <li>Đối phương mua ở <b>giá chào bán</b> (ask) thì nâng giá lên. Đối phương bán vào <b>giá chào mua</b> (bid) thì hạ xuống. Giữ nguyên giá là mời họ lặp lại đúng giao dịch đó.</li>
+  <li>Khi còn ít thông tin, hãy dịch mạnh, khoảng nửa độ rộng trở lên. Khi đã có giao dịch ở cả hai phía, giá trị bị kẹp lại, nên dịch ít đi.</li>
+  <li>Sổ sách chỉ cần hai đại lượng: <b>vị thế</b> (position) và <b>tiền mặt</b> (cash). Lãi/lỗ (PnL) bằng tiền mặt cộng vị thế nhân giá thanh toán.</li>
+  <li>Thua lỗ trong trò chơi là chuyện thường. Điều được đánh giá là bạn điều chỉnh giá có hợp lý và nhất quán hay không.</li>
+</ul>
+
+<h4>Công thức</h4>
+<div class="formula"><span class="lbl">Sổ sách sau một chuỗi giao dịch của chính bạn (mua: +1, bán: −1)</span>vị thế = Σ<sub>mua</sub> 1 − Σ<sub>bán</sub> 1,&nbsp;&nbsp; tiền mặt = Σ<sub>bán</sub> giá − Σ<sub>mua</sub> giá</div>
+<div class="formula"><span class="lbl">Lãi/lỗ khi hợp đồng thanh toán ở giá X</span>PnL(X) = tiền mặt + vị thế × X</div>
+<div class="formula"><span class="lbl">Ghép cặp: một lần mua ở B và một lần bán ở A khoá lãi chắc chắn, không phụ thuộc X</span>lãi của cặp = A − B</div>
+<div class="formula"><span class="lbl">Khoảng tin cậy cho số trận thắng W ~ Binomial(n, p), xấp xỉ chuẩn</span>μ = np,&nbsp;&nbsp; σ = √<span style="text-decoration:overline">np(1 − p)</span>,&nbsp;&nbsp; khoảng = μ ± z·σ,&nbsp;&nbsp; z<sub>50%</sub> ≈ 0,674,&nbsp; z<sub>90%</sub> ≈ 1,645</div>
+
+<h4>Ví dụ minh hoạ: số trận thắng của Boston Red Sox</h4>
+<p>Đề bài: yết một thị trường rộng 10 cho số trận thắng của Red Sox trong mùa giải chính. Sau đó nêu khoảng tin cậy 50% và 90%. Người phỏng vấn giao dịch, bạn yết lại, lặp lại vài lượt.</p>
+<ol>
+  <li><b>Giả định.</b> Mùa giải đủ 162 trận. Các mùa gần đây có tỉ lệ thắng 0,519 (84 trận), 0,667 (108 trận, năm vô địch) và khoảng 0,400 trong mùa rút gọn 60 trận. Đội hình thay đổi nhiều, nên lấy tỉ lệ 0,500, tức 81 trận. Thị trường mở đầu: <b>76 @ 86</b>.</li>
+  <li><b>Khoảng tin cậy.</b> σ = √(162 × 0,5 × 0,5) ≈ 6,36. Khoảng 50% là 81 ± 0,67 × 6,36 = [76,7; 85,3]. Khoảng 90% là 81 ± 1,64 × 6,36 = [70,5; 91,5].</li>
+  <li><b>Diễn biến.</b> Hai lần đầu người phỏng vấn đều mua. Bạn đang bán khống và chưa có thông tin gì, nên dịch mạnh lên 81 @ 91 rồi 85 @ 95. Sau đó họ bán ở 85. Tín hiệu trái chiều này cho thấy giá trị họ nghĩ nằm đâu đó giữa 85 và 91. Bạn lùi về trung điểm 88 (83 @ 93), rồi chỉ dịch thêm 1 điểm.</li>
+</ol>
+<table class="t">
+  <tr><th>Lượt</th><th>Bạn yết</th><th>Người phỏng vấn</th><th>Bạn thực hiện</th><th>Vị thế</th><th>Tiền mặt</th></tr>
+  <tr><td>1</td><td>76 @ 86</td><td>mua</td><td>bán 86</td><td>−1</td><td>+86</td></tr>
+  <tr><td>2</td><td>81 @ 91</td><td>mua</td><td>bán 91</td><td>−2</td><td>+177</td></tr>
+  <tr><td>3</td><td>85 @ 95</td><td>bán</td><td>mua 85</td><td>−1</td><td>+92</td></tr>
+  <tr><td>4</td><td>83 @ 93</td><td>mua</td><td>bán 93</td><td>−2</td><td>+185</td></tr>
+  <tr><td>5</td><td>84 @ 94</td><td>bán</td><td>mua 84</td><td>−1</td><td>+101</td></tr>
+</table>
+<ol start="4">
+  <li><b>Chấm điểm.</b> Ghép cặp bán 86 với mua 85 được +1. Ghép bán 93 với mua 84 được +9. Lệnh bán ở 91 còn mở, nên bạn bán khống 1 hợp đồng ở 91 và đã khoá 10 điểm.</li>
+  <li>Nếu đội thắng W trận thì PnL = 10 + (91 − W) = 101 − W. Thắng 90 trận cho lãi 11. Điểm hoà vốn là 101 trận.</li>
+</ol>
+<p><b>Dân số Tanzania</b> (giá chào bán tối đa gấp 1,5 lần giá chào mua). Mở 20 @ 30 triệu, vì Tanzania nhỏ hơn nhiều so với 325 triệu dân Mỹ. Bị mua, và lúc này dịch quá ít còn tệ hơn dịch quá nhiều, nên nhảy lên 60 @ 90. Bị bán, giá trị nằm giữa 25 và 75, nên về 40 @ 60. Bị mua ở 60. Vì đã có giao dịch ở hai phía, trung điểm chỉ dịch nửa bước trước, từ 50 lên 62,5, thành 50 @ 75. Bị bán ở 50. Kết quả: phẳng vị thế, tiền mặt 30 − 60 + 60 − 50 = −20. Bài gốc lấy đáp số khoảng 56 triệu.</p>
+<p><b>Giao dịch hay thắt chặt</b> (trade or tighten). Bạn và người phỏng vấn mỗi người nhận một giá trị riêng cho cổ phiếu XYZ, rút độc lập, đều trên [90; 110]. Của bạn là 100. Mỗi lượt, người đến lượt hoặc giao dịch trên thị trường đang có, hoặc thắt chặt nó (nâng giá chào mua, hạ giá chào bán, hoặc cả hai). Bạn mở 90 @ 110. Họ đáp 95 @ 107, trung điểm 101, gợi ý giá trị của họ trên 100. Giá chào mua bị đẩy dần 100, 101, 102, 103. Bạn hạ giá chào bán 105 rồi 104, và họ mua ở 104. So với giá trị 100 của bạn, lãi +4. Giá trị thật của họ là 105.</p>
+
+<figure class="demo">
+  <div class="stage" id="demo-18"></div>
+  <div class="controls" id="ctl-18"></div>
+  <div class="readout" id="out-18"></div>
+  <figcaption><b>Mô hình 18.1 – Phát lại ba tình huống, từng lượt.</b> Bên trái: mỗi cột là thị trường được yết ở một lượt (xanh dương là của bạn, xám là của người phỏng vấn). Chấm cam: họ mua của bạn ở giá chào bán. Chấm xanh lá: họ bán cho bạn ở giá chào mua. Bên phải: đường lãi/lỗ theo giá thanh toán X với vị thế hiện tại. Bấm “Lượt tiếp” để đi tiếp, kéo thanh X để xem lãi/lỗ đổi theo kết quả.</figcaption>
+</figure>
+
+<figure class="demo">
+  <div class="stage" id="demo2-18" style="min-height:0"></div>
+  <div class="controls" id="ctl2-18"></div>
+  <div class="readout" id="out2-18"></div>
+  <figcaption><b>Mô hình 18.2 – Luyện trí nhớ giao dịch.</b> Bấm “Ván mới”. Các giao dịch của bạn hiện lần lượt rồi bị che đi. Nhập vị thế và tiền mặt bạn nhớ được, bấm “Kiểm tra”. Lời giải ghép cặp từng giao dịch mua với bán để bạn tự soát lại.</figcaption>
+</figure>
+
+<h4>Lưu ý khi phỏng vấn</h4>
+<ul>
+  <li>Nói giả định ra thành tiếng trước khi yết giá: số trận trong mùa, nguồn số liệu, lý do điều chỉnh. Một con số có lập luận tốt hơn một con số đúng may mắn.</li>
+  <li>Sau mỗi giao dịch, nhẩm lại vị thế và tiền mặt. Luyện thói quen ghép cặp mua với bán thành tiếng, như “bán 86, mua 85, được 1”.</li>
+  <li>Kiểm tra nhanh: hai lần bán và hai lần mua thì phẳng vị thế. Ví dụ bán 52, mua 48, bán 55, mua 50 cho tiền mặt +9, cũng là lãi +9.</li>
+  <li>Trong trò chơi thắt chặt, đừng giao dịch trên một thị trường làm bạn lỗ ở cả hai phía. Hãy dùng nó như tín hiệu về giá trị của đối phương.</li>
+</ul>
+
+<script>
+(()=>{
+  const stage=document.getElementById('demo-18'), ctl=document.getElementById('ctl-18'), out=document.getElementById('out-18');
+  // act: 'buy' = người phỏng vấn mua ở giá chào bán của bạn; 'sell' = họ bán vào giá chào mua của bạn.
+  const CASES={
+    sox:{name:'Red Sox', lo:66, hi:100, tick:5, xr:[60,110], x0:90, unit:'trận thắng',
+      refs:[{v:81,t:'giá trị lý thuyết 81'}],
+      steps:[
+        {who:'me',bid:76,ask:86,act:'buy',why:'Mở quanh 81 trận, rộng 10 theo yêu cầu.'},
+        {who:'me',bid:81,ask:91,act:'buy',why:'Bị mua khi chưa biết gì: dịch lên nửa độ rộng.'},
+        {who:'me',bid:85,ask:95,act:'sell',why:'Bị mua lần nữa: dịch thêm 4 điểm.'},
+        {who:'me',bid:83,ask:93,act:'buy',why:'Họ mua ở 91 nhưng bán ở 85: giá trị bị kẹp, lùi về trung điểm 88.'},
+        {who:'me',bid:84,ask:94,act:'sell',why:'Đã có giao dịch hai phía: chỉ dịch 1 điểm.'}]},
+    tz:{name:'Tanzania', lo:10, hi:100, tick:10, xr:[20,100], x0:56, unit:'triệu dân',
+      refs:[{v:56,t:'đáp số bài gốc ≈ 56'}],
+      steps:[
+        {who:'me',bid:20,ask:30,act:'buy',why:'Đoán 25 triệu; giá chào bán ≤ 1,5 × giá chào mua.'},
+        {who:'me',bid:60,ask:90,act:'sell',why:'Ít thông tin: nhân ước lượng lên ba lần, quanh 75.'},
+        {who:'me',bid:40,ask:60,act:'buy',why:'Bị kẹp giữa 25 và 75: về trung điểm 50.'},
+        {who:'me',bid:50,ask:75,act:'sell',why:'Có giao dịch hai phía: trung điểm chỉ dịch nửa bước, lên 62,5.'}]},
+    tt:{name:'Thắt chặt', lo:88, hi:112, tick:5, xr:[90,110], x0:100, unit:'(giá trị)',
+      refs:[{v:100,t:'giá trị của bạn 100'}],
+      steps:[
+        {who:'me',bid:90,ask:110,act:null,why:'Chưa biết gì về giá trị của họ: yết toàn bộ khoảng.'},
+        {who:'they',bid:95,ask:107,act:null,why:'Trung điểm 101: có lẽ giá trị của họ trên 100.'},
+        {who:'me',bid:97,ask:106,act:null,why:'Không giao dịch (cả hai phía đều lỗ so với 100), chỉ thắt chặt.'},
+        {who:'they',bid:100,ask:106,act:null,why:'Họ nâng giá chào mua lên 100.'},
+        {who:'me',bid:101,ask:106,act:null,why:'Rủi ro có tính toán: họ vừa trả 100, khó bán cho bạn ở 101.'},
+        {who:'they',bid:102,ask:106,act:null,why:'Họ trả 102.'},
+        {who:'me',bid:102,ask:105,act:null,why:'Trả 103 là quá liều: chuyển sang hạ giá chào bán xuống 105.'},
+        {who:'they',bid:103,ask:105,act:null,why:'Họ trả 103.'},
+        {who:'me',bid:103,ask:104,act:'buy',why:'Bạn chào bán 104 và họ mua.'}]}
+  };
+  let cur='sox', k=1, X=CASES.sox.x0;
+  function ledger(){
+    let pos=0,cash=0; const st=CASES[cur].steps;
+    for(let i=0;i<k;i++){ const s=st[i]; if(s.act==='buy'){pos--;cash+=s.ask;} else if(s.act==='sell'){pos++;cash-=s.bid;} }
+    return {pos,cash};
+  }
+  const sg=v=>(v>0?'+':v<0?'−':'')+Q.fmt(Math.abs(v),v%1?1:0);
+  const c=Q.canvas(stage,340,draw);
+  function draw(ctx,w,h){
+    const C=Q.colors(), cs=CASES[cur], st=cs.steps, n=st.length; ctx.clearRect(0,0,w,h);
+    ctx.font='12px -apple-system,sans-serif'; ctx.textBaseline='middle';
+    const L=40, R1=Math.max(L+160,w*0.6), T=40, B=h-42;
+    const yOf=v=>B-(v-cs.lo)/(cs.hi-cs.lo)*(B-T), xOf=i=>L+(i+0.5)*(R1-L)/n;
+    // lưới giá
+    for(let v=Math.ceil(cs.lo/cs.tick)*cs.tick; v<=cs.hi; v+=cs.tick){
+      ctx.strokeStyle=C.line; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(L,yOf(v)); ctx.lineTo(R1,yOf(v)); ctx.stroke();
+      ctx.fillStyle=C.muted; ctx.textAlign='right'; ctx.fillText(v,L-6,yOf(v));
+    }
+    for(const r of cs.refs){ ctx.setLineDash([5,4]); ctx.strokeStyle=C.d; ctx.beginPath(); ctx.moveTo(L,yOf(r.v)); ctx.lineTo(R1,yOf(r.v)); ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle=C.d; ctx.textAlign='left'; ctx.fillText(r.t,L+4,yOf(r.v)-9); }
+    const bw=Math.max(6,Math.min(20,(R1-L)/n*0.35));
+    for(let i=0;i<n;i++){
+      const x=xOf(i); ctx.fillStyle=C.muted; ctx.textAlign='center'; ctx.fillText(i+1,x,B+14);
+      if(i>=k) continue; const s=st[i], col=s.who==='me'?C.c:C.muted;
+      ctx.globalAlpha=i===k-1?0.9:0.45; ctx.fillStyle=col; ctx.fillRect(x-bw/2,yOf(s.ask),bw,yOf(s.bid)-yOf(s.ask)); ctx.globalAlpha=1;
+      ctx.fillStyle=C.ink; ctx.font='11px ui-monospace,monospace'; ctx.textAlign='left';
+      if(i===k-1){ ctx.fillText(Q.fmt(s.ask,0),x+bw/2+3,yOf(s.ask)); ctx.fillText(Q.fmt(s.bid,0),x+bw/2+3,yOf(s.bid)); }
+      ctx.font='12px -apple-system,sans-serif';
+      if(s.act){ const py=s.act==='buy'?yOf(s.ask):yOf(s.bid); ctx.fillStyle=s.act==='buy'?C.b:C.a; ctx.beginPath(); ctx.arc(x,py,6,0,7); ctx.fill(); }
+    }
+    ctx.fillStyle=C.muted; ctx.textAlign='center'; ctx.fillText('lượt',(L+R1)/2,h-6);
+    // chú giải
+    const leg=[[C.c,'■ giá của bạn'],[C.muted,'■ giá người phỏng vấn'],[C.b,'● họ mua của bạn'],[C.a,'● họ bán cho bạn']];
+    let lx=12; ctx.textAlign='left';
+    for(const [col,t] of leg){ ctx.fillStyle=col; ctx.fillText(t,lx,14); lx+=ctx.measureText(t).width+14; }
+    // bảng lãi/lỗ theo X
+    const {pos,cash}=ledger(), L2=R1+46, R2=w-12, [x0,x1]=cs.xr; if(R2-L2<80) return;
+    const pn=x=>cash+pos*x; let p0=Math.min(0,pn(x0),pn(x1)), p1=Math.max(0,pn(x0),pn(x1)); if(p1-p0<10){p0-=5;p1+=5;}
+    const pad=(p1-p0)*0.1; p0-=pad; p1+=pad;
+    const xs=v=>L2+(v-x0)/(x1-x0)*(R2-L2), ys=v=>B-(v-p0)/(p1-p0)*(B-T);
+    ctx.strokeStyle=C.line; ctx.strokeRect(L2,T,R2-L2,B-T);
+    ctx.strokeStyle=C.muted; ctx.beginPath(); ctx.moveTo(L2,ys(0)); ctx.lineTo(R2,ys(0)); ctx.stroke();
+    ctx.fillStyle=C.muted; ctx.textAlign='right'; ctx.fillText('0',L2-5,ys(0)); ctx.fillText(sg(Math.round(p1)),L2-5,T+6); ctx.fillText(sg(Math.round(p0)),L2-5,B-6);
+    ctx.textAlign='center'; ctx.fillText(x0,L2,B+14); ctx.fillText(x1,R2,B+14); ctx.fillText('giá thanh toán X',(L2+R2)/2,h-6);
+    ctx.fillText('PnL(X) = '+sg(cash)+(pos? ' '+(pos>0?'+':'−')+' '+(Math.abs(pos)>1?Math.abs(pos)+'X':'X'):''),(L2+R2)/2,T-12);
+    ctx.strokeStyle=C.a; ctx.lineWidth=2.5; ctx.beginPath(); ctx.moveTo(xs(x0),ys(pn(x0))); ctx.lineTo(xs(x1),ys(pn(x1))); ctx.stroke(); ctx.lineWidth=1;
+    ctx.fillStyle=C.b; ctx.beginPath(); ctx.arc(xs(X),ys(pn(X)),6,0,7); ctx.fill();
+  }
+  function report(){
+    const cs=CASES[cur], s=cs.steps[k-1], {pos,cash}=ledger();
+    const who=s.who==='me'?'Bạn yết':'Người phỏng vấn yết';
+    const act=s.act==='buy'?` → họ MUA ở ${s.ask} (bạn bán)`:s.act==='sell'?` → họ BÁN ở ${s.bid} (bạn mua)`:' → chưa ai giao dịch';
+    out.textContent=`${cs.name} · lượt ${k}/${cs.steps.length}: ${who} ${s.bid} @ ${s.ask}${act}\nLý do: ${s.why}\n`+
+      `Vị thế: ${sg(pos)||'0'} · Tiền mặt: ${sg(cash)||'0'} · PnL nếu thanh toán ở X = ${Q.fmt(X,0)}: ${sg(cash+pos*X)||'0'}`;
+    c.redraw();
+  }
+  const bPrev=Q.button(ctl,'◀ Lượt trước',()=>{ if(k>1){k--;report();} });
+  Q.button(ctl,'Lượt tiếp ▶',()=>{ if(k<CASES[cur].steps.length){k++;report();} },true);
+  Q.button(ctl,'Xem hết',()=>{ k=CASES[cur].steps.length; report(); });
+  const sX=Q.slider(ctl,'Giá thanh toán X',60,110,1,X,v=>{X=v;report();},v=>Q.fmt(v,0));
+  for(const key of ['sox','tz','tt']) Q.button(ctl,CASES[key].name,()=>{ cur=key; k=1; const cs=CASES[key];
+    sX.min=cs.xr[0]; sX.max=cs.xr[1]; sX.value=cs.x0; sX.dispatchEvent(new Event('input')); });
+  report();
+})();
+(()=>{
+  const stage=document.getElementById('demo2-18'), ctl=document.getElementById('ctl2-18'), out=document.getElementById('out2-18');
+  const S={n:5, ms:1400, trades:[], shown:0, phase:'idle', t0:0, seed:18};
+  const sg=v=>(v>0?'+':v<0?'−':'')+Math.abs(v);
+  function newGame(){
+    const r=Q.rng(S.seed++); S.trades=[]; let mid=50;
+    for(let i=0;i<S.n;i++){ mid=Math.max(44,Math.min(56,mid+Math.round(Q.normal(r)*1.5))); const side=r()<0.5?'buy':'sell';
+      S.trades.push({side,px:mid+(side==='buy'?-1:1)*(1+Math.floor(r()*3))}); }
+    S.shown=0; S.phase='show'; S.t0=performance.now(); iPos.value=''; iCash.value='';
+    out.textContent='Theo dõi và ghi nhớ từng giao dịch…'; c.redraw();
+  }
+  function totals(){ let pos=0,cash=0; for(const t of S.trades){ if(t.side==='buy'){pos++;cash-=t.px;} else {pos--;cash+=t.px;} } return {pos,cash}; }
+  function check(){
+    if(!S.trades.length) return; const {pos,cash}=totals(); S.phase='done'; c.redraw();
+    const gp=iPos.value===''?null:+iPos.value, gc=iCash.value===''?null:+iCash.value;
+    const buys=S.trades.filter(t=>t.side==='buy'), sells=S.trades.filter(t=>t.side==='sell');
+    const m=Math.min(buys.length,sells.length), lines=[];
+    let locked=0; for(let i=0;i<m;i++){ const d=sells[i].px-buys[i].px; locked+=d; lines.push(`bán ${sells[i].px} / mua ${buys[i].px}: ${sg(d)}`); }
+    const open=(pos>0?buys.slice(m).map(t=>'mua '+t.px):sells.slice(m).map(t=>'bán '+t.px));
+    const ok=(gp===pos)&&(gc===cash);
+    out.textContent=(ok?'Chính xác. ':'Chưa khớp. ')+`Đáp án: vị thế ${sg(pos)||'0'}, tiền mặt ${sg(cash)||'0'}`+
+      (gp!==null||gc!==null?` (bạn nhập: ${gp??'–'}, ${gc??'–'})`:'')+'\n'+
+      (lines.length?'Ghép cặp: '+lines.join('; ')+` → khoá ${sg(locked)||'0'}\n`:'')+
+      (open.length?`Còn mở: ${open.join(', ')} → PnL(X) = ${sg(cash)||'0'} ${pos>0?'+':'−'} ${Math.abs(pos)>1?Math.abs(pos)+'X':'X'}`:'Phẳng vị thế: lãi/lỗ đúng bằng tiền mặt.');
+  }
+  const c=Q.canvas(stage,170,draw);
+  function draw(ctx,w,h){
+    const C=Q.colors(); ctx.clearRect(0,0,w,h); ctx.textAlign='center'; ctx.textBaseline='middle';
+    if(!S.trades.length){ ctx.fillStyle=C.muted; ctx.font='14px -apple-system,sans-serif'; ctx.fillText('Bấm “Ván mới” để bắt đầu',w/2,h/2); return; }
+    const n=S.trades.length, gap=10, cw=Math.min(110,(w-24-gap*(n-1))/n), x0=(w-(cw*n+gap*(n-1)))/2;
+    let pos=0;
+    S.trades.forEach((t,i)=>{
+      const x=x0+i*(cw+gap), y=36, ch=80; if(t.side==='buy')pos++; else pos--;
+      const vis=S.phase==='done'||(S.phase==='show'&&i<S.shown);
+      ctx.fillStyle=C.panel; ctx.strokeStyle=vis?(t.side==='buy'?C.a:C.b):C.line; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.roundRect(x,y,cw,ch,10); ctx.fill(); ctx.stroke(); ctx.lineWidth=1;
+      ctx.fillStyle=C.muted; ctx.font='11px -apple-system,sans-serif'; ctx.fillText('#'+(i+1),x+cw/2,y-12);
+      if(vis){ ctx.fillStyle=t.side==='buy'?C.a:C.b; ctx.font='600 13px -apple-system,sans-serif'; ctx.fillText(t.side==='buy'?'BẠN MUA':'BẠN BÁN',x+cw/2,y+24);
+        ctx.fillStyle=C.ink; ctx.font='600 22px ui-monospace,monospace'; ctx.fillText(t.px,x+cw/2,y+54); }
+      else if(S.phase==='show'&&i>=S.shown){ ctx.fillStyle=C.line; ctx.font='22px ui-monospace,monospace'; ctx.fillText('·',x+cw/2,y+ch/2); }
+      else { ctx.fillStyle=C.muted; ctx.font='600 26px ui-monospace,monospace'; ctx.fillText('?',x+cw/2,y+ch/2); }
+      if(S.phase==='done'){ ctx.fillStyle=C.muted; ctx.font='11px ui-monospace,monospace'; ctx.fillText('vị thế '+(sg(pos)||'0'),x+cw/2,y+ch+16); }
+    });
+  }
+  Q.loop(stage,t=>{ if(S.phase!=='show') return; const k=Math.floor((t-S.t0)/S.ms)+1;
+    if(k>S.n+1){ S.phase='ask'; out.textContent='Đã che. Nhập vị thế và tiền mặt rồi bấm “Kiểm tra”.'; c.redraw(); }
+    else if(Math.min(k,S.n)!==S.shown){ S.shown=Math.min(k,S.n); c.redraw(); } });
+  Q.button(ctl,'Ván mới',newGame,true);
+  Q.slider(ctl,'Số giao dịch',3,8,1,S.n,v=>{S.n=v;},v=>v);
+  Q.slider(ctl,'Giây mỗi giao dịch',0.6,2.5,0.1,S.ms/1000,v=>{S.ms=v*1000;},v=>Q.fmt(v,1));
+  const box=(lbl)=>{ const l=Q.el('label',{},ctl); l.append(lbl+' '); return Q.el('input',{type:'number',step:'1',style:'width:5.5em;font:13px ui-monospace,monospace;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:5px 6px'},l); };
+  const iPos=box('Vị thế'), iCash=box('Tiền mặt');
+  Q.button(ctl,'Kiểm tra',check);
+  out.textContent='Mua: vị thế +1, tiền mặt trừ giá. Bán: vị thế −1, tiền mặt cộng giá.';
+})();
+</script>
+</section>

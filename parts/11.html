@@ -1,0 +1,231 @@
+<section class="lesson" id="bai-11" data-short="Ridge và lasso">
+<header>
+  <span class="num">11</span>
+  <h3>Ridge, lasso và elastic net</h3>
+  <p class="meta">14 phút · Ứng dụng: Kết hợp hàng trăm tín hiệu nhiễu · <a href="https://hft.md/learn/regularization/">Bài gốc (tiếng Anh)</a></p>
+</header>
+
+<p>Một quỹ có vài trăm tín hiệu alpha ứng viên, phần lớn chỉ là nhiễu. Hồi quy OLS sẽ khớp cả nhiễu, còn hồi quy có phạt (penalized regression) cố ý thu nhỏ hệ số để đổi một chút độ chệch lấy mức giảm phương sai lớn hơn nhiều.</p>
+
+<h4>Ý chính</h4>
+<ul>
+  <li>OLS không chệch nhưng có phương sai lớn khi có nhiều biến tương quan. Theo phân tích độ chệch – phương sai (bài 09), <b>co hệ số</b> (shrinkage) về 0 thường làm sai số kiểm tra giảm.</li>
+  <li><b>Chọn tập con</b> (subset selection) giữ k biến và bỏ phần còn lại. Có các biến thể từng bước tiến (forward stepwise), từng bước lùi (backward stepwise) và tiến từng nấc nhỏ (forward stagewise).</li>
+  <li><b>Ridge</b> phạt tổng bình phương hệ số (chuẩn L2). Nó luôn có nghiệm đóng, co mọi hệ số một cách trơn, nhưng không bao giờ đưa hệ số nào về đúng 0.</li>
+  <li><b>Lasso</b> phạt tổng trị tuyệt đối (chuẩn L1). Không có nghiệm đóng, nhưng khi λ đủ lớn nhiều hệ số bằng đúng 0. Lasso vừa co vừa chọn biến.</li>
+  <li>Lý do hình học: hàm phạt L1 có “nếp gấp” trên các trục toạ độ. Điểm cực tiểu của tổng RSS và hàm phạt hay rơi đúng vào nếp gấp đó.</li>
+  <li><b>Elastic net</b> trộn L1 và L2. Nó giữ được tính thưa của lasso, nhưng xử lý ổn định hơn khi có một nhóm biến tương quan mạnh.</li>
+</ul>
+
+<h4>Công thức</h4>
+<div class="formula"><span class="lbl">Ridge: thêm λI vào XᵀX, nên ma trận luôn khả nghịch</span>β̂<sup>ridge</sup> = arg min<sub>β</sub> { Σ<sub>i</sub> (y<sub>i</sub> − β<sub>0</sub> − Σ<sub>j</sub> x<sub>ij</sub>β<sub>j</sub>)² + λ Σ<sub>j</sub> β<sub>j</sub>² } = (XᵀX + λI)<sup>−1</sup>Xᵀy</div>
+<div class="formula"><span class="lbl">Lasso: bài toán quy hoạch toàn phương, giải bằng hạ toạ độ (coordinate descent) hoặc LARS</span>β̂<sup>lasso</sup> = arg min<sub>β</sub> { Σ<sub>i</sub> (y<sub>i</sub> − β<sub>0</sub> − Σ<sub>j</sub> x<sub>ij</sub>β<sub>j</sub>)² + λ Σ<sub>j</sub> |β<sub>j</sub>| }</div>
+<div class="formula"><span class="lbl">Elastic net (α = 1 là ridge, α = 0 là lasso) và họ phạt L<sub>q</sub></span>λ Σ<sub>j</sub> ( α β<sub>j</sub>² + (1 − α) |β<sub>j</sub>| ),&nbsp;&nbsp;&nbsp; λ Σ<sub>j</sub> |β<sub>j</sub>|<sup>q</sup>: q = 0 chọn tập con, q = 1 lasso, q = 2 ridge</div>
+<div class="formula"><span class="lbl">Khi XᵀX = I, mỗi phương pháp là một hàm của ước lượng OLS β̂<sub>j</sub> (với hàm mục tiêu như trên)</span>Tập con cỡ M: β̂<sub>j</sub> · 1{|β̂<sub>j</sub>| ≥ |β̂<sub>(M)</sub>|}&nbsp;&nbsp;·&nbsp;&nbsp; Ridge: <span class="frac"><span>β̂<sub>j</sub></span><span>1 + λ</span></span>&nbsp;&nbsp;·&nbsp;&nbsp; Lasso: sign(β̂<sub>j</sub>) (|β̂<sub>j</sub>| − λ/2)<sub>+</sub></div>
+<div class="formula"><span class="lbl">Bậc tự do hiệu dụng của ridge, d<sub>j</sub> là các giá trị kỳ dị của X</span>df(λ) = Σ<sub>j</sub> <span class="frac"><span>d<sub>j</sub>²</span><span>d<sub>j</sub>² + λ</span></span>,&nbsp;&nbsp; giảm trơn từ p (λ = 0) về 0 (λ → ∞)</div>
+<p>Ba quy tắc ứng với ba kiểu ngưỡng. Tập con là <b>ngưỡng cứng</b> (hard threshold): giữ nguyên hoặc bỏ hẳn. Ridge là <b>co theo tỉ lệ</b>. Lasso là <b>ngưỡng mềm</b> (soft threshold): trừ đi một lượng cố định, chạm 0 thì dừng. Công thức df cho thấy ridge co mạnh nhất theo các hướng có d<sub>j</sub> nhỏ, tức các thành phần chính cuối (bài 12). Luôn chuẩn hoá các biến trước khi phạt, vì hàm phạt phụ thuộc đơn vị đo.</p>
+
+<h4>Ví dụ minh hoạ: ba quy tắc trên cùng một bộ hệ số</h4>
+<p>Giả sử các biến trực chuẩn và OLS cho β̂ = (3; 1,2; −0,4). Chọn λ = 2 và so sánh ba cách co.</p>
+<ol>
+  <li>Ridge chia mọi hệ số cho 1 + λ = 3: được (1; 0,4; −0,13). Không hệ số nào bằng 0, kể cả hệ số rất yếu.</li>
+  <li>Lasso trừ λ/2 = 1 vào trị tuyệt đối, chạm 0 thì dừng: |3| − 1 = 2, |1,2| − 1 = 0,2, còn |−0,4| − 1 &lt; 0 nên về 0. Kết quả (2; 0,2; 0).</li>
+  <li>Tập con cỡ M = 1 chỉ giữ hệ số lớn nhất và không co nó: (3; 0; 0). Cỡ M = 2 cho (3; 1,2; 0).</li>
+  <li>Nhận xét: với hệ số lớn, lasso giữ lại 2/3 còn ridge chỉ giữ 1/3, nhưng lasso loại hẳn tín hiệu yếu. Trong thực tế λ được chọn bằng kiểm định chéo (cross-validation).</li>
+</ol>
+
+<figure class="demo">
+  <div class="stage" id="demo-11"></div>
+  <div class="controls" id="ctl-11"></div>
+  <div class="readout" id="out-11"></div>
+  <figcaption><b>Mô hình 11.1 – Mặt hàm mục tiêu có phạt trong không gian (β<sub>1</sub>, β<sub>2</sub>).</b> Lưới 3D là RSS(β) + λ·phạt(β). Hai đường cam nằm trên mặt là chỗ β<sub>1</sub> = 0 và β<sub>2</sub> = 0. Chấm cam dưới sàn là nghiệm OLS, chấm xanh là nghiệm có phạt, đường xanh dưới sàn là quỹ đạo nghiệm khi λ tăng từ 0. Với lasso, mặt bị gấp dọc hai trục và quỹ đạo dừng hẳn trên trục: một hệ số bằng đúng 0. Với ridge, mặt trơn và quỹ đạo chỉ lượn dần về gốc. Kéo để xoay.</figcaption>
+</figure>
+
+<figure class="demo">
+  <div class="stage" id="demo2-11"></div>
+  <div class="controls" id="ctl2-11"></div>
+  <div class="readout" id="out2-11"></div>
+  <figcaption><b>Mô hình 11.2 – Quỹ đạo hệ số và sai số ngoài mẫu.</b> Tám tín hiệu đã chuẩn hoá, chỉ có ba tín hiệu thật (đường đậm); x<sub>2</sub> tương quan với x<sub>1</sub>, x<sub>4</sub> tương quan với x<sub>3</sub>. Khung trên vẽ hệ số theo log λ, khung dưới vẽ sai số bình phương kỳ vọng khi dự báo dữ liệu mới, tính chính xác từ mô hình sinh dữ liệu. Kéo thanh λ để di chuyển vạch dọc. Giảm số quan sát huấn luyện để thấy OLS (λ ≈ 0) khớp nhiễu, còn λ vừa phải cho sai số kiểm tra thấp hơn.</figcaption>
+</figure>
+
+<h4>Lưu ý khi phỏng vấn</h4>
+<ul>
+  <li><b>Lasso hay ridge có độ chệch thấp hơn, phương sai cao hơn?</b> Câu trả lời thường được chờ đợi: với cùng λ, phạt L2 tăng nhanh hơn với hệ số lớn nên ràng buộc chúng mạnh hơn. Do đó lasso thường có độ chệch thấp hơn và phương sai cao hơn. Hãy nói thêm rằng điều này phụ thuộc dữ liệu.</li>
+  <li>Với một nhóm biến yếu, tương quan và gần giống nhau, lasso không ổn định. Dữ liệu thay đổi nhẹ là biến được giữ lại có thể đổi chỗ. Ridge co cả nhóm cùng lúc nên ít bị ảnh hưởng.</li>
+  <li><b>1.000 biến, tin rằng chỉ khoảng 20 biến có tác dụng</b>: chọn lasso hoặc elastic net nghiêng về L1, vì niềm tin đó là một cấu trúc thưa (sparse).</li>
+  <li>Ứng dụng: kết hợp tín hiệu bằng ridge hoặc elastic net, tái tạo chỉ số bằng một rổ nhỏ do lasso chọn. Co ma trận hiệp phương sai Ledoit–Wolf cũng cùng ý tưởng: kéo ước lượng nhiễu về một mục tiêu đơn giản.</li>
+</ul>
+
+<script>
+(()=>{
+  /* ---------- Mô hình 11.1: mặt hàm mục tiêu 3D ---------- */
+  const stage=document.getElementById('demo-11'), ctl=document.getElementById('ctl-11'), out=document.getElementById('out-11');
+  const S={alpha:0, lam:1.5, b1:2, b2:0.5, rho:0.4};
+  const view={yaw:-0.6,pitch:0.55,dist:7,auto:true};
+  const R=3, G=30, K=0.5, ZF=-1.0, ZH=2.0;
+  const soft=(g,t)=>g>t?g-t:(g<-t?g+t:0);
+  function solve(lam,init){
+    // f(β) = (β−b)ᵀA(β−b) + λ[α‖β‖² + (1−α)‖β‖₁], A = [[1,ρ],[ρ,1]]
+    const Ab1=S.b1+S.rho*S.b2, Ab2=S.rho*S.b1+S.b2; let x=init?init.slice():[S.b1,S.b2];
+    const t=lam*(1-S.alpha)/2, d=1+lam*S.alpha;
+    for(let it=0;it<300;it++){ x[0]=soft(Ab1-S.rho*x[1],t)/d; x[1]=soft(Ab2-S.rho*x[0],t)/d; }
+    return x;
+  }
+  function f(x1,x2){ const u=x1-S.b1, v=x2-S.b2;
+    return u*u+2*S.rho*u*v+v*v + S.lam*(S.alpha*(x1*x1+x2*x2)+(1-S.alpha)*(Math.abs(x1)+Math.abs(x2))); }
+  let sol=[0,0], path=[], zeroAt=[null,null], grid=null, fmin=0, fmax=1;
+  function compute(){
+    sol=solve(S.lam); path=[]; zeroAt=[null,null]; let x=null;
+    for(let i=0;i<=120;i++){ const l=i/120*5; x=solve(l,x); path.push(x.slice());
+      for(let j=0;j<2;j++) if(zeroAt[j]===null && Math.abs(x[j])<1e-9 && Math.abs(j?S.b2:S.b1)>1e-9) zeroAt[j]=l; }
+    grid=[]; fmin=Infinity; fmax=-Infinity;
+    for(let i=0;i<=G;i++){ const row=[]; for(let j=0;j<=G;j++){ const v=f(-R+2*R*i/G,-R+2*R*j/G); row.push(v); fmin=Math.min(fmin,v); fmax=Math.max(fmax,v); } grid.push(row); }
+    const fs=f(sol[0],sol[1]); fmin=Math.min(fmin,fs);
+    const name=S.alpha===1?'Ridge':(S.alpha===0?'Lasso':'Elastic net (α = 0,5)');
+    const zs=sol.filter(v=>Math.abs(v)<1e-9).length;
+    const za=j=>Math.abs(j?S.b2:S.b1)<1e-9?'bằng 0 ngay từ OLS':zeroAt[j]===null?'không về 0 khi λ ≤ 5':'bằng 0 từ λ ≈ '+Q.fmt(zeroAt[j],2);
+    out.textContent=`${name}, λ = ${Q.fmt(S.lam,2)}, tương quan giữa hai biến ρ = ${Q.fmt(S.rho,2)}\n`+
+      `Nghiệm OLS: (${Q.fmt(S.b1,2)}; ${Q.fmt(S.b2,2)})   Nghiệm có phạt: (${Q.fmt(sol[0],3)}; ${Q.fmt(sol[1],3)})   Số hệ số bằng 0: ${zs}\n`+
+      `Quỹ đạo: β₁ ${za(0)}; β₂ ${za(1)}`;
+  }
+  const H=v=>ZF+ZH*Math.min(1,(v-fmin)/(fmax-fmin||1));
+  const W=(x1,x2,z)=>[x1*K,x2*K,z];
+  let c=null;
+  function draw(ctx,w,h){
+    const C=Q.colors(); ctx.clearRect(0,0,w,h);
+    const scale=Math.min(w,h*1.4)/5.0, P=p=>Q.project(p,view,w,h,scale);
+    const poly=(pts)=>{ ctx.beginPath(); pts.forEach((p,i)=>{ const q=P(p); i?ctx.lineTo(q[0],q[1]):ctx.moveTo(q[0],q[1]); }); ctx.stroke(); };
+    // sàn
+    ctx.strokeStyle=C.line; ctx.lineWidth=1;
+    for(let t=-R;t<=R;t++){ poly([W(t,-R,ZF),W(t,R,ZF)]); poly([W(-R,t,ZF),W(R,t,ZF)]); }
+    ctx.strokeStyle=C.muted; poly([W(-R,0,ZF),W(R,0,ZF)]); poly([W(0,-R,ZF),W(0,R,ZF)]);
+    ctx.fillStyle=C.muted; ctx.font='12px -apple-system,sans-serif';
+    let L=P(W(R+0.4,0,ZF)); ctx.fillText('β₁',L[0],L[1]); L=P(W(0,R+0.4,ZF)); ctx.fillText('β₂',L[0],L[1]);
+    // lưới mặt
+    ctx.strokeStyle=C.a; ctx.globalAlpha=0.38;
+    for(let i=0;i<=G;i+=2){ const xs=-R+2*R*i/G; poly(grid[i].map((v,j)=>W(xs,-R+2*R*j/G,H(v)))); poly(grid.map((row,j)=>W(-R+2*R*j/G,xs,H(row[i])))); }
+    ctx.globalAlpha=1;
+    // hai đường trục nâng lên mặt: nơi có nếp gấp của L1
+    ctx.strokeStyle=C.b; ctx.lineWidth=2;
+    const ax=[]; const ay=[]; for(let k=0;k<=60;k++){ const t=-R+2*R*k/60; ax.push(W(t,0,H(f(t,0)))); ay.push(W(0,t,H(f(0,t)))); }
+    poly(ax); poly(ay);
+    // quỹ đạo nghiệm trên sàn
+    ctx.strokeStyle=C.c; ctx.lineWidth=2.5; poly(path.map(p=>W(p[0],p[1],ZF)));
+    ctx.lineWidth=1;
+    // OLS và nghiệm có phạt
+    const dot=(p,col,r)=>{ const q=P(p); ctx.fillStyle=col; ctx.beginPath(); ctx.arc(q[0],q[1],r,0,7); ctx.fill(); };
+    dot(W(S.b1,S.b2,ZF),C.b,5);
+    const top=W(sol[0],sol[1],H(f(sol[0],sol[1])));
+    ctx.strokeStyle=C.c; ctx.setLineDash([4,4]); poly([W(sol[0],sol[1],ZF),top]); ctx.setLineDash([]);
+    dot(W(sol[0],sol[1],ZF),C.c,5.5); dot(top,C.c,4);
+    ctx.fillStyle=C.muted;
+    ctx.fillText('● OLS   ● nghiệm có phạt   — quỹ đạo khi λ tăng   — mặt cắt β₁ = 0, β₂ = 0',12,18);
+  }
+  compute();
+  c=Q.canvas(stage,400,draw);
+  Q.orbit(c.cv,view,()=>c.redraw());
+  Q.loop(stage,()=>{ if(view.auto){ view.yaw+=0.003; c.redraw(); } });
+  const upd=()=>{ compute(); c.redraw(); };
+  Q.button(ctl,'Lasso',()=>{S.alpha=0;upd();},true);
+  Q.button(ctl,'Ridge',()=>{S.alpha=1;upd();});
+  Q.button(ctl,'Elastic net',()=>{S.alpha=0.5;upd();});
+  Q.slider(ctl,'λ',0,5,0.05,S.lam,v=>{S.lam=v;upd();},v=>Q.fmt(v,2));
+  Q.slider(ctl,'OLS β̂₁',-2.5,2.5,0.1,S.b1,v=>{S.b1=v;upd();},v=>Q.fmt(v,1));
+  Q.slider(ctl,'OLS β̂₂',-2.5,2.5,0.1,S.b2,v=>{S.b2=v;upd();},v=>Q.fmt(v,1));
+  Q.slider(ctl,'Tương quan ρ',-0.9,0.9,0.05,S.rho,v=>{S.rho=v;upd();},v=>Q.fmt(v,2));
+})();
+(()=>{
+  /* ---------- Mô hình 11.2: quỹ đạo hệ số và sai số kiểm tra ---------- */
+  const stage=document.getElementById('demo2-11'), ctl=document.getElementById('ctl2-11'), out=document.getElementById('out2-11');
+  const P=8, TRUE=[1.5,0,0.8,0,0,-1,0,0], SIG=1.5;
+  // ma trận hiệp phương sai thật của x
+  const SX=Array.from({length:P},(_,i)=>Array.from({length:P},(_,j)=>i===j?1:0));
+  SX[0][1]=SX[1][0]=0.8; SX[2][3]=SX[3][2]=0.7; SX[3][3]=0.49+0.714*0.714;
+  const S={alpha:0, n:20, seed:3, li:40};
+  const LAMS=Array.from({length:61},(_,i)=>Math.pow(10,-3+4*i/60)); // 0,001 → 10
+  function gen(n,r){
+    const X=[], y=[];
+    for(let i=0;i<n;i++){ const z=Array.from({length:P},()=>Q.normal(r));
+      const x=[z[0],0.8*z[0]+0.6*z[1],z[2],0.7*z[2]+0.714*z[3],z[4],z[5],z[6],z[7]];
+      X.push(x); y.push(x.reduce((s,v,j)=>s+v*TRUE[j],0)+SIG*Q.normal(r)); }
+    return {X,y};
+  }
+  let paths=[], mse=[], mseOls=0, c=null;
+  function fitAll(){
+    const r=Q.rng(S.seed*7717+1), tr=gen(S.n,r), n=S.n;
+    // chuẩn hoá theo tập huấn luyện
+    const mu=new Array(P).fill(0), sd=new Array(P).fill(0);
+    tr.X.forEach(x=>x.forEach((v,j)=>mu[j]+=v/n)); tr.X.forEach(x=>x.forEach((v,j)=>sd[j]+=(v-mu[j])**2/n));
+    for(let j=0;j<P;j++) sd[j]=Math.sqrt(sd[j])||1;
+    const ym=tr.y.reduce((s,v)=>s+v,0)/n;
+    const Z=tr.X.map(x=>x.map((v,j)=>(v-mu[j])/sd[j])), yc=tr.y.map(v=>v-ym);
+    // sai số kỳ vọng trên điểm mới: σ² + (β−γ)ᵀΣ(β−γ) + c₀², với γ_j = b_j/sd_j
+    const testMse=b=>{ const g=b.map((v,j)=>v/sd[j]), d=TRUE.map((v,j)=>v-g[j]);
+      const c0=ym-g.reduce((a,v,j)=>a+v*mu[j],0); let q=0;
+      for(let i=0;i<P;i++) for(let j=0;j<P;j++) q+=d[i]*SX[i][j]*d[j];
+      return SIG*SIG+q+c0*c0; };
+    // hạ toạ độ cho (1/n)RSS + λ Σ(α β² + (1−α)|β|)
+    const soft=(g,t)=>g>t?g-t:(g<-t?g+t:0);
+    let b=new Array(P).fill(0); const res=yc.slice();
+    paths=new Array(LAMS.length); mse=new Array(LAMS.length);
+    for(let k=LAMS.length-1;k>=0;k--){
+      const lam=LAMS[k], t=lam*(1-S.alpha)/2, d=1+lam*S.alpha;
+      for(let it=0;it<200;it++){ let mx=0;
+        for(let j=0;j<P;j++){ let g=0; for(let i=0;i<n;i++) g+=Z[i][j]*(res[i]+Z[i][j]*b[j]); g/=n;
+          const nb=soft(g,t)/d, db=nb-b[j]; if(db){ for(let i=0;i<n;i++) res[i]-=Z[i][j]*db; b[j]=nb; mx=Math.max(mx,Math.abs(db)); } }
+        if(mx<1e-7) break; }
+      paths[k]=b.slice(); mse[k]=testMse(b);
+    }
+    mseOls=mse[0];
+  }
+  function report(){
+    const k=S.li, b=paths[k], best=mse.indexOf(Math.min(...mse));
+    const nz=b.filter(v=>Math.abs(v)>1e-9).length;
+    out.textContent=`λ = ${Q.fmt(LAMS[k],3)}   hệ số khác 0: ${nz}/8   MSE kiểm tra = ${Q.fmt(mse[k],3)}\n`+
+      `β = (${b.map(v=>Q.fmt(v,2)).join('; ')})\n`+
+      `λ ≈ 0 (gần OLS): MSE = ${Q.fmt(mseOls,3)}   λ tốt nhất ≈ ${Q.fmt(LAMS[best],3)}: MSE = ${Q.fmt(mse[best],3)}   mức nhiễu không giảm được σ² = ${Q.fmt(SIG*SIG,2)}`;
+  }
+  const COL=C=>[C.a,C.muted,C.c,C.muted,C.muted,C.b,C.muted,C.muted];
+  function draw(ctx,w,h){
+    const C=Q.colors(), cols=COL(C); ctx.clearRect(0,0,w,h);
+    const l=44, rr=w-40, t1=40, h1=220, t2=t1+h1+28, h2=h-t2-26;
+    const X=k=>l+(rr-l)*k/(LAMS.length-1);
+    let bmax=1.5; paths.forEach(b=>b.forEach(v=>bmax=Math.max(bmax,Math.abs(v)))); bmax*=1.1;
+    const Y1=v=>t1+h1/2-v/bmax*h1/2;
+    const mlo=Math.min(...mse), s2=SIG*SIG, mhi=Math.min(Math.max(...mse),s2+3*Math.max(mseOls-s2,0.05));
+    const Y2=v=>t2+h2-Math.min(1,(v-s2)/((mhi-s2)||1))*h2;
+    ctx.strokeStyle=C.line; ctx.lineWidth=1; ctx.strokeRect(l,t1,rr-l,h1); ctx.strokeRect(l,t2,rr-l,h2);
+    ctx.beginPath(); ctx.moveTo(l,Y1(0)); ctx.lineTo(rr,Y1(0)); ctx.stroke();
+    ctx.fillStyle=C.muted; ctx.font='12px -apple-system,sans-serif';
+    ctx.fillText('Hệ số β_j',l,t1-24); ctx.fillText('MSE kiểm tra',l,t2-8);
+    ['0,001','0,01','0,1','1','10'].forEach((txt,e)=>{ const x=X(e*15); ctx.fillText(txt,x-ctx.measureText(txt).width/2,t2+h2+16); });
+    ctx.fillText('λ',rr+14,t2+h2+16);
+    ctx.setLineDash([3,3]); ctx.strokeStyle=C.muted; ctx.beginPath(); ctx.moveTo(l,Y2(s2)); ctx.lineTo(rr,Y2(s2)); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillText('σ² (không giảm được)',rr-130,Y2(s2)-5);
+    for(let j=P-1;j>=0;j--){ ctx.strokeStyle=cols[j]; ctx.lineWidth=TRUE[j]?2.4:1.2; ctx.globalAlpha=TRUE[j]?1:0.7;
+      ctx.beginPath(); paths.forEach((b,k)=>k?ctx.lineTo(X(k),Y1(b[j])):ctx.moveTo(X(k),Y1(b[j]))); ctx.stroke();
+    }
+    ctx.globalAlpha=1;
+    // nhãn ở mép phải, giãn cách để không chồng lên nhau
+    const labs=paths[0].map((v,j)=>({j,y:Y1(v)+4})).sort((a,b)=>a.y-b.y);
+    for(let i=1;i<labs.length;i++) labs[i].y=Math.max(labs[i].y,labs[i-1].y+12);
+    labs.forEach(o=>{ ctx.fillStyle=cols[o.j]; ctx.fillText('x'+(o.j+1),rr+6,o.y); });
+    // giá trị thật (gạch ngang ở mép trái)
+    ctx.setLineDash([3,3]); [0,2,5].forEach(j=>{ ctx.strokeStyle=cols[j]; ctx.beginPath(); ctx.moveTo(l,Y1(TRUE[j])); ctx.lineTo(l+40,Y1(TRUE[j])); ctx.stroke(); }); ctx.setLineDash([]);
+    ctx.strokeStyle=C.d; ctx.lineWidth=2; ctx.beginPath(); mse.forEach((m,k)=>k?ctx.lineTo(X(k),Y2(m)):ctx.moveTo(X(k),Y2(m))); ctx.stroke();
+    const best=mse.indexOf(mlo); ctx.fillStyle=C.d; ctx.beginPath(); ctx.arc(X(best),Y2(mlo),4,0,7); ctx.fill();
+    ctx.strokeStyle=C.ink; ctx.lineWidth=1; ctx.globalAlpha=0.6; ctx.beginPath(); ctx.moveTo(X(S.li),t1); ctx.lineTo(X(S.li),t2+h2); ctx.stroke(); ctx.globalAlpha=1;
+    ctx.fillStyle=C.muted; ctx.fillText('Đường đậm: x1, x3, x6 có tác dụng thật; gạch đứt: giá trị thật',l+110,t1-24);
+  }
+  const upd=()=>{ fitAll(); report(); c&&c.redraw(); };
+  fitAll(); report();
+  c=Q.canvas(stage,420,draw);
+  Q.button(ctl,'Lasso',()=>{S.alpha=0;upd();},true);
+  Q.button(ctl,'Ridge',()=>{S.alpha=1;upd();});
+  Q.button(ctl,'Elastic net',()=>{S.alpha=0.5;upd();});
+  Q.slider(ctl,'log₁₀ λ',0,60,1,S.li,v=>{S.li=v;report();c.redraw();},v=>Q.fmt(-3+4*v/60,2));
+  Q.slider(ctl,'Số quan sát huấn luyện',12,300,4,S.n,v=>{S.n=v;upd();},v=>v);
+  Q.button(ctl,'Lấy mẫu mới',()=>{S.seed++;upd();});
+})();
+</script>
+</section>

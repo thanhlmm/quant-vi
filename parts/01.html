@@ -1,0 +1,110 @@
+<section class="lesson" id="bai-01" data-short="Định lý Bayes">
+<header>
+  <span class="num">01</span>
+  <h3>Xác suất có điều kiện và định lý Bayes</h3>
+  <p class="meta">12 phút · Ứng dụng: cập nhật giá trị hợp lý khi lệnh của mình bị khớp · <a href="https://hft.md/learn/bayes/">Bài gốc (tiếng Anh)</a></p>
+</header>
+
+<p>Mỗi lần lệnh của nhà tạo lập thị trường bị khớp là một lần nhận thêm bằng chứng về giá trị thật của tài sản. Định lý Bayes cho biết phải điều chỉnh niềm tin bao nhiêu. Đây cũng là ý tưởng xuất hiện nhiều nhất trong các vòng phỏng vấn quant.</p>
+
+<h4>Ý chính</h4>
+<ul>
+  <li><b>Xác suất có điều kiện</b> (conditional probability): biết B đã xảy ra thì không gian mẫu thu hẹp lại còn B. P(A | B) là tỉ trọng của A ∩ B bên trong B.</li>
+  <li><b>Định lý Bayes</b> đảo chiều điều kiện. Từ P(E | H), vốn là tính chất của phép đo, ta suy ra P(H | E), là điều cần biết.</li>
+  <li>Mẫu số là <b>luật xác suất toàn phần</b> (law of total probability). Bằng chứng E có thể xuất hiện khi H đúng hoặc khi H sai, nên phải cộng cả hai nhánh.</li>
+  <li><b>Xác suất tiên nghiệm</b> (prior) thấp có thể lấn át một bằng chứng có vẻ rất mạnh. Đây là lỗi bỏ qua tỉ lệ nền (base-rate neglect).</li>
+  <li>Khi có k bằng chứng độc lập cùng chiều, các tỉ số hợp lý được nhân với nhau, nên xác suất hậu nghiệm tăng rất nhanh.</li>
+</ul>
+
+<h4>Công thức</h4>
+<div class="formula"><span class="lbl">Xác suất có điều kiện</span>P(A | B) = <span class="frac"><span>P(A ∩ B)</span><span>P(B)</span></span>,&nbsp;&nbsp; P(B) &gt; 0</div>
+<div class="formula"><span class="lbl">Định lý Bayes: hậu nghiệm = hợp lý × tiên nghiệm / bằng chứng</span>P(H | E) = <span class="frac"><span>P(E | H) · P(H)</span><span>P(E | H) · P(H) + P(E | ¬H) · P(¬H)</span></span></div>
+<div class="formula"><span class="lbl">Dạng tỉ lệ cược (odds): tiện cho việc tính nhẩm</span><span class="frac"><span>P(H | E)</span><span>P(¬H | E)</span></span> = <span class="frac"><span>P(H)</span><span>P(¬H)</span></span> × <span class="frac"><span>P(E | H)</span><span>P(E | ¬H)</span></span></div>
+
+<h4>Ví dụ minh hoạ: nhân chứng và chiếc taxi</h4>
+<p>Trong thành phố, 15% taxi màu xanh dương và 85% màu xanh lá. Một nhân chứng nói chiếc taxi gây tai nạn có màu xanh dương. Kiểm tra cho thấy người này nhận đúng màu trong 80% trường hợp.</p>
+<ol>
+  <li>Xét 100 chiếc taxi. Có 15 chiếc xanh dương, nhân chứng gọi đúng 0,8 × 15 = 12 chiếc.</li>
+  <li>Có 85 chiếc xanh lá, nhân chứng gọi nhầm thành xanh dương 0,2 × 85 = 17 chiếc.</li>
+  <li>Trong 12 + 17 = 29 lần nhân chứng nói “xanh dương”, chỉ có 12 lần đúng. Vậy P(xanh dương | nói xanh dương) = 12/29 ≈ 41%, chứ không phải 80%.</li>
+</ol>
+<p>Bài toán xét nghiệm có cùng cấu trúc. Bệnh có tỉ lệ mắc 1%, xét nghiệm phát hiện đúng 99% người bệnh và báo dương tính nhầm 1% người khoẻ. Một kết quả dương tính chỉ cho xác suất mắc bệnh là 50%. Kết quả dương tính độc lập thứ hai nâng con số lên khoảng 99%.</p>
+
+<figure class="demo">
+  <div class="stage" id="demo-01"></div>
+  <div class="controls" id="ctl-01"></div>
+  <div class="readout" id="out-01"></div>
+  <figcaption><b>Mô hình 1.1 – Quần thể 1.000 cá thể trong không gian 3D.</b> Mỗi khối là một cá thể. Khối xanh dương là nhóm có giả thuyết H đúng, khối cam là nhóm H sai. Khối nào cho ra bằng chứng E thì được nâng lên. Xác suất hậu nghiệm chính là tỉ lệ khối xanh dương trong số các khối được nâng. Kéo để xoay; dùng các phương án mẫu hoặc thanh trượt để thay đổi tham số.</figcaption>
+</figure>
+
+<h4>Lưu ý khi phỏng vấn</h4>
+<ul>
+  <li>Luôn hỏi lại hoặc tự xác định <b>tỉ lệ nền</b> trước khi dùng độ chính xác của bằng chứng.</li>
+  <li>Cách nhanh nhất là đếm trên một quần thể giả định, chẳng hạn 100 hoặc 1.000 cá thể, thay vì thay số vào công thức.</li>
+  <li>Bài toán kinh điển: có 1.000 đồng xu, trong đó 1 đồng có hai mặt ngửa. Rút ngẫu nhiên một đồng, tung 10 lần đều ra ngửa. Tỉ số hợp lý là 2<sup>10</sup> = 1.024 so với tỉ lệ cược tiên nghiệm 1 : 999, nên P(đồng hai mặt ngửa) = 1.024 / (1.024 + 999) ≈ 50,6%.</li>
+  <li>Áp vào giao dịch: lệnh mua khớp vào giá chào bán của mình là bằng chứng cho thấy giá trị thật có thể cao hơn. Cần dịch giá trị hợp lý lên theo đúng mức thông tin mà loại lệnh đó mang theo.</li>
+</ul>
+
+<script>
+(()=>{
+  const stage=document.getElementById('demo-01'), ctl=document.getElementById('ctl-01'), out=document.getElementById('out-01');
+  const N=1000, COLS=40, ROWS=25;
+  const S={prior:0.15, hit:0.8, fa:0.2, k:1};
+  const view={yaw:-0.6,pitch:0.75,dist:9,auto:true};
+  // Mỗi cá thể nhận một số ngẫu nhiên cố định; cá thể cho bằng chứng nếu u < xác suất tương ứng.
+  const r=Q.rng(7); const u=Array.from({length:N},()=>r());
+  let lift=new Float32Array(N), target=new Float32Array(N);
+  function compute(){
+    const nH=Math.round(S.prior*N);
+    const pH=Math.pow(S.hit,S.k), pN=Math.pow(S.fa,S.k);
+    let a=0,b=0;
+    for(let i=0;i<N;i++){ const isH=i<nH; const on=u[i]<(isH?pH:pN); target[i]=on?1:0; if(on){ if(isH)a++; else b++; } }
+    const post=pH*S.prior/(pH*S.prior+pN*(1-S.prior));
+    out.textContent=`Số khối được nâng: ${a} xanh dương + ${b} cam (trên quần thể 1.000)\n`+
+      `P(H | E) lý thuyết = ${Q.fmt(pH,3)}×${Q.fmt(S.prior,3)} / (${Q.fmt(pH,3)}×${Q.fmt(S.prior,3)} + ${Q.fmt(pN,3)}×${Q.fmt(1-S.prior,3)}) = ${Q.pct(post,1)}`;
+    return nH;
+  }
+  let nH=compute(); lift.set(target);
+  const c=Q.canvas(stage,380,draw);
+  function draw(ctx,w,h){
+    const C=Q.colors(); ctx.clearRect(0,0,w,h);
+    ctx.save(); ctx.translate(0,h*0.05);
+    const scale=Math.min(w,h*1.6)/8, cell=0.16, gap=0.035, sz=cell-gap;
+    const items=[];
+    for(let i=0;i<N;i++){
+      // xếp theo cột để nhóm H nằm gọn bên trái
+      const col=Math.floor(i/ROWS), row=i%ROWS;
+      const x=(col-COLS/2)*cell, y=(row-ROWS/2)*cell, z=lift[i]*0.6;
+      const P=Q.project([x+sz/2,y+sz/2,z],view,w,h,scale);
+      items.push({i,x,y,z,d:P[2]});
+    }
+    items.sort((p,q)=>q.d-p.d);
+    for(const it of items){
+      const isH=it.i<nH, col=isH?C.c:C.b;
+      const on=lift[it.i]>0.02;
+      const pts=[[it.x,it.y],[it.x+sz,it.y],[it.x+sz,it.y+sz],[it.x,it.y+sz]].map(p=>Q.project([p[0],p[1],it.z],view,w,h,scale));
+      if(on){ // cột nối xuống mặt đất
+        const base=Q.project([it.x+sz/2,it.y+sz/2,0],view,w,h,scale), top=Q.project([it.x+sz/2,it.y+sz/2,it.z],view,w,h,scale);
+        ctx.strokeStyle=col; ctx.globalAlpha=0.35; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(base[0],base[1]); ctx.lineTo(top[0],top[1]); ctx.stroke();
+      }
+      ctx.globalAlpha=on?1:0.22; ctx.fillStyle=col; ctx.beginPath();
+      pts.forEach((p,j)=>j?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1])); ctx.closePath(); ctx.fill();
+    }
+    ctx.restore(); ctx.globalAlpha=1; ctx.font='13px -apple-system,sans-serif'; ctx.fillStyle=C.muted;
+    ctx.fillText('■ H đúng (xanh dương)   ■ H sai (cam)   khối nâng lên = có bằng chứng E',12,20);
+  }
+  Q.orbit(c.cv,view,()=>c.redraw());
+  Q.loop(stage,()=>{ let moving=false; for(let i=0;i<N;i++){ const d=target[i]-lift[i]; if(Math.abs(d)>0.002){ lift[i]+=d*0.12; moving=true; } else lift[i]=target[i]; }
+    if(view.auto){ view.yaw+=0.0025; moving=true; } if(moving) c.redraw(); });
+  const f2=v=>Q.pct(v,1);
+  const sP=Q.slider(ctl,'Tiên nghiệm P(H)',0.001,0.5,0.001,S.prior,v=>{S.prior=v;nH=compute();},f2);
+  const sH=Q.slider(ctl,'P(E | H)',0.5,1,0.01,S.hit,v=>{S.hit=v;compute();},f2);
+  const sF=Q.slider(ctl,'P(E | ¬H)',0,0.5,0.005,S.fa,v=>{S.fa=v;compute();},f2);
+  const sK=Q.slider(ctl,'Số bằng chứng độc lập k',1,3,1,S.k,v=>{S.k=v;compute();},v=>v);
+  function preset(p,h,f){ S.prior=p;S.hit=h;S.fa=f; [[sP,p],[sH,h],[sF,f]].forEach(([s,v])=>{s.value=v;s.dispatchEvent(new Event('input'));}); }
+  Q.button(ctl,'Taxi và nhân chứng',()=>preset(0.15,0.8,0.2));
+  Q.button(ctl,'Xét nghiệm 99%',()=>preset(0.01,0.99,0.01));
+  Q.button(ctl,'Thủ thư hay nông dân',()=>preset(0.048,0.4,0.1));
+})();
+</script>
+</section>

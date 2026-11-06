@@ -1,0 +1,206 @@
+<section class="lesson" id="bai-19" data-short="Trò chơi xúc xắc">
+<header>
+  <span class="num">19</span>
+  <h3>Thực hành: tạo lập thị trường trên năm viên xúc xắc</h3>
+  <p class="meta">10 phút · Ứng dụng: Luyện tập cho vòng tạo lập thị trường trực tiếp · <a href="https://hft.md/learn/market-making-game/">Bài gốc (tiếng Anh)</a></p>
+</header>
+
+<p>Đọc về tạo lập thị trường chỉ giúp được một phần. Bài này là một trò chơi theo đúng kiểu các công ty hay dùng: bạn yết giá cho tổng của năm viên xúc xắc, trong khi đối phương luôn biết trước bạn một viên.</p>
+
+<h4>Ý chính</h4>
+<ul>
+  <li><b>Luật chơi.</b> Năm viên xúc xắc được gieo và che lại. Trước mỗi lần lật một viên, bạn yết hai chiều “giá chào mua @ giá chào bán”, rộng từ 1 đến 6. Sau viên thứ năm, mọi vị thế thanh toán theo tổng thật.</li>
+  <li><b>Đối phương có thông tin</b> (informed trader) đã nhìn trộm viên sắp lật. Họ mua một lô nếu ước lượng của họ cao hơn giá chào bán ít nhất 1, bán một lô nếu thấp hơn giá chào mua ít nhất 1, còn lại thì bỏ qua.</li>
+  <li>Thỉnh thoảng có <b>khách không có thông tin</b> (noise trader) giao dịch ngẫu nhiên. Chênh lệch giá (spread) họ trả là nguồn thu duy nhất của bạn.</li>
+  <li><b>Độ rộng theo độ bất định.</b> Lúc đầu còn năm viên ẩn, bạn biết ít và đối phương biết nhiều hơn hẳn. Càng về cuối, độ bất định càng nhỏ, có thể yết hẹp lại.</li>
+  <li><b>Mỗi giao dịch là thông tin.</b> Bị mua nghĩa là viên sắp lật nhiều khả năng là 5 hoặc 6. Bạn vừa bán khống, nên nâng giá vừa bảo vệ vị thế vừa phản ánh tin mới.</li>
+  <li><b>Theo dõi vị thế.</b> Ôm vị thế mua 3 lô khi viên cuối ra 1 là cách thua nhanh nhất. Hãy lệch giá (skew) để về gần phẳng trước khi kết thúc.</li>
+</ul>
+
+<h4>Công thức</h4>
+<div class="formula"><span class="lbl">Một viên xúc xắc sáu mặt</span>E[X] = 3,5,&nbsp;&nbsp; Var(X) = <span class="frac"><span>91</span><span>6</span></span> − 3,5<sup>2</sup> = <span class="frac"><span>35</span><span>12</span></span> ≈ 2,92</div>
+<div class="formula"><span class="lbl">Giá trị hợp lý khi tổng các viên đã lật là s và còn h viên ẩn</span>giá trị hợp lý = s + 3,5·h,&nbsp;&nbsp; σ = √<span style="text-decoration:overline">35h / 12</span>,&nbsp;&nbsp; lúc đầu: 17,5 ± 3,82</div>
+<div class="formula"><span class="lbl">Ước lượng của đối phương, khi họ đã thấy viên kế tiếp có giá trị d</span>T = s + d + 3,5·(h − 1) = giá trị hợp lý + (d − 3,5)</div>
+<div class="formula"><span class="lbl">Lỗ kỳ vọng mỗi lượt vì đối phương có thông tin, khi yết đối xứng quanh giá trị hợp lý với độ rộng w</span>E[lỗ] = <span class="frac"><span>2</span><span>6</span></span> Σ<sub>d : d − 3,5 ≥ w/2 + 1</sub> (d − 3,5 − w/2)</div>
+
+<h4>Ví dụ minh hoạ: chọn độ rộng ở lượt đầu</h4>
+<ol>
+  <li>Chưa lật viên nào: s = 0, h = 5, giá trị hợp lý 17,5. Yết rộng 2 nghĩa là <b>16,5 @ 18,5</b>.</li>
+  <li>Đối phương mua khi T ≥ 18,5 + 1 = 19,5, tức d − 3,5 ≥ 2. Chỉ có d = 6 thoả, khi đó T = 20.</li>
+  <li>Bạn bán ở 18,5 một thứ có giá trị kỳ vọng 20, lỗ 1,5. Xác suất 1/6. Phía bán đối xứng (d = 1) cũng lỗ 1,5. Lỗ kỳ vọng mỗi lượt: 2 × 1,5 / 6 = 0,5.</li>
+  <li>Yết rộng 3 (16 @ 19): chỉ d = 6 hoặc d = 1 bị khai thác, mỗi lần lỗ 1. Lỗ kỳ vọng còn 1/3.</li>
+  <li>Yết rộng 4 (15,5 @ 19,5): đối phương cần T ≥ 20,5, nhưng T lớn nhất là 20. Họ không bao giờ giao dịch, nhưng khách không có thông tin cũng ít ghé hơn.</li>
+  <li><b>Cập nhật sau giao dịch.</b> Với độ rộng 2, bị mua nghĩa là viên kế tiếp chắc chắn là 6. Giá trị hợp lý nhảy từ 17,5 lên 20, trước cả khi viên đó được lật.</li>
+</ol>
+<p>Kiểm tra nhanh: ba viên đã lật có tổng 9, còn hai viên ẩn. Giá trị hợp lý là 9 + 2 × 3,5 = 16, độ lệch chuẩn √(35/6) ≈ 2,42.</p>
+
+<figure class="demo">
+  <div class="stage" id="demo-19"></div>
+  <div class="controls" id="ctl-19"></div>
+  <div class="readout" id="out-19"></div>
+  <figcaption><b>Mô hình 19.1 – Bàn chơi xúc xắc 3D.</b> Năm viên xúc xắc nằm trên bàn; viên viền tím là viên đối phương đã nhìn trộm. Chọn giá giữa và độ rộng rồi bấm “Yết giá này”. Đối phương phản ứng, sau đó một viên được lật. Biểu đồ phía dưới ghi lại các thị trường bạn đã yết (dải xanh dương), giá trị hợp lý (đường tím) và các giao dịch (chấm cam: họ mua, chấm xanh lá: họ bán). Mỗi lượt có 25% khả năng gặp khách không có thông tin. Kéo để xoay bàn.</figcaption>
+</figure>
+
+<figure class="demo">
+  <div class="stage" id="demo2-19"></div>
+  <div class="controls" id="ctl2-19"></div>
+  <div class="readout" id="out2-19"></div>
+  <figcaption><b>Mô hình 19.2 – Độ rộng tối ưu.</b> Đường cong là lãi/lỗ kỳ vọng của cả ván (5 lượt) khi luôn yết đối xứng quanh giá trị hợp lý. Đường cam là phần thu từ khách không có thông tin; đường xanh lá là phần mất cho đối phương có thông tin. Khách không có thông tin chấp nhận độ rộng w với xác suất (6 − w)/5. Kéo tỉ lệ khách không có thông tin về 0 để thấy: khi chỉ còn người biết nhiều hơn bạn, cách tốt nhất là không giao dịch. Bấm “Mô phỏng” để kiểm chứng bằng 4.000 ván ngẫu nhiên.</figcaption>
+</figure>
+
+<h4>Lưu ý khi phỏng vấn</h4>
+<ul>
+  <li>Các biến thể hay gặp: tích của một viên sáu mặt và một viên mười hai mặt (kỳ vọng 3,5 × 6,5 = 22,75), giá trị lớn nhất của hai viên (kỳ vọng 161/36 ≈ 4,47), hoặc tổng có vài viên chỉ mình bạn được xem.</li>
+  <li>Phương pháp luôn như nhau: tính kỳ vọng và độ phân tán của phần còn ẩn, yết quanh đó, cập nhật sau mỗi giao dịch, và nói to lập luận của mình.</li>
+  <li>Thua vài ván là bình thường. Đối phương có thông tin trung bình luôn lấy tiền của nhà tạo lập. Kỹ năng là lỗ ít khi bị khai thác và thu đủ chênh lệch từ các giao dịch ngẫu nhiên.</li>
+  <li>Trên sàn thật, đây chính là <b>lựa chọn bất lợi</b> (adverse selection) thu nhỏ. Một phần lệnh đến từ người vừa đọc tin hoặc biết có lệnh lớn sắp vào. Chênh lệch giá phải bù được khoản mất cho họ.</li>
+</ul>
+
+<script>
+(()=>{
+  const stage=document.getElementById('demo-19'), ctl=document.getElementById('ctl-19'), out=document.getElementById('out-19');
+  const PI_NOISE=0.25, H3=230;
+  const view={yaw:-0.35,pitch:0.62,dist:12,auto:true};
+  const G={dice:[],r:0,pos:0,cash:0,hist:[],anim:[0,0,0,0,0],session:0,games:0,done:false,last:''};
+  let mid=17.5, width=4;
+  const fair=()=>{ let s=0; for(let i=0;i<G.r;i++) s+=G.dice[i]; return s+3.5*(5-G.r); };
+  const sd=()=>Math.sqrt(35/12*(5-G.r));
+  const roll=()=>1+Math.floor(Math.random()*6);
+  function newGame(){ G.dice=[roll(),roll(),roll(),roll(),roll()]; G.r=0; G.pos=0; G.cash=0; G.hist=[]; G.anim=[0,0,0,0,0]; G.done=false;
+    G.last='Ván mới. Năm viên đã được gieo và che lại.'; setMid(fair()); report(); }
+  function quote(){
+    if(G.done){ newGame(); return; }
+    const bid=mid-width/2, ask=mid+width/2, f=fair(), d=G.dice[G.r], T=f+(d-3.5);
+    let act=null, who='';
+    if(Math.random()<PI_NOISE){ who='Khách không có thông tin';
+      if(Math.random()<(6-width)/5) act=Math.random()<0.5?'buy':'sell'; }
+    else { who='Đối phương có thông tin'; if(T-ask>=1) act='buy'; else if(bid-T>=1) act='sell'; }
+    if(act==='buy'){ G.pos--; G.cash+=ask; } else if(act==='sell'){ G.pos++; G.cash-=bid; }
+    G.hist.push({bid,ask,f,act});
+    const fx=v=>Q.fmt(v,1);
+    G.last=`Lượt ${G.r+1}: bạn yết ${fx(bid)} @ ${fx(ask)}. ${who} `+(act==='buy'?`MUA ở ${fx(ask)}.`:act==='sell'?`BÁN ở ${fx(bid)}.`:'bỏ qua.')+` Viên ${G.r+1} lật ra ${d}.`;
+    G.r++; G.anim[G.r-1]=performance.now();
+    if(G.r===5){ const S=G.dice.reduce((a,b)=>a+b,0), p=G.cash+G.pos*S; G.done=true; G.session+=p; G.games++;
+      G.last+=`\nKết thúc: tổng = ${S}. Lãi/lỗ ván này ${p>=0?'+':'−'}${fx(Math.abs(p))}.`; }
+    else setMid(fair());
+    report();
+  }
+  function report(){
+    const f=fair(), mtm=G.cash+G.pos*f, fx=v=>Q.fmt(v,2);
+    out.textContent=`${G.last}\n`+
+      (G.done?'':`Giá trị hợp lý = ${fx(f)} ± ${fx(sd())} (còn ${5-G.r} viên ẩn). Thị trường đang chọn: ${Q.fmt(mid-width/2,1)} @ ${Q.fmt(mid+width/2,1)}\n`)+
+      `Vị thế: ${G.pos<0?'−'+(-G.pos):G.pos} · Tiền mặt: ${fx(G.cash)} · Lãi/lỗ theo giá trị hợp lý: ${fx(mtm)}\n`+
+      `Tổng phiên: ${fx(G.session)} sau ${G.games} ván`+(G.games?` (trung bình ${fx(G.session/G.games)} mỗi ván)`:'');
+    bQ.textContent=G.done?'Ván tiếp theo':'Yết giá này'; c.redraw();
+  }
+  // Hình học xúc xắc
+  const PIPS={1:[[.5,.5]],2:[[.25,.25],[.75,.75]],3:[[.25,.25],[.5,.5],[.75,.75]],4:[[.25,.25],[.75,.25],[.25,.75],[.75,.75]],
+    5:[[.25,.25],[.75,.25],[.5,.5],[.25,.75],[.75,.75]],6:[[.25,.22],[.25,.5],[.25,.78],[.75,.22],[.75,.5],[.75,.78]]};
+  const FACES=[[4,5,6,7,'top'],[0,3,2,1,'bot'],[0,1,5,4,'s'],[1,2,6,5,'s'],[2,3,7,6,'s'],[3,0,4,7,'s']];
+  const LOC=[[-.5,-.5,-.5],[.5,-.5,-.5],[.5,.5,-.5],[-.5,.5,-.5],[-.5,-.5,.5],[.5,-.5,.5],[.5,.5,.5],[-.5,.5,.5]];
+  function diePts(i){ const a=G.anim[i]>0?Math.min(1,(performance.now()-G.anim[i])/700):0, moving=a>0&&a<1, th=moving?(1-a)*Math.PI:0, lift=moving?Math.sin(Math.PI*a)*1.1:0;
+    const ct=Math.cos(th), st=Math.sin(th), cx=(i-2)*1.6;
+    const tf=p=>[p[0]+cx, p[1]*ct-p[2]*st, p[1]*st+p[2]*ct+0.5+lift];
+    return {tf, verts:LOC.map(tf), shown:i<G.r};
+  }
+  const c=Q.canvas(stage,430,draw);
+  function draw(ctx,w,h){
+    const C=Q.colors(); ctx.clearRect(0,0,w,h); const sc=Math.min(w/9.5,58);
+    const P=p=>Q.project(p,view,w,H3,sc);
+    // mặt bàn
+    ctx.strokeStyle=C.line; ctx.lineWidth=1;
+    for(let gx=-5;gx<=5;gx++){ const a=P([gx,-1.6,0]),b=P([gx,1.6,0]); ctx.beginPath(); ctx.moveTo(a[0],a[1]); ctx.lineTo(b[0],b[1]); ctx.stroke(); }
+    for(let gy=-1.6;gy<=1.61;gy+=0.8){ const a=P([-5,gy,0]),b=P([5,gy,0]); ctx.beginPath(); ctx.moveTo(a[0],a[1]); ctx.lineTo(b[0],b[1]); ctx.stroke(); }
+    const faces=[];
+    for(let i=0;i<5;i++){ if(!G.dice.length) break; const D=diePts(i);
+      for(const F of FACES){ const pts=F.slice(0,4).map(k=>P(D.verts[k])); faces.push({i,F,D,pts,d:pts.reduce((s,p)=>s+p[2],0)/4}); } }
+    faces.sort((a,b)=>b.d-a.d);
+    for(const f of faces){
+      const peek=!G.done&&f.i===G.r, visTop=f.D.shown||G.done;
+      ctx.beginPath(); f.pts.forEach((p,j)=>j?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1])); ctx.closePath();
+      ctx.fillStyle=visTop?C.panel:C.line; ctx.fill();
+      if(f.F[4]==='s'){ ctx.fillStyle='rgba(0,0,0,0.14)'; ctx.fill(); }
+      if(f.F[4]==='bot'){ ctx.fillStyle='rgba(0,0,0,0.25)'; ctx.fill(); }
+      ctx.strokeStyle=peek?C.d:C.muted; ctx.lineWidth=peek?2.2:1; ctx.stroke(); ctx.lineWidth=1;
+      if(f.F[4]==='top'){
+        const at=(u,v)=>P(f.D.tf([u-.5,v-.5,.5]));
+        if(visTop){ ctx.fillStyle=C.ink; const r=Math.max(1.5,sc*0.075*(view.dist/(view.dist+at(.5,.5)[2])));
+          for(const [u,v] of PIPS[G.dice[f.i]]){ const p=at(u,v); ctx.beginPath(); ctx.arc(p[0],p[1],r,0,7); ctx.fill(); } }
+        else { const p=at(.5,.5); ctx.fillStyle=peek?C.d:C.muted; ctx.font='600 16px ui-monospace,monospace'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText('?',p[0],p[1]); }
+      }
+    }
+    ctx.textBaseline='alphabetic'; ctx.textAlign='left'; ctx.font='12px -apple-system,sans-serif'; ctx.fillStyle=C.muted;
+    ctx.fillText(G.done?'Ván đã kết thúc: bấm “Ván tiếp theo”':'Viên viền tím: đối phương đã nhìn trộm',12,18);
+    // biểu đồ lịch sử thị trường
+    const T0=H3+18, B=h-26, L=40, R=w-14, lo=5, hi=30;
+    const ys=v=>B-(v-lo)/(hi-lo)*(B-T0), xs=i=>L+(i+0.5)*(R-L)/6;
+    for(let v=5;v<=30;v+=5){ ctx.strokeStyle=C.line; ctx.beginPath(); ctx.moveTo(L,ys(v)); ctx.lineTo(R,ys(v)); ctx.stroke(); ctx.fillStyle=C.muted; ctx.textAlign='right'; ctx.fillText(v,L-6,ys(v)+4); }
+    ctx.textAlign='center'; for(let i=0;i<6;i++){ ctx.fillText(i<5?'lượt '+(i+1):'kết thúc',xs(i),h-8); }
+    const fl=G.hist.map(o=>o.f); if(!G.done) fl.push(fair()); else fl.push(G.dice.reduce((a,b)=>a+b,0));
+    ctx.strokeStyle=C.d; ctx.lineWidth=2; ctx.beginPath(); fl.forEach((v,i)=>i?ctx.lineTo(xs(i),ys(v)):ctx.moveTo(xs(i),ys(v))); ctx.stroke(); ctx.lineWidth=1;
+    const bw=Math.min(26,(R-L)/6*0.35);
+    G.hist.forEach((o,i)=>{ ctx.globalAlpha=0.55; ctx.fillStyle=C.c; ctx.fillRect(xs(i)-bw/2,ys(o.ask),bw,ys(o.bid)-ys(o.ask)); ctx.globalAlpha=1;
+      if(o.act){ ctx.fillStyle=o.act==='buy'?C.b:C.a; ctx.beginPath(); ctx.arc(xs(i),ys(o.act==='buy'?o.ask:o.bid),5.5,0,7); ctx.fill(); } });
+    if(!G.done){ const i=G.r; ctx.setLineDash([4,3]); ctx.strokeStyle=C.c; ctx.strokeRect(xs(i)-bw/2,ys(mid+width/2),bw,ys(mid-width/2)-ys(mid+width/2)); ctx.setLineDash([]); }
+  }
+  Q.orbit(c.cv,view,()=>c.redraw());
+  Q.loop(stage,t=>{ let mv=false; for(let i=0;i<5;i++){ if(G.anim[i]>0&&performance.now()-G.anim[i]<800) mv=true; }
+    if(view.auto){ view.yaw+=0.002; mv=true; } if(mv) c.redraw(); });
+  const sM=Q.slider(ctl,'Giá giữa',5,30,0.5,mid,v=>{mid=v;report();},v=>Q.fmt(v,1));
+  function setMid(v){ mid=Math.round(v*2)/2; sM.value=mid; sM.nextSibling.textContent=Q.fmt(mid,1); }
+  Q.slider(ctl,'Độ rộng',1,6,0.5,width,v=>{width=v;report();},v=>Q.fmt(v,1));
+  Q.button(ctl,'Giá giữa = giá trị hợp lý',()=>{ setMid(fair()); report(); });
+  const bQ=Q.button(ctl,'Yết giá này',quote,true);
+  Q.button(ctl,'Ván mới',newGame);
+  newGame();
+})();
+(()=>{
+  const stage=document.getElementById('demo2-19'), ctl=document.getElementById('ctl2-19'), out=document.getElementById('out2-19');
+  const S={pi:0.25, w:4, mc:null};
+  // Lỗ kỳ vọng mỗi lượt cho đối phương có thông tin, và thu kỳ vọng từ khách không có thông tin
+  const lossInf=w=>{ let s=0; for(let d=1;d<=6;d++){ const e=d-3.5; if(e>=w/2+1) s+=e-w/2; } return 2*s/6; };
+  const gainNoise=w=>(6-w)/5*w/2;
+  const EV=(w,pi)=>5*(pi*gainNoise(w)-(1-pi)*lossInf(w));
+  function simulate(){ // 4.000 ván, yết đối xứng quanh giá trị hợp lý với độ rộng S.w
+    const r=Q.rng(1919), N=4000; let tot=0, tot2=0;
+    for(let g=0;g<N;g++){ const dice=[]; for(let i=0;i<5;i++) dice.push(1+Math.floor(r()*6));
+      let s=0,pos=0,cash=0;
+      for(let k=0;k<5;k++){ const f=s+3.5*(5-k), bid=f-S.w/2, ask=f+S.w/2, T=f+dice[k]-3.5;
+        if(r()<S.pi){ if(r()<(6-S.w)/5){ if(r()<0.5){pos--;cash+=ask;} else {pos++;cash-=bid;} } }
+        else if(T-ask>=1){pos--;cash+=ask;} else if(bid-T>=1){pos++;cash-=bid;}
+        s+=dice[k]; }
+      const p=cash+pos*s; tot+=p; tot2+=p*p; }
+    const m=tot/N, se=Math.sqrt((tot2/N-m*m)/N); S.mc={w:S.w,pi:S.pi,m,se}; report();
+  }
+  function report(){ const e=EV(S.w,S.pi);
+    let best=1,bv=-1e9; for(let w=1;w<=6.0001;w+=0.05){ const v=EV(w,S.pi); if(v>bv+1e-9){bv=v;best=w;} }
+    out.textContent=`Độ rộng ${Q.fmt(S.w,1)}: thu từ khách không thông tin ${Q.fmt(5*S.pi*gainNoise(S.w),3)} − mất cho đối phương có thông tin ${Q.fmt(5*(1-S.pi)*lossInf(S.w),3)} = ${Q.fmt(e,3)} mỗi ván\n`+
+      `Độ rộng tốt nhất với tỉ lệ khách ${Q.pct(S.pi,0)}: ≈ ${Q.fmt(best,2)} (kỳ vọng ${Q.fmt(bv,3)} mỗi ván)`+
+      (S.mc?`\nMô phỏng 4.000 ván ở độ rộng ${Q.fmt(S.mc.w,1)}, tỉ lệ khách ${Q.pct(S.mc.pi,0)}: trung bình ${Q.fmt(S.mc.m,3)} ± ${Q.fmt(1.96*S.mc.se,3)}`:'');
+    c.redraw(); }
+  const c=Q.canvas(stage,300,draw);
+  function draw(ctx,w,h){
+    const C=Q.colors(); ctx.clearRect(0,0,w,h); ctx.font='12px -apple-system,sans-serif';
+    const L=52,R=w-16,T=24,B=h-34, lo=-5.5, hi=3.5;
+    const xs=v=>L+(v-1)/5*(R-L), ys=v=>B-(v-lo)/(hi-lo)*(B-T);
+    for(let v=-5;v<=3;v++){ ctx.strokeStyle=v===0?C.muted:C.line; ctx.beginPath(); ctx.moveTo(L,ys(v)); ctx.lineTo(R,ys(v)); ctx.stroke();
+      ctx.fillStyle=C.muted; ctx.textAlign='right'; ctx.fillText(Q.fmt(v,0),L-6,ys(v)+4); }
+    ctx.textAlign='center'; for(let v=1;v<=6;v++) ctx.fillText(Q.fmt(v,0),xs(v),B+16); ctx.fillText('độ rộng w',(L+R)/2,h-4);
+    ctx.save(); ctx.translate(14,(T+B)/2); ctx.rotate(-Math.PI/2); ctx.fillText('lãi/lỗ kỳ vọng mỗi ván',0,0); ctx.restore();
+    const curve=(f,col,lw)=>{ ctx.strokeStyle=col; ctx.lineWidth=lw; ctx.beginPath(); let first=true;
+      for(let i=0;i<=500;i++){ const v=1+5*i/500, y=f(v); if(first){ctx.moveTo(xs(v),ys(y));first=false;} else ctx.lineTo(xs(v),ys(y)); } ctx.stroke(); ctx.lineWidth=1; };
+    curve(v=>5*S.pi*gainNoise(v),C.b,1.5); curve(v=>-5*(1-S.pi)*lossInf(v),C.a,1.5); curve(v=>EV(v,S.pi),C.c,3);
+    const e=EV(S.w,S.pi); ctx.fillStyle=C.c; ctx.beginPath(); ctx.arc(xs(S.w),ys(e),6,0,7); ctx.fill();
+    if(S.mc&&S.mc.pi===S.pi){ ctx.strokeStyle=C.d; ctx.lineWidth=2; const x=xs(S.mc.w);
+      ctx.beginPath(); ctx.moveTo(x,ys(S.mc.m-1.96*S.mc.se)); ctx.lineTo(x,ys(S.mc.m+1.96*S.mc.se)); ctx.stroke();
+      ctx.beginPath(); ctx.rect(x-4,ys(S.mc.m)-4,8,8); ctx.stroke(); ctx.lineWidth=1; }
+    ctx.textAlign='left'; let lx=L+6;
+    for(const [col,t] of [[C.c,'— tổng'],[C.b,'— thu từ khách không thông tin'],[C.a,'— mất cho đối phương có thông tin'],[C.d,'□ mô phỏng']]){ ctx.fillStyle=col; ctx.fillText(t,lx,14); lx+=ctx.measureText(t).width+14; }
+  }
+  Q.slider(ctl,'Độ rộng w',1,6,0.5,S.w,v=>{S.w=v;report();},v=>Q.fmt(v,1));
+  Q.slider(ctl,'Tỉ lệ khách không thông tin',0,0.8,0.05,S.pi,v=>{S.pi=v;report();},v=>Q.pct(v,0));
+  Q.button(ctl,'Mô phỏng 4.000 ván',simulate,true);
+  report();
+})();
+</script>
+</section>

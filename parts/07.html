@@ -1,0 +1,151 @@
+<section class="lesson" id="bai-07" data-short="Khoảng tin cậy">
+<header>
+  <span class="num">07</span>
+  <h3>Khoảng tin cậy</h3>
+  <p class="meta">10 phút · Ứng dụng: thanh sai số cho hệ số Sharpe và độ mạnh của tín hiệu · <a href="https://hft.md/learn/confidence-intervals/">Bài gốc (tiếng Anh)</a></p>
+</header>
+
+<p>Một ước lượng không kèm sai số mới chỉ là nửa câu trả lời. Trên sàn giao dịch, người ta còn hỏi thẳng: “cho tôi khoảng 90% của số cửa sổ trong toà nhà này”. Khoảng tin cậy là cách nói rõ mình chắc chắn đến đâu.</p>
+
+<h4>Ý chính</h4>
+<ul>
+  <li><b>Khoảng tin cậy</b> (confidence interval) mức 1 − α là một khoảng được tính từ dữ liệu. Nó chứa tham số thật với xác suất ít nhất 1 − α, dù tham số thật là bao nhiêu.</li>
+  <li>Cái ngẫu nhiên là khoảng, còn tham số thì cố định. “95%” là tính chất của <b>quy trình</b>: lặp lại thí nghiệm nhiều lần thì khoảng 95% số khoảng dựng được sẽ chứa tham số. Một khoảng cụ thể thì hoặc chứa, hoặc không.</li>
+  <li>Cách dựng thông dụng: tâm lấy từ trung bình mẫu (luật số lớn), độ rộng lấy từ định lý giới hạn trung tâm. Phân vị chuẩn q là 1,645 cho mức 90%, 1,96 cho 95% và 2,576 cho 99%.</li>
+  <li>Vướng mắc: σ thường phụ thuộc vào chính tham số chưa biết. Với biến Bernoulli, σ = √(p(1 − p)). Có hai cách xử lý: chặn trên <b>bảo thủ</b> (conservative) hoặc <b>thay thế</b> (plug-in) p bằng p̂.</li>
+  <li>Độ rộng tỉ lệ với 1/√n. Mức tin cậy càng cao thì khoảng càng rộng. Một khoảng quá rộng thì luôn đúng nhưng vô dụng.</li>
+</ul>
+
+<h4>Công thức</h4>
+<div class="formula"><span class="lbl">Định nghĩa: khoảng ngẫu nhiên I phủ θ với xác suất ít nhất 1 − α</span>P<sub>θ</sub>( θ ∈ I ) ≥ 1 − α &nbsp;&nbsp; với mọi θ</div>
+<div class="formula"><span class="lbl">Khoảng dựa trên CLT, q = q<sub>α/2</sub> là phân vị 1 − α/2 của N(0, 1)</span>I = [ θ̂ − <span class="frac"><span>q · σ</span><span>√n</span></span> ,&nbsp; θ̂ + <span class="frac"><span>q · σ</span><span>√n</span></span> ]</div>
+<div class="formula"><span class="lbl">Tỉ lệ Bernoulli: bảo thủ (vì p(1 − p) ≤ 1/4) và thay thế (định lý Slutsky)</span>p̂ ± <span class="frac"><span>q</span><span>2√n</span></span> &nbsp;&nbsp;&nbsp;&nbsp; p̂ ± q · √<span style="text-decoration:overline">p̂(1 − p̂) / n</span></div>
+<div class="formula"><span class="lbl">Cỡ mẫu để sai số biên không quá m (dạng bảo thủ), và sai số chuẩn xấp xỉ của Sharpe năm ước lượng từ T năm dữ liệu ngày</span>n ≥ ( <span class="frac"><span>q</span><span>2m</span></span> )<sup>2</sup> &nbsp;&nbsp;&nbsp;&nbsp; SE(Ŝ) ≈ <span class="frac"><span>1</span><span>√T</span></span></div>
+
+<h4>Ví dụ minh hoạ: tín hiệu đoán chiều và thanh sai số của Sharpe</h4>
+<p>Một tín hiệu đoán đúng chiều giá trong 540 trên 1.000 ngày. Nó có thật sự tốt hơn tung đồng xu không?</p>
+<ol>
+  <li>Ước lượng p̂ = 540 / 1.000 = 0,54.</li>
+  <li>Sai số chuẩn theo cách thay thế: √(0,54 × 0,46 / 1.000) ≈ 0,0158.</li>
+  <li>Khoảng 95%: 0,54 ± 1,96 × 0,0158 = 0,54 ± 0,031, tức [0,509; 0,571]. Cách bảo thủ cho 1,96 / (2√1.000) ≈ 0,031, gần như trùng khớp vì p̂ gần 0,5.</li>
+  <li>Khoảng không chứa 0,5, nhưng cận dưới chỉ cách 0,5 chưa tới 1 điểm phần trăm. Muốn sai số biên còn ±0,01 thì cần n ≥ (1,96 / 0,02)<sup>2</sup> ≈ 9.604 ngày.</li>
+</ol>
+<p>Với hệ số Sharpe: backtest 3 năm cho Ŝ = 1,2. Sai số chuẩn khoảng 1/√3 ≈ 0,58, nên khoảng 95% là 1,2 ± 1,13, tức [0,07; 2,33]. Khoảng này chỉ vừa đủ loại trừ 0. Cần T &gt; (1,96 / 1,2)<sup>2</sup> ≈ 2,7 năm để đạt điều đó.</p>
+
+<figure class="demo">
+  <div class="stage" id="demo-07"></div>
+  <div class="controls" id="ctl-07"></div>
+  <div class="readout" id="out-07"></div>
+  <figcaption><b>Mô hình 7.1 – Cỗ máy đo độ phủ.</b> Vạch dọc là tỉ lệ thật p. Mỗi đoạn ngang là một khoảng tin cậy dựng từ một mẫu mới gồm n lần tung. Đoạn màu xanh chứa p, đoạn màu cam trượt. Rút nhiều lần để xem tỉ lệ phủ tích luỹ tiến về đâu. Phần đọc số còn cho độ phủ chính xác, tính bằng phân phối nhị thức. Hãy thử n nhỏ hoặc p gần 0 với cách thay thế: độ phủ thật thấp hơn mức danh nghĩa.</figcaption>
+</figure>
+
+<figure class="demo">
+  <div class="stage" id="demo2-07"></div>
+  <div class="controls" id="ctl2-07"></div>
+  <div class="readout" id="out2-07"></div>
+  <figcaption><b>Mô hình 7.2 – Thanh sai số cho hệ số Sharpe.</b> 30 chiến lược có cùng hệ số Sharpe thật S, mỗi chiến lược được backtest trên T năm lợi suất ngày ngẫu nhiên. Mỗi cột là Sharpe ước lượng kèm khoảng 95%. Đường đứt nét là S thật, đường liền là 0. Kéo T để xem cần bao nhiêu năm thì phần lớn các khoảng mới tách khỏi 0.</figcaption>
+</figure>
+
+<h4>Lưu ý khi phỏng vấn</h4>
+<ul>
+  <li>Bẫy diễn đạt: câu “có 95% xác suất giá trị thật nằm trong [a, b]” là sai theo nghĩa tần suất. Câu đúng: lặp lại quy trình nhiều lần thì khoảng 95% số khoảng chứa giá trị thật. Cách hiểu thứ nhất chỉ đúng với khoảng khả tín (credible interval) của Bayes, vốn cần một tiên nghiệm.</li>
+  <li>Đừng nhầm khoảng tin cậy của trung bình với khoảng chứa các quan sát riêng lẻ. Khoảng cho lợi suất trung bình ngày không nói gì về lợi suất của một ngày cụ thể.</li>
+  <li>Đại lượng chuẩn có trung bình 100, độ lệch chuẩn 10: khoảng 95% là 100 ± 19,6, tức khoảng 80 đến 120. Với câu hỏi ước lượng kiểu Fermi, khoảng phải rộng khi mình biết ít, nhưng vẫn phải sát thực tế. Khoảng “từ 0 đến một tỉ” cũng vô dụng như một thị trường yết giá 0 @ 1 tỉ.</li>
+  <li>Một tín hiệu có tương quan 0,03 với lợi suất ngày hôm sau, đo trên 2.000 ngày, có sai số chuẩn khoảng 1/√2.000 ≈ 0,022. Khoảng 95% chứa 0, nên chưa nên giao dịch theo nó.</li>
+</ul>
+
+<script>
+(()=>{
+  /* ---------- Mô hình 7.1: cỗ máy đo độ phủ ---------- */
+  const stage=document.getElementById('demo-07'), ctl=document.getElementById('ctl-07'), out=document.getElementById('out-07');
+  const S={p:0.55, n:50, q:1.96, lvl:0.95, cons:false};
+  const SHOW=60; let rows=[], queue=0, total=0, hits=0, sumW=0;
+  const r=Q.rng(77);
+  const lf=[0]; for(let i=1;i<=1000;i++) lf[i]=lf[i-1]+Math.log(i);
+  function interval(k){ const ph=k/S.n; const half=S.cons? S.q/(2*Math.sqrt(S.n)) : S.q*Math.sqrt(ph*(1-ph)/S.n); return [ph,ph-half,ph+half]; }
+  function exactCoverage(){ let c=0; const lp=Math.log(S.p), lq=Math.log(1-S.p);
+    for(let k=0;k<=S.n;k++){ const [,a,b]=interval(k); if(a<=S.p&&S.p<=b) c+=Math.exp(lf[S.n]-lf[k]-lf[S.n-k]+k*lp+(S.n-k)*lq); } return c; }
+  function drawOne(){ let k=0; for(let i=0;i<S.n;i++) if(r()<S.p) k++; const [ph,a,b]=interval(k); const hit=a<=S.p&&S.p<=b;
+    total++; if(hit) hits++; sumW+=b-a; return {ph,a,b,hit,age:0}; }
+  function reset(){ rows=[]; queue=0; total=0; hits=0; sumW=0; report(); c&&c.redraw(); }
+  function report(){
+    out.textContent=`Đã dựng ${total.toLocaleString('vi-VN')} khoảng · số khoảng chứa p: ${hits.toLocaleString('vi-VN')}`+(total?` (${Q.pct(hits/total,1)})`:'')+`\n`+
+      `Mức danh nghĩa ${Q.pct(S.lvl,0)} · phương pháp ${S.cons?'bảo thủ':'thay thế (plug-in)'} · độ phủ chính xác với p = ${Q.fmt(S.p,2)}, n = ${S.n}: ${Q.pct(exactCoverage(),1)}\n`+
+      `Độ rộng trung bình của khoảng: `+(total?Q.fmt(sumW/total,3):'–');
+  }
+  let c=null;
+  c=Q.canvas(stage,380,draw);
+  function draw(ctx,w,h){
+    const C=Q.colors(); ctx.clearRect(0,0,w,h);
+    const half=Math.max(0.06,2.3*S.q*0.5/Math.sqrt(S.n)), lo=Math.max(0,S.p-half), hi=Math.min(1,S.p+half);
+    const L=40, Rr=w-20, T0=34, B=h-32, X=v=>L+(v-lo)/(hi-lo)*(Rr-L), rowH=(B-T0)/SHOW;
+    ctx.font='12px -apple-system,sans-serif';
+    ctx.strokeStyle=C.line; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(L,B); ctx.lineTo(Rr,B); ctx.stroke();
+    ctx.fillStyle=C.muted; ctx.textAlign='center';
+    const step=(hi-lo)>0.4?0.1:(hi-lo)>0.15?0.05:0.02;
+    for(let v=Math.ceil(lo/step)*step;v<=hi+1e-9;v+=step){ ctx.fillText(Q.fmt(v,2),X(v),B+16); ctx.strokeStyle=C.line; ctx.beginPath(); ctx.moveTo(X(v),T0); ctx.lineTo(X(v),B); ctx.stroke(); }
+    rows.forEach((o,i)=>{ const y=T0+i*rowH+rowH/2 - (1-Math.min(1,o.age))*rowH*0.8;
+      const col=o.hit?C.c:C.b; ctx.strokeStyle=col; ctx.fillStyle=col; ctx.globalAlpha=Math.min(1,0.3+o.age); ctx.lineWidth=Math.max(1.2,rowH*0.45);
+      const a=Math.max(lo,o.a), b=Math.min(hi,o.b); ctx.beginPath(); ctx.moveTo(X(a),y); ctx.lineTo(X(b),y); ctx.stroke();
+      ctx.beginPath(); ctx.arc(X(o.ph),y,Math.max(1.5,rowH*0.42),0,7); ctx.fill(); });
+    ctx.globalAlpha=1; ctx.strokeStyle=C.ink; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(X(S.p),T0-6); ctx.lineTo(X(S.p),B); ctx.stroke();
+    ctx.fillStyle=C.ink; ctx.textAlign='center'; ctx.fillText('p thật = '+Q.fmt(S.p,2),X(S.p),T0-10);
+    ctx.textAlign='left'; ctx.fillStyle=C.muted; ctx.fillText(`${SHOW} khoảng gần nhất (mới nhất ở trên)`,L,16);
+    if(total){ ctx.textAlign='right'; ctx.fillStyle=C.ink; ctx.fillText(`phủ: ${Q.pct(hits/total,1)} / mục tiêu ${Q.pct(S.lvl,0)}`,Rr,16); }
+    ctx.textAlign='left';
+  }
+  function push(o){ rows.unshift(o); if(rows.length>SHOW) rows.length=SHOW; }
+  Q.loop(stage,()=>{ let moving=false;
+    if(queue>0){ push(drawOne()); queue--; report(); moving=true; }
+    rows.forEach(o=>{ if(o.age<1){ o.age=Math.min(1,o.age+0.15); moving=true; } });
+    if(moving) c.redraw(); });
+  Q.slider(ctl,'p thật',0.02,0.98,0.01,S.p,v=>{S.p=v;reset();},v=>Q.fmt(v,2));
+  Q.slider(ctl,'Cỡ mẫu n',5,500,1,S.n,v=>{S.n=v;reset();},v=>v);
+  const lvB={}; const Qs={0.9:1.645,0.95:1.96,0.99:2.576};
+  function setLvl(l){ S.lvl=l; S.q=Qs[l]; Object.keys(lvB).forEach(k=>lvB[k].className=(+k===l)?'primary':''); reset(); }
+  [0.9,0.95,0.99].forEach(l=>{ lvB[l]=Q.button(ctl,Q.pct(l,0),()=>setLvl(l)); });
+  const mB=Q.button(ctl,'Phương pháp: thay thế',()=>{ S.cons=!S.cons; mB.textContent='Phương pháp: '+(S.cons?'bảo thủ':'thay thế'); reset(); });
+  Q.button(ctl,'Rút 20 khoảng',()=>{ queue+=20; },true);
+  Q.button(ctl,'Rút nhanh 1.000',()=>{ for(let i=0;i<1000;i++){ const o=drawOne(); if(i>=1000-SHOW){ o.age=1; push(o);} } report(); c.redraw(); });
+  Q.button(ctl,'Xoá',reset);
+  setLvl(0.95); queue=20;
+})();
+(()=>{
+  /* ---------- Mô hình 7.2: thanh sai số cho Sharpe ---------- */
+  const stage=document.getElementById('demo2-07'), ctl=document.getElementById('ctl2-07'), out=document.getElementById('out2-07');
+  const S={sh:0.5, T:3, seed:5}; const M=30;
+  let est=[];
+  function sim(){
+    const r=Q.rng(S.seed*1009+Math.round(S.T*10)), N=Math.round(252*S.T), mu=S.sh/Math.sqrt(252);
+    est=[];
+    for(let j=0;j<M;j++){ let s=0,s2=0; for(let i=0;i<N;i++){ const x=mu+Q.normal(r); s+=x; s2+=x*x; }
+      const m=s/N, sd=Math.sqrt(Math.max(1e-12,s2/N-m*m)), sdd=m/sd, Sh=sdd*Math.sqrt(252);
+      const se=Math.sqrt((1+sdd*sdd/2)/N)*Math.sqrt(252); est.push({Sh,a:Sh-1.96*se,b:Sh+1.96*se}); }
+    const sig=est.filter(e=>e.a>0).length, cov=est.filter(e=>e.a<=S.sh&&S.sh<=e.b).length, se=1/Math.sqrt(S.T);
+    out.textContent=`T = ${Q.fmt(S.T,1)} năm (${N.toLocaleString('vi-VN')} ngày) · sai số chuẩn ≈ 1/√T = ${Q.fmt(se,2)} · nửa độ rộng khoảng 95% ≈ ${Q.fmt(1.96*se,2)}\n`+
+      `Số chiến lược có khoảng nằm hẳn trên 0: ${sig}/${M} · số khoảng chứa S thật: ${cov}/${M}\n`+
+      `Số năm cần để Sharpe thật ${Q.fmt(S.sh,1)} có khoảng 95% tách khỏi 0: `+(S.sh>0?`T > (1,96 / S)² ≈ ${Q.fmt(Math.pow(1.96/S.sh,2),1)} năm`:'không bao giờ');
+  }
+  sim();
+  const c=Q.canvas(stage,320,draw);
+  function draw(ctx,w,h){
+    const C=Q.colors(); ctx.clearRect(0,0,w,h);
+    const lo=Math.min(-1,...est.map(e=>e.a))-0.2, hi=Math.max(2.5,...est.map(e=>e.b))+0.2;
+    const L=44, Rr=w-16, T0=24, B=h-28, Y=v=>T0+(hi-v)/(hi-lo)*(B-T0), dx=(Rr-L)/M;
+    ctx.font='12px -apple-system,sans-serif'; ctx.textAlign='right'; ctx.fillStyle=C.muted;
+    for(let v=Math.ceil(lo);v<=hi;v++){ ctx.fillText(String(v).replace('-','−'),L-6,Y(v)+4); ctx.strokeStyle=C.line; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(L,Y(v)); ctx.lineTo(Rr,Y(v)); ctx.stroke(); }
+    ctx.strokeStyle=C.ink; ctx.lineWidth=1.5; ctx.beginPath(); ctx.moveTo(L,Y(0)); ctx.lineTo(Rr,Y(0)); ctx.stroke();
+    ctx.strokeStyle=C.a; ctx.setLineDash([6,4]); ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(L,Y(S.sh)); ctx.lineTo(Rr,Y(S.sh)); ctx.stroke(); ctx.setLineDash([]);
+    est.forEach((e,j)=>{ const x=L+dx*(j+0.5), col=e.a>0?C.c:C.muted; ctx.strokeStyle=col; ctx.fillStyle=col; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.moveTo(x,Y(e.a)); ctx.lineTo(x,Y(e.b)); ctx.moveTo(x-dx*0.25,Y(e.a)); ctx.lineTo(x+dx*0.25,Y(e.a)); ctx.moveTo(x-dx*0.25,Y(e.b)); ctx.lineTo(x+dx*0.25,Y(e.b)); ctx.stroke();
+      ctx.beginPath(); ctx.arc(x,Y(e.Sh),3,0,7); ctx.fill(); });
+    ctx.textAlign='left'; ctx.fillStyle=C.muted;
+    ctx.fillText('Sharpe năm ước lượng ± khoảng 95%  (xanh: khoảng nằm hẳn trên 0)',L,14);
+    ctx.fillStyle=C.a; ctx.fillText('S thật',L+4,Y(S.sh)-6);
+  }
+  Q.slider(ctl,'Sharpe thật S',0,2,0.1,S.sh,v=>{S.sh=v;sim();c.redraw();},v=>Q.fmt(v,1));
+  Q.slider(ctl,'Số năm backtest T',0.5,10,0.5,S.T,v=>{S.T=v;sim();c.redraw();},v=>Q.fmt(v,1));
+  Q.button(ctl,'Mô phỏng lại',()=>{S.seed++;sim();c.redraw();},true);
+})();
+</script>
+</section>

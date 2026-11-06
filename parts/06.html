@@ -1,0 +1,244 @@
+<section class="lesson" id="bai-06" data-short="Số lớn và CLT">
+<header>
+  <span class="num">06</span>
+  <h3>Luật số lớn và định lý giới hạn trung tâm</h3>
+  <p class="meta">12 phút · Ứng dụng: đánh giá độ tin cậy của backtest; xác định cỡ mẫu · <a href="https://hft.md/learn/lln-clt/">Bài gốc (tiếng Anh)</a></p>
+</header>
+
+<p>Thị trường không bao giờ cho ta thấy tham số thật, chỉ cho ta dữ liệu. Hai định lý trong bài này cho biết một trung bình mẫu sai lệch bao nhiêu so với sự thật. Mọi câu hỏi “backtest này có thật không?” đều quy về chúng.</p>
+
+<h4>Ý chính</h4>
+<ul>
+  <li>Xác suất đi xuôi: biết đồng xu, đoán kết quả tung. <b>Thống kê</b> đi ngược: thấy kết quả tung, đoán đồng xu. Ta chỉ có dữ liệu, nên luôn phải đi ngược.</li>
+  <li>Khung làm việc chuẩn: coi mỗi quan sát là một biến ngẫu nhiên thuộc một họ phân phối, thường giả định <b>độc lập và cùng phân phối</b> (i.i.d.). Sau đó chọn một <b>ước lượng</b> (estimator) nối tham số với dữ liệu, chẳng hạn p̂ = X̄<sub>n</sub> cho đồng xu.</li>
+  <li><b>Luật số lớn</b> (law of large numbers, LLN): trung bình mẫu tiến về kỳ vọng thật khi n tăng. Đây là lý do một ước lượng dựa trên trung bình là hợp lý.</li>
+  <li><b>Định lý giới hạn trung tâm</b> (central limit theorem, CLT): sai số của trung bình có dạng xấp xỉ chuẩn, với độ lệch chuẩn σ/√n. Điều này đúng với hầu như mọi phân phối gốc, miễn là phương sai hữu hạn.</li>
+  <li>Đại lượng σ/√n gọi là <b>sai số chuẩn</b> (standard error). Muốn sai số giảm 10 lần thì cần dữ liệu nhiều gấp 100 lần.</li>
+  <li>Phân phối gốc càng lệch thì cần n càng lớn để trung bình trông chuẩn. Một đồng xu rất lệch cần nhiều quan sát hơn hẳn một phân phối đều.</li>
+</ul>
+
+<h4>Công thức</h4>
+<div class="formula"><span class="lbl">Luật số lớn: hội tụ theo xác suất và hầu chắc chắn</span>X̄<sub>n</sub> = <span class="frac"><span>1</span><span>n</span></span> Σ<sub>i=1</sub><sup>n</sup> X<sub>i</sub> &nbsp;⟶&nbsp; μ &nbsp;&nbsp;khi n → ∞</div>
+<div class="formula"><span class="lbl">Định lý giới hạn trung tâm: hội tụ theo phân phối</span>√n · <span class="frac"><span>X̄<sub>n</sub> − μ</span><span>σ</span></span> &nbsp;⟶&nbsp; N(0, 1) &nbsp;&nbsp;khi n → ∞</div>
+<div class="formula"><span class="lbl">Sai số chuẩn của trung bình</span>SE(X̄<sub>n</sub>) = <span class="frac"><span>σ</span><span>√n</span></span></div>
+<div class="formula"><span class="lbl">Hai quy tắc trên bàn giao dịch: thống kê t của chiến lược có hệ số Sharpe năm S sau T năm, và số lệnh cần để lợi thế e vượt nhiễu σ</span>t ≈ S · √T &nbsp;&nbsp;&nbsp;&nbsp; n ≫ <span class="frac"><span>σ<sup>2</sup></span><span>e<sup>2</sup></span></span></div>
+
+<h4>Ví dụ minh hoạ: lợi thế nhỏ, rất nhiều lệnh</h4>
+<p>Một chiến lược tần suất cao lãi trung bình e = 0,02 USD mỗi lệnh. Lãi/lỗ của từng lệnh có độ lệch chuẩn σ = 1 USD. Cần bao nhiêu lệnh để lợi nhuận nổi lên khỏi nhiễu?</p>
+<ol>
+  <li>Sau n lệnh, tổng lãi/lỗ có kỳ vọng n·e = 0,02n và độ lệch chuẩn σ√n = √n.</li>
+  <li>Tỉ số tín hiệu trên nhiễu là t = 0,02n / √n = 0,02√n.</li>
+  <li>Muốn t = 2 thì √n = 100, tức n = 10.000 lệnh. Với 2.000 lệnh mỗi ngày, chỉ mất 5 ngày.</li>
+  <li>Theo CLT, tổng lãi/lỗ xấp xỉ chuẩn. Xác suất lỗ sau 10.000 lệnh là P(Z &lt; −2) ≈ 2,3%.</li>
+</ol>
+<p>So sánh với một chiến lược theo ngày có hệ số Sharpe năm bằng 1. Theo t ≈ S√T, cần T = (2/1)<sup>2</sup> = 4 năm dữ liệu để đạt t ≈ 2. Với Sharpe 0,5, con số là 16 năm. Phần lớn các backtest ngắn mà trông “rất đẹp” chỉ là nhiễu.</p>
+
+<figure class="demo">
+  <div class="stage" id="demo-06"></div>
+  <div class="controls" id="ctl-06"></div>
+  <div class="readout" id="out-06"></div>
+  <figcaption><b>Mô hình 6.1 – Trung bình chạy và phân phối của sai số.</b> Bên trái: 10 người cùng rút 1.000 quan sát từ một phân phối gốc và theo dõi trung bình tích luỹ (trục ngang theo thang log). Phễu màu xanh là μ ± 1,96σ/√n. Bên phải: 4.000 trung bình, mỗi trung bình gồm n quan sát, đã chuẩn hoá thành Z = √n(X̄ − μ)/σ, so với đường cong N(0, 1). Ô nhỏ góc phải là hình dạng phân phối gốc. Chọn phân phối gốc rồi kéo n để xem lúc nào histogram bám vào đường chuẩn.</figcaption>
+</figure>
+
+<figure class="demo">
+  <div class="stage" id="demo2-06"></div>
+  <div class="controls" id="ctl2-06"></div>
+  <div class="readout" id="out2-06"></div>
+  <figcaption><b>Mô hình 6.2 – Bảng Galton (Galton board) trong không gian 3D.</b> Ở mỗi hàng đinh, viên bi nảy sang phải với xác suất p. Ô cuối cùng của nó là tổng các lần nảy phải, tức một biến nhị thức. Khi đủ nhiều bi, các cột xếp theo đường cong chuẩn màu cam. Đặt p lệch khỏi 0,5 thì đỉnh dịch đi nhưng hình chuông vẫn còn. Kéo để xoay.</figcaption>
+</figure>
+
+<h4>Lưu ý khi phỏng vấn</h4>
+<ul>
+  <li>Câu hỏi quen thuộc: 100 quan sát cho sai số chuẩn 0,4, cần bao nhiêu để sai số còn 0,1? Giảm 4 lần cần 4<sup>2</sup> = 16 lần dữ liệu, tức 1.600 quan sát.</li>
+  <li>CLT cần phương sai hữu hạn. Phân phối Cauchy không có phương sai, nên trung bình của nó không bao giờ ổn định. Lợi suất có đuôi dày làm CLT hội tụ chậm hơn nhiều.</li>
+  <li>Giả định i.i.d. thường bị vi phạm. Lợi suất có tự tương quan làm cỡ mẫu hiệu dụng nhỏ hơn n, nên sai số chuẩn thật lớn hơn σ/√n.</li>
+  <li>Luật số lớn không “bù trừ” chuỗi thua. Độ lệch cũ không bị sửa, nó chỉ bị pha loãng bởi các quan sát mới. Nghĩ ngược lại là ngụy biện của con bạc (gambler’s fallacy).</li>
+</ul>
+
+<script>
+(()=>{
+  /* ---------- Mô hình 6.1: trung bình chạy + phân phối của Z ---------- */
+  const stage=document.getElementById('demo-06'), ctl=document.getElementById('ctl-06'), out=document.getElementById('out-06');
+  const SRC={
+    uni:{name:'Phân phối đều [0, 1]', mu:0.5, sd:Math.sqrt(1/12), lattice:false, draw:r=>r()},
+    exp:{name:'Phân phối mũ, λ = 1', mu:1, sd:1, lattice:false, draw:r=>-Math.log(1-r())},
+    bi:{name:'Hai đỉnh ±2', mu:0, sd:Math.sqrt(4.25), lattice:false, draw:r=>(r()<0.5?-2:2)+0.5*Q.normal(r)},
+    coin:{name:'Đồng xu công bằng', mu:0.5, sd:0.5, lattice:true, p:0.5, draw:r=>r()<0.5?1:0},
+    skew:{name:'Đồng xu lệch, p = 0,05', mu:0.05, sd:Math.sqrt(0.05*0.95), lattice:true, p:0.05, draw:r=>r()<0.05?1:0}
+  };
+  const S={src:'exp', n:5, seed:1};
+  const PATHS=10, T=1000, REPS=4000;
+  let paths=[], z=null, srcHist=null, prog=0;
+  function simPaths(){
+    const r=Q.rng(S.seed*97+3), s=SRC[S.src]; paths=[];
+    for(let p=0;p<PATHS;p++){ const a=new Float32Array(T); let sum=0; for(let t=0;t<T;t++){ sum+=s.draw(r); a[t]=sum/(t+1); } paths.push(a); }
+    // hình dạng phân phối gốc cho ô nhỏ
+    const xs=[]; for(let i=0;i<3000;i++) xs.push(s.draw(r));
+    const lo=s.mu-3*s.sd, hi=s.mu+3*s.sd, B=24, hb=new Array(B).fill(0);
+    xs.forEach(x=>{ const k=Math.floor((x-lo)/(hi-lo)*B); if(k>=0&&k<B) hb[k]++; });
+    srcHist=hb; prog=0;
+  }
+  function simZ(){
+    const r=Q.rng(S.seed*131+S.n*7), s=SRC[S.src]; z=new Float32Array(REPS);
+    for(let i=0;i<REPS;i++){ let sum=0; for(let j=0;j<S.n;j++) sum+=s.draw(r); z[i]=Math.sqrt(S.n)*(sum/S.n-s.mu)/s.sd; }
+    let m=0; for(const v of z) m+=v; m/=REPS;
+    let v2=0,v3=0,inside=0; for(const v of z){ const d=v-m; v2+=d*d; v3+=d*d*d; if(Math.abs(v)<1.96) inside++; }
+    v2/=REPS; v3/=REPS; const sk=v3/Math.pow(v2,1.5);
+    out.textContent=`Nguồn: ${s.name} (μ = ${Q.fmt(s.mu,3)}, σ = ${Q.fmt(s.sd,3)}) · n = ${S.n} quan sát mỗi trung bình · ${REPS.toLocaleString('vi-VN')} lần lặp\n`+
+      `Z = √n(X̄ − μ)/σ: trung bình ${Q.fmt(Math.abs(m)<0.005?0:m,2)}, độ lệch chuẩn ${Q.fmt(Math.sqrt(v2),2)}, độ xiên (skewness) ${Q.fmt(sk,2)}\n`+
+      `Tỉ lệ |Z| < 1,96: ${Q.pct(inside/REPS,1)} (phân phối chuẩn: 95,0%)`;
+  }
+  function binsZ(){
+    // Với nguồn rời rạc (đồng xu), Z nằm trên một lưới; gom ô theo đúng lưới để histogram không bị răng cưa giả.
+    const s=SRC[S.src]; let e0=-5, bw=0.25;
+    if(s.lattice){ const h=1/(Math.sqrt(S.n)*s.sd), g=Math.max(1,Math.ceil(0.25/h)); bw=g*h; e0=-s.mu*Math.sqrt(S.n)/s.sd-h/2; }
+    const cnt=new Map(); for(const v of z){ const k=Math.floor((v-e0)/bw); cnt.set(k,(cnt.get(k)||0)+1); }
+    const res=[]; cnt.forEach((c,k)=>res.push({a:e0+k*bw,b:e0+(k+1)*bw,d:c/(REPS*bw)})); return res;
+  }
+  const phi=x=>Math.exp(-x*x/2)/Math.sqrt(2*Math.PI);
+  simPaths(); simZ();
+  const c=Q.canvas(stage,360,draw);
+  function draw(ctx,w,h){
+    const C=Q.colors(); ctx.clearRect(0,0,w,h); const s=SRC[S.src];
+    const narrow=w<620, padT=26, padB=34;
+    const L={x:46,y:padT,w:narrow?w-60:w*0.55-60,h:narrow?(h-padT-padB)/2-20:h-padT-padB};
+    const R=narrow?{x:46,y:L.y+L.h+44,w:w-60,h:L.h}:{x:w*0.55+20,y:padT,w:w*0.45-34,h:h-padT-padB};
+    ctx.font='12px -apple-system,sans-serif';
+    // ----- bảng trái: trung bình chạy -----
+    const lo=s.mu-2.5*s.sd, hi=s.mu+2.5*s.sd;
+    const X=t=>L.x+Math.log10(t)/3*L.w, Y=v=>L.y+(hi-v)/(hi-lo)*L.h;
+    ctx.strokeStyle=C.line; ctx.lineWidth=1; ctx.strokeRect(L.x,L.y,L.w,L.h);
+    // phễu ±1,96σ/√t
+    ctx.fillStyle=C.a; ctx.globalAlpha=0.13; ctx.beginPath();
+    for(let t=1;t<=T;t*=1.05) ctx.lineTo(X(t),Y(Math.min(hi,s.mu+1.96*s.sd/Math.sqrt(t))));
+    for(let t=T;t>=1;t/=1.05) ctx.lineTo(X(t),Y(Math.max(lo,s.mu-1.96*s.sd/Math.sqrt(t))));
+    ctx.closePath(); ctx.fill(); ctx.globalAlpha=1;
+    ctx.strokeStyle=C.a; ctx.setLineDash([4,4]); ctx.beginPath(); ctx.moveTo(L.x,Y(s.mu)); ctx.lineTo(L.x+L.w,Y(s.mu)); ctx.stroke(); ctx.setLineDash([]);
+    ctx.save(); ctx.beginPath(); ctx.rect(L.x,L.y,L.w,L.h); ctx.clip();
+    const shown=Math.max(1,Math.floor(Math.pow(10,3*prog)));
+    const pal=[C.c,C.b,C.d,C.muted];
+    paths.forEach((a,p)=>{ ctx.strokeStyle=pal[p%pal.length]; ctx.globalAlpha=0.85; ctx.lineWidth=1.3; ctx.beginPath();
+      for(let t=1;t<=shown;t++) ctx.lineTo(X(t),Y(a[t-1])); ctx.stroke(); });
+    ctx.globalAlpha=1; ctx.restore();
+    // vạch n
+    ctx.strokeStyle=C.ink; ctx.lineWidth=1; ctx.setLineDash([2,3]); ctx.beginPath(); ctx.moveTo(X(S.n),L.y); ctx.lineTo(X(S.n),L.y+L.h); ctx.stroke(); ctx.setLineDash([]);
+    ctx.fillStyle=C.muted; ctx.textAlign='center';
+    [1,10,100,1000].forEach(t=>ctx.fillText(t.toLocaleString('vi-VN'),X(t),L.y+L.h+15));
+    ctx.fillText('số quan sát (thang log)',L.x+L.w/2,L.y+L.h+29);
+    ctx.textAlign='right'; ctx.fillText('μ',L.x-6,Y(s.mu)+4);
+    ctx.fillText(Q.fmt(hi,2),L.x-6,L.y+10); ctx.fillText(Q.fmt(lo,2),L.x-6,L.y+L.h);
+    ctx.textAlign='left'; ctx.fillStyle=C.ink; ctx.fillText('Trung bình chạy X̄ₜ (luật số lớn)',L.x,L.y-9);
+    ctx.fillStyle=C.ink; ctx.fillText('n = '+S.n,Math.min(X(S.n)+4,L.x+L.w-40),L.y+14);
+    // ----- bảng phải: histogram của Z -----
+    const bins=binsZ(); let dmax=0.45; bins.forEach(b=>{ if(b.b>-5&&b.a<5) dmax=Math.max(dmax,b.d); }); dmax*=1.08;
+    const ZX=v=>R.x+(v+5)/10*R.w, ZY=d=>R.y+R.h-d/dmax*R.h;
+    ctx.strokeStyle=C.line; ctx.strokeRect(R.x,R.y,R.w,R.h);
+    ctx.fillStyle=C.c; ctx.globalAlpha=0.55;
+    bins.forEach(b=>{ const a=Math.max(-5,b.a), bb=Math.min(5,b.b); if(bb<=a) return; ctx.fillRect(ZX(a)+0.5,ZY(b.d),Math.max(1,ZX(bb)-ZX(a)-1),R.y+R.h-ZY(b.d)); });
+    ctx.globalAlpha=1; ctx.strokeStyle=C.b; ctx.lineWidth=2; ctx.beginPath();
+    for(let v=-5;v<=5.001;v+=0.05) ctx.lineTo(ZX(v),ZY(phi(v))); ctx.stroke();
+    ctx.fillStyle=C.muted; ctx.textAlign='center'; [-4,-2,0,2,4].forEach(v=>ctx.fillText(String(v).replace('-','−'),ZX(v),R.y+R.h+15));
+    ctx.fillText('Z = √n (X̄ − μ) / σ',R.x+R.w/2,R.y+R.h+29);
+    ctx.textAlign='left'; ctx.fillStyle=C.ink; ctx.fillText('Phân phối của Z (giới hạn trung tâm)',R.x,R.y-9);
+    // ô nhỏ: phân phối gốc
+    const iw=Math.min(90,R.w*0.3), ih=46, ix=R.x+R.w-iw-6, iy=R.y+6, mx=Math.max(...srcHist);
+    ctx.fillStyle=C.panel; ctx.fillRect(ix-3,iy-3,iw+6,ih+18); ctx.strokeStyle=C.line; ctx.strokeRect(ix-3,iy-3,iw+6,ih+18);
+    ctx.fillStyle=C.d; const bwI=iw/srcHist.length;
+    srcHist.forEach((v,k)=>{ const hh=v/mx*ih; ctx.fillRect(ix+k*bwI,iy+ih-hh,Math.max(1,bwI-1),hh); });
+    ctx.fillStyle=C.muted; ctx.font='10px -apple-system,sans-serif'; ctx.textAlign='center'; ctx.fillText('phân phối gốc',ix+iw/2,iy+ih+11);
+    ctx.textAlign='left';
+  }
+  Q.loop(stage,()=>{ if(prog<1){ prog=Math.min(1,prog+0.012); c.redraw(); } });
+  const srcBtns={};
+  function setSrc(k){ S.src=k; Object.keys(srcBtns).forEach(j=>srcBtns[j].className=j===k?'primary':''); simPaths(); simZ(); c.redraw(); }
+  [['uni','Đều'],['exp','Mũ'],['bi','Hai đỉnh'],['coin','Xu công bằng'],['skew','Xu lệch 5%']].forEach(([k,lab])=>{ srcBtns[k]=Q.button(ctl,lab,()=>setSrc(k)); });
+  Q.slider(ctl,'Số quan sát mỗi trung bình n',1,200,1,S.n,v=>{ S.n=v; simZ(); c.redraw(); },v=>v);
+  Q.button(ctl,'Lấy mẫu mới',()=>{ S.seed++; simPaths(); simZ(); c.redraw(); });
+  setSrc('exp');
+})();
+(()=>{
+  /* ---------- Mô hình 6.2: bảng Galton 3D ---------- */
+  const stage=document.getElementById('demo2-06'), ctl=document.getElementById('ctl2-06'), out=document.getElementById('out2-06');
+  const S={R:12, p:0.5};
+  const view={yaw:0.45,pitch:0.18,dist:12,auto:true};
+  const r=Q.rng(2024);
+  let bins=[], balls=[], queue=0, landed=0, dirty=true;
+  const TOP=2.5, BASE=-2.7, PEGLOW=0.1, BINH=2.3;
+  const dx=()=>5.4/(S.R+1), dz=()=>(TOP-PEGLOW)/S.R;
+  function reset(){ bins=new Array(S.R+1).fill(0); balls=[]; queue=0; landed=0; dirty=true; report(); }
+  function spawn(){ balls.push({t:0,k:0,d:r()<S.p?1:0,falling:false,z:0,vz:0}); }
+  function instant(m){ for(let i=0;i<m;i++){ let k=0; for(let j=0;j<S.R;j++) if(r()<S.p) k++; bins[k]++; } landed+=m; dirty=true; report(); }
+  function stats(){ let m=0,v=0; if(!landed) return [0,0]; bins.forEach((c,k)=>m+=c*k); m/=landed; bins.forEach((c,k)=>v+=c*(k-m)*(k-m)); return [m,v/landed]; }
+  function report(){ const [m,v]=stats(), R=S.R, p=S.p;
+    out.textContent=`Số bi đã rơi: ${landed.toLocaleString('vi-VN')}${balls.length||queue?` (đang rơi: ${(balls.length+queue).toLocaleString('vi-VN')})`:''}\n`+
+      `Vị trí ô trung bình: ${Q.fmt(m,2)} · lý thuyết R·p = ${Q.fmt(R*p,2)}\n`+
+      `Phương sai: ${Q.fmt(v,2)} · lý thuyết R·p·(1 − p) = ${Q.fmt(R*p*(1-p),2)}`; }
+  function binX(k){ return (k-S.R/2)*dx(); }
+  function ballPos(b){
+    const i=Math.min(Math.floor(b.t),S.R), f=b.t-i, D=dx(), Z=dz();
+    if(b.falling) return [binX(b.k),0,b.z];
+    const x=(b.k-i/2)*D+(b.d-0.5)*D*f;
+    const zz=TOP-i*Z-Z*f+0.45*Z*Math.sin(Math.PI*f)+0.12;
+    return [x,0,zz];
+  }
+  function heightScale(){ let mx=0; bins.forEach(c=>mx=Math.max(mx,c)); const v=S.R*S.p*(1-S.p);
+    const peak=Math.max(landed,1)/Math.sqrt(2*Math.PI*v); return BINH/Math.max(mx,peak*1.05,8); }
+  reset();
+  const c=Q.canvas(stage,420,draw);
+  function draw(ctx,w,h){
+    const C=Q.colors(); ctx.clearRect(0,0,w,h);
+    const scale=Math.min(w,h*1.2)/9, P=p=>Q.project([p[0],p[1],p[2]+0.15],view,w,h,scale);
+    const D=dx(), hs=heightScale();
+    const poly=(pts,fill,alpha)=>{ ctx.globalAlpha=alpha; ctx.fillStyle=fill; ctx.beginPath(); pts.forEach((q,j)=>j?ctx.lineTo(q[0],q[1]):ctx.moveTo(q[0],q[1])); ctx.closePath(); ctx.fill(); };
+    // tấm nền phía sau
+    const back=[[-3.1,0.35,BASE],[3.1,0.35,BASE],[3.1,0.35,TOP+0.5],[-3.1,0.35,TOP+0.5]].map(P);
+    poly(back,C.soft,0.9); ctx.globalAlpha=1; ctx.strokeStyle=C.line; ctx.lineWidth=1; ctx.beginPath(); back.forEach((q,j)=>j?ctx.lineTo(q[0],q[1]):ctx.moveTo(q[0],q[1])); ctx.closePath(); ctx.stroke();
+    // đinh
+    ctx.fillStyle=C.muted;
+    for(let i=0;i<S.R;i++) for(let j=0;j<=i;j++){ const q=P([(j-i/2)*D,0,TOP-i*dz()]); const rr=Math.max(1.5,2.6*scale/80); ctx.globalAlpha=0.9; ctx.beginPath(); ctx.arc(q[0],q[1],rr,0,7); ctx.fill(); }
+    // các cột: mặt hộp được sắp xếp theo độ sâu
+    const faces=[];
+    for(let k=0;k<=S.R;k++){
+      const x0=binX(k)-0.42*D, x1=binX(k)+0.42*D, y0=-0.3, y1=0.3, z0=BASE, z1=BASE+Math.max(0.005,bins[k]*hs);
+      const V=[[x0,y0,z0],[x1,y0,z0],[x1,y1,z0],[x0,y1,z0],[x0,y0,z1],[x1,y0,z1],[x1,y1,z1],[x0,y1,z1]].map(P);
+      [[0,1,5,4,1],[1,2,6,5,0.75],[2,3,7,6,1],[3,0,4,7,0.75],[4,5,6,7,0.55]].forEach(f=>{ const pts=f.slice(0,4).map(i=>V[i]); faces.push({pts,d:pts.reduce((s,q)=>s+q[2],0)/4,shade:f[4]}); });
+    }
+    faces.sort((a,b)=>b.d-a.d);
+    faces.forEach(f=>{ poly(f.pts,C.c,0.35+0.5*f.shade); ctx.globalAlpha=0.5; ctx.strokeStyle=C.panel; ctx.lineWidth=0.6; ctx.stroke(); });
+    ctx.globalAlpha=1;
+    // đường cong chuẩn xấp xỉ, đặt ở mặt trước các cột
+    const mu=S.R*S.p, v=S.R*S.p*(1-S.p);
+    if(landed>0){ ctx.strokeStyle=C.b; ctx.lineWidth=2.2; ctx.beginPath();
+      for(let u=-0.5;u<=S.R+0.5;u+=0.05){ const dens=landed*Math.exp(-(u-mu)*(u-mu)/(2*v))/Math.sqrt(2*Math.PI*v); const q=P([(u-S.R/2)*D,-0.32,BASE+dens*hs]); u>-0.5?ctx.lineTo(q[0],q[1]):ctx.moveTo(q[0],q[1]); }
+      ctx.stroke(); }
+    // bi đang rơi
+    const br=Math.max(2,0.17*D*scale);
+    ctx.fillStyle=C.b;
+    balls.forEach(b=>{ const q=P(ballPos(b)); ctx.globalAlpha=0.95; ctx.beginPath(); ctx.arc(q[0],q[1],br,0,7); ctx.fill(); });
+    ctx.globalAlpha=1; ctx.fillStyle=C.muted; ctx.font='12px -apple-system,sans-serif';
+    ctx.fillText(`${S.R} hàng đinh · p = ${Q.fmt(S.p,2)} · đường cam: xấp xỉ chuẩn N(Rp, Rp(1 − p))`,12,20);
+  }
+  Q.orbit(c.cv,view,()=>c.redraw());
+  let tick=0;
+  Q.loop(stage,()=>{
+    let moving=false;
+    for(let s=0;s<3&&queue>0;s++){ spawn(); queue--; }
+    const Z=dz();
+    for(let i=balls.length-1;i>=0;i--){ const b=balls[i]; moving=true;
+      if(!b.falling){ const prev=Math.floor(b.t); b.t+=0.14; const now=Math.floor(b.t);
+        if(now>prev){ b.k+=b.d; b.d=r()<S.p?1:0; }
+        if(b.t>=S.R){ b.falling=true; b.z=TOP-S.R*Z+0.12; b.vz=0; } }
+      else { b.vz+=0.012; b.z-=b.vz; const top=BASE+bins[b.k]*heightScale();
+        if(b.z<=top){ bins[b.k]++; landed++; balls.splice(i,1); dirty=true; } } }
+    if(view.auto){ view.yaw=0.45*Math.sin((tick++)*0.006); moving=true; }
+    if(moving||dirty){ c.redraw(); if(dirty||(tick%6===0)) report(); dirty=false; }
+  });
+  Q.slider(ctl,'Số hàng đinh R',4,16,1,S.R,v=>{ S.R=v; reset(); },v=>v);
+  Q.slider(ctl,'Xác suất nảy phải p',0.1,0.9,0.05,S.p,v=>{ S.p=v; reset(); },v=>Q.fmt(v,2));
+  Q.button(ctl,'Thả 300 bi',()=>{ queue+=300; },true);
+  Q.button(ctl,'Thêm ngay 5.000 bi',()=>instant(5000));
+  Q.button(ctl,'Xoá',reset);
+  queue=200;
+})();
+</script>
+</section>

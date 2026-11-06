@@ -1,0 +1,219 @@
+<section class="lesson" id="bai-13" data-short="Nhân quả">
+<header>
+  <span class="num">13</span>
+  <h3>Nhân quả: thiên lệch chọn mẫu, ngẫu nhiên hoá và biến bị bỏ sót</h3>
+  <p class="meta">14 phút · Ứng dụng: Phân biệt hiệu ứng thật với biến gây nhiễu · <a href="https://hft.md/learn/econometrics/">Bài gốc (tiếng Anh)</a></p>
+</header>
+
+<p>Dự báo hỏi “điều gì sẽ xảy ra”, còn kinh tế lượng (econometrics) hỏi “điều gì sẽ xảy ra nếu ta thay đổi một thứ”. Thuật toán khớp lệnh mới có thật sự giảm độ trượt giá, hay chỉ vì ta dùng nó cho các lệnh dễ? Khớp mô hình tốt chưa đủ để trả lời câu hỏi này.</p>
+
+<h4>Ý chính</h4>
+<ul>
+  <li><b>Kết quả tiềm năng</b> (potential outcomes): mỗi cá thể i có Y<sub>1i</sub> nếu được xử lý (D<sub>i</sub> = 1) và Y<sub>0i</sub> nếu không. Ta chỉ quan sát được một trong hai.</li>
+  <li>Chênh lệch trung bình giữa hai nhóm bằng hiệu ứng nhân quả trên nhóm được xử lý cộng <b>thiên lệch chọn mẫu</b> (selection bias). Thiên lệch hỏi: nếu không được xử lý, nhóm được xử lý có khác nhóm kia không?</li>
+  <li><b>Ngẫu nhiên hoá</b> (randomisation): khi đồng xu quyết định ai được xử lý, D độc lập với Y<sub>0</sub>. Theo luật số lớn, thiên lệch chọn mẫu về 0. Sau đó luôn <b>kiểm tra cân bằng</b> (balance check) các đặc điểm quan sát được.</li>
+  <li>Khi không thể ngẫu nhiên hoá, hồi quy thêm <b>biến kiểm soát</b> (controls). Giả định then chốt là <b>độc lập có điều kiện</b> (conditional independence): với cùng giá trị biến kiểm soát, việc xử lý coi như ngẫu nhiên.</li>
+  <li><b>Thiên lệch do biến bị bỏ sót</b> (omitted-variable bias, OVB) chỉ xuất hiện khi biến bị bỏ vừa đi cùng biến xử lý, vừa tác động lên kết quả. Không có dữ liệu về biến đó, ta vẫn suy luận được dấu của thiên lệch.</li>
+  <li>Hồi quy là xấp xỉ tuyến tính tốt nhất của <b>hàm kỳ vọng có điều kiện</b> (conditional expectation function, CEF) E[Y | X]. Nếu phương sai nhiễu thay đổi theo X, hãy dùng sai số chuẩn vững (robust standard errors).</li>
+</ul>
+
+<h4>Công thức</h4>
+<div class="formula"><span class="lbl">Phân rã chênh lệch đo được = hiệu ứng nhân quả trên nhóm được xử lý + thiên lệch chọn mẫu</span>E[Y<sub>1i</sub> | D = 1] − E[Y<sub>0i</sub> | D = 0] = E[Y<sub>1i</sub> − Y<sub>0i</sub> | D = 1] + ( E[Y<sub>0i</sub> | D = 1] − E[Y<sub>0i</sub> | D = 0] )</div>
+<div class="formula"><span class="lbl">Sai số chuẩn của trung bình mẫu và của hiệu hai nhóm (S(Y) là độ lệch chuẩn gộp)</span>SE(Ȳ) = <span class="frac"><span>S(Y)</span><span>√n</span></span>,&nbsp;&nbsp; SE(Ȳ<sup>1</sup> − Ȳ<sup>0</sup>) = S(Y) √(1/n<sub>1</sub> + 1/n<sub>0</sub>),&nbsp;&nbsp; t = <span class="frac"><span>Ȳ<sup>1</sup> − Ȳ<sup>0</sup></span><span>SE(Ȳ<sup>1</sup> − Ȳ<sup>0</sup>)</span></span></div>
+<div class="formula"><span class="lbl">Hồi quy có biến kiểm soát A<sub>i</sub> (tuổi, thu nhập, quy mô lệnh, …; biến phân loại đưa vào dưới dạng biến giả)</span>Y<sub>i</sub> = α + β D<sub>i</sub> + γᵀA<sub>i</sub> + ε<sub>i</sub></div>
+<div class="formula"><span class="lbl">Công thức OVB: hồi quy ngắn (bỏ A) so với hồi quy dài (có A); π<sub>1</sub> là hệ số khi hồi quy A theo D</span>β<sup>ngắn</sup> − β<sup>dài</sup> = π<sub>1</sub> × γ</div>
+<div class="formula"><span class="lbl">CEF là dự báo có sai số bình phương trung bình nhỏ nhất; phân rã phương sai (ANOVA)</span>E[Y | X] = arg min<sub>m</sub> E[(Y − m(X))²],&nbsp;&nbsp; Var(Y) = Var(E[Y | X]) + E[Var(Y | X)]</div>
+<p>Khi kết quả là log Y, hệ số β đọc xấp xỉ như phần trăm thay đổi. Phần dư của hồi quy có trung bình 0 và không tương quan với mọi biến đầu vào. Trọng số lấy mẫu (nghịch đảo xác suất được chọn) dùng để sửa mẫu không ngẫu nhiên. Phương sai thay đổi tự nó không phải lý do để dùng bình phương tối thiểu có trọng số.</p>
+
+<h4>Ví dụ minh hoạ: thuật toán khớp lệnh “thông minh”</h4>
+<p>Bàn giao dịch gửi các lệnh khó cho thuật toán thông minh, lệnh dễ cho thuật toán đơn giản. Độ trượt giá trung bình là 9 bp ở nhóm thông minh và 6 bp ở nhóm đơn giản.</p>
+<ol>
+  <li>So sánh ngây thơ: 9 − 6 = +3 bp. Có vẻ thuật toán thông minh làm độ trượt tăng thêm 3 bp.</li>
+  <li>Một thử nghiệm riêng cho thấy các lệnh khó, nếu đi qua thuật toán đơn giản, sẽ trượt trung bình 13 bp. Đó là E[Y<sub>0</sub> | D = 1] = 13.</li>
+  <li>Hiệu ứng thật trên nhóm được xử lý: 9 − 13 = −4 bp. Thiên lệch chọn mẫu: 13 − 6 = +7 bp. Kiểm tra: −4 + 7 = +3, đúng bằng chênh lệch đo được.</li>
+  <li>Cách sửa: chia ngẫu nhiên một phần lệnh. Giả sử 400 lệnh mỗi nhóm, chênh lệch −4 bp, S(Y) = 10 bp. Khi đó SE = 10 · √(1/400 + 1/400) ≈ 0,71 bp và t ≈ −5,7. Hiệu ứng rõ ràng có ý nghĩa.</li>
+  <li>OVB trong nghiên cứu tín hiệu: hồi quy lợi suất theo tín hiệu mới cho hệ số 0,50. Hồi quy động lượng (momentum) theo tín hiệu cho π<sub>1</sub> = 0,6, và trong hồi quy dài động lượng có γ = 0,5. Vậy β<sup>dài</sup> = 0,50 − 0,6 × 0,5 = 0,20. Hơn một nửa “alpha” thực ra là phơi nhiễm động lượng.</li>
+</ol>
+
+<figure class="demo">
+  <div class="stage" id="demo-13"></div>
+  <div class="controls" id="ctl-13"></div>
+  <div class="readout" id="out-13"></div>
+  <figcaption><b>Mô hình 13.1 – Phòng thí nghiệm định tuyến lệnh.</b> Mỗi chấm là một lệnh: trục ngang là độ khó (trader thấy được, nhà phân tích thì không), trục dọc là độ trượt giá. Chấm xanh dương đi qua thuật toán thông minh, chấm cam đi qua thuật toán đơn giản; gạch ngang là trung bình từng nhóm. Cột bên phải tách chênh lệch đo được thành hiệu ứng thật và thiên lệch chọn mẫu. Bấm “Tung đồng xu” để thấy thiên lệch biến mất. Đặt hiệu ứng thật bằng 0 để thấy một thuật toán vô dụng vẫn “có tác dụng” khi trader tự chọn.</figcaption>
+</figure>
+
+<figure class="demo">
+  <div class="stage" id="demo2-13"></div>
+  <div class="controls" id="ctl2-13"></div>
+  <div class="readout" id="out2-13"></div>
+  <figcaption><b>Mô hình 13.2 – Biến bị bỏ sót trong không gian 3D.</b> X là tín hiệu mới, A là động lượng (biến gây nhiễu), Y là lợi suất. Lưới xanh lá là mặt phẳng của hồi quy dài Y theo X và A. Trên bức tường phía sau là bóng của các điểm trên mặt X–Y: đường đỏ là hồi quy ngắn bỏ A, đường xanh lá đứt là độ dốc của hồi quy dài. Khung nhỏ cho thấy β<sup>ngắn</sup> = β<sup>dài</sup> + π̂<sub>1</sub>·γ̂ đúng chính xác trên mẫu. Đặt π<sub>1</sub> hoặc γ bằng 0 thì hai đường trùng nhau. Bấm “Nhìn dọc trục A” để thấy đúng thứ mà hồi quy ngắn nhìn thấy. Kéo để xoay.</figcaption>
+</figure>
+
+<h4>Lưu ý khi phỏng vấn</h4>
+<ul>
+  <li><b>Cổ phiếu được chuyên viên phân tích theo dõi có lợi suất cao hơn 3% mỗi năm.</b> Biến bị bỏ sót nào dễ làm hiệu ứng này bị thổi phồng? Quy mô và thanh khoản của doanh nghiệp: chúng quyết định việc được theo dõi và cũng liên quan tới lợi suất.</li>
+  <li>Khi được hỏi về thiên lệch, hãy nêu cả hai điều kiện của OVB rồi suy ra dấu: dấu của π<sub>1</sub> nhân dấu của γ.</li>
+  <li>t nhỏ không có nghĩa là không có hiệu ứng. Có thể hiệu ứng có thật nhưng dữ liệu quá ít, sai số chuẩn quá lớn.</li>
+  <li>Áp vào bàn giao dịch: ngẫu nhiên hoá định tuyến cho một phần lệnh, hoặc kiểm soát quy mô lệnh, biến động và chênh lệch giá mua – bán. Khi đánh giá tín hiệu, đưa các nhân tố đã biết vào hồi quy dài để thấy phần alpha thật.</li>
+</ul>
+
+<script>
+(()=>{
+  function ols(X,y){ // giải phương trình chuẩn bằng khử Gauss
+    const p=X[0].length, M=Array.from({length:p},()=>new Array(p+1).fill(0));
+    X.forEach((r,i)=>{ for(let a=0;a<p;a++){ M[a][p]+=r[a]*y[i]; for(let b=0;b<p;b++) M[a][b]+=r[a]*r[b]; } });
+    for(let c=0;c<p;c++){ let piv=c; for(let r=c+1;r<p;r++) if(Math.abs(M[r][c])>Math.abs(M[piv][c])) piv=r; [M[c],M[piv]]=[M[piv],M[c]];
+      if(Math.abs(M[c][c])<1e-12) return null;
+      for(let r=0;r<p;r++) if(r!==c){ const f=M[r][c]/M[c][c]; for(let k=c;k<=p;k++) M[r][k]-=f*M[c][k]; } }
+    return M.map((r,i)=>r[p]/r[i]);
+  }
+  const mean=a=>a.length?a.reduce((s,v)=>s+v,0)/a.length:NaN;
+
+  /* ---------- Mô hình 13.1: thiên lệch chọn mẫu ---------- */
+  {
+    const stage=document.getElementById('demo-13'), ctl=document.getElementById('ctl-13'), out=document.getElementById('out-13');
+    const S={tau:-2, sel:2, n:400, seed:1, mode:'chon'};
+    let H=[], Y0=[], U=[], V=[], D=[], yy=[], c=null, st=null;
+    function gen(){
+      const r=Q.rng(S.seed*4243+7); H=[]; Y0=[]; U=[]; V=[];
+      for(let i=0;i<S.n;i++){ const h=Q.normal(r); H.push(h); Y0.push(8+3*h+2*Q.normal(r)); U.push(r()); V.push(r()); }
+      yy=Y0.slice(); assign();
+    }
+    function assign(){
+      D=H.map((h,i)=>S.mode==='xu' ? V[i]<0.5 : U[i]<1/(1+Math.exp(-S.sel*h)));
+      const i1=[],i0=[]; D.forEach((d,i)=>(d?i1:i0).push(i));
+      if(i1.length<2||i0.length<2){ st=null; report(); return; }
+      const Y=Y0.map((v,i)=>v+(D[i]?S.tau:0));
+      const m1=mean(i1.map(i=>Y[i])), m0=mean(i0.map(i=>Y[i]));
+      const att=S.tau, sb=mean(i1.map(i=>Y0[i]))-mean(i0.map(i=>Y0[i]));
+      const ss=a=>{ const m=mean(a); return a.reduce((s,v)=>s+(v-m)**2,0); };
+      const sp=Math.sqrt((ss(i1.map(i=>Y[i]))+ss(i0.map(i=>Y[i])))/(S.n-2)), se=sp*Math.sqrt(1/i1.length+1/i0.length);
+      const b=ols(H.map((h,i)=>[1,D[i]?1:0,h]),Y);
+      st={Y,i1,i0,m1,m0,att,sb,se,naive:m1-m0,reg:b?b[1]:NaN,h1:mean(i1.map(i=>H[i])),h0:mean(i0.map(i=>H[i]))};
+      report();
+    }
+    function report(){
+      if(!st){ out.textContent='Một nhóm quá nhỏ. Hãy giảm mức độ tự chọn hoặc tăng số lệnh.'; return; }
+      out.textContent=`${S.mode==='xu'?'Tung đồng xu':'Trader tự chọn'}: thông minh n₁ = ${st.i1.length} (TB ${Q.fmt(st.m1,2)} bp), đơn giản n₀ = ${st.i0.length} (TB ${Q.fmt(st.m0,2)} bp)\n`+
+        `Đo được ${Q.fmt(st.naive,2)} = hiệu ứng thật ${Q.fmt(st.att,2)} + thiên lệch ${Q.fmt(st.sb,2)};  SE = ${Q.fmt(st.se,2)}, t = ${Q.fmt(st.naive/st.se,1)}\n`+
+        `Kiểm tra cân bằng: độ khó TB nhóm thông minh ${Q.fmt(st.h1,2)}, nhóm đơn giản ${Q.fmt(st.h0,2)}\n`+
+        `Hồi quy độ trượt theo D và độ khó (nếu đo được độ khó): β̂ = ${Q.fmt(st.reg,2)}`;
+    }
+    function draw(ctx,w,h){
+      const C=Q.colors(); ctx.clearRect(0,0,w,h); ctx.font='12px -apple-system,sans-serif';
+      const wide=w>=560, r1=wide?w*0.64:w-10, l=40, t=28, b=h-30;
+      const X=v=>l+(v+3)/6*(r1-l), Yl=-6, Yh=22, Y=v=>b-(v-Yl)/(Yh-Yl)*(b-t);
+      ctx.strokeStyle=C.line; ctx.strokeRect(l,t,r1-l,b-t);
+      ctx.fillStyle=C.muted; ctx.fillText('độ khó của lệnh →',r1-110,b+18); ctx.fillText('độ trượt giá (bp)',l,t-10);
+      [0,10,20].forEach(v=>ctx.fillText(String(v),l-22,Y(v)+4));
+      if(st){
+        ctx.save(); ctx.beginPath(); ctx.rect(l,t,r1-l,b-t); ctx.clip();
+        for(let i=0;i<H.length;i++){ ctx.fillStyle=D[i]?C.c:C.b; ctx.globalAlpha=0.65; ctx.beginPath(); ctx.arc(X(H[i]),Y(yy[i]),2.6,0,7); ctx.fill(); }
+        ctx.globalAlpha=1; ctx.lineWidth=2; ctx.setLineDash([6,4]);
+        ctx.strokeStyle=C.c; ctx.beginPath(); ctx.moveTo(l,Y(st.m1)); ctx.lineTo(r1,Y(st.m1)); ctx.stroke();
+        ctx.strokeStyle=C.b; ctx.beginPath(); ctx.moveTo(l,Y(st.m0)); ctx.lineTo(r1,Y(st.m0)); ctx.stroke();
+        ctx.setLineDash([]); ctx.lineWidth=1; ctx.restore();
+        ctx.fillStyle=C.c; ctx.fillText('● thông minh',l+8,t+16); ctx.fillStyle=C.b; ctx.fillText('● đơn giản',l+100,t+16);
+      }
+      if(!wide||!st) return;
+      // cột phân rã
+      const l2=w*0.70, r2=w-14, vals=[[st.naive,'Đo được',C.muted],[st.att,'Hiệu ứng thật',C.a],[st.sb,'Thiên lệch',C.b],[st.reg,'Hồi quy + độ khó',C.c]];
+      // thanh ngang: nhãn bên trái, gốc 0 ở giữa vùng thanh
+      const lab0=l2+100, mx=Math.max(3,...vals.map(v=>Math.abs(v[0])))*1.15, X0=(lab0+r2)/2, Z=v=>X0+v/mx*(r2-lab0)/2-0, rh=(b-t)/vals.length;
+      ctx.strokeStyle=C.line; ctx.strokeRect(l2,t,r2-l2,b-t); ctx.strokeStyle=C.muted; ctx.beginPath(); ctx.moveTo(X0,t+6); ctx.lineTo(X0,b-6); ctx.stroke();
+      ctx.fillStyle=C.muted; ctx.fillText('Phân rã (bp)',l2,t-10);
+      vals.forEach(([v,lab,col],k)=>{ const y=t+k*rh+rh/2; ctx.fillStyle=C.muted; ctx.fillText(lab,l2+8,y+4);
+        ctx.fillStyle=col; ctx.globalAlpha=0.85; ctx.fillRect(Math.min(Z(0),Z(v)),y-11,Math.abs(Z(v)-Z(0)),22); ctx.globalAlpha=1;
+        ctx.fillStyle=C.ink; const txt=Q.fmt(v,1), tw=ctx.measureText(txt).width; ctx.fillText(txt,v>=0?Math.min(Z(v)+4,r2-tw-2):Math.max(Z(v)-tw-4,lab0-6),y+4); });
+      ctx.fillStyle=C.muted; ctx.fillText('Đo được = Hiệu ứng thật + Thiên lệch',l2,b+18);
+    }
+    gen();
+    c=Q.canvas(stage,360,draw);
+    Q.loop(stage,()=>{ if(!st) return; let mv=false; for(let i=0;i<yy.length;i++){ const d=st.Y[i]-yy[i]; if(Math.abs(d)>0.01){ yy[i]+=d*0.15; mv=true; } else yy[i]=st.Y[i]; } if(mv) c.redraw(); });
+    const re=()=>{ assign(); c.redraw(); };
+    const b1=Q.button(ctl,'Trader tự chọn',()=>{S.mode='chon'; b1.className='primary'; b2.className=''; re();},true);
+    const b2=Q.button(ctl,'Tung đồng xu',()=>{S.mode='xu'; b2.className='primary'; b1.className=''; re();});
+    Q.slider(ctl,'Hiệu ứng thật τ',-4,2,0.25,S.tau,v=>{S.tau=v;re();},v=>Q.fmt(v,2)+' bp');
+    Q.slider(ctl,'Mức độ tự chọn',0,3,0.1,S.sel,v=>{S.sel=v;re();},v=>Q.fmt(v,1));
+    Q.slider(ctl,'Số lệnh',100,2000,50,S.n,v=>{S.n=v;gen();c.redraw();},v=>v);
+    Q.button(ctl,'Lấy mẫu mới',()=>{S.seed++;gen();c.redraw();});
+  }
+
+  /* ---------- Mô hình 13.2: biến bị bỏ sót, 3D ---------- */
+  {
+    const stage=document.getElementById('demo2-13'), ctl=document.getElementById('ctl2-13'), out=document.getElementById('out2-13');
+    const S={beta:0.2, pi:0.6, gam:0.5, n:250, seed:1};
+    const view={yaw:-0.65,pitch:0.4,dist:7,auto:true};
+    const KX=0.5, KA=0.45, KY=0.45, RW=1.6;
+    let P=[], fit=null, Am=0, c=null;
+    function gen(){
+      const r=Q.rng(S.seed*6151+11); P=[];
+      for(let i=0;i<S.n;i++){ const x=Q.normal(r), a=S.pi*x+0.8*Q.normal(r); P.push([x,a,S.beta*x+S.gam*a+0.6*Q.normal(r)]); }
+      const L=ols(P.map(p=>[1,p[0],p[1]]),P.map(p=>p[2])), Sh=ols(P.map(p=>[1,p[0]]),P.map(p=>p[2])), Ax=ols(P.map(p=>[1,p[0]]),P.map(p=>p[1]));
+      fit={L,Sh,Ax}; Am=mean(P.map(p=>p[1]));
+      const bl=L[1], g=L[2], p1=Ax[1], bs=Sh[1];
+      out.textContent=`Hồi quy dài  Y ~ X + A:  β̂ dài = ${Q.fmt(bl,3)},  γ̂ = ${Q.fmt(g,3)}   (thật: β = ${Q.fmt(S.beta,2)}, γ = ${Q.fmt(S.gam,2)})\n`+
+        `Hồi quy phụ  A ~ X:      π̂₁ = ${Q.fmt(p1,3)}\n`+
+        `Hồi quy ngắn Y ~ X:      β̂ ngắn = ${Q.fmt(bs,3)}  =  ${Q.fmt(bl,3)} + ${Q.fmt(p1,3)} × ${Q.fmt(g,3)}  =  ${Q.fmt(bl+p1*g,3)}\n`+
+        `Thiên lệch do bỏ A: ${Q.fmt(bs-bl,3)}  (dấu = dấu π₁ × dấu γ)`;
+    }
+    const W=(x,a,y)=>[x*KX,a*KA,y*KY];
+    function draw(ctx,w,h){
+      const C=Q.colors(); ctx.clearRect(0,0,w,h); ctx.font='12px -apple-system,sans-serif';
+      const scale=Math.min(w,h*1.4)/4.6, Pj=p=>Q.project(p,view,w,h,scale);
+      const seg=(a,b)=>{ const A=Pj(a), B=Pj(b); ctx.beginPath(); ctx.moveTo(A[0],A[1]); ctx.lineTo(B[0],B[1]); ctx.stroke(); };
+      const xr=2.6/1, wallA=RW/KA;
+      // tường sau (A = hằng số lớn) và sàn
+      ctx.strokeStyle=C.line; ctx.lineWidth=1;
+      for(let y=-2;y<=2;y++) seg(W(-xr,wallA,y),W(xr,wallA,y));
+      for(let x=-2;x<=2;x++) seg(W(x,wallA,-2.6),W(x,wallA,2.6));
+      ctx.strokeStyle=C.muted; seg(W(-xr,0,0),W(xr,0,0)); seg(W(0,-wallA,0),W(0,wallA,0)); seg(W(0,0,-2.6),W(0,0,2.6));
+      ctx.fillStyle=C.muted; let L=Pj(W(xr+0.2,0,0)); ctx.fillText('X tín hiệu',L[0],L[1]); L=Pj(W(0,-wallA-0.3,0)); ctx.fillText('A động lượng',L[0],L[1]); L=Pj(W(0,0,2.8)); ctx.fillText('Y lợi suất',L[0],L[1]);
+      if(!fit) return;
+      const {L:bL,Sh}=fit, zl=(x,a)=>bL[0]+bL[1]*x+bL[2]*a;
+      // bóng điểm trên tường
+      ctx.fillStyle=C.muted; ctx.globalAlpha=0.35;
+      P.forEach(p=>{ if(Math.abs(p[2])>2.6) return; const q=Pj(W(p[0],wallA,p[2])); ctx.fillRect(q[0]-1.2,q[1]-1.2,2.4,2.4); });
+      ctx.globalAlpha=1;
+      // hồi quy ngắn (đỏ) và độ dốc hồi quy dài tại A trung bình (xanh, đứt) trên tường
+      ctx.lineWidth=2.5;
+      ctx.strokeStyle=C.b; seg(W(-2.4,wallA,Sh[0]-2.4*Sh[1]),W(2.4,wallA,Sh[0]+2.4*Sh[1]));
+      ctx.strokeStyle=C.a; ctx.setLineDash([6,4]); seg(W(-2.4,wallA,zl(-2.4,Am)),W(2.4,wallA,zl(2.4,Am))); ctx.setLineDash([]);
+      ctx.lineWidth=1;
+      // mặt phẳng hồi quy dài
+      ctx.strokeStyle=C.a; ctx.globalAlpha=0.45;
+      for(let t=-2;t<=2.001;t+=0.5){ seg(W(t,-2.5,zl(t,-2.5)),W(t,2.5,zl(t,2.5))); seg(W(-2,t*1.25,zl(-2,t*1.25)),W(2,t*1.25,zl(2,t*1.25))); }
+      ctx.globalAlpha=1;
+      // điểm: tô theo A cao / thấp
+      const items=P.map(p=>({p,q:Pj(W(p[0],p[1],p[2]))})).sort((a,b)=>b.q[2]-a.q[2]);
+      items.forEach(it=>{ ctx.fillStyle=it.p[1]>Am?C.d:C.c; ctx.globalAlpha=0.85; ctx.beginPath(); ctx.arc(it.q[0],it.q[1],2.8,0,7); ctx.fill(); });
+      ctx.globalAlpha=1;
+      ctx.fillStyle=C.d; ctx.fillText('● A cao',12,18); ctx.fillStyle=C.c; ctx.fillText('● A thấp',72,18);
+      ctx.fillStyle=C.b; ctx.fillText('— hồi quy ngắn',136,18); ctx.fillStyle=C.a; ctx.fillText('- - độ dốc hồi quy dài',236,18);
+      // khung đẳng thức OVB
+      const bl=bL[1], g=bL[2], p1=fit.Ax[1], bs=Sh[1];
+      const bx=w-190, by=h-124, bwid=176, bh=110;
+      ctx.fillStyle=C.panel; ctx.strokeStyle=C.line; ctx.fillRect(bx,by,bwid,bh); ctx.strokeRect(bx,by,bwid,bh);
+      const mx=Math.max(0.5,Math.abs(bl),Math.abs(bs),Math.abs(bl+p1*g))*1.15, X0=bx+bwid/2, sx=v=>X0+v/mx*(bwid/2-12);
+      ctx.strokeStyle=C.muted; ctx.beginPath(); ctx.moveTo(X0,by+8); ctx.lineTo(X0,by+bh-20); ctx.stroke();
+      const bar=(y,a,b2,col)=>{ ctx.fillStyle=col; ctx.fillRect(Math.min(sx(a),sx(b2)),y,Math.abs(sx(b2)-sx(a)),14); };
+      bar(by+14,0,bl,C.a); bar(by+38,bl,bl+p1*g,C.b); bar(by+62,0,bs,C.muted);
+      ctx.fillStyle=C.ink; ctx.font='11px -apple-system,sans-serif';
+      ctx.fillText('β dài',bx+6,by+25); ctx.fillText('+ π₁·γ',bx+6,by+49); ctx.fillText('= β ngắn',bx+6,by+73);
+      ctx.fillStyle=C.muted; ctx.fillText('0',X0-3,by+bh-8);
+    }
+    gen();
+    c=Q.canvas(stage,400,draw);
+    Q.orbit(c.cv,view,()=>c.redraw());
+    Q.loop(stage,()=>{ if(view.auto){ view.yaw+=0.003; c.redraw(); } });
+    const re=()=>{ gen(); c.redraw(); };
+    Q.slider(ctl,'β thật của X',-1,1,0.05,S.beta,v=>{S.beta=v;re();},v=>Q.fmt(v,2));
+    Q.slider(ctl,'π₁: A đi cùng X',-1.5,1.5,0.05,S.pi,v=>{S.pi=v;re();},v=>Q.fmt(v,2));
+    Q.slider(ctl,'γ: tác động của A lên Y',-1.5,1.5,0.05,S.gam,v=>{S.gam=v;re();},v=>Q.fmt(v,2));
+    Q.button(ctl,'Nhìn dọc trục A',()=>{ view.auto=false; view.yaw=0; view.pitch=0; c.redraw(); });
+    Q.button(ctl,'Xoay tự động',()=>{ view.auto=true; view.pitch=0.4; });
+    Q.button(ctl,'Lấy mẫu mới',()=>{S.seed++;re();});
+  }
+})();
+</script>
+</section>

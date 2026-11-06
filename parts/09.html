@@ -1,0 +1,194 @@
+<section class="lesson" id="bai-09" data-short="Chệch – phương sai">
+<header>
+  <span class="num">09</span>
+  <h3>Đánh đổi độ chệch – phương sai và lời nguyền số chiều</h3>
+  <p class="meta">12 phút · Ứng dụng: tránh quá khớp tín hiệu alpha · <a href="https://hft.md/learn/bias-variance/">Bài gốc (tiếng Anh)</a></p>
+</header>
+
+<p>Một mô hình khớp hoàn hảo quá khứ thường dự báo tương lai rất tệ. Mọi mô hình đều nằm đâu đó giữa hai thái cực: học thuộc dữ liệu và bỏ qua dữ liệu. Chọn đúng vị trí đó là phần lớn công việc, và cũng là chỗ hầu hết các backtest đi sai.</p>
+
+<h4>Ý chính</h4>
+<ul>
+  <li><b>Độ chệch</b> (bias) là phần sai số do giả định của mô hình áp đặt. <b>Phương sai</b> (variance) đo câu trả lời của mô hình thay đổi bao nhiêu khi đổi sang một mẫu huấn luyện khác.</li>
+  <li>Với sai số bình phương, sai số kiểm tra kỳ vọng tại một điểm tách đúng thành ba phần: nhiễu, bình phương độ chệch và phương sai. Nhiễu không thể giảm. Chỉ có thể đổi độ chệch lấy phương sai và ngược lại.</li>
+  <li>Mô hình càng linh hoạt (nhiều tham số, nhiều <b>bậc tự do</b>, degrees of freedom) thì độ chệch càng thấp và phương sai càng cao. 1-NN là cực điểm: không giả định gì, sai số huấn luyện bằng 0, ranh giới nhảy mỗi khi một điểm dữ liệu dịch chuyển.</li>
+  <li>Sai số huấn luyện luôn giảm khi tăng độ phức tạp. Sai số kiểm tra giảm rồi tăng lại, tạo thành <b>đường cong chữ U</b>. Đây là hình cần nhớ.</li>
+  <li><b>Lời nguyền số chiều</b> (curse of dimensionality): trong không gian nhiều chiều, không có láng giềng nào thật sự gần. Một “lân cận” muốn chứa 10% dữ liệu trong 10 chiều phải trải tới 79% mỗi trục.</li>
+  <li>Điểm dữ liệu dồn ra sát biên, nên dự báo trở thành ngoại suy chứ không còn là nội suy. Vì vậy mô hình tuyến tính, nhất là khi có điều chuẩn (regularization, bài 11), thắng kNN khi số chiều tăng.</li>
+</ul>
+
+<h4>Công thức</h4>
+<div class="formula"><span class="lbl">Phân rã sai số kiểm tra kỳ vọng tại điểm x, với Y = f(x) + ε và Var(ε) = σ<sub>ε</sub><sup>2</sup></span>E[ (Y − f̂(x))<sup>2</sup> ] = σ<sub>ε</sub><sup>2</sup> + ( E[f̂(x)] − f(x) )<sup>2</sup> + Var( f̂(x) )<br><span style="font-size:14px;color:var(--muted)">nhiễu &nbsp;+&nbsp; bình phương độ chệch &nbsp;+&nbsp; phương sai</span></div>
+<div class="formula"><span class="lbl">Cạnh của khối lập phương con chứa tỉ lệ r dữ liệu phân bố đều trong khối đơn vị p chiều</span>e<sub>p</sub>(r) = r<sup>1/p</sup></div>
+<div class="formula"><span class="lbl">Tỉ lệ điểm nằm cách một mặt nào đó dưới 5% độ dài cạnh</span>P(sát biên) = 1 − 0,9<sup>p</sup></div>
+
+<h4>Ví dụ minh hoạ: chấp nhận chệch để giảm phương sai</h4>
+<p>Cần ước lượng kỳ vọng μ = 1 từ n = 10 quan sát có độ lệch chuẩn σ = 2. Xét họ ước lượng co rút (shrinkage) μ̂<sub>c</sub> = c · X̄.</p>
+<ol>
+  <li>Độ chệch là (c − 1)μ. Phương sai là c<sup>2</sup>σ<sup>2</sup>/n = 0,4c<sup>2</sup>.</li>
+  <li>Với c = 1 (trung bình mẫu thông thường): độ chệch bằng 0, sai số bình phương trung bình (MSE) = 0,4.</li>
+  <li>Với c = 0,7: bình phương độ chệch = 0,09, phương sai = 0,49 × 0,4 = 0,196, MSE = 0,286. Thấp hơn hẳn dù có chệch.</li>
+  <li>Giá trị tối ưu là c* = μ<sup>2</sup> / (μ<sup>2</sup> + σ<sup>2</sup>/n) = 1 / 1,4 ≈ 0,714, cho MSE = 2/7 ≈ 0,286.</li>
+</ol>
+<p>Về số chiều, với r = 10%: cạnh lân cận là 0,10 khi p = 1, 0,32 khi p = 2, 0,79 khi p = 10 và 0,95 khi p = 50. Tỉ lệ điểm sát biên là 1 − 0,9<sup>5</sup> ≈ 41% khi p = 5, và 1 − 0,9<sup>50</sup> ≈ 99,5% khi p = 50.</p>
+
+<figure class="demo">
+  <div class="stage" id="demo-09"></div>
+  <div class="controls" id="ctl-09"></div>
+  <div class="readout" id="out-09"></div>
+  <figcaption><b>Mô hình 9.1 – Phòng thí nghiệm quá khớp.</b> 18 điểm rải gần đều trên [0, 1], nhãn là sóng sin cộng nhiễu có độ lệch chuẩn 0,3. Bên trái: đường cong sin thật (nét đứt) và đa thức bậc d khớp bằng bình phương tối thiểu. Bên phải, thang log: sai số huấn luyện (nét đứt) chỉ giảm, sai số kiểm tra (cam) giảm rồi tăng. Hai đường xanh dương và tím là bình phương độ chệch và phương sai, ước lượng từ 200 mẫu huấn luyện khác nhau. Ở bậc 12 trở lên, vài lần khớp bùng nổ ở hai đầu đoạn, nên cả độ chệch ước lượng cũng nhảy lên. Bật “Hiện 20 lần khớp khác” ở bậc 1 rồi ở bậc 14 để thấy tận mắt phương sai thấp và phương sai cao.</figcaption>
+</figure>
+
+<figure class="demo">
+  <div class="stage" id="demo2-09"></div>
+  <div class="controls" id="ctl2-09"></div>
+  <div class="readout" id="out2-09"></div>
+  <figcaption><b>Mô hình 9.2 – Một “lân cận” phải lớn đến đâu.</b> 800 điểm phân bố đều trong khối lập phương p chiều, vẽ theo 3 toạ độ đầu (khi p &lt; 3, trục dư không thuộc dữ liệu nên lân cận trải hết trục đó). Khối xanh dương là lân cận quanh tâm chứa tỉ lệ r dữ liệu, cạnh r<sup>1/p</sup> trên mọi trục. Điểm tô đậm là các điểm thật sự nằm trong lân cận khi xét đủ p toạ độ. Tăng p để thấy lân cận phình ra gần hết không gian. Chuyển sang chế độ “Sát biên” để đếm số điểm nằm cách một mặt dưới 5%. Kéo để xoay.</figcaption>
+</figure>
+
+<h4>Lưu ý khi phỏng vấn</h4>
+<ul>
+  <li>Câu hỏi mẫu: thêm 40 đặc trưng vào mô hình huấn luyện trên 300 điểm. Sai số huấn luyện giảm từ 0,21 xuống 0,12, sai số kiểm định tăng từ 0,24 lên 0,29. Đáp án: phương sai tăng, mô hình đang quá khớp (overfitting). Chỉ sai số kiểm định mới quan trọng.</li>
+  <li>Quá khớp backtest là đánh đổi chệch – phương sai có gắn tiền. Thử đủ nhiều quy tắc trên cùng một lịch sử thì sẽ có một quy tắc trông xuất sắc trong mẫu. Hãy giữ riêng dữ liệu kiểm tra đến cuối cùng, và đếm số lần đã thử.</li>
+  <li>Ngân sách đặc trưng: 10 năm dữ liệu ngày chỉ có khoảng 2.500 điểm. Một mô hình 500 tham số đã ở vùng phương sai cao. Kết hợp mô hình (ensemble) và co rút (ridge, lasso) giảm mạnh phương sai với cái giá là một chút độ chệch.</li>
+  <li>Nhiễu σ<sub>ε</sub><sup>2</sup> là sàn không thể vượt qua. Nếu sai số kiểm tra thấp hơn mức nhiễu hợp lý, hãy nghi ngờ rò rỉ dữ liệu (look-ahead) trước khi ăn mừng.</li>
+</ul>
+
+<script>
+(()=>{
+  /* ---------- Mô hình 9.1: phòng thí nghiệm quá khớp ---------- */
+  const stage=document.getElementById('demo-09'), ctl=document.getElementById('ctl-09'), out=document.getElementById('out-09');
+  const NPT=18, SIG=0.3, DMAX=14, REP=200, NG=120;
+  const f=x=>Math.sin(2*Math.PI*x);
+  const S={d:3, seed:1, many:false};
+  const XG=Array.from({length:NG},(_,i)=>(i+0.5)/NG);
+  function sample(seed){ const r=Q.rng(seed*4099+17); const x=Array.from({length:NPT},(_,i)=>(i+r())/NPT); /* mỗi điểm rơi ngẫu nhiên trong một ô con, nên x rải gần đều */ return {x,y:x.map(v=>f(v)+SIG*Q.normal(r))}; }
+  // cơ sở Chebyshev trên [−1, 1] để bài toán khớp đa thức bậc cao ổn định hơn
+  function basis(x,d){ const t=2*x-1, B=[1]; if(d>=1) B.push(t); for(let j=2;j<=d;j++) B.push(2*t*B[j-1]-B[j-2]); return B; }
+  // bình phương tối thiểu bằng phân rã QR Householder
+  function lsq(A,b){ const m=A.length, n=A[0].length, R=A.map(r=>r.slice()), y=b.slice();
+    for(let k=0;k<n;k++){ let nr=0; for(let i=k;i<m;i++) nr+=R[i][k]*R[i][k]; nr=Math.sqrt(nr); if(nr<1e-14) continue;
+      const al=R[k][k]>0?-nr:nr, v=new Array(m).fill(0); for(let i=k;i<m;i++) v[i]=R[i][k]; v[k]-=al;
+      let vv=0; for(let i=k;i<m;i++) vv+=v[i]*v[i]; if(vv<1e-28) continue;
+      for(let j=k;j<n;j++){ let s=0; for(let i=k;i<m;i++) s+=v[i]*R[i][j]; s*=2/vv; for(let i=k;i<m;i++) R[i][j]-=s*v[i]; }
+      let s=0; for(let i=k;i<m;i++) s+=v[i]*y[i]; s*=2/vv; for(let i=k;i<m;i++) y[i]-=s*v[i]; }
+    const c=new Array(n).fill(0); for(let k=n-1;k>=0;k--){ let s=y[k]; for(let j=k+1;j<n;j++) s-=R[k][j]*c[j]; c[k]=Math.abs(R[k][k])<1e-12?0:s/R[k][k]; } return c; }
+  function fit(sm,d){ const c=lsq(sm.x.map(v=>basis(v,d)),sm.y); return x=>{ const B=basis(x,d); let s=0; for(let j=0;j<=d;j++) s+=c[j]*B[j]; return s; }; }
+  function errs(sm,d){ const g=fit(sm,d); let tr=0; sm.x.forEach((v,i)=>tr+=(g(v)-sm.y[i])**2); let te=0; XG.forEach(v=>te+=(g(v)-f(v))**2);
+    return {g,tr:tr/NPT,te:te/NG+SIG*SIG}; }
+  // phân rã chệch – phương sai từ REP mẫu huấn luyện độc lập (tính một lần)
+  const DEC=[]; const many=[];
+  (function(){ const fits=[]; for(let s=0;s<REP;s++) fits.push(sample(1000+s));
+    for(let d=0;d<=DMAX;d++){ const vals=fits.map(sm=>{ const g=fit(sm,d); return XG.map(g); });
+      let b2=0,va=0; for(let j=0;j<NG;j++){ let m=0; for(let s=0;s<REP;s++) m+=vals[s][j]; m/=REP; let v=0; for(let s=0;s<REP;s++) v+=(vals[s][j]-m)**2; v/=REP; b2+=(m-f(XG[j]))**2; va+=v; }
+      DEC.push({b2:b2/NG,va:va/NG,tot:SIG*SIG+b2/NG+va/NG}); many.push(vals.slice(0,20)); } })();
+  let cur=null, curve=[];
+  function refresh(){ const sm=sample(S.seed); curve=[]; for(let d=0;d<=DMAX;d++) curve.push(errs(sm,d)); cur={sm,...curve[S.d]};
+    const D=DEC[S.d];
+    out.textContent=`Bậc d = ${S.d} (${S.d+1} hệ số) · MSE huấn luyện ${Q.fmt(cur.tr,3)} · MSE kiểm tra của mẫu này ${Q.fmt(cur.te,3)}\n`+
+      `Trung bình trên 200 mẫu: nhiễu ${Q.fmt(SIG*SIG,3)} + độ chệch² ${Q.fmt(D.b2,3)} + phương sai ${fmtBig(D.va)} = ${fmtBig(D.tot)}`; }
+  const fmtBig=v=>v<1000?Q.fmt(v,3):v.toExponential(1).replace('.',',');
+  refresh();
+  const c=Q.canvas(stage,360,draw);
+  function draw(ctx,w,h){
+    const C=Q.colors(); ctx.clearRect(0,0,w,h); ctx.font='12px -apple-system,sans-serif';
+    const narrow=w<620;
+    const L={x:36,y:24,w:narrow?w-50:w*0.52-46,h:narrow?150:h-58};
+    const R=narrow?{x:44,y:L.y+L.h+40,w:w-60,h:h-(L.y+L.h+40)-34}:{x:w*0.52+34,y:24,w:w*0.48-50,h:h-58};
+    // bảng trái
+    const X=v=>L.x+v*L.w, Y=v=>L.y+(2-v)/4*L.h;
+    ctx.strokeStyle=C.line; ctx.lineWidth=1; ctx.strokeRect(L.x,L.y,L.w,L.h);
+    ctx.beginPath(); ctx.moveTo(L.x,Y(0)); ctx.lineTo(L.x+L.w,Y(0)); ctx.stroke();
+    ctx.save(); ctx.beginPath(); ctx.rect(L.x,L.y,L.w,L.h); ctx.clip();
+    if(S.many){ ctx.strokeStyle=C.d; ctx.globalAlpha=0.3; ctx.lineWidth=1; many[S.d].forEach(vals=>{ ctx.beginPath(); vals.forEach((v,j)=>{ const yy=Y(Math.max(-9,Math.min(9,v))); j?ctx.lineTo(X(XG[j]),yy):ctx.moveTo(X(XG[j]),yy); }); ctx.stroke(); }); ctx.globalAlpha=1; }
+    ctx.strokeStyle=C.ink; ctx.setLineDash([5,4]); ctx.lineWidth=1.4; ctx.beginPath(); for(let i=0;i<=100;i++){ const v=i/100; i?ctx.lineTo(X(v),Y(f(v))):ctx.moveTo(X(v),Y(f(v))); } ctx.stroke(); ctx.setLineDash([]);
+    ctx.strokeStyle=C.b; ctx.lineWidth=2.2; ctx.beginPath(); for(let i=0;i<=300;i++){ const v=i/300, yy=Y(Math.max(-9,Math.min(9,cur.g(v)))); i?ctx.lineTo(X(v),yy):ctx.moveTo(X(v),yy); } ctx.stroke();
+    ctx.restore();
+    ctx.fillStyle=C.c; cur.sm.x.forEach((v,i)=>{ ctx.beginPath(); ctx.arc(X(v),Y(cur.sm.y[i]),3.5,0,7); ctx.fill(); });
+    ctx.fillStyle=C.muted; ctx.textAlign='right'; [-2,-1,0,1,2].forEach(v=>ctx.fillText(String(v).replace('-','−'),L.x-5,Y(v)+4));
+    ctx.textAlign='left'; ctx.fillStyle=C.ink; ctx.fillText(`Đa thức bậc ${S.d} khớp 18 điểm`,L.x,L.y-8);
+    // bảng phải: thang log
+    const lo=Math.log10(0.001), hi=Math.log10(500), XD=d=>R.x+d/DMAX*R.w, YE=e=>R.y+(hi-Math.log10(Math.max(1e-9,e)))/(hi-lo)*R.h;
+    ctx.strokeStyle=C.line; ctx.strokeRect(R.x,R.y,R.w,R.h);
+    ctx.fillStyle=C.muted; ctx.textAlign='right'; [0.001,0.01,0.1,1,10,100].forEach(e=>{ ctx.fillText(Q.fmt(e,e<0.01?3:e<0.1?2:e<1?1:0),R.x-5,YE(e)+4); ctx.strokeStyle=C.line; ctx.beginPath(); ctx.moveTo(R.x,YE(e)); ctx.lineTo(R.x+R.w,YE(e)); ctx.stroke(); });
+    ctx.textAlign='center'; [0,2,4,6,8,10,12,14].forEach(d=>ctx.fillText(String(d),XD(d),R.y+R.h+14)); ctx.fillText('bậc đa thức d',R.x+R.w/2,R.y+R.h+28);
+    ctx.save(); ctx.beginPath(); ctx.rect(R.x,R.y,R.w,R.h); ctx.clip();
+    const line=(arr,col,dash,lw)=>{ ctx.strokeStyle=col; ctx.setLineDash(dash); ctx.lineWidth=lw; ctx.beginPath(); arr.forEach((e,d)=>d?ctx.lineTo(XD(d),YE(e)):ctx.moveTo(XD(d),YE(e))); ctx.stroke(); ctx.setLineDash([]); };
+    line(DEC.map(()=>SIG*SIG),C.a,[2,3],1.4);
+    line(DEC.map(e=>e.b2),C.c,[],1.6); line(DEC.map(e=>e.va),C.d,[],1.6);
+    line(curve.map(e=>e.tr),C.muted,[5,4],2); line(curve.map(e=>e.te),C.b,[],2.4);
+    ctx.restore();
+    ctx.strokeStyle=C.ink; ctx.setLineDash([2,3]); ctx.beginPath(); ctx.moveTo(XD(S.d),R.y); ctx.lineTo(XD(S.d),R.y+R.h); ctx.stroke(); ctx.setLineDash([]);
+    ctx.textAlign='left'; ctx.font='11px -apple-system,sans-serif';
+    const leg=[[C.muted,'huấn luyện'],[C.b,'kiểm tra'],[C.c,'độ chệch²'],[C.d,'phương sai'],[C.a,'nhiễu']]; let lx=R.x;
+    ctx.font='12px -apple-system,sans-serif'; ctx.fillStyle=C.ink; ctx.fillText('MSE (thang log)',R.x,R.y-8);
+    ctx.font='11px -apple-system,sans-serif';
+    leg.forEach(([col,t],i)=>{ const yy=R.y+14+i*14; ctx.fillStyle=col; ctx.fillRect(R.x+8,yy-7,10,3); ctx.fillStyle=C.muted; ctx.fillText(t,R.x+22,yy-2); });
+  }
+  Q.slider(ctl,'Bậc đa thức d',0,DMAX,1,S.d,v=>{ S.d=v; refresh(); c.redraw(); },v=>v);
+  Q.button(ctl,'Mẫu huấn luyện mới',()=>{ S.seed++; refresh(); c.redraw(); },true);
+  const mb=Q.button(ctl,'Hiện 20 lần khớp khác',()=>{ S.many=!S.many; mb.textContent=S.many?'Ẩn 20 lần khớp khác':'Hiện 20 lần khớp khác'; c.redraw(); });
+})();
+(()=>{
+  /* ---------- Mô hình 9.2: lân cận trong khối lập phương p chiều ---------- */
+  const stage=document.getElementById('demo2-09'), ctl=document.getElementById('ctl2-09'), out=document.getElementById('out2-09');
+  const NP=800, PMAX=50;
+  const S={p:3, r:0.1, mode:'nb'};
+  const view={yaw:0.6,pitch:0.45,dist:8,auto:true};
+  const rnd=Q.rng(909), pts=Array.from({length:NP},()=>Float32Array.from({length:PMAX},()=>rnd()));
+  let flag=new Uint8Array(NP), cnt=0;
+  const edge=()=>Math.pow(S.r,1/S.p);
+  function compute(){ const e=edge(); cnt=0;
+    for(let i=0;i<NP;i++){ const q=pts[i]; let ok;
+      if(S.mode==='nb'){ ok=true; for(let j=0;j<S.p;j++) if(Math.abs(q[j]-0.5)>e/2){ ok=false; break; } }
+      else { ok=false; for(let j=0;j<S.p;j++) if(q[j]<0.05||q[j]>0.95){ ok=true; break; } }
+      flag[i]=ok?1:0; cnt+=flag[i]; }
+    out.textContent=`p = ${S.p} chiều · r = ${Q.pct(S.r,0)} · cạnh lân cận r^(1/p) = ${Q.fmt(e,3)} của mỗi trục\n`+
+      (S.mode==='nb'
+        ? `Điểm nằm trong lân cận (xét đủ p toạ độ): ${cnt}/${NP} = ${Q.pct(cnt/NP,1)} · kỳ vọng ${Q.pct(S.r,1)}`
+        : `Điểm cách một mặt dưới 5%: ${cnt}/${NP} = ${Q.pct(cnt/NP,1)} · lý thuyết 1 − 0,9^p = ${Q.pct(1-Math.pow(0.9,S.p),1)}`); }
+  compute();
+  const c=Q.canvas(stage,400,draw);
+  function draw(ctx,w,h){
+    const C=Q.colors(); ctx.clearRect(0,0,w,h);
+    const scale=Math.min(w,h*1.4)/6.8, P=p=>Q.project(p,view,w,h,scale);
+    const m=v=>(v-0.5)*2.4, e=edge();
+    // trục thứ j (j < 3) chỉ bị giới hạn khi j < p; trục dư khi p < 3 không thuộc dữ liệu nên trải hết
+    const box=(a,b)=>{ const lo=[0,1,2].map(j=>j<S.p?a:0), hi=[0,1,2].map(j=>j<S.p?b:1), V=[];
+      for(const z of [0,1]) for(const [x,y] of [[0,0],[1,0],[1,1],[0,1]]) V.push(P([m(x?hi[0]:lo[0]),m(y?hi[1]:lo[1]),m(z?hi[2]:lo[2])])); return V; };
+    const E=[[0,1],[1,2],[2,3],[3,0],[4,5],[5,6],[6,7],[7,4],[0,4],[1,5],[2,6],[3,7]];
+    const F=[[0,1,2,3],[4,5,6,7],[0,1,5,4],[1,2,6,5],[2,3,7,6],[3,0,4,7]];
+    // khối đơn vị
+    const U=[0,1].flatMap(z=>[[0,0],[1,0],[1,1],[0,1]].map(([x,y])=>P([m(x),m(y),m(z)]))); ctx.strokeStyle=C.muted; ctx.lineWidth=1.2; ctx.beginPath(); E.forEach(([a,b])=>{ ctx.moveTo(U[a][0],U[a][1]); ctx.lineTo(U[b][0],U[b][1]); }); ctx.stroke();
+    // lân cận hoặc lớp vỏ 5%
+    const inner=S.mode==='nb'?box(0.5-e/2,0.5+e/2):box(0.05,0.95);
+    const faces=F.map(f=>({pts:f.map(i=>inner[i]),d:f.reduce((s,i)=>s+inner[i][2],0)/4})).sort((a,b)=>b.d-a.d);
+    faces.slice(0,3).forEach(fc=>{ ctx.globalAlpha=0.12; ctx.fillStyle=S.mode==='nb'?C.c:C.muted; ctx.beginPath(); fc.pts.forEach((q,j)=>j?ctx.lineTo(q[0],q[1]):ctx.moveTo(q[0],q[1])); ctx.closePath(); ctx.fill(); });
+    // các điểm
+    const items=pts.map((q,i)=>{ const pp=P([m(q[0]),m(q[1]),m(q[2])]); return {pp,i}; }).sort((a,b)=>b.pp[2]-a.pp[2]);
+    items.forEach(({pp,i})=>{ const on=flag[i]; ctx.globalAlpha=on?1:0.28; ctx.fillStyle=on?(S.mode==='nb'?C.c:C.b):C.muted; ctx.beginPath(); ctx.arc(pp[0],pp[1],on?3:2,0,7); ctx.fill(); });
+    faces.slice(3).forEach(fc=>{ ctx.globalAlpha=0.12; ctx.fillStyle=S.mode==='nb'?C.c:C.muted; ctx.beginPath(); fc.pts.forEach((q,j)=>j?ctx.lineTo(q[0],q[1]):ctx.moveTo(q[0],q[1])); ctx.closePath(); ctx.fill(); });
+    ctx.globalAlpha=1; ctx.strokeStyle=S.mode==='nb'?C.c:C.muted; ctx.lineWidth=S.mode==='nb'?2:1; if(S.mode!=='nb') ctx.setLineDash([4,3]);
+    ctx.beginPath(); E.forEach(([a,b])=>{ ctx.moveTo(inner[a][0],inner[a][1]); ctx.lineTo(inner[b][0],inner[b][1]); }); ctx.stroke(); ctx.setLineDash([]);
+    // ô nhỏ: cạnh r^(1/p) theo p
+    const ix=14, iy=34, iw=Math.min(170,w*0.3), ih=90;
+    ctx.fillStyle=C.panel; ctx.fillRect(ix-6,iy-22,iw+16,ih+42); ctx.strokeStyle=C.line; ctx.lineWidth=1; ctx.strokeRect(ix-6,iy-22,iw+16,ih+42);
+    ctx.font='11px -apple-system,sans-serif'; ctx.fillStyle=C.ink; ctx.fillText('cạnh r^(1/p) theo p',ix,iy-8);
+    const PX=p=>ix+(p-1)/(PMAX-1)*iw, PY=v=>iy+(1-v)*ih;
+    ctx.strokeStyle=C.line; ctx.strokeRect(ix,iy,iw,ih);
+    ctx.strokeStyle=C.c; ctx.lineWidth=1.8; ctx.beginPath(); for(let p=1;p<=PMAX;p++){ const v=Math.pow(S.r,1/p); p>1?ctx.lineTo(PX(p),PY(v)):ctx.moveTo(PX(p),PY(v)); } ctx.stroke();
+    ctx.fillStyle=C.b; ctx.beginPath(); ctx.arc(PX(S.p),PY(e),4,0,7); ctx.fill();
+    ctx.fillStyle=C.muted; ctx.textAlign='center'; [1,10,20,30,40,50].forEach(p=>ctx.fillText(String(p),PX(p),iy+ih+12)); ctx.textAlign='right'; ctx.fillText('1',ix-2,iy+8); ctx.fillText('0',ix-2,iy+ih); ctx.textAlign='left';
+    ctx.font='12px -apple-system,sans-serif'; ctx.fillStyle=C.muted;
+    ctx.fillText(S.mode==='nb'?`lân cận chứa ${Q.pct(S.r,0)} dữ liệu: cạnh ${Q.fmt(e,2)}`:'vỏ 5% sát các mặt (nét đứt: phần lõi)',ix-6,h-12);
+  }
+  Q.orbit(c.cv,view,()=>c.redraw());
+  Q.loop(stage,()=>{ if(view.auto){ view.yaw+=0.004; c.redraw(); } });
+  Q.slider(ctl,'Số chiều p',1,PMAX,1,S.p,v=>{ S.p=v; compute(); c.redraw(); },v=>v);
+  Q.slider(ctl,'Tỉ lệ dữ liệu r',0.01,0.5,0.01,S.r,v=>{ S.r=v; compute(); c.redraw(); },v=>Q.pct(v,0));
+  const bN=Q.button(ctl,'Lân cận',()=>setMode('nb')), bB=Q.button(ctl,'Sát biên',()=>setMode('bd'));
+  function setMode(md){ S.mode=md; bN.className=md==='nb'?'primary':''; bB.className=md==='bd'?'primary':''; compute(); c.redraw(); }
+  setMode('nb');
+})();
+</script>
+</section>
