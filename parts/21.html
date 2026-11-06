@@ -134,7 +134,7 @@
     const bb=bestBid(), ba=bestAsk();
     if(bb>=0&&ba<NL){ const qb=bid[bb], qa=ask[ba], km=(bb*qa+ba*qb)/(qa+qb);
       const a=P([X(km),Yr(0)-0.3,0]), b=P([X(km),Yr(0)-0.3,0.9]); ctx.strokeStyle=C.ink; ctx.lineWidth=2.5; ctx.beginPath(); ctx.moveTo(a[0],a[1]); ctx.lineTo(b[0],b[1]); ctx.stroke(); ctx.lineWidth=1; }
-    ctx.font='12px -apple-system,sans-serif'; ctx.fillStyle=C.muted; ctx.textAlign='center';
+    ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif'; ctx.fillStyle=C.muted; ctx.textAlign='center';
     for(let k=0;k<NL;k+=5){ const p=P([X(k),Yr(0)-0.55,0]); ctx.fillText(Q.fmt(px(k),2),p[0],p[1]); }
     const pb=P([X(0)-0.4,Yr(0),0]), pa=P([X(0)-0.4,Yr(ROWS-1),0]); ctx.fillText('hiện tại',pb[0],pb[1]); ctx.fillText('quá khứ',pa[0],pa[1]);
     ctx.textAlign='left'; ctx.fillText('■ lệnh mua chờ (xanh lá)   ■ lệnh bán chờ (cam)   ● giao dịch (tím)   | giá vi mô',12,18);
@@ -167,7 +167,7 @@
     c.redraw(); }
   const c=Q.canvas(stage,300,draw);
   function draw(ctx,w,h){
-    const C=Q.colors(), {m,sd}=calc(); ctx.clearRect(0,0,w,h); ctx.font='12px -apple-system,sans-serif';
+    const C=Q.colors(), {m,sd}=calc(); ctx.clearRect(0,0,w,h); ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif';
     const T=26,B=h-30, L1=16, R1=Math.max(180,w*0.42), L2=R1+60, R2=w-14;
     // trái: mật độ chuẩn của lãi/lỗ ngày
     const lo=Math.min(m-4*sd,-0.5*sd), hi=Math.max(m+4*sd,0.5*sd), xs=v=>L1+(v-lo)/(hi-lo)*(R1-L1), pk=1/(sd*Math.sqrt(2*Math.PI));

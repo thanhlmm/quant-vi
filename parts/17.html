@@ -80,14 +80,14 @@
     ctx.strokeStyle=C.muted; ctx.lineWidth=2; ctx.beginPath();
     for(let i=0;i<=240;i++){ const x=lo+(hi-lo)*i/240; i?ctx.lineTo(X(x),Y(pdf(x))):ctx.moveTo(X(x),Y(pdf(x))); } ctx.stroke();
     const vl=(x,col,lab,dash,dy)=>{ ctx.strokeStyle=col; ctx.lineWidth=dash?1.5:3; ctx.setLineDash(dash?[5,4]:[]); ctx.beginPath(); ctx.moveTo(X(x),T-4); ctx.lineTo(X(x),T+ph); ctx.stroke(); ctx.setLineDash([]);
-      ctx.fillStyle=col; ctx.font='600 12px -apple-system,sans-serif'; const tw=ctx.measureText(lab).width; ctx.fillText(lab,Math.min(w-tw-4,Math.max(4,X(x)-tw/2)),T-10+dy); };
+      ctx.fillStyle=col; ctx.font='600 12px Be Vietnam Pro,-apple-system,sans-serif'; const tw=ctx.measureText(lab).width; ctx.fillText(lab,Math.min(w-tw-4,Math.max(4,X(x)-tw/2)),T-10+dy); };
     vl(A.V,C.ink,'V = '+Q.fmt(A.V,A.dec),true,0);
     vl(z.bid,C.a,'bid '+Q.fmt(z.bid,A.dec+1),false,ph+30);
     vl(z.ask,C.b,'ask '+Q.fmt(z.ask,A.dec+1),false,ph+30);
     if(A.q){ ctx.strokeStyle=C.c; ctx.fillStyle=C.c; ctx.lineWidth=2; const y=T+ph*0.5, x0=X(A.V), x1=X(z.m);
       ctx.beginPath(); ctx.moveTo(x0,y); ctx.lineTo(x1,y); ctx.stroke(); ctx.beginPath(); const d=Math.sign(x1-x0)*7; ctx.moveTo(x1,y); ctx.lineTo(x1-d,y-5); ctx.lineTo(x1-d,y+5); ctx.fill();
-      ctx.font='12px -apple-system,sans-serif'; ctx.fillText('lệch '+Q.fmt(z.m-A.V,A.dec+1),Math.min(x0,x1)+4,y-8); }
-    ctx.fillStyle=C.muted; ctx.font='12px -apple-system,sans-serif';
+      ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif'; ctx.fillText('lệch '+Q.fmt(z.m-A.V,A.dec+1),Math.min(x0,x1)+4,y-8); }
+    ctx.fillStyle=C.muted; ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif';
     ctx.fillText('xám: niềm tin về giá trị thật   nền nhạt: vùng giữa bid và ask',L,16);
   }
   function reportA(){
@@ -171,10 +171,10 @@
       ctx.beginPath(); ctx.moveTo(a[0],a[1]); ctx.lineTo(b[0],b[1]); ctx.stroke();
     }
     ctx.globalAlpha=1;
-    if(flash && flash.t>0){ const x=flash.side>0?me.ask-c0:me.bid-c0, q=P(x,0,7.5); ctx.fillStyle=C.c; ctx.font='600 13px -apple-system,sans-serif';
+    if(flash && flash.t>0){ const x=flash.side>0?me.ask-c0:me.bid-c0, q=P(x,0,7.5); ctx.fillStyle=C.c; ctx.font='600 13px Be Vietnam Pro,-apple-system,sans-serif';
       ctx.fillText(flash.side>0?'khách mua của bạn':'khách bán cho bạn',q[0]-50,q[1]-6); }
     const lab=(x,y,t)=>{ const q=P(x,y,0); ctx.fillText(t,q[0]-20,q[1]+16); };
-    ctx.fillStyle=C.muted; ctx.font='12px -apple-system,sans-serif';
+    ctx.fillStyle=C.muted; ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif';
     lab(-LV/2,0,'phía mua (bid)'); lab(LV/2,0,'phía bán (ask)'); const qq=P(LV+1.5,DEPTH,0); ctx.fillText('quá khứ',qq[0],qq[1]);
     ctx.fillText('xanh lá: lệnh mua chờ   cam: lệnh bán chờ   xanh dương: lệnh của bạn   đường đen: giá giữa',12,20);
   }

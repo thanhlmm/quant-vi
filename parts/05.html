@@ -104,7 +104,7 @@
     ctx.fillStyle=C.c; ctx.globalAlpha=0.7;
     pts().forEach(([x,y])=>{ if(Math.abs(x)>L||Math.abs(y)>L) return; const q=P([x,y,0]); ctx.beginPath(); ctx.arc(q[0],q[1],1.8,0,7); ctx.fill(); });
     ctx.globalAlpha=1;
-    ctx.font='12px -apple-system,sans-serif';
+    ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif';
     if(S.sq){
       const par=[]; for(let i=0;i<=80;i++){ const x=-L+2*L*i/80, y=(x*x-1)/Math.SQRT2; if(Math.abs(y)<=L) par.push([x,y,0]); }
       line(par,C.b,2.5);
@@ -170,7 +170,7 @@
     ctx.strokeStyle=C.line; ctx.beginPath(); ctx.moveTo(L,T); ctx.lineTo(L,B); ctx.lineTo(R,B); ctx.stroke();
     ctx.strokeStyle=C.muted; ctx.setLineDash([4,4]); ctx.beginPath(); ctx.moveTo(L,Y(0)); ctx.lineTo(R,Y(0)); ctx.stroke(); ctx.setLineDash([]);
     ctx.strokeStyle=C.c; ctx.lineWidth=2.2; ctx.beginPath(); for(let i=0;i<=200;i++){ const c=-1+i/100; i?ctx.lineTo(X(c),Y(det(c))):ctx.moveTo(X(c),Y(det(c))); } ctx.stroke(); ctx.lineWidth=1;
-    ctx.font='12px -apple-system,sans-serif'; ctx.fillStyle=C.muted; ctx.textAlign='center';
+    ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif'; ctx.fillStyle=C.muted; ctx.textAlign='center';
     [-1,-0.5,0,0.5,1].forEach(c=>ctx.fillText(Q.fmt(c,1),X(c),B+16));
     ctx.fillText('c = Corr(X, Z)',(L+R)/2,B+30);
     ctx.textAlign='right'; ctx.fillText('0',L-6,Y(0)+4); ctx.fillText(Q.fmt(ymax,2),L-6,Y(ymax)+4); ctx.fillText(Q.fmt(ymin,2),L-6,Y(ymin)+4);

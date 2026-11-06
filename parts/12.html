@@ -125,7 +125,7 @@
       const R=1.15/K;
       ctx.strokeStyle=C.line; ctx.lineWidth=1;
       const nm=['Δ 2 năm','Δ 10 năm','Δ 30 năm'];
-      ctx.font='12px -apple-system,sans-serif';
+      ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif';
       for(let k=0;k<3;k++){ const a=[0,0,0], b=[0,0,0]; a[k]=-R; b[k]=R; ctx.strokeStyle=C.muted; ctx.globalAlpha=0.6; seg(a,b); ctx.globalAlpha=1;
         const L=P(b); ctx.fillStyle=C.muted; ctx.fillText(nm[k],L[0]+3,L[1]); }
       // mặt phẳng hoặc đường thẳng được giữ lại
@@ -147,8 +147,8 @@
       E.vec.forEach((v,j)=>{ const L=2*Math.sqrt(E.val[j]), tip=v.map(x=>x*L), A=P([0,0,0]), B=P(tip);
         ctx.strokeStyle=cols[j]; ctx.fillStyle=cols[j]; ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(A[0],A[1]); ctx.lineTo(B[0],B[1]); ctx.stroke();
         const ang=Math.atan2(B[1]-A[1],B[0]-A[0]); ctx.beginPath(); ctx.moveTo(B[0],B[1]); ctx.lineTo(B[0]-9*Math.cos(ang-0.4),B[1]-9*Math.sin(ang-0.4)); ctx.lineTo(B[0]-9*Math.cos(ang+0.4),B[1]-9*Math.sin(ang+0.4)); ctx.closePath(); ctx.fill();
-        ctx.font='bold 12px -apple-system,sans-serif'; ctx.fillText('PC'+(j+1),B[0]+5,B[1]-5); });
-      ctx.lineWidth=1; ctx.font='12px -apple-system,sans-serif'; ctx.fillStyle=C.muted;
+        ctx.font='bold 12px Be Vietnam Pro,-apple-system,sans-serif'; ctx.fillText('PC'+(j+1),B[0]+5,B[1]-5); });
+      ctx.lineWidth=1; ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif'; ctx.fillStyle=C.muted;
       ctx.fillText('Mũi tên: véc-tơ riêng × 2σ.  Đoạn cam: phần dư khi bỏ bớt thành phần.',12,18);
     }
     gen();
@@ -184,7 +184,7 @@
         `\nHệ số tải PC2 từ 3 tháng đến 30 năm: ${Q.fmt(E.vec[1][0],2)} → ${Q.fmt(E.vec[1][T.length-1],2)}.  Các thành phần 4 đến 10 cộng lại: ${Q.pct(1-cum/tot,1)}`;
     }
     function draw(ctx,w,h){
-      const C=Q.colors(); ctx.clearRect(0,0,w,h); ctx.font='12px -apple-system,sans-serif';
+      const C=Q.colors(); ctx.clearRect(0,0,w,h); ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif';
       const cols=[C.a,C.d,C.b];
       // khung trái: hệ số tải
       const l=40, r=w*0.62, t=30, b=h-34, X=k=>l+(r-l)*(lt[k]-lt[0])/(lt[T.length-1]-lt[0]), Y=v=>(t+b)/2-v/0.75*(b-t)/2;

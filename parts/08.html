@@ -145,7 +145,7 @@
       if(it.t===0){ ctx.globalAlpha=0.92; { const t=Math.max(0,Math.min(1,it.z)); ctx.fillStyle=t<0.5?mix(cb,cm,0.85*t*2):mix(cm,cc,1-0.85*(1-t)*2+0.0); } ctx.fill(); ctx.globalAlpha=0.18; ctx.strokeStyle=C.panel; ctx.lineWidth=0.5; ctx.stroke(); }
       else { ctx.globalAlpha=0.16; ctx.fillStyle=C.a; ctx.fill(); }
     }
-    ctx.globalAlpha=1; ctx.fillStyle=C.muted; ctx.font='12px -apple-system,sans-serif';
+    ctx.globalAlpha=1; ctx.fillStyle=C.muted; ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif';
     ctx.fillText(st.m1==='ls'?'Bình phương tối thiểu: một mặt phẳng nghiêng':`kNN với k = ${st.k1}: độ cao = tỉ lệ láng giềng xanh dương`,12,20);
   }
   function rep1(){ const k=st.k1;
@@ -164,7 +164,7 @@
   /* ---------- Mô hình 8.2: ranh giới quyết định + đường sai số ---------- */
   const c2=Q.canvas(stage2,380,draw2);
   function draw2(ctx,w,h){
-    const C=Q.colors(); ctx.clearRect(0,0,w,h); ctx.font='12px -apple-system,sans-serif';
+    const C=Q.colors(); ctx.clearRect(0,0,w,h); ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif';
     const narrow=w<620;
     const side=narrow?Math.min(w-24,230):Math.min(h-30,w*0.5);
     const M={x:12,y:22,s:side};

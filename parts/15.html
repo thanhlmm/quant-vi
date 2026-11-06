@@ -120,7 +120,7 @@
     // sân khấu
     const st=[[-1.6,-3.6,0],[1.6,-3.6,0],[1.6,-2.4,0],[-1.6,-2.4,0]].map(P);
     ctx.fillStyle=C.muted; ctx.globalAlpha=0.25; ctx.beginPath(); st.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1])); ctx.closePath(); ctx.fill(); ctx.globalAlpha=1;
-    const sc0=P([0,-3,0]); ctx.fillStyle=C.muted; ctx.font='12px -apple-system,sans-serif'; ctx.fillText('sân khấu',sc0[0]-22,sc0[1]+4);
+    const sc0=P([0,-3,0]); ctx.fillStyle=C.muted; ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif'; ctx.fillText('sân khấu',sc0[0]-22,sc0[1]+4);
     let lo=1e9,hi=-1e9; for(const s of seats){ const q=s.isSold?s.p:s.est; lo=Math.min(lo,q); hi=Math.max(hi,q); }
     const order=seats.map((s,i)=>({s,i,P:P([s.x,s.y,s.z])})).sort((a,b)=>b.P[2]-a.P[2]);
     scr.length=0;
@@ -138,7 +138,7 @@
     ctx.globalAlpha=1;
     for(const q of sel.nb){ const pq=P([q.x,q.y,q.z]); ctx.strokeStyle=C.ink; ctx.lineWidth=1.5; ctx.beginPath(); ctx.arc(pq[0],pq[1],6,0,7); ctx.stroke(); }
     ctx.strokeStyle=C.ink; ctx.lineWidth=2.5; ctx.beginPath(); ctx.arc(ps[0],ps[1],8,0,7); ctx.stroke();
-    ctx.fillStyle=C.muted; ctx.font='13px -apple-system,sans-serif';
+    ctx.fillStyle=C.muted; ctx.font='13px Be Vietnam Pro,-apple-system,sans-serif';
     ctx.fillText('● đã bán (xanh dương)   ● chưa bán, giá kNN (cam)   đậm hơn = đắt hơn   vòng đen: ghế chọn và láng giềng',12,20);
   }
   Q.orbit(c.cv,view,()=>c.redraw());
@@ -180,7 +180,7 @@
     curve(sold,Yq,C.c); curve(rev,Yr,C.b);
     ctx.strokeStyle=C.ink; ctx.lineWidth=1.5; ctx.beginPath(); ctx.moveTo(X(D.p),T); ctx.lineTo(X(D.p),T+ph); ctx.stroke();
     ctx.fillStyle=C.ink; ctx.beginPath(); ctx.arc(X(bb[0]),Yr(bb[1]),5,0,7); ctx.fill();
-    ctx.font='12px -apple-system,sans-serif'; ctx.fillStyle=C.muted;
+    ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif'; ctx.fillStyle=C.muted;
     for(let i=0;i<=5;i++){ const p=PMAX*i/5; ctx.fillText(Q.fmt(p,0),X(p)-10,T+ph+16); }
     ctx.fillStyle=C.c; for(let i=0;i<=5;i++){ const q=qmax*(5-i)/5; ctx.fillText(Q.fmt(q,0),6,T+ph*i/5+4); }
     ctx.fillStyle=C.b; for(let i=0;i<=5;i++){ const r=rmax*(5-i)/5; ctx.fillText(Q.fmt(r/1000,1)+'k',w-R+6,T+ph*i/5+4); }

@@ -124,7 +124,7 @@
     ctx.strokeStyle=C.line; ctx.lineWidth=1;
     for(let t=-2.5;t<=2.501;t+=0.5){ line([t*K,-2.5*K,ZF],[t*K,2.5*K,ZF]); line([-2.5*K,t*K,ZF],[2.5*K,t*K,ZF]); }
     ctx.strokeStyle=C.muted; line([-2.5*K,-2.5*K,ZF],[-2.5*K,-2.5*K,1.7]);
-    ctx.fillStyle=C.muted; ctx.font='12px -apple-system,sans-serif';
+    ctx.fillStyle=C.muted; ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif';
     let L=P([2.8*K,-2.5*K,ZF]); ctx.fillText('x₁',L[0],L[1]);
     L=P([-2.5*K,2.8*K,ZF]); ctx.fillText('x₂',L[0],L[1]);
     L=P([-2.5*K,-2.5*K,1.85]); ctx.fillText('y',L[0],L[1]);
@@ -167,7 +167,7 @@
     ctx.globalAlpha=1;
     if(hist.length){ const hh=hist[hist.length-1]; ctx.fillStyle=C.b; ctx.beginPath(); ctx.arc(mx(hh[1]),my(hh[2]),4.5,0,7); ctx.fill(); }
     ctx.restore();
-    ctx.fillStyle=C.muted; ctx.font='12px -apple-system,sans-serif';
+    ctx.fillStyle=C.muted; ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif';
     ctx.fillText('β̂₁ →',bx+bw-40,by+bh+15); ctx.fillText('↑ β̂₂',bx+4,by-5>10?by-5:by+bh+15);
     if(wide) ctx.fillText('Mỗi chấm: một lần lấy mẫu (± '+Q.fmt(R,2)+')',bx,by+bh+32);
     ctx.fillText('● y trên mặt phẳng  ● y dưới mặt phẳng  | phần dư',12,18);
@@ -232,7 +232,7 @@
     uniq.forEach(p=>{ ctx.fillStyle=C.c; ctx.beginPath(); ctx.arc(sx(p[0]),sy(p[1]),4,0,7); ctx.fill();
       if(dupCount>1){ ctx.strokeStyle=C.c; ctx.beginPath(); ctx.arc(sx(p[0]),sy(p[1]),7,0,7); ctx.stroke(); } });
     ctx.restore();
-    ctx.fillStyle=C.muted; ctx.font='12px -apple-system,sans-serif';
+    ctx.fillStyle=C.muted; ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif';
     ctx.fillText('— y theo x'+(S.xy?'    — x theo y':'')+(dupCount>1?'    ◎ điểm được lặp '+dupCount+' lần':''),12,18);
   }
   gen();

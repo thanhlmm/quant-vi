@@ -110,7 +110,7 @@
   const c=Q.canvas(stage,340,draw);
   function draw(ctx,w,h){
     const C=Q.colors(), cs=CASES[cur], st=cs.steps, n=st.length; ctx.clearRect(0,0,w,h);
-    ctx.font='12px -apple-system,sans-serif'; ctx.textBaseline='middle';
+    ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif'; ctx.textBaseline='middle';
     const L=40, R1=Math.max(L+160,w*0.6), T=40, B=h-42;
     const yOf=v=>B-(v-cs.lo)/(cs.hi-cs.lo)*(B-T), xOf=i=>L+(i+0.5)*(R1-L)/n;
     // lưới giá
@@ -125,9 +125,9 @@
       const x=xOf(i); ctx.fillStyle=C.muted; ctx.textAlign='center'; ctx.fillText(i+1,x,B+14);
       if(i>=k) continue; const s=st[i], col=s.who==='me'?C.c:C.muted;
       ctx.globalAlpha=i===k-1?0.9:0.45; ctx.fillStyle=col; ctx.fillRect(x-bw/2,yOf(s.ask),bw,yOf(s.bid)-yOf(s.ask)); ctx.globalAlpha=1;
-      ctx.fillStyle=C.ink; ctx.font='11px ui-monospace,monospace'; ctx.textAlign='left';
+      ctx.fillStyle=C.ink; ctx.font='11px JetBrains Mono,ui-monospace,monospace'; ctx.textAlign='left';
       if(i===k-1){ ctx.fillText(Q.fmt(s.ask,0),x+bw/2+3,yOf(s.ask)); ctx.fillText(Q.fmt(s.bid,0),x+bw/2+3,yOf(s.bid)); }
-      ctx.font='12px -apple-system,sans-serif';
+      ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif';
       if(s.act){ const py=s.act==='buy'?yOf(s.ask):yOf(s.bid); ctx.fillStyle=s.act==='buy'?C.b:C.a; ctx.beginPath(); ctx.arc(x,py,6,0,7); ctx.fill(); }
     }
     ctx.fillStyle=C.muted; ctx.textAlign='center'; ctx.fillText('lượt',(L+R1)/2,h-6);
@@ -192,7 +192,7 @@
   const c=Q.canvas(stage,170,draw);
   function draw(ctx,w,h){
     const C=Q.colors(); ctx.clearRect(0,0,w,h); ctx.textAlign='center'; ctx.textBaseline='middle';
-    if(!S.trades.length){ ctx.fillStyle=C.muted; ctx.font='14px -apple-system,sans-serif'; ctx.fillText('Bấm “Ván mới” để bắt đầu',w/2,h/2); return; }
+    if(!S.trades.length){ ctx.fillStyle=C.muted; ctx.font='14px Be Vietnam Pro,-apple-system,sans-serif'; ctx.fillText('Bấm “Ván mới” để bắt đầu',w/2,h/2); return; }
     const n=S.trades.length, gap=10, cw=Math.min(110,(w-24-gap*(n-1))/n), x0=(w-(cw*n+gap*(n-1)))/2;
     let pos=0;
     S.trades.forEach((t,i)=>{
@@ -200,12 +200,12 @@
       const vis=S.phase==='done'||(S.phase==='show'&&i<S.shown);
       ctx.fillStyle=C.panel; ctx.strokeStyle=vis?(t.side==='buy'?C.a:C.b):C.line; ctx.lineWidth=2;
       ctx.beginPath(); ctx.roundRect(x,y,cw,ch,10); ctx.fill(); ctx.stroke(); ctx.lineWidth=1;
-      ctx.fillStyle=C.muted; ctx.font='11px -apple-system,sans-serif'; ctx.fillText('#'+(i+1),x+cw/2,y-12);
-      if(vis){ ctx.fillStyle=t.side==='buy'?C.a:C.b; ctx.font='600 13px -apple-system,sans-serif'; ctx.fillText(t.side==='buy'?'BẠN MUA':'BẠN BÁN',x+cw/2,y+24);
-        ctx.fillStyle=C.ink; ctx.font='600 22px ui-monospace,monospace'; ctx.fillText(t.px,x+cw/2,y+54); }
-      else if(S.phase==='show'&&i>=S.shown){ ctx.fillStyle=C.line; ctx.font='22px ui-monospace,monospace'; ctx.fillText('·',x+cw/2,y+ch/2); }
-      else { ctx.fillStyle=C.muted; ctx.font='600 26px ui-monospace,monospace'; ctx.fillText('?',x+cw/2,y+ch/2); }
-      if(S.phase==='done'){ ctx.fillStyle=C.muted; ctx.font='11px ui-monospace,monospace'; ctx.fillText('vị thế '+(sg(pos)||'0'),x+cw/2,y+ch+16); }
+      ctx.fillStyle=C.muted; ctx.font='11px Be Vietnam Pro,-apple-system,sans-serif'; ctx.fillText('#'+(i+1),x+cw/2,y-12);
+      if(vis){ ctx.fillStyle=t.side==='buy'?C.a:C.b; ctx.font='600 13px Be Vietnam Pro,-apple-system,sans-serif'; ctx.fillText(t.side==='buy'?'BẠN MUA':'BẠN BÁN',x+cw/2,y+24);
+        ctx.fillStyle=C.ink; ctx.font='600 22px JetBrains Mono,ui-monospace,monospace'; ctx.fillText(t.px,x+cw/2,y+54); }
+      else if(S.phase==='show'&&i>=S.shown){ ctx.fillStyle=C.line; ctx.font='22px JetBrains Mono,ui-monospace,monospace'; ctx.fillText('·',x+cw/2,y+ch/2); }
+      else { ctx.fillStyle=C.muted; ctx.font='600 26px JetBrains Mono,ui-monospace,monospace'; ctx.fillText('?',x+cw/2,y+ch/2); }
+      if(S.phase==='done'){ ctx.fillStyle=C.muted; ctx.font='11px JetBrains Mono,ui-monospace,monospace'; ctx.fillText('vị thế '+(sg(pos)||'0'),x+cw/2,y+ch+16); }
     });
   }
   Q.loop(stage,t=>{ if(S.phase!=='show') return; const k=Math.floor((t-S.t0)/S.ms)+1;
@@ -214,7 +214,7 @@
   Q.button(ctl,'Ván mới',newGame,true);
   Q.slider(ctl,'Số giao dịch',3,8,1,S.n,v=>{S.n=v;},v=>v);
   Q.slider(ctl,'Giây mỗi giao dịch',0.6,2.5,0.1,S.ms/1000,v=>{S.ms=v*1000;},v=>Q.fmt(v,1));
-  const box=(lbl)=>{ const l=Q.el('label',{},ctl); l.append(lbl+' '); return Q.el('input',{type:'number',step:'1',style:'width:5.5em;font:13px ui-monospace,monospace;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:5px 6px'},l); };
+  const box=(lbl)=>{ const l=Q.el('label',{},ctl); l.append(lbl+' '); return Q.el('input',{type:'number',step:'1',style:'width:5.5em;font:13px JetBrains Mono,ui-monospace,monospace;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:5px 6px'},l); };
   const iPos=box('Vị thế'), iCash=box('Tiền mặt');
   Q.button(ctl,'Kiểm tra',check);
   out.textContent='Mua: vị thế +1, tiền mặt trừ giá. Bán: vị thế −1, tiền mặt cộng giá.';

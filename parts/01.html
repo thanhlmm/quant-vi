@@ -90,7 +90,7 @@
       ctx.globalAlpha=on?1:0.22; ctx.fillStyle=col; ctx.beginPath();
       pts.forEach((p,j)=>j?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1])); ctx.closePath(); ctx.fill();
     }
-    ctx.restore(); ctx.globalAlpha=1; ctx.font='13px -apple-system,sans-serif'; ctx.fillStyle=C.muted;
+    ctx.restore(); ctx.globalAlpha=1; ctx.font='13px Be Vietnam Pro,-apple-system,sans-serif'; ctx.fillStyle=C.muted;
     ctx.fillText('■ H đúng (xanh dương)   ■ H sai (cam)   khối nâng lên = có bằng chứng E',12,20);
   }
   Q.orbit(c.cv,view,()=>c.redraw());

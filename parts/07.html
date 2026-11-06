@@ -79,7 +79,7 @@
     const C=Q.colors(); ctx.clearRect(0,0,w,h);
     const half=Math.max(0.06,2.3*S.q*0.5/Math.sqrt(S.n)), lo=Math.max(0,S.p-half), hi=Math.min(1,S.p+half);
     const L=40, Rr=w-20, T0=34, B=h-32, X=v=>L+(v-lo)/(hi-lo)*(Rr-L), rowH=(B-T0)/SHOW;
-    ctx.font='12px -apple-system,sans-serif';
+    ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif';
     ctx.strokeStyle=C.line; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(L,B); ctx.lineTo(Rr,B); ctx.stroke();
     ctx.fillStyle=C.muted; ctx.textAlign='center';
     const step=(hi-lo)>0.4?0.1:(hi-lo)>0.15?0.05:0.02;
@@ -132,7 +132,7 @@
     const C=Q.colors(); ctx.clearRect(0,0,w,h);
     const lo=Math.min(-1,...est.map(e=>e.a))-0.2, hi=Math.max(2.5,...est.map(e=>e.b))+0.2;
     const L=44, Rr=w-16, T0=24, B=h-28, Y=v=>T0+(hi-v)/(hi-lo)*(B-T0), dx=(Rr-L)/M;
-    ctx.font='12px -apple-system,sans-serif'; ctx.textAlign='right'; ctx.fillStyle=C.muted;
+    ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif'; ctx.textAlign='right'; ctx.fillStyle=C.muted;
     for(let v=Math.ceil(lo);v<=hi;v++){ ctx.fillText(String(v).replace('-','−'),L-6,Y(v)+4); ctx.strokeStyle=C.line; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(L,Y(v)); ctx.lineTo(Rr,Y(v)); ctx.stroke(); }
     ctx.strokeStyle=C.ink; ctx.lineWidth=1.5; ctx.beginPath(); ctx.moveTo(L,Y(0)); ctx.lineTo(Rr,Y(0)); ctx.stroke();
     ctx.strokeStyle=C.a; ctx.setLineDash([6,4]); ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(L,Y(S.sh)); ctx.lineTo(Rr,Y(S.sh)); ctx.stroke(); ctx.setLineDash([]);

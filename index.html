@@ -4,14 +4,17 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Giáo trình Quant trực quan – 21 bài (tiếng Việt)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Noto+Serif:ital,wght@0,400;0,600;0,700;1,400&family=JetBrains+Mono:wght@400;600&display=swap&subset=vietnamese">
 <style>
 :root{
   --bg:#f6f7f4; --panel:#ffffff; --ink:#18201c; --muted:#5d6a63; --line:#dde3dd;
   --accent:#0f7a5a; --accent2:#c2410c; --accent3:#2563eb; --accent4:#a21caf;
   --soft:#e8f2ec; --code:#eef1ed;
-  --serif: "Iowan Old Style","Palatino Linotype","Book Antiqua",Georgia,"Times New Roman",serif;
-  --sans: -apple-system,BlinkMacSystemFont,"Segoe UI","Helvetica Neue",Arial,sans-serif;
-  --mono: ui-monospace,"SF Mono",Menlo,Consolas,monospace;
+  --serif: "Noto Serif",Georgia,serif;
+  --sans: "Be Vietnam Pro",-apple-system,"Segoe UI",Arial,sans-serif;
+  --mono: "JetBrains Mono",ui-monospace,Menlo,monospace;
 }
 @media (prefers-color-scheme: dark){
   :root{ --bg:#0e1311; --panel:#151c19; --ink:#e6ece8; --muted:#97a69e; --line:#26312c;
@@ -19,13 +22,13 @@
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
-body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.65 var(--serif);-webkit-font-smoothing:antialiased}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.7 var(--serif);-webkit-font-smoothing:antialiased}
 a{color:var(--accent)}
 .wrap{max-width:1180px;margin:0 auto;padding:0 24px;display:grid;grid-template-columns:240px minmax(0,1fr);gap:48px}
 @media (max-width:900px){.wrap{grid-template-columns:1fr}.toc{position:static!important;max-height:none!important}}
 .hero{max-width:1180px;margin:0 auto;padding:56px 24px 28px}
 .hero .kicker{font:600 12px/1 var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--accent)}
-.hero h1{font-size:44px;line-height:1.12;margin:12px 0 14px;letter-spacing:-.01em}
+.hero h1{font-family:var(--sans);font-weight:700;font-size:42px;line-height:1.12;margin:12px 0 14px;letter-spacing:-.01em}
 .hero p{max-width:760px;color:var(--muted);margin:0 0 10px}
 .stats{display:flex;gap:28px;margin-top:22px;font-family:var(--sans)}
 .stats div{border-left:2px solid var(--accent);padding-left:12px}
@@ -39,13 +42,13 @@ a{color:var(--accent)}
 main{min-width:0;padding-bottom:80px}
 .part{margin:28px 0 8px;padding-top:24px;border-top:1px solid var(--line)}
 .part .tag{font:600 12px/1 var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--accent2)}
-.part h2{font-size:32px;margin:8px 0 6px;line-height:1.2}
+.part h2{font-family:var(--sans);font-weight:700;font-size:30px;margin:8px 0 6px;line-height:1.2}
 .part p{color:var(--muted);margin:0}
 .lesson{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:28px 32px;margin:22px 0}
 @media (max-width:600px){.lesson{padding:20px 16px}}
 .lesson>header{display:grid;grid-template-columns:auto 1fr;gap:4px 16px;align-items:baseline;margin-bottom:12px}
 .lesson>header .num{font:700 30px/1 var(--mono);color:var(--accent);grid-row:span 2}
-.lesson>header h3{margin:0;font-size:25px;line-height:1.25}
+.lesson>header h3{margin:0;font-family:var(--sans);font-weight:600;font-size:23px;line-height:1.25}
 .lesson>header .meta{margin:0;font:13px/1.5 var(--sans);color:var(--muted)}
 .lesson>header .meta a{color:var(--muted)}
 .lesson h4{font:700 13px/1.3 var(--sans);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:22px 0 8px}
@@ -98,6 +101,7 @@ window.Q = (function(){
       ctx.setTransform(d,0,0,d,0,0); st.w=w; st.h=height; st.draw && st.draw(ctx,w,height); }
     st.redraw=()=>{ st.draw && st.draw(ctx,st.w,st.h); };
     new ResizeObserver(fit).observe(stage); fit();
+    if(document.fonts) document.fonts.ready.then(fit);
     matchMedia('(prefers-color-scheme: dark)').addEventListener('change',st.redraw);
     return st;
   }
@@ -241,7 +245,7 @@ window.Q = (function(){
       ctx.globalAlpha=on?1:0.22; ctx.fillStyle=col; ctx.beginPath();
       pts.forEach((p,j)=>j?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1])); ctx.closePath(); ctx.fill();
     }
-    ctx.restore(); ctx.globalAlpha=1; ctx.font='13px -apple-system,sans-serif'; ctx.fillStyle=C.muted;
+    ctx.restore(); ctx.globalAlpha=1; ctx.font='13px Be Vietnam Pro,-apple-system,sans-serif'; ctx.fillStyle=C.muted;
     ctx.fillText('■ H đúng (xanh dương)   ■ H sai (cam)   khối nâng lên = có bằng chứng E',12,20);
   }
   Q.orbit(c.cv,view,()=>c.redraw());
@@ -395,7 +399,7 @@ window.Q = (function(){
       ctx.globalAlpha=f.alpha; ctx.fillStyle=f.col; ctx.fill();
       if(f.shade){ ctx.globalAlpha=f.alpha*f.shade; ctx.fillStyle='#000'; ctx.fill(); }
     }
-    ctx.globalAlpha=1; ctx.font='12px -apple-system,sans-serif'; ctx.fillStyle=C.muted; ctx.textAlign='center';
+    ctx.globalAlpha=1; ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif'; ctx.fillStyle=C.muted; ctx.textAlign='center';
     const step=N<=6?1:N<=20?5:20, yF=-(R/2)*rowGap-0.25;
     for(let t=1;t<=N;t++){ if(t!==1 && t%step) continue; const p=P([-W/2+(t-0.5)*cell,yF,0]); ctx.fillText('≥'+t,p[0],p[1]+4); }
     COSTS.forEach((c,ri)=>{ const p=P([W/2+0.55,(ri-(R-1)/2)*rowGap,0]); ctx.fillStyle=ri===S.ci?C.ink:C.muted; ctx.fillText('c='+Q.fmt(c,1),p[0],p[1]+4); });
@@ -462,7 +466,7 @@ window.Q = (function(){
     }
     ctx.lineWidth=1;
     line.forEach((s,i)=>{ ctx.fillStyle=s?C.b:C.c; ctx.beginPath(); ctx.arc(pad+(i+0.5)*gap,cy,rad,0,7); ctx.fill(); });
-    ctx.font='12px -apple-system,sans-serif'; ctx.fillStyle=C.muted; ctx.textAlign='left';
+    ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif'; ctx.fillStyle=C.muted; ctx.textAlign='left';
     ctx.fillText(`Lần xếp gần nhất: ${mixed} cặp khác giới`,pad,18);
     // biểu đồ tần suất
     const top=96, bot=h-30, maxH=Math.max(...hist)/runs||1, bwid=(w-2*pad)/n;
@@ -596,7 +600,7 @@ window.Q = (function(){
     for(let k=0;k<=24;k++){ const a=th*k/24, p=P([0.8*Math.cos(a),0,0.8*Math.sin(a)]); k?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]); } ctx.stroke();
     const o=[0,0,0];
     arrow(ctx,o,X,C.c,3,w,h,scale); arrow(ctx,o,Yw,C.b,3,w,h,scale); arrow(ctx,o,R,C.a,4,w,h,scale);
-    ctx.font='13px -apple-system,sans-serif'; ctx.lineWidth=1;
+    ctx.font='13px Be Vietnam Pro,-apple-system,sans-serif'; ctx.lineWidth=1;
     const lab=(v,t,col)=>{ const p=P(mul(v,1.08)); ctx.fillStyle=col; ctx.fillText(t,p[0]+6,p[1]-6); };
     lab(X,'σX',C.c); lab(Yw,S.hedge?'−h·σY':'σY',C.b); lab(R,S.hedge?'σ(X − hY)':'σ(X + Y)',C.a);
     ctx.fillStyle=C.muted; ctx.fillText('Góc giữa σX và σY: cos(góc) = ρ',12,20);
@@ -640,7 +644,7 @@ window.Q = (function(){
   function draw(ctx,w,h){
     const C=Q.colors(); ctx.clearRect(0,0,w,h);
     const L=52, Rr=w-16, mid=180;
-    ctx.font='12px -apple-system,sans-serif';
+    ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif';
     // nửa trên: hai dải điểm
     const Yv=v=>mid/2+10-Math.max(-3.5,Math.min(3.5,v))*(mid/2-20)/3.5;
     const cols=[[singles,1,C.b,L+(Rr-L)*0.08,(Rr-L)*0.38,'Một biến đơn lẻ'],[avgs,sdT(S.n,S.rho),C.c,L+(Rr-L)*0.54,(Rr-L)*0.38,'Trung bình của n biến']];
@@ -837,7 +841,7 @@ window.Q = (function(){
         }
         if(s.cur){ const m=d.mean(s.P); if(m>=lo-0.5&&m<=hi+0.5){ const a=pr([X(m),y,0]), b=pr([X(m),y,H*1.08]); ctx.globalAlpha=1; ctx.strokeStyle=C.a; ctx.lineWidth=2.5; ctx.beginPath(); ctx.moveTo(a[0],a[1]); ctx.lineTo(b[0],b[1]); ctx.stroke(); ctx.lineWidth=1; } }
       }
-      ctx.globalAlpha=1; ctx.font='12px -apple-system,sans-serif'; ctx.fillStyle=C.muted; ctx.textAlign='center';
+      ctx.globalAlpha=1; ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif'; ctx.fillStyle=C.muted; ctx.textAlign='center';
       for(const x of ticks(d,lo,hi,6)){ const p=pr([X(x),-Dy/2-0.55,0]); ctx.fillText(Q.fmt(x,d.disc?0:1),p[0],p[1]+4); }
       const sname=d.ps.find(q=>q[0]===d.sw)[1];
       [s0,s1].forEach(v=>{ const p=pr([Wx/2+0.5,Yp(v),0]); ctx.fillText(sname+' = '+Q.fmt(v,2),p[0],p[1]+4); });
@@ -886,7 +890,7 @@ window.Q = (function(){
       const m=d.mean(P), sd=Math.sqrt(d.vr(P));
       ctx.fillStyle=C.a; ctx.globalAlpha=0.12; const xa=Math.max(L,X(m-sd)), xb=Math.min(R,X(m+sd)); if(xb>xa) ctx.fillRect(xa,T,xb-xa,B-T); ctx.globalAlpha=1;
       ctx.strokeStyle=C.line; ctx.beginPath(); ctx.moveTo(L,T); ctx.lineTo(L,B); ctx.lineTo(R,B); ctx.stroke();
-      ctx.font='12px -apple-system,sans-serif'; ctx.fillStyle=C.muted; ctx.textAlign='right';
+      ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif'; ctx.fillStyle=C.muted; ctx.textAlign='right';
       [0,0.5,1].forEach(f=>ctx.fillText(Q.fmt(ymax*f,st.cdf?1:3),L-5,Y(ymax*f)+4));
       ctx.textAlign='center'; for(const x of ticks(d,lo,hi,8)){ ctx.fillText(Q.fmt(x,d.disc?0:1),X(x),B+16); }
       ctx.textAlign='left'; ctx.fillText(st.cdf?'Hàm phân phối tích luỹ F(x)':(d.disc?'Hàm khối xác suất p(x)':'Hàm mật độ f(x)'),L+6,T-8);
@@ -1022,7 +1026,7 @@ window.Q = (function(){
     ctx.fillStyle=C.c; ctx.globalAlpha=0.7;
     pts().forEach(([x,y])=>{ if(Math.abs(x)>L||Math.abs(y)>L) return; const q=P([x,y,0]); ctx.beginPath(); ctx.arc(q[0],q[1],1.8,0,7); ctx.fill(); });
     ctx.globalAlpha=1;
-    ctx.font='12px -apple-system,sans-serif';
+    ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif';
     if(S.sq){
       const par=[]; for(let i=0;i<=80;i++){ const x=-L+2*L*i/80, y=(x*x-1)/Math.SQRT2; if(Math.abs(y)<=L) par.push([x,y,0]); }
       line(par,C.b,2.5);
@@ -1088,7 +1092,7 @@ window.Q = (function(){
     ctx.strokeStyle=C.line; ctx.beginPath(); ctx.moveTo(L,T); ctx.lineTo(L,B); ctx.lineTo(R,B); ctx.stroke();
     ctx.strokeStyle=C.muted; ctx.setLineDash([4,4]); ctx.beginPath(); ctx.moveTo(L,Y(0)); ctx.lineTo(R,Y(0)); ctx.stroke(); ctx.setLineDash([]);
     ctx.strokeStyle=C.c; ctx.lineWidth=2.2; ctx.beginPath(); for(let i=0;i<=200;i++){ const c=-1+i/100; i?ctx.lineTo(X(c),Y(det(c))):ctx.moveTo(X(c),Y(det(c))); } ctx.stroke(); ctx.lineWidth=1;
-    ctx.font='12px -apple-system,sans-serif'; ctx.fillStyle=C.muted; ctx.textAlign='center';
+    ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif'; ctx.fillStyle=C.muted; ctx.textAlign='center';
     [-1,-0.5,0,0.5,1].forEach(c=>ctx.fillText(Q.fmt(c,1),X(c),B+16));
     ctx.fillText('c = Corr(X, Z)',(L+R)/2,B+30);
     ctx.textAlign='right'; ctx.fillText('0',L-6,Y(0)+4); ctx.fillText(Q.fmt(ymax,2),L-6,Y(ymax)+4); ctx.fillText(Q.fmt(ymin,2),L-6,Y(ymin)+4);
@@ -1221,7 +1225,7 @@ window.Q = (function(){
     const narrow=w<620, padT=26, padB=34;
     const L={x:46,y:padT,w:narrow?w-60:w*0.55-60,h:narrow?(h-padT-padB)/2-20:h-padT-padB};
     const R=narrow?{x:46,y:L.y+L.h+44,w:w-60,h:L.h}:{x:w*0.55+20,y:padT,w:w*0.45-34,h:h-padT-padB};
-    ctx.font='12px -apple-system,sans-serif';
+    ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif';
     // ----- bảng trái: trung bình chạy -----
     const lo=s.mu-2.5*s.sd, hi=s.mu+2.5*s.sd;
     const X=t=>L.x+Math.log10(t)/3*L.w, Y=v=>L.y+(hi-v)/(hi-lo)*L.h;
@@ -1263,7 +1267,7 @@ window.Q = (function(){
     ctx.fillStyle=C.panel; ctx.fillRect(ix-3,iy-3,iw+6,ih+18); ctx.strokeStyle=C.line; ctx.strokeRect(ix-3,iy-3,iw+6,ih+18);
     ctx.fillStyle=C.d; const bwI=iw/srcHist.length;
     srcHist.forEach((v,k)=>{ const hh=v/mx*ih; ctx.fillRect(ix+k*bwI,iy+ih-hh,Math.max(1,bwI-1),hh); });
-    ctx.fillStyle=C.muted; ctx.font='10px -apple-system,sans-serif'; ctx.textAlign='center'; ctx.fillText('phân phối gốc',ix+iw/2,iy+ih+11);
+    ctx.fillStyle=C.muted; ctx.font='10px Be Vietnam Pro,-apple-system,sans-serif'; ctx.textAlign='center'; ctx.fillText('phân phối gốc',ix+iw/2,iy+ih+11);
     ctx.textAlign='left';
   }
   Q.loop(stage,()=>{ if(prog<1){ prog=Math.min(1,prog+0.012); c.redraw(); } });
@@ -1333,7 +1337,7 @@ window.Q = (function(){
     const br=Math.max(2,0.17*D*scale);
     ctx.fillStyle=C.b;
     balls.forEach(b=>{ const q=P(ballPos(b)); ctx.globalAlpha=0.95; ctx.beginPath(); ctx.arc(q[0],q[1],br,0,7); ctx.fill(); });
-    ctx.globalAlpha=1; ctx.fillStyle=C.muted; ctx.font='12px -apple-system,sans-serif';
+    ctx.globalAlpha=1; ctx.fillStyle=C.muted; ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif';
     ctx.fillText(`${S.R} hàng đinh · p = ${Q.fmt(S.p,2)} · đường cam: xấp xỉ chuẩn N(Rp, Rp(1 − p))`,12,20);
   }
   Q.orbit(c.cv,view,()=>c.redraw());
@@ -1442,7 +1446,7 @@ window.Q = (function(){
     const C=Q.colors(); ctx.clearRect(0,0,w,h);
     const half=Math.max(0.06,2.3*S.q*0.5/Math.sqrt(S.n)), lo=Math.max(0,S.p-half), hi=Math.min(1,S.p+half);
     const L=40, Rr=w-20, T0=34, B=h-32, X=v=>L+(v-lo)/(hi-lo)*(Rr-L), rowH=(B-T0)/SHOW;
-    ctx.font='12px -apple-system,sans-serif';
+    ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif';
     ctx.strokeStyle=C.line; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(L,B); ctx.lineTo(Rr,B); ctx.stroke();
     ctx.fillStyle=C.muted; ctx.textAlign='center';
     const step=(hi-lo)>0.4?0.1:(hi-lo)>0.15?0.05:0.02;
@@ -1495,7 +1499,7 @@ window.Q = (function(){
     const C=Q.colors(); ctx.clearRect(0,0,w,h);
     const lo=Math.min(-1,...est.map(e=>e.a))-0.2, hi=Math.max(2.5,...est.map(e=>e.b))+0.2;
     const L=44, Rr=w-16, T0=24, B=h-28, Y=v=>T0+(hi-v)/(hi-lo)*(B-T0), dx=(Rr-L)/M;
-    ctx.font='12px -apple-system,sans-serif'; ctx.textAlign='right'; ctx.fillStyle=C.muted;
+    ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif'; ctx.textAlign='right'; ctx.fillStyle=C.muted;
     for(let v=Math.ceil(lo);v<=hi;v++){ ctx.fillText(String(v).replace('-','−'),L-6,Y(v)+4); ctx.strokeStyle=C.line; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(L,Y(v)); ctx.lineTo(Rr,Y(v)); ctx.stroke(); }
     ctx.strokeStyle=C.ink; ctx.lineWidth=1.5; ctx.beginPath(); ctx.moveTo(L,Y(0)); ctx.lineTo(Rr,Y(0)); ctx.stroke();
     ctx.strokeStyle=C.a; ctx.setLineDash([6,4]); ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(L,Y(S.sh)); ctx.lineTo(Rr,Y(S.sh)); ctx.stroke(); ctx.setLineDash([]);
@@ -1661,7 +1665,7 @@ window.Q = (function(){
       if(it.t===0){ ctx.globalAlpha=0.92; { const t=Math.max(0,Math.min(1,it.z)); ctx.fillStyle=t<0.5?mix(cb,cm,0.85*t*2):mix(cm,cc,1-0.85*(1-t)*2+0.0); } ctx.fill(); ctx.globalAlpha=0.18; ctx.strokeStyle=C.panel; ctx.lineWidth=0.5; ctx.stroke(); }
       else { ctx.globalAlpha=0.16; ctx.fillStyle=C.a; ctx.fill(); }
     }
-    ctx.globalAlpha=1; ctx.fillStyle=C.muted; ctx.font='12px -apple-system,sans-serif';
+    ctx.globalAlpha=1; ctx.fillStyle=C.muted; ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif';
     ctx.fillText(st.m1==='ls'?'Bình phương tối thiểu: một mặt phẳng nghiêng':`kNN với k = ${st.k1}: độ cao = tỉ lệ láng giềng xanh dương`,12,20);
   }
   function rep1(){ const k=st.k1;
@@ -1680,7 +1684,7 @@ window.Q = (function(){
   /* ---------- Mô hình 8.2: ranh giới quyết định + đường sai số ---------- */
   const c2=Q.canvas(stage2,380,draw2);
   function draw2(ctx,w,h){
-    const C=Q.colors(); ctx.clearRect(0,0,w,h); ctx.font='12px -apple-system,sans-serif';
+    const C=Q.colors(); ctx.clearRect(0,0,w,h); ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif';
     const narrow=w<620;
     const side=narrow?Math.min(w-24,230):Math.min(h-30,w*0.5);
     const M={x:12,y:22,s:side};
@@ -1823,7 +1827,7 @@ window.Q = (function(){
   refresh();
   const c=Q.canvas(stage,360,draw);
   function draw(ctx,w,h){
-    const C=Q.colors(); ctx.clearRect(0,0,w,h); ctx.font='12px -apple-system,sans-serif';
+    const C=Q.colors(); ctx.clearRect(0,0,w,h); ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif';
     const narrow=w<620;
     const L={x:36,y:24,w:narrow?w-50:w*0.52-46,h:narrow?150:h-58};
     const R=narrow?{x:44,y:L.y+L.h+40,w:w-60,h:h-(L.y+L.h+40)-34}:{x:w*0.52+34,y:24,w:w*0.48-50,h:h-58};
@@ -1851,10 +1855,10 @@ window.Q = (function(){
     line(curve.map(e=>e.tr),C.muted,[5,4],2); line(curve.map(e=>e.te),C.b,[],2.4);
     ctx.restore();
     ctx.strokeStyle=C.ink; ctx.setLineDash([2,3]); ctx.beginPath(); ctx.moveTo(XD(S.d),R.y); ctx.lineTo(XD(S.d),R.y+R.h); ctx.stroke(); ctx.setLineDash([]);
-    ctx.textAlign='left'; ctx.font='11px -apple-system,sans-serif';
+    ctx.textAlign='left'; ctx.font='11px Be Vietnam Pro,-apple-system,sans-serif';
     const leg=[[C.muted,'huấn luyện'],[C.b,'kiểm tra'],[C.c,'độ chệch²'],[C.d,'phương sai'],[C.a,'nhiễu']]; let lx=R.x;
-    ctx.font='12px -apple-system,sans-serif'; ctx.fillStyle=C.ink; ctx.fillText('MSE (thang log)',R.x,R.y-8);
-    ctx.font='11px -apple-system,sans-serif';
+    ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif'; ctx.fillStyle=C.ink; ctx.fillText('MSE (thang log)',R.x,R.y-8);
+    ctx.font='11px Be Vietnam Pro,-apple-system,sans-serif';
     leg.forEach(([col,t],i)=>{ const yy=R.y+14+i*14; ctx.fillStyle=col; ctx.fillRect(R.x+8,yy-7,10,3); ctx.fillStyle=C.muted; ctx.fillText(t,R.x+22,yy-2); });
   }
   Q.slider(ctl,'Bậc đa thức d',0,DMAX,1,S.d,v=>{ S.d=v; refresh(); c.redraw(); },v=>v);
@@ -1905,13 +1909,13 @@ window.Q = (function(){
     // ô nhỏ: cạnh r^(1/p) theo p
     const ix=14, iy=34, iw=Math.min(170,w*0.3), ih=90;
     ctx.fillStyle=C.panel; ctx.fillRect(ix-6,iy-22,iw+16,ih+42); ctx.strokeStyle=C.line; ctx.lineWidth=1; ctx.strokeRect(ix-6,iy-22,iw+16,ih+42);
-    ctx.font='11px -apple-system,sans-serif'; ctx.fillStyle=C.ink; ctx.fillText('cạnh r^(1/p) theo p',ix,iy-8);
+    ctx.font='11px Be Vietnam Pro,-apple-system,sans-serif'; ctx.fillStyle=C.ink; ctx.fillText('cạnh r^(1/p) theo p',ix,iy-8);
     const PX=p=>ix+(p-1)/(PMAX-1)*iw, PY=v=>iy+(1-v)*ih;
     ctx.strokeStyle=C.line; ctx.strokeRect(ix,iy,iw,ih);
     ctx.strokeStyle=C.c; ctx.lineWidth=1.8; ctx.beginPath(); for(let p=1;p<=PMAX;p++){ const v=Math.pow(S.r,1/p); p>1?ctx.lineTo(PX(p),PY(v)):ctx.moveTo(PX(p),PY(v)); } ctx.stroke();
     ctx.fillStyle=C.b; ctx.beginPath(); ctx.arc(PX(S.p),PY(e),4,0,7); ctx.fill();
     ctx.fillStyle=C.muted; ctx.textAlign='center'; [1,10,20,30,40,50].forEach(p=>ctx.fillText(String(p),PX(p),iy+ih+12)); ctx.textAlign='right'; ctx.fillText('1',ix-2,iy+8); ctx.fillText('0',ix-2,iy+ih); ctx.textAlign='left';
-    ctx.font='12px -apple-system,sans-serif'; ctx.fillStyle=C.muted;
+    ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif'; ctx.fillStyle=C.muted;
     ctx.fillText(S.mode==='nb'?`lân cận chứa ${Q.pct(S.r,0)} dữ liệu: cạnh ${Q.fmt(e,2)}`:'vỏ 5% sát các mặt (nét đứt: phần lõi)',ix-6,h-12);
   }
   Q.orbit(c.cv,view,()=>c.redraw());
@@ -2051,7 +2055,7 @@ window.Q = (function(){
     ctx.strokeStyle=C.line; ctx.lineWidth=1;
     for(let t=-2.5;t<=2.501;t+=0.5){ line([t*K,-2.5*K,ZF],[t*K,2.5*K,ZF]); line([-2.5*K,t*K,ZF],[2.5*K,t*K,ZF]); }
     ctx.strokeStyle=C.muted; line([-2.5*K,-2.5*K,ZF],[-2.5*K,-2.5*K,1.7]);
-    ctx.fillStyle=C.muted; ctx.font='12px -apple-system,sans-serif';
+    ctx.fillStyle=C.muted; ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif';
     let L=P([2.8*K,-2.5*K,ZF]); ctx.fillText('x₁',L[0],L[1]);
     L=P([-2.5*K,2.8*K,ZF]); ctx.fillText('x₂',L[0],L[1]);
     L=P([-2.5*K,-2.5*K,1.85]); ctx.fillText('y',L[0],L[1]);
@@ -2094,7 +2098,7 @@ window.Q = (function(){
     ctx.globalAlpha=1;
     if(hist.length){ const hh=hist[hist.length-1]; ctx.fillStyle=C.b; ctx.beginPath(); ctx.arc(mx(hh[1]),my(hh[2]),4.5,0,7); ctx.fill(); }
     ctx.restore();
-    ctx.fillStyle=C.muted; ctx.font='12px -apple-system,sans-serif';
+    ctx.fillStyle=C.muted; ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif';
     ctx.fillText('β̂₁ →',bx+bw-40,by+bh+15); ctx.fillText('↑ β̂₂',bx+4,by-5>10?by-5:by+bh+15);
     if(wide) ctx.fillText('Mỗi chấm: một lần lấy mẫu (± '+Q.fmt(R,2)+')',bx,by+bh+32);
     ctx.fillText('● y trên mặt phẳng  ● y dưới mặt phẳng  | phần dư',12,18);
@@ -2159,7 +2163,7 @@ window.Q = (function(){
     uniq.forEach(p=>{ ctx.fillStyle=C.c; ctx.beginPath(); ctx.arc(sx(p[0]),sy(p[1]),4,0,7); ctx.fill();
       if(dupCount>1){ ctx.strokeStyle=C.c; ctx.beginPath(); ctx.arc(sx(p[0]),sy(p[1]),7,0,7); ctx.stroke(); } });
     ctx.restore();
-    ctx.fillStyle=C.muted; ctx.font='12px -apple-system,sans-serif';
+    ctx.fillStyle=C.muted; ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif';
     ctx.fillText('— y theo x'+(S.xy?'    — x theo y':'')+(dupCount>1?'    ◎ điểm được lặp '+dupCount+' lần':''),12,18);
   }
   gen();
@@ -2283,7 +2287,7 @@ window.Q = (function(){
     ctx.strokeStyle=C.line; ctx.lineWidth=1;
     for(let t=-R;t<=R;t++){ poly([W(t,-R,ZF),W(t,R,ZF)]); poly([W(-R,t,ZF),W(R,t,ZF)]); }
     ctx.strokeStyle=C.muted; poly([W(-R,0,ZF),W(R,0,ZF)]); poly([W(0,-R,ZF),W(0,R,ZF)]);
-    ctx.fillStyle=C.muted; ctx.font='12px -apple-system,sans-serif';
+    ctx.fillStyle=C.muted; ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif';
     let L=P(W(R+0.4,0,ZF)); ctx.fillText('β₁',L[0],L[1]); L=P(W(0,R+0.4,ZF)); ctx.fillText('β₂',L[0],L[1]);
     // lưới mặt
     ctx.strokeStyle=C.a; ctx.globalAlpha=0.38;
@@ -2380,7 +2384,7 @@ window.Q = (function(){
     const Y2=v=>t2+h2-Math.min(1,(v-s2)/((mhi-s2)||1))*h2;
     ctx.strokeStyle=C.line; ctx.lineWidth=1; ctx.strokeRect(l,t1,rr-l,h1); ctx.strokeRect(l,t2,rr-l,h2);
     ctx.beginPath(); ctx.moveTo(l,Y1(0)); ctx.lineTo(rr,Y1(0)); ctx.stroke();
-    ctx.fillStyle=C.muted; ctx.font='12px -apple-system,sans-serif';
+    ctx.fillStyle=C.muted; ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif';
     ctx.fillText('Hệ số β_j',l,t1-24); ctx.fillText('MSE kiểm tra',l,t2-8);
     ['0,001','0,01','0,1','1','10'].forEach((txt,e)=>{ const x=X(e*15); ctx.fillText(txt,x-ctx.measureText(txt).width/2,t2+h2+16); });
     ctx.fillText('λ',rr+14,t2+h2+16);
@@ -2541,7 +2545,7 @@ window.Q = (function(){
       const R=1.15/K;
       ctx.strokeStyle=C.line; ctx.lineWidth=1;
       const nm=['Δ 2 năm','Δ 10 năm','Δ 30 năm'];
-      ctx.font='12px -apple-system,sans-serif';
+      ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif';
       for(let k=0;k<3;k++){ const a=[0,0,0], b=[0,0,0]; a[k]=-R; b[k]=R; ctx.strokeStyle=C.muted; ctx.globalAlpha=0.6; seg(a,b); ctx.globalAlpha=1;
         const L=P(b); ctx.fillStyle=C.muted; ctx.fillText(nm[k],L[0]+3,L[1]); }
       // mặt phẳng hoặc đường thẳng được giữ lại
@@ -2563,8 +2567,8 @@ window.Q = (function(){
       E.vec.forEach((v,j)=>{ const L=2*Math.sqrt(E.val[j]), tip=v.map(x=>x*L), A=P([0,0,0]), B=P(tip);
         ctx.strokeStyle=cols[j]; ctx.fillStyle=cols[j]; ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(A[0],A[1]); ctx.lineTo(B[0],B[1]); ctx.stroke();
         const ang=Math.atan2(B[1]-A[1],B[0]-A[0]); ctx.beginPath(); ctx.moveTo(B[0],B[1]); ctx.lineTo(B[0]-9*Math.cos(ang-0.4),B[1]-9*Math.sin(ang-0.4)); ctx.lineTo(B[0]-9*Math.cos(ang+0.4),B[1]-9*Math.sin(ang+0.4)); ctx.closePath(); ctx.fill();
-        ctx.font='bold 12px -apple-system,sans-serif'; ctx.fillText('PC'+(j+1),B[0]+5,B[1]-5); });
-      ctx.lineWidth=1; ctx.font='12px -apple-system,sans-serif'; ctx.fillStyle=C.muted;
+        ctx.font='bold 12px Be Vietnam Pro,-apple-system,sans-serif'; ctx.fillText('PC'+(j+1),B[0]+5,B[1]-5); });
+      ctx.lineWidth=1; ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif'; ctx.fillStyle=C.muted;
       ctx.fillText('Mũi tên: véc-tơ riêng × 2σ.  Đoạn cam: phần dư khi bỏ bớt thành phần.',12,18);
     }
     gen();
@@ -2600,7 +2604,7 @@ window.Q = (function(){
         `\nHệ số tải PC2 từ 3 tháng đến 30 năm: ${Q.fmt(E.vec[1][0],2)} → ${Q.fmt(E.vec[1][T.length-1],2)}.  Các thành phần 4 đến 10 cộng lại: ${Q.pct(1-cum/tot,1)}`;
     }
     function draw(ctx,w,h){
-      const C=Q.colors(); ctx.clearRect(0,0,w,h); ctx.font='12px -apple-system,sans-serif';
+      const C=Q.colors(); ctx.clearRect(0,0,w,h); ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif';
       const cols=[C.a,C.d,C.b];
       // khung trái: hệ số tải
       const l=40, r=w*0.62, t=30, b=h-34, X=k=>l+(r-l)*(lt[k]-lt[0])/(lt[T.length-1]-lt[0]), Y=v=>(t+b)/2-v/0.75*(b-t)/2;
@@ -2745,7 +2749,7 @@ window.Q = (function(){
         `Hồi quy độ trượt theo D và độ khó (nếu đo được độ khó): β̂ = ${Q.fmt(st.reg,2)}`;
     }
     function draw(ctx,w,h){
-      const C=Q.colors(); ctx.clearRect(0,0,w,h); ctx.font='12px -apple-system,sans-serif';
+      const C=Q.colors(); ctx.clearRect(0,0,w,h); ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif';
       const wide=w>=560, r1=wide?w*0.64:w-10, l=40, t=28, b=h-30;
       const X=v=>l+(v+3)/6*(r1-l), Yl=-6, Yh=22, Y=v=>b-(v-Yl)/(Yh-Yl)*(b-t);
       ctx.strokeStyle=C.line; ctx.strokeRect(l,t,r1-l,b-t);
@@ -2804,7 +2808,7 @@ window.Q = (function(){
     }
     const W=(x,a,y)=>[x*KX,a*KA,y*KY];
     function draw(ctx,w,h){
-      const C=Q.colors(); ctx.clearRect(0,0,w,h); ctx.font='12px -apple-system,sans-serif';
+      const C=Q.colors(); ctx.clearRect(0,0,w,h); ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif';
       const scale=Math.min(w,h*1.4)/4.6, Pj=p=>Q.project(p,view,w,h,scale);
       const seg=(a,b)=>{ const A=Pj(a), B=Pj(b); ctx.beginPath(); ctx.moveTo(A[0],A[1]); ctx.lineTo(B[0],B[1]); ctx.stroke(); };
       const xr=2.6/1, wallA=RW/KA;
@@ -2843,7 +2847,7 @@ window.Q = (function(){
       ctx.strokeStyle=C.muted; ctx.beginPath(); ctx.moveTo(X0,by+8); ctx.lineTo(X0,by+bh-20); ctx.stroke();
       const bar=(y,a,b2,col)=>{ ctx.fillStyle=col; ctx.fillRect(Math.min(sx(a),sx(b2)),y,Math.abs(sx(b2)-sx(a)),14); };
       bar(by+14,0,bl,C.a); bar(by+38,bl,bl+p1*g,C.b); bar(by+62,0,bs,C.muted);
-      ctx.fillStyle=C.ink; ctx.font='11px -apple-system,sans-serif';
+      ctx.fillStyle=C.ink; ctx.font='11px Be Vietnam Pro,-apple-system,sans-serif';
       ctx.fillText('β dài',bx+6,by+25); ctx.fillText('+ π₁·γ',bx+6,by+49); ctx.fillText('= β ngắn',bx+6,by+73);
       ctx.fillStyle=C.muted; ctx.fillText('0',X0-3,by+bh-8);
     }
@@ -2966,9 +2970,9 @@ window.Q = (function(){
     for(let i=0;i<=200;i++){ const x=lo+(hi-lo)*i/200, y=pdf(x); i?ctx.lineTo(X(x),Y(y)):ctx.moveTo(X(x),Y(y)); }
     ctx.stroke(); ctx.setLineDash([]);
     // trung bình và trung vị
-    const vline=(x,col,lab,dy)=>{ ctx.strokeStyle=col; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(X(x),T); ctx.lineTo(X(x),T+ph); ctx.stroke(); ctx.fillStyle=col; ctx.font='12px -apple-system,sans-serif'; ctx.fillText(lab,X(x)+4,T+12+dy); };
+    const vline=(x,col,lab,dy)=>{ ctx.strokeStyle=col; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(X(x),T); ctx.lineTo(X(x),T+ph); ctx.stroke(); ctx.fillStyle=col; ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif'; ctx.fillText(lab,X(x)+4,T+12+dy); };
     vline(stats.med,C.a,'trung vị',0); vline(stats.m,C.b,'trung bình',16);
-    ctx.fillStyle=C.muted; ctx.font='12px -apple-system,sans-serif';
+    ctx.fillStyle=C.muted; ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif';
     for(let i=0;i<=5;i++){ const x=lo+(hi-lo)*i/5; ctx.fillText(A.log?Q.fmt(x,2):Q.fmt(x,0),X(x)-14,T+ph+16); }
     ctx.fillText(A.log?'ln(diện tích)':'diện tích (ft²), cắt ở phân vị 99,5%',L,h-4);
     ctx.fillText('cột: tần suất   nét đứt: phân phối chuẩn cùng trung bình và độ lệch chuẩn',L,16);
@@ -3015,7 +3019,7 @@ window.Q = (function(){
     // sàn
     for(let i=-E;i<=E+1e-9;i+=1.25){ line([i,-E,-6],[i,E,-6],C.line); line([-E,i,-6],[E,i,-6],C.line); }
     line([-E,-E,-6],[E+0.6,-E,-6],C.muted,1.5); line([-E,-E,-6],[-E,E+0.6,-6],C.muted,1.5); line([-E,-E,-6],[-E,-E,6],C.muted,1.5);
-    ctx.fillStyle=C.muted; ctx.font='12px -apple-system,sans-serif';
+    ctx.fillStyle=C.muted; ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif';
     let t=P([E+0.9,-E,-6]); ctx.fillText('x₁ log diện tích',t[0],t[1]);
     t=P([-E,E+0.9,-6]); ctx.fillText('x₂ phòng ngủ',t[0],t[1]);
     t=P([-E,-E,6.5]); ctx.fillText('log giá',t[0]-16,t[1]);
@@ -3038,8 +3042,8 @@ window.Q = (function(){
     ctx.strokeStyle=C.muted; ctx.setLineDash([3,3]); ctx.beginPath(); ctx.moveTo(Xb(-1),Yb(3)); ctx.lineTo(Xb(3),Yb(-1)); ctx.stroke(); ctx.setLineDash([]);
     hist.forEach((hh,i)=>{ const last=i===hist.length-1; ctx.fillStyle=last?C.b:C.c; ctx.globalAlpha=last?1:0.5; ctx.beginPath(); ctx.arc(Math.min(bx+bs,Math.max(bx,Xb(hh[0]))),Math.min(by+bs,Math.max(by,Yb(hh[1]))),last?4:2.4,0,7); ctx.fill(); });
     ctx.globalAlpha=1; ctx.fillStyle=C.ink; ctx.beginPath(); ctx.arc(Xb(1),Yb(1),3,0,7); ctx.fill();
-    ctx.fillStyle=C.muted; ctx.font='11px -apple-system,sans-serif'; ctx.fillText('β̂₁ →',bx+bs-34,by+bs-4); ctx.fillText('β̂₂ ↑',bx+4,by+12); ctx.fillText('[−1; 3]²',bx+4,by+bs-4);
-    ctx.font='12px -apple-system,sans-serif'; ctx.fillText('lưới cam: mặt phẳng ước lượng   chấm xanh: dữ liệu',12,h-10);
+    ctx.fillStyle=C.muted; ctx.font='11px Be Vietnam Pro,-apple-system,sans-serif'; ctx.fillText('β̂₁ →',bx+bs-34,by+bs-4); ctx.fillText('β̂₂ ↑',bx+4,by+12); ctx.fillText('[−1; 3]²',bx+4,by+bs-4);
+    ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif'; ctx.fillText('lưới cam: mặt phẳng ước lượng   chấm xanh: dữ liệu',12,h-10);
   }
   Q.orbit(cB.cv,view,()=>cB.redraw());
   Q.loop(stB,()=>{
@@ -3181,7 +3185,7 @@ window.Q = (function(){
     // sân khấu
     const st=[[-1.6,-3.6,0],[1.6,-3.6,0],[1.6,-2.4,0],[-1.6,-2.4,0]].map(P);
     ctx.fillStyle=C.muted; ctx.globalAlpha=0.25; ctx.beginPath(); st.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1])); ctx.closePath(); ctx.fill(); ctx.globalAlpha=1;
-    const sc0=P([0,-3,0]); ctx.fillStyle=C.muted; ctx.font='12px -apple-system,sans-serif'; ctx.fillText('sân khấu',sc0[0]-22,sc0[1]+4);
+    const sc0=P([0,-3,0]); ctx.fillStyle=C.muted; ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif'; ctx.fillText('sân khấu',sc0[0]-22,sc0[1]+4);
     let lo=1e9,hi=-1e9; for(const s of seats){ const q=s.isSold?s.p:s.est; lo=Math.min(lo,q); hi=Math.max(hi,q); }
     const order=seats.map((s,i)=>({s,i,P:P([s.x,s.y,s.z])})).sort((a,b)=>b.P[2]-a.P[2]);
     scr.length=0;
@@ -3199,7 +3203,7 @@ window.Q = (function(){
     ctx.globalAlpha=1;
     for(const q of sel.nb){ const pq=P([q.x,q.y,q.z]); ctx.strokeStyle=C.ink; ctx.lineWidth=1.5; ctx.beginPath(); ctx.arc(pq[0],pq[1],6,0,7); ctx.stroke(); }
     ctx.strokeStyle=C.ink; ctx.lineWidth=2.5; ctx.beginPath(); ctx.arc(ps[0],ps[1],8,0,7); ctx.stroke();
-    ctx.fillStyle=C.muted; ctx.font='13px -apple-system,sans-serif';
+    ctx.fillStyle=C.muted; ctx.font='13px Be Vietnam Pro,-apple-system,sans-serif';
     ctx.fillText('● đã bán (xanh dương)   ● chưa bán, giá kNN (cam)   đậm hơn = đắt hơn   vòng đen: ghế chọn và láng giềng',12,20);
   }
   Q.orbit(c.cv,view,()=>c.redraw());
@@ -3241,7 +3245,7 @@ window.Q = (function(){
     curve(sold,Yq,C.c); curve(rev,Yr,C.b);
     ctx.strokeStyle=C.ink; ctx.lineWidth=1.5; ctx.beginPath(); ctx.moveTo(X(D.p),T); ctx.lineTo(X(D.p),T+ph); ctx.stroke();
     ctx.fillStyle=C.ink; ctx.beginPath(); ctx.arc(X(bb[0]),Yr(bb[1]),5,0,7); ctx.fill();
-    ctx.font='12px -apple-system,sans-serif'; ctx.fillStyle=C.muted;
+    ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif'; ctx.fillStyle=C.muted;
     for(let i=0;i<=5;i++){ const p=PMAX*i/5; ctx.fillText(Q.fmt(p,0),X(p)-10,T+ph+16); }
     ctx.fillStyle=C.c; for(let i=0;i<=5;i++){ const q=qmax*(5-i)/5; ctx.fillText(Q.fmt(q,0),6,T+ph*i/5+4); }
     ctx.fillStyle=C.b; for(let i=0;i<=5;i++){ const r=rmax*(5-i)/5; ctx.fillText(Q.fmt(r/1000,1)+'k',w-R+6,T+ph*i/5+4); }
@@ -3370,7 +3374,7 @@ window.Q = (function(){
     // mặt đồng hồ
     ctx.strokeStyle=C.line; ctx.lineWidth=1.2; ctx.beginPath();
     for(let i=0;i<=96;i++){ const q=P(at(24*i/96,RAD,0)); i?ctx.lineTo(q[0],q[1]):ctx.moveTo(q[0],q[1]); } ctx.stroke();
-    ctx.fillStyle=C.muted; ctx.font='12px -apple-system,sans-serif';
+    ctx.fillStyle=C.muted; ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif';
     for(let k=0;k<24;k+=3){ const q=P(at(k,RAD+0.5,0)); ctx.fillText(k+'h',q[0]-8,q[1]+4); }
     // dây cung giữa giờ A và B
     const pa=P(at(S.hA,RAD+0.35,0)), pb=P(at(S.hB,RAD+0.35,0));
@@ -3388,7 +3392,7 @@ window.Q = (function(){
     // vách nửa đêm
     const j0=P(at(0,RAD,pred(0)*ZS)), j1=P(at(0,RAD,pred(23.999)*ZS));
     if(Math.abs(pred(0)-pred(23.999))>1){ ctx.strokeStyle=C.ink; ctx.lineWidth=3; ctx.setLineDash([4,3]); ctx.beginPath(); ctx.moveTo(j0[0],j0[1]); ctx.lineTo(j1[0],j1[1]); ctx.stroke(); ctx.setLineDash([]); }
-    ctx.lineCap='butt'; ctx.fillStyle=C.muted; ctx.font='13px -apple-system,sans-serif';
+    ctx.lineCap='butt'; ctx.fillStyle=C.muted; ctx.font='13px Be Vietnam Pro,-apple-system,sans-serif';
     ctx.fillText('cột xanh: nhu cầu trung bình mỗi giờ   đường cam: mô hình   tím: hai giờ A, B',12,20);
   }
   Q.orbit(c.cv,view,()=>c.redraw());
@@ -3491,14 +3495,14 @@ window.Q = (function(){
     ctx.strokeStyle=C.muted; ctx.lineWidth=2; ctx.beginPath();
     for(let i=0;i<=240;i++){ const x=lo+(hi-lo)*i/240; i?ctx.lineTo(X(x),Y(pdf(x))):ctx.moveTo(X(x),Y(pdf(x))); } ctx.stroke();
     const vl=(x,col,lab,dash,dy)=>{ ctx.strokeStyle=col; ctx.lineWidth=dash?1.5:3; ctx.setLineDash(dash?[5,4]:[]); ctx.beginPath(); ctx.moveTo(X(x),T-4); ctx.lineTo(X(x),T+ph); ctx.stroke(); ctx.setLineDash([]);
-      ctx.fillStyle=col; ctx.font='600 12px -apple-system,sans-serif'; const tw=ctx.measureText(lab).width; ctx.fillText(lab,Math.min(w-tw-4,Math.max(4,X(x)-tw/2)),T-10+dy); };
+      ctx.fillStyle=col; ctx.font='600 12px Be Vietnam Pro,-apple-system,sans-serif'; const tw=ctx.measureText(lab).width; ctx.fillText(lab,Math.min(w-tw-4,Math.max(4,X(x)-tw/2)),T-10+dy); };
     vl(A.V,C.ink,'V = '+Q.fmt(A.V,A.dec),true,0);
     vl(z.bid,C.a,'bid '+Q.fmt(z.bid,A.dec+1),false,ph+30);
     vl(z.ask,C.b,'ask '+Q.fmt(z.ask,A.dec+1),false,ph+30);
     if(A.q){ ctx.strokeStyle=C.c; ctx.fillStyle=C.c; ctx.lineWidth=2; const y=T+ph*0.5, x0=X(A.V), x1=X(z.m);
       ctx.beginPath(); ctx.moveTo(x0,y); ctx.lineTo(x1,y); ctx.stroke(); ctx.beginPath(); const d=Math.sign(x1-x0)*7; ctx.moveTo(x1,y); ctx.lineTo(x1-d,y-5); ctx.lineTo(x1-d,y+5); ctx.fill();
-      ctx.font='12px -apple-system,sans-serif'; ctx.fillText('lệch '+Q.fmt(z.m-A.V,A.dec+1),Math.min(x0,x1)+4,y-8); }
-    ctx.fillStyle=C.muted; ctx.font='12px -apple-system,sans-serif';
+      ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif'; ctx.fillText('lệch '+Q.fmt(z.m-A.V,A.dec+1),Math.min(x0,x1)+4,y-8); }
+    ctx.fillStyle=C.muted; ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif';
     ctx.fillText('xám: niềm tin về giá trị thật   nền nhạt: vùng giữa bid và ask',L,16);
   }
   function reportA(){
@@ -3582,10 +3586,10 @@ window.Q = (function(){
       ctx.beginPath(); ctx.moveTo(a[0],a[1]); ctx.lineTo(b[0],b[1]); ctx.stroke();
     }
     ctx.globalAlpha=1;
-    if(flash && flash.t>0){ const x=flash.side>0?me.ask-c0:me.bid-c0, q=P(x,0,7.5); ctx.fillStyle=C.c; ctx.font='600 13px -apple-system,sans-serif';
+    if(flash && flash.t>0){ const x=flash.side>0?me.ask-c0:me.bid-c0, q=P(x,0,7.5); ctx.fillStyle=C.c; ctx.font='600 13px Be Vietnam Pro,-apple-system,sans-serif';
       ctx.fillText(flash.side>0?'khách mua của bạn':'khách bán cho bạn',q[0]-50,q[1]-6); }
     const lab=(x,y,t)=>{ const q=P(x,y,0); ctx.fillText(t,q[0]-20,q[1]+16); };
-    ctx.fillStyle=C.muted; ctx.font='12px -apple-system,sans-serif';
+    ctx.fillStyle=C.muted; ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif';
     lab(-LV/2,0,'phía mua (bid)'); lab(LV/2,0,'phía bán (ask)'); const qq=P(LV+1.5,DEPTH,0); ctx.fillText('quá khứ',qq[0],qq[1]);
     ctx.fillText('xanh lá: lệnh mua chờ   cam: lệnh bán chờ   xanh dương: lệnh của bạn   đường đen: giá giữa',12,20);
   }
@@ -3714,7 +3718,7 @@ window.Q = (function(){
   const c=Q.canvas(stage,340,draw);
   function draw(ctx,w,h){
     const C=Q.colors(), cs=CASES[cur], st=cs.steps, n=st.length; ctx.clearRect(0,0,w,h);
-    ctx.font='12px -apple-system,sans-serif'; ctx.textBaseline='middle';
+    ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif'; ctx.textBaseline='middle';
     const L=40, R1=Math.max(L+160,w*0.6), T=40, B=h-42;
     const yOf=v=>B-(v-cs.lo)/(cs.hi-cs.lo)*(B-T), xOf=i=>L+(i+0.5)*(R1-L)/n;
     // lưới giá
@@ -3729,9 +3733,9 @@ window.Q = (function(){
       const x=xOf(i); ctx.fillStyle=C.muted; ctx.textAlign='center'; ctx.fillText(i+1,x,B+14);
       if(i>=k) continue; const s=st[i], col=s.who==='me'?C.c:C.muted;
       ctx.globalAlpha=i===k-1?0.9:0.45; ctx.fillStyle=col; ctx.fillRect(x-bw/2,yOf(s.ask),bw,yOf(s.bid)-yOf(s.ask)); ctx.globalAlpha=1;
-      ctx.fillStyle=C.ink; ctx.font='11px ui-monospace,monospace'; ctx.textAlign='left';
+      ctx.fillStyle=C.ink; ctx.font='11px JetBrains Mono,ui-monospace,monospace'; ctx.textAlign='left';
       if(i===k-1){ ctx.fillText(Q.fmt(s.ask,0),x+bw/2+3,yOf(s.ask)); ctx.fillText(Q.fmt(s.bid,0),x+bw/2+3,yOf(s.bid)); }
-      ctx.font='12px -apple-system,sans-serif';
+      ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif';
       if(s.act){ const py=s.act==='buy'?yOf(s.ask):yOf(s.bid); ctx.fillStyle=s.act==='buy'?C.b:C.a; ctx.beginPath(); ctx.arc(x,py,6,0,7); ctx.fill(); }
     }
     ctx.fillStyle=C.muted; ctx.textAlign='center'; ctx.fillText('lượt',(L+R1)/2,h-6);
@@ -3796,7 +3800,7 @@ window.Q = (function(){
   const c=Q.canvas(stage,170,draw);
   function draw(ctx,w,h){
     const C=Q.colors(); ctx.clearRect(0,0,w,h); ctx.textAlign='center'; ctx.textBaseline='middle';
-    if(!S.trades.length){ ctx.fillStyle=C.muted; ctx.font='14px -apple-system,sans-serif'; ctx.fillText('Bấm “Ván mới” để bắt đầu',w/2,h/2); return; }
+    if(!S.trades.length){ ctx.fillStyle=C.muted; ctx.font='14px Be Vietnam Pro,-apple-system,sans-serif'; ctx.fillText('Bấm “Ván mới” để bắt đầu',w/2,h/2); return; }
     const n=S.trades.length, gap=10, cw=Math.min(110,(w-24-gap*(n-1))/n), x0=(w-(cw*n+gap*(n-1)))/2;
     let pos=0;
     S.trades.forEach((t,i)=>{
@@ -3804,12 +3808,12 @@ window.Q = (function(){
       const vis=S.phase==='done'||(S.phase==='show'&&i<S.shown);
       ctx.fillStyle=C.panel; ctx.strokeStyle=vis?(t.side==='buy'?C.a:C.b):C.line; ctx.lineWidth=2;
       ctx.beginPath(); ctx.roundRect(x,y,cw,ch,10); ctx.fill(); ctx.stroke(); ctx.lineWidth=1;
-      ctx.fillStyle=C.muted; ctx.font='11px -apple-system,sans-serif'; ctx.fillText('#'+(i+1),x+cw/2,y-12);
-      if(vis){ ctx.fillStyle=t.side==='buy'?C.a:C.b; ctx.font='600 13px -apple-system,sans-serif'; ctx.fillText(t.side==='buy'?'BẠN MUA':'BẠN BÁN',x+cw/2,y+24);
-        ctx.fillStyle=C.ink; ctx.font='600 22px ui-monospace,monospace'; ctx.fillText(t.px,x+cw/2,y+54); }
-      else if(S.phase==='show'&&i>=S.shown){ ctx.fillStyle=C.line; ctx.font='22px ui-monospace,monospace'; ctx.fillText('·',x+cw/2,y+ch/2); }
-      else { ctx.fillStyle=C.muted; ctx.font='600 26px ui-monospace,monospace'; ctx.fillText('?',x+cw/2,y+ch/2); }
-      if(S.phase==='done'){ ctx.fillStyle=C.muted; ctx.font='11px ui-monospace,monospace'; ctx.fillText('vị thế '+(sg(pos)||'0'),x+cw/2,y+ch+16); }
+      ctx.fillStyle=C.muted; ctx.font='11px Be Vietnam Pro,-apple-system,sans-serif'; ctx.fillText('#'+(i+1),x+cw/2,y-12);
+      if(vis){ ctx.fillStyle=t.side==='buy'?C.a:C.b; ctx.font='600 13px Be Vietnam Pro,-apple-system,sans-serif'; ctx.fillText(t.side==='buy'?'BẠN MUA':'BẠN BÁN',x+cw/2,y+24);
+        ctx.fillStyle=C.ink; ctx.font='600 22px JetBrains Mono,ui-monospace,monospace'; ctx.fillText(t.px,x+cw/2,y+54); }
+      else if(S.phase==='show'&&i>=S.shown){ ctx.fillStyle=C.line; ctx.font='22px JetBrains Mono,ui-monospace,monospace'; ctx.fillText('·',x+cw/2,y+ch/2); }
+      else { ctx.fillStyle=C.muted; ctx.font='600 26px JetBrains Mono,ui-monospace,monospace'; ctx.fillText('?',x+cw/2,y+ch/2); }
+      if(S.phase==='done'){ ctx.fillStyle=C.muted; ctx.font='11px JetBrains Mono,ui-monospace,monospace'; ctx.fillText('vị thế '+(sg(pos)||'0'),x+cw/2,y+ch+16); }
     });
   }
   Q.loop(stage,t=>{ if(S.phase!=='show') return; const k=Math.floor((t-S.t0)/S.ms)+1;
@@ -3818,7 +3822,7 @@ window.Q = (function(){
   Q.button(ctl,'Ván mới',newGame,true);
   Q.slider(ctl,'Số giao dịch',3,8,1,S.n,v=>{S.n=v;},v=>v);
   Q.slider(ctl,'Giây mỗi giao dịch',0.6,2.5,0.1,S.ms/1000,v=>{S.ms=v*1000;},v=>Q.fmt(v,1));
-  const box=(lbl)=>{ const l=Q.el('label',{},ctl); l.append(lbl+' '); return Q.el('input',{type:'number',step:'1',style:'width:5.5em;font:13px ui-monospace,monospace;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:5px 6px'},l); };
+  const box=(lbl)=>{ const l=Q.el('label',{},ctl); l.append(lbl+' '); return Q.el('input',{type:'number',step:'1',style:'width:5.5em;font:13px JetBrains Mono,ui-monospace,monospace;background:var(--panel);color:var(--ink);border:1px solid var(--line);border-radius:6px;padding:5px 6px'},l); };
   const iPos=box('Vị thế'), iCash=box('Tiền mặt');
   Q.button(ctl,'Kiểm tra',check);
   out.textContent='Mua: vị thế +1, tiền mặt trừ giá. Bán: vị thế −1, tiền mặt cộng giá.';
@@ -3954,10 +3958,10 @@ window.Q = (function(){
         const at=(u,v)=>P(f.D.tf([u-.5,v-.5,.5]));
         if(visTop){ ctx.fillStyle=C.ink; const r=Math.max(1.5,sc*0.075*(view.dist/(view.dist+at(.5,.5)[2])));
           for(const [u,v] of PIPS[G.dice[f.i]]){ const p=at(u,v); ctx.beginPath(); ctx.arc(p[0],p[1],r,0,7); ctx.fill(); } }
-        else { const p=at(.5,.5); ctx.fillStyle=peek?C.d:C.muted; ctx.font='600 16px ui-monospace,monospace'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText('?',p[0],p[1]); }
+        else { const p=at(.5,.5); ctx.fillStyle=peek?C.d:C.muted; ctx.font='600 16px JetBrains Mono,ui-monospace,monospace'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText('?',p[0],p[1]); }
       }
     }
-    ctx.textBaseline='alphabetic'; ctx.textAlign='left'; ctx.font='12px -apple-system,sans-serif'; ctx.fillStyle=C.muted;
+    ctx.textBaseline='alphabetic'; ctx.textAlign='left'; ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif'; ctx.fillStyle=C.muted;
     ctx.fillText(G.done?'Ván đã kết thúc: bấm “Ván tiếp theo”':'Viên viền tím: đối phương đã nhìn trộm',12,18);
     // biểu đồ lịch sử thị trường
     const T0=H3+18, B=h-26, L=40, R=w-14, lo=5, hi=30;
@@ -4008,7 +4012,7 @@ window.Q = (function(){
     c.redraw(); }
   const c=Q.canvas(stage,300,draw);
   function draw(ctx,w,h){
-    const C=Q.colors(); ctx.clearRect(0,0,w,h); ctx.font='12px -apple-system,sans-serif';
+    const C=Q.colors(); ctx.clearRect(0,0,w,h); ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif';
     const L=52,R=w-16,T=24,B=h-34, lo=-5.5, hi=3.5;
     const xs=v=>L+(v-1)/5*(R-L), ys=v=>B-(v-lo)/(hi-lo)*(B-T);
     for(let v=-5;v<=3;v++){ ctx.strokeStyle=v===0?C.muted:C.line; ctx.beginPath(); ctx.moveTo(L,ys(v)); ctx.lineTo(R,ys(v)); ctx.stroke();
@@ -4133,7 +4137,7 @@ window.Q = (function(){
     ctx.strokeStyle=C.ink; ctx.beginPath(); ctx.moveTo(m0[0],m0[1]); ctx.lineTo(m[0],m[1]); ctx.stroke();
     ctx.fillStyle=C.d; ctx.strokeStyle=C.panel; ctx.lineWidth=2; ctx.beginPath(); ctx.arc(m[0],m[1],7,0,7); ctx.fill(); ctx.stroke(); ctx.lineWidth=1;
     // nhãn trục
-    ctx.font='12px -apple-system,sans-serif'; ctx.fillStyle=C.muted; ctx.textAlign='center';
+    ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif'; ctx.fillStyle=C.muted; ctx.textAlign='center';
     const lab=(x,y,z,t)=>{ const q=P(x,y,z); ctx.fillText(t,q[0],q[1]); };
     lab(X(0),Y(P0)-0.35,0,'f = 0'); lab(X(0.98),Y(P0)-0.35,0,'f = 1'); lab(X(0.5),Y(P0)-0.6,0,'tỉ lệ cược f →');
     lab(X(0)-0.5,Y(P0),0,'p = '+Q.fmt(P0,2)); lab(X(0)-0.5,Y(P1),0,'p = '+Q.fmt(P1,2));
@@ -4173,7 +4177,7 @@ window.Q = (function(){
     S.t=0; }
   const c=Q.canvas(stage,340,draw);
   function draw(ctx,w,h){
-    const C=Q.colors(); ctx.clearRect(0,0,w,h); if(!cache) return; ctx.font='12px -apple-system,sans-serif';
+    const C=Q.colors(); ctx.clearRect(0,0,w,h); if(!cache) return; ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif';
     const L=70,R=w-14,T=16,B=h-30, LO=-4, HI=6; // log10 tài sản
     const xs=i=>L+i/S.n*(R-L), ys=v=>B-(Math.max(LO,Math.min(HI,v/Math.LN10))-LO)/(HI-LO)*(B-T);
     for(let e=LO;e<=HI;e++){ const y=B-(e-LO)/(HI-LO)*(B-T); ctx.strokeStyle=e===0?C.muted:C.line; ctx.beginPath(); ctx.moveTo(L,y); ctx.lineTo(R,y); ctx.stroke();
@@ -4333,7 +4337,7 @@ window.Q = (function(){
     const bb=bestBid(), ba=bestAsk();
     if(bb>=0&&ba<NL){ const qb=bid[bb], qa=ask[ba], km=(bb*qa+ba*qb)/(qa+qb);
       const a=P([X(km),Yr(0)-0.3,0]), b=P([X(km),Yr(0)-0.3,0.9]); ctx.strokeStyle=C.ink; ctx.lineWidth=2.5; ctx.beginPath(); ctx.moveTo(a[0],a[1]); ctx.lineTo(b[0],b[1]); ctx.stroke(); ctx.lineWidth=1; }
-    ctx.font='12px -apple-system,sans-serif'; ctx.fillStyle=C.muted; ctx.textAlign='center';
+    ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif'; ctx.fillStyle=C.muted; ctx.textAlign='center';
     for(let k=0;k<NL;k+=5){ const p=P([X(k),Yr(0)-0.55,0]); ctx.fillText(Q.fmt(px(k),2),p[0],p[1]); }
     const pb=P([X(0)-0.4,Yr(0),0]), pa=P([X(0)-0.4,Yr(ROWS-1),0]); ctx.fillText('hiện tại',pb[0],pb[1]); ctx.fillText('quá khứ',pa[0],pa[1]);
     ctx.textAlign='left'; ctx.fillText('■ lệnh mua chờ (xanh lá)   ■ lệnh bán chờ (cam)   ● giao dịch (tím)   | giá vi mô',12,18);
@@ -4366,7 +4370,7 @@ window.Q = (function(){
     c.redraw(); }
   const c=Q.canvas(stage,300,draw);
   function draw(ctx,w,h){
-    const C=Q.colors(), {m,sd}=calc(); ctx.clearRect(0,0,w,h); ctx.font='12px -apple-system,sans-serif';
+    const C=Q.colors(), {m,sd}=calc(); ctx.clearRect(0,0,w,h); ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif';
     const T=26,B=h-30, L1=16, R1=Math.max(180,w*0.42), L2=R1+60, R2=w-14;
     // trái: mật độ chuẩn của lãi/lỗ ngày
     const lo=Math.min(m-4*sd,-0.5*sd), hi=Math.max(m+4*sd,0.5*sd), xs=v=>L1+(v-lo)/(hi-lo)*(R1-L1), pk=1/(sd*Math.sqrt(2*Math.PI));

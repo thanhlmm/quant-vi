@@ -99,7 +99,7 @@
     ctx.strokeStyle=C.line; ctx.lineWidth=1;
     for(let t=-R;t<=R;t++){ poly([W(t,-R,ZF),W(t,R,ZF)]); poly([W(-R,t,ZF),W(R,t,ZF)]); }
     ctx.strokeStyle=C.muted; poly([W(-R,0,ZF),W(R,0,ZF)]); poly([W(0,-R,ZF),W(0,R,ZF)]);
-    ctx.fillStyle=C.muted; ctx.font='12px -apple-system,sans-serif';
+    ctx.fillStyle=C.muted; ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif';
     let L=P(W(R+0.4,0,ZF)); ctx.fillText('β₁',L[0],L[1]); L=P(W(0,R+0.4,ZF)); ctx.fillText('β₂',L[0],L[1]);
     // lưới mặt
     ctx.strokeStyle=C.a; ctx.globalAlpha=0.38;
@@ -196,7 +196,7 @@
     const Y2=v=>t2+h2-Math.min(1,(v-s2)/((mhi-s2)||1))*h2;
     ctx.strokeStyle=C.line; ctx.lineWidth=1; ctx.strokeRect(l,t1,rr-l,h1); ctx.strokeRect(l,t2,rr-l,h2);
     ctx.beginPath(); ctx.moveTo(l,Y1(0)); ctx.lineTo(rr,Y1(0)); ctx.stroke();
-    ctx.fillStyle=C.muted; ctx.font='12px -apple-system,sans-serif';
+    ctx.fillStyle=C.muted; ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif';
     ctx.fillText('Hệ số β_j',l,t1-24); ctx.fillText('MSE kiểm tra',l,t2-8);
     ['0,001','0,01','0,1','1','10'].forEach((txt,e)=>{ const x=X(e*15); ctx.fillText(txt,x-ctx.measureText(txt).width/2,t2+h2+16); });
     ctx.fillText('λ',rr+14,t2+h2+16);

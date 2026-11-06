@@ -100,9 +100,9 @@
     for(let i=0;i<=200;i++){ const x=lo+(hi-lo)*i/200, y=pdf(x); i?ctx.lineTo(X(x),Y(y)):ctx.moveTo(X(x),Y(y)); }
     ctx.stroke(); ctx.setLineDash([]);
     // trung bình và trung vị
-    const vline=(x,col,lab,dy)=>{ ctx.strokeStyle=col; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(X(x),T); ctx.lineTo(X(x),T+ph); ctx.stroke(); ctx.fillStyle=col; ctx.font='12px -apple-system,sans-serif'; ctx.fillText(lab,X(x)+4,T+12+dy); };
+    const vline=(x,col,lab,dy)=>{ ctx.strokeStyle=col; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(X(x),T); ctx.lineTo(X(x),T+ph); ctx.stroke(); ctx.fillStyle=col; ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif'; ctx.fillText(lab,X(x)+4,T+12+dy); };
     vline(stats.med,C.a,'trung vị',0); vline(stats.m,C.b,'trung bình',16);
-    ctx.fillStyle=C.muted; ctx.font='12px -apple-system,sans-serif';
+    ctx.fillStyle=C.muted; ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif';
     for(let i=0;i<=5;i++){ const x=lo+(hi-lo)*i/5; ctx.fillText(A.log?Q.fmt(x,2):Q.fmt(x,0),X(x)-14,T+ph+16); }
     ctx.fillText(A.log?'ln(diện tích)':'diện tích (ft²), cắt ở phân vị 99,5%',L,h-4);
     ctx.fillText('cột: tần suất   nét đứt: phân phối chuẩn cùng trung bình và độ lệch chuẩn',L,16);
@@ -149,7 +149,7 @@
     // sàn
     for(let i=-E;i<=E+1e-9;i+=1.25){ line([i,-E,-6],[i,E,-6],C.line); line([-E,i,-6],[E,i,-6],C.line); }
     line([-E,-E,-6],[E+0.6,-E,-6],C.muted,1.5); line([-E,-E,-6],[-E,E+0.6,-6],C.muted,1.5); line([-E,-E,-6],[-E,-E,6],C.muted,1.5);
-    ctx.fillStyle=C.muted; ctx.font='12px -apple-system,sans-serif';
+    ctx.fillStyle=C.muted; ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif';
     let t=P([E+0.9,-E,-6]); ctx.fillText('x₁ log diện tích',t[0],t[1]);
     t=P([-E,E+0.9,-6]); ctx.fillText('x₂ phòng ngủ',t[0],t[1]);
     t=P([-E,-E,6.5]); ctx.fillText('log giá',t[0]-16,t[1]);
@@ -172,8 +172,8 @@
     ctx.strokeStyle=C.muted; ctx.setLineDash([3,3]); ctx.beginPath(); ctx.moveTo(Xb(-1),Yb(3)); ctx.lineTo(Xb(3),Yb(-1)); ctx.stroke(); ctx.setLineDash([]);
     hist.forEach((hh,i)=>{ const last=i===hist.length-1; ctx.fillStyle=last?C.b:C.c; ctx.globalAlpha=last?1:0.5; ctx.beginPath(); ctx.arc(Math.min(bx+bs,Math.max(bx,Xb(hh[0]))),Math.min(by+bs,Math.max(by,Yb(hh[1]))),last?4:2.4,0,7); ctx.fill(); });
     ctx.globalAlpha=1; ctx.fillStyle=C.ink; ctx.beginPath(); ctx.arc(Xb(1),Yb(1),3,0,7); ctx.fill();
-    ctx.fillStyle=C.muted; ctx.font='11px -apple-system,sans-serif'; ctx.fillText('β̂₁ →',bx+bs-34,by+bs-4); ctx.fillText('β̂₂ ↑',bx+4,by+12); ctx.fillText('[−1; 3]²',bx+4,by+bs-4);
-    ctx.font='12px -apple-system,sans-serif'; ctx.fillText('lưới cam: mặt phẳng ước lượng   chấm xanh: dữ liệu',12,h-10);
+    ctx.fillStyle=C.muted; ctx.font='11px Be Vietnam Pro,-apple-system,sans-serif'; ctx.fillText('β̂₁ →',bx+bs-34,by+bs-4); ctx.fillText('β̂₂ ↑',bx+4,by+12); ctx.fillText('[−1; 3]²',bx+4,by+bs-4);
+    ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif'; ctx.fillText('lưới cam: mặt phẳng ước lượng   chấm xanh: dữ liệu',12,h-10);
   }
   Q.orbit(cB.cv,view,()=>cB.redraw());
   Q.loop(stB,()=>{

@@ -126,10 +126,10 @@
         const at=(u,v)=>P(f.D.tf([u-.5,v-.5,.5]));
         if(visTop){ ctx.fillStyle=C.ink; const r=Math.max(1.5,sc*0.075*(view.dist/(view.dist+at(.5,.5)[2])));
           for(const [u,v] of PIPS[G.dice[f.i]]){ const p=at(u,v); ctx.beginPath(); ctx.arc(p[0],p[1],r,0,7); ctx.fill(); } }
-        else { const p=at(.5,.5); ctx.fillStyle=peek?C.d:C.muted; ctx.font='600 16px ui-monospace,monospace'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText('?',p[0],p[1]); }
+        else { const p=at(.5,.5); ctx.fillStyle=peek?C.d:C.muted; ctx.font='600 16px JetBrains Mono,ui-monospace,monospace'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText('?',p[0],p[1]); }
       }
     }
-    ctx.textBaseline='alphabetic'; ctx.textAlign='left'; ctx.font='12px -apple-system,sans-serif'; ctx.fillStyle=C.muted;
+    ctx.textBaseline='alphabetic'; ctx.textAlign='left'; ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif'; ctx.fillStyle=C.muted;
     ctx.fillText(G.done?'Ván đã kết thúc: bấm “Ván tiếp theo”':'Viên viền tím: đối phương đã nhìn trộm',12,18);
     // biểu đồ lịch sử thị trường
     const T0=H3+18, B=h-26, L=40, R=w-14, lo=5, hi=30;
@@ -180,7 +180,7 @@
     c.redraw(); }
   const c=Q.canvas(stage,300,draw);
   function draw(ctx,w,h){
-    const C=Q.colors(); ctx.clearRect(0,0,w,h); ctx.font='12px -apple-system,sans-serif';
+    const C=Q.colors(); ctx.clearRect(0,0,w,h); ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif';
     const L=52,R=w-16,T=24,B=h-34, lo=-5.5, hi=3.5;
     const xs=v=>L+(v-1)/5*(R-L), ys=v=>B-(v-lo)/(hi-lo)*(B-T);
     for(let v=-5;v<=3;v++){ ctx.strokeStyle=v===0?C.muted:C.line; ctx.beginPath(); ctx.moveTo(L,ys(v)); ctx.lineTo(R,ys(v)); ctx.stroke();

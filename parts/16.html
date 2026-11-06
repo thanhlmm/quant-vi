@@ -100,7 +100,7 @@
     // mặt đồng hồ
     ctx.strokeStyle=C.line; ctx.lineWidth=1.2; ctx.beginPath();
     for(let i=0;i<=96;i++){ const q=P(at(24*i/96,RAD,0)); i?ctx.lineTo(q[0],q[1]):ctx.moveTo(q[0],q[1]); } ctx.stroke();
-    ctx.fillStyle=C.muted; ctx.font='12px -apple-system,sans-serif';
+    ctx.fillStyle=C.muted; ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif';
     for(let k=0;k<24;k+=3){ const q=P(at(k,RAD+0.5,0)); ctx.fillText(k+'h',q[0]-8,q[1]+4); }
     // dây cung giữa giờ A và B
     const pa=P(at(S.hA,RAD+0.35,0)), pb=P(at(S.hB,RAD+0.35,0));
@@ -118,7 +118,7 @@
     // vách nửa đêm
     const j0=P(at(0,RAD,pred(0)*ZS)), j1=P(at(0,RAD,pred(23.999)*ZS));
     if(Math.abs(pred(0)-pred(23.999))>1){ ctx.strokeStyle=C.ink; ctx.lineWidth=3; ctx.setLineDash([4,3]); ctx.beginPath(); ctx.moveTo(j0[0],j0[1]); ctx.lineTo(j1[0],j1[1]); ctx.stroke(); ctx.setLineDash([]); }
-    ctx.lineCap='butt'; ctx.fillStyle=C.muted; ctx.font='13px -apple-system,sans-serif';
+    ctx.lineCap='butt'; ctx.fillStyle=C.muted; ctx.font='13px Be Vietnam Pro,-apple-system,sans-serif';
     ctx.fillText('cột xanh: nhu cầu trung bình mỗi giờ   đường cam: mô hình   tím: hai giờ A, B',12,20);
   }
   Q.orbit(c.cv,view,()=>c.redraw());

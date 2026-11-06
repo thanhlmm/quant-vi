@@ -91,7 +91,7 @@
   refresh();
   const c=Q.canvas(stage,360,draw);
   function draw(ctx,w,h){
-    const C=Q.colors(); ctx.clearRect(0,0,w,h); ctx.font='12px -apple-system,sans-serif';
+    const C=Q.colors(); ctx.clearRect(0,0,w,h); ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif';
     const narrow=w<620;
     const L={x:36,y:24,w:narrow?w-50:w*0.52-46,h:narrow?150:h-58};
     const R=narrow?{x:44,y:L.y+L.h+40,w:w-60,h:h-(L.y+L.h+40)-34}:{x:w*0.52+34,y:24,w:w*0.48-50,h:h-58};
@@ -119,10 +119,10 @@
     line(curve.map(e=>e.tr),C.muted,[5,4],2); line(curve.map(e=>e.te),C.b,[],2.4);
     ctx.restore();
     ctx.strokeStyle=C.ink; ctx.setLineDash([2,3]); ctx.beginPath(); ctx.moveTo(XD(S.d),R.y); ctx.lineTo(XD(S.d),R.y+R.h); ctx.stroke(); ctx.setLineDash([]);
-    ctx.textAlign='left'; ctx.font='11px -apple-system,sans-serif';
+    ctx.textAlign='left'; ctx.font='11px Be Vietnam Pro,-apple-system,sans-serif';
     const leg=[[C.muted,'huấn luyện'],[C.b,'kiểm tra'],[C.c,'độ chệch²'],[C.d,'phương sai'],[C.a,'nhiễu']]; let lx=R.x;
-    ctx.font='12px -apple-system,sans-serif'; ctx.fillStyle=C.ink; ctx.fillText('MSE (thang log)',R.x,R.y-8);
-    ctx.font='11px -apple-system,sans-serif';
+    ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif'; ctx.fillStyle=C.ink; ctx.fillText('MSE (thang log)',R.x,R.y-8);
+    ctx.font='11px Be Vietnam Pro,-apple-system,sans-serif';
     leg.forEach(([col,t],i)=>{ const yy=R.y+14+i*14; ctx.fillStyle=col; ctx.fillRect(R.x+8,yy-7,10,3); ctx.fillStyle=C.muted; ctx.fillText(t,R.x+22,yy-2); });
   }
   Q.slider(ctl,'Bậc đa thức d',0,DMAX,1,S.d,v=>{ S.d=v; refresh(); c.redraw(); },v=>v);
@@ -173,13 +173,13 @@
     // ô nhỏ: cạnh r^(1/p) theo p
     const ix=14, iy=34, iw=Math.min(170,w*0.3), ih=90;
     ctx.fillStyle=C.panel; ctx.fillRect(ix-6,iy-22,iw+16,ih+42); ctx.strokeStyle=C.line; ctx.lineWidth=1; ctx.strokeRect(ix-6,iy-22,iw+16,ih+42);
-    ctx.font='11px -apple-system,sans-serif'; ctx.fillStyle=C.ink; ctx.fillText('cạnh r^(1/p) theo p',ix,iy-8);
+    ctx.font='11px Be Vietnam Pro,-apple-system,sans-serif'; ctx.fillStyle=C.ink; ctx.fillText('cạnh r^(1/p) theo p',ix,iy-8);
     const PX=p=>ix+(p-1)/(PMAX-1)*iw, PY=v=>iy+(1-v)*ih;
     ctx.strokeStyle=C.line; ctx.strokeRect(ix,iy,iw,ih);
     ctx.strokeStyle=C.c; ctx.lineWidth=1.8; ctx.beginPath(); for(let p=1;p<=PMAX;p++){ const v=Math.pow(S.r,1/p); p>1?ctx.lineTo(PX(p),PY(v)):ctx.moveTo(PX(p),PY(v)); } ctx.stroke();
     ctx.fillStyle=C.b; ctx.beginPath(); ctx.arc(PX(S.p),PY(e),4,0,7); ctx.fill();
     ctx.fillStyle=C.muted; ctx.textAlign='center'; [1,10,20,30,40,50].forEach(p=>ctx.fillText(String(p),PX(p),iy+ih+12)); ctx.textAlign='right'; ctx.fillText('1',ix-2,iy+8); ctx.fillText('0',ix-2,iy+ih); ctx.textAlign='left';
-    ctx.font='12px -apple-system,sans-serif'; ctx.fillStyle=C.muted;
+    ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif'; ctx.fillStyle=C.muted;
     ctx.fillText(S.mode==='nb'?`lân cận chứa ${Q.pct(S.r,0)} dữ liệu: cạnh ${Q.fmt(e,2)}`:'vỏ 5% sát các mặt (nét đứt: phần lõi)',ix-6,h-12);
   }
   Q.orbit(c.cv,view,()=>c.redraw());

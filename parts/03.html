@@ -107,7 +107,7 @@
     for(let k=0;k<=24;k++){ const a=th*k/24, p=P([0.8*Math.cos(a),0,0.8*Math.sin(a)]); k?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]); } ctx.stroke();
     const o=[0,0,0];
     arrow(ctx,o,X,C.c,3,w,h,scale); arrow(ctx,o,Yw,C.b,3,w,h,scale); arrow(ctx,o,R,C.a,4,w,h,scale);
-    ctx.font='13px -apple-system,sans-serif'; ctx.lineWidth=1;
+    ctx.font='13px Be Vietnam Pro,-apple-system,sans-serif'; ctx.lineWidth=1;
     const lab=(v,t,col)=>{ const p=P(mul(v,1.08)); ctx.fillStyle=col; ctx.fillText(t,p[0]+6,p[1]-6); };
     lab(X,'σX',C.c); lab(Yw,S.hedge?'−h·σY':'σY',C.b); lab(R,S.hedge?'σ(X − hY)':'σ(X + Y)',C.a);
     ctx.fillStyle=C.muted; ctx.fillText('Góc giữa σX và σY: cos(góc) = ρ',12,20);
@@ -151,7 +151,7 @@
   function draw(ctx,w,h){
     const C=Q.colors(); ctx.clearRect(0,0,w,h);
     const L=52, Rr=w-16, mid=180;
-    ctx.font='12px -apple-system,sans-serif';
+    ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif';
     // nửa trên: hai dải điểm
     const Yv=v=>mid/2+10-Math.max(-3.5,Math.min(3.5,v))*(mid/2-20)/3.5;
     const cols=[[singles,1,C.b,L+(Rr-L)*0.08,(Rr-L)*0.38,'Một biến đơn lẻ'],[avgs,sdT(S.n,S.rho),C.c,L+(Rr-L)*0.54,(Rr-L)*0.38,'Trung bình của n biến']];

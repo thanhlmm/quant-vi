@@ -100,7 +100,7 @@
         `Hồi quy độ trượt theo D và độ khó (nếu đo được độ khó): β̂ = ${Q.fmt(st.reg,2)}`;
     }
     function draw(ctx,w,h){
-      const C=Q.colors(); ctx.clearRect(0,0,w,h); ctx.font='12px -apple-system,sans-serif';
+      const C=Q.colors(); ctx.clearRect(0,0,w,h); ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif';
       const wide=w>=560, r1=wide?w*0.64:w-10, l=40, t=28, b=h-30;
       const X=v=>l+(v+3)/6*(r1-l), Yl=-6, Yh=22, Y=v=>b-(v-Yl)/(Yh-Yl)*(b-t);
       ctx.strokeStyle=C.line; ctx.strokeRect(l,t,r1-l,b-t);
@@ -159,7 +159,7 @@
     }
     const W=(x,a,y)=>[x*KX,a*KA,y*KY];
     function draw(ctx,w,h){
-      const C=Q.colors(); ctx.clearRect(0,0,w,h); ctx.font='12px -apple-system,sans-serif';
+      const C=Q.colors(); ctx.clearRect(0,0,w,h); ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif';
       const scale=Math.min(w,h*1.4)/4.6, Pj=p=>Q.project(p,view,w,h,scale);
       const seg=(a,b)=>{ const A=Pj(a), B=Pj(b); ctx.beginPath(); ctx.moveTo(A[0],A[1]); ctx.lineTo(B[0],B[1]); ctx.stroke(); };
       const xr=2.6/1, wallA=RW/KA;
@@ -198,7 +198,7 @@
       ctx.strokeStyle=C.muted; ctx.beginPath(); ctx.moveTo(X0,by+8); ctx.lineTo(X0,by+bh-20); ctx.stroke();
       const bar=(y,a,b2,col)=>{ ctx.fillStyle=col; ctx.fillRect(Math.min(sx(a),sx(b2)),y,Math.abs(sx(b2)-sx(a)),14); };
       bar(by+14,0,bl,C.a); bar(by+38,bl,bl+p1*g,C.b); bar(by+62,0,bs,C.muted);
-      ctx.fillStyle=C.ink; ctx.font='11px -apple-system,sans-serif';
+      ctx.fillStyle=C.ink; ctx.font='11px Be Vietnam Pro,-apple-system,sans-serif';
       ctx.fillText('β dài',bx+6,by+25); ctx.fillText('+ π₁·γ',bx+6,by+49); ctx.fillText('= β ngắn',bx+6,by+73);
       ctx.fillStyle=C.muted; ctx.fillText('0',X0-3,by+bh-8);
     }

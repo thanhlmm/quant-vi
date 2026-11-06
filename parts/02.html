@@ -133,7 +133,7 @@
       ctx.globalAlpha=f.alpha; ctx.fillStyle=f.col; ctx.fill();
       if(f.shade){ ctx.globalAlpha=f.alpha*f.shade; ctx.fillStyle='#000'; ctx.fill(); }
     }
-    ctx.globalAlpha=1; ctx.font='12px -apple-system,sans-serif'; ctx.fillStyle=C.muted; ctx.textAlign='center';
+    ctx.globalAlpha=1; ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif'; ctx.fillStyle=C.muted; ctx.textAlign='center';
     const step=N<=6?1:N<=20?5:20, yF=-(R/2)*rowGap-0.25;
     for(let t=1;t<=N;t++){ if(t!==1 && t%step) continue; const p=P([-W/2+(t-0.5)*cell,yF,0]); ctx.fillText('≥'+t,p[0],p[1]+4); }
     COSTS.forEach((c,ri)=>{ const p=P([W/2+0.55,(ri-(R-1)/2)*rowGap,0]); ctx.fillStyle=ri===S.ci?C.ink:C.muted; ctx.fillText('c='+Q.fmt(c,1),p[0],p[1]+4); });
@@ -200,7 +200,7 @@
     }
     ctx.lineWidth=1;
     line.forEach((s,i)=>{ ctx.fillStyle=s?C.b:C.c; ctx.beginPath(); ctx.arc(pad+(i+0.5)*gap,cy,rad,0,7); ctx.fill(); });
-    ctx.font='12px -apple-system,sans-serif'; ctx.fillStyle=C.muted; ctx.textAlign='left';
+    ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif'; ctx.fillStyle=C.muted; ctx.textAlign='left';
     ctx.fillText(`Lần xếp gần nhất: ${mixed} cặp khác giới`,pad,18);
     // biểu đồ tần suất
     const top=96, bot=h-30, maxH=Math.max(...hist)/runs||1, bwid=(w-2*pad)/n;
