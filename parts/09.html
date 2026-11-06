@@ -2,57 +2,143 @@
 <header>
   <span class="num">09</span>
   <h3>Đánh đổi độ chệch – phương sai và lời nguyền số chiều</h3>
-  <p class="meta">12 phút · Ứng dụng: tránh quá khớp tín hiệu alpha · <a href="https://hft.md/learn/bias-variance/">Bài gốc (tiếng Anh)</a></p>
+  <p class="meta">Phần 3 · Khoa học dữ liệu · Bài 9 · 12 phút · <a href="https://hft.md/learn/bias-variance/">Bài gốc (tiếng Anh)</a></p>
 </header>
 
-<p>Một mô hình khớp hoàn hảo quá khứ thường dự báo tương lai rất tệ. Mọi mô hình đều nằm đâu đó giữa hai thái cực: học thuộc dữ liệu và bỏ qua dữ liệu. Chọn đúng vị trí đó là phần lớn công việc, và cũng là chỗ hầu hết các backtest đi sai.</p>
+<p><i>Bài này giải thích vì sao mô hình khớp quá khứ càng khéo thì càng dễ dự báo hỏng tương lai, và vì sao trong không gian nhiều chiều, mỗi điểm dữ liệu gần như đứng một mình.</i></p>
 
-<h4>Ý chính</h4>
+<p>Có thể hình dung mọi mô hình thống kê trên một thước đo. Ở một đầu là mô hình học thuộc lòng từng điểm dữ liệu. Ở đầu kia là mô hình gần như không nhìn vào dữ liệu, chỉ trả về một con số cố định. Cả hai đầu đều dự báo kém. Tìm được chỗ đứng hợp lý trên thước đo này là phần việc chính của người làm mô hình. Đây cũng là nơi phần lớn các backtest trông đẹp nhưng thực chất sai.</p>
+
+<h4>Độ chệch và phương sai</h4>
+<p>Hãy tưởng tượng ta có thể lặp lại quá trình thu thập dữ liệu nhiều lần, mỗi lần được một mẫu huấn luyện mới, và mỗi lần khớp lại mô hình. Với mỗi điểm x cố định, ta sẽ có cả một tập các dự báo f̂(x). Hai câu hỏi tự nhiên nảy ra:</p>
 <ul>
-  <li><b>Độ chệch</b> (bias) là phần sai số do giả định của mô hình áp đặt. <b>Phương sai</b> (variance) đo câu trả lời của mô hình thay đổi bao nhiêu khi đổi sang một mẫu huấn luyện khác.</li>
-  <li>Với sai số bình phương, sai số kiểm tra kỳ vọng tại một điểm tách đúng thành ba phần: nhiễu, bình phương độ chệch và phương sai. Nhiễu không thể giảm. Chỉ có thể đổi độ chệch lấy phương sai và ngược lại.</li>
-  <li>Mô hình càng linh hoạt (nhiều tham số, nhiều <b>bậc tự do</b>, degrees of freedom) thì độ chệch càng thấp và phương sai càng cao. 1-NN là cực điểm: không giả định gì, sai số huấn luyện bằng 0, ranh giới nhảy mỗi khi một điểm dữ liệu dịch chuyển.</li>
-  <li>Sai số huấn luyện luôn giảm khi tăng độ phức tạp. Sai số kiểm tra giảm rồi tăng lại, tạo thành <b>đường cong chữ U</b>. Đây là hình cần nhớ.</li>
-  <li><b>Lời nguyền số chiều</b> (curse of dimensionality): trong không gian nhiều chiều, không có láng giềng nào thật sự gần. Một “lân cận” muốn chứa 10% dữ liệu trong 10 chiều phải trải tới 79% mỗi trục.</li>
-  <li>Điểm dữ liệu dồn ra sát biên, nên dự báo trở thành ngoại suy chứ không còn là nội suy. Vì vậy mô hình tuyến tính, nhất là khi có điều chuẩn (regularization, bài 11), thắng kNN khi số chiều tăng.</li>
+  <li><b>Độ chệch</b> (bias): trung bình của các dự báo đó lệch khỏi giá trị thật f(x) bao nhiêu? Đây là cái sai mà giả định của mô hình gây ra, nó vẫn còn dù có bao nhiêu mẫu đi nữa.</li>
+  <li><b>Phương sai</b> (variance): các dự báo dao động quanh trung bình của chính chúng mạnh đến đâu? Đây là độ nhạy của mô hình với việc ta tình cờ nhận được mẫu nào.</li>
+</ul>
+<p>Giả sử dữ liệu sinh ra theo Y = f(x) + ε, trong đó ε có kỳ vọng 0, phương sai σ<sub>ε</sub><sup>2</sup> và độc lập với mẫu huấn luyện. Khi đo bằng sai số bình phương, sai số kiểm tra kỳ vọng tại x tách chính xác thành ba phần:</p>
+<div class="formula"><span class="lbl">Phân rã sai số kiểm tra kỳ vọng tại điểm x</span>E[ (Y − f̂(x))<sup>2</sup> ] = σ<sub>ε</sub><sup>2</sup> + ( E[f̂(x)] − f(x) )<sup>2</sup> + Var( f̂(x) )<br><span style="font-size:14px;color:var(--muted)">nhiễu &nbsp;+&nbsp; bình phương độ chệch &nbsp;+&nbsp; phương sai</span></div>
+<p><b>Vì sao đúng.</b> Viết Y − f̂ = (Y − f) + (f − E f̂) + (E f̂ − f̂). Số hạng đầu chính là ε. Số hạng giữa là một hằng số (không phụ thuộc mẫu). Số hạng cuối có kỳ vọng 0. Bình phương rồi lấy kỳ vọng, ba tích chéo đều triệt tiêu: ε độc lập với f̂ và có trung bình 0, còn (E f̂ − f̂) có trung bình 0. Chỉ còn lại tổng ba bình phương, tức là đúng ba số hạng ở trên.</p>
+<p>Số hạng nhiễu là sàn cứng: không mô hình nào xuống dưới được, vì nó là phần ngẫu nhiên nằm ngay trong Y. Thứ ta điều khiển được chỉ là hai số hạng còn lại, và chúng thường kéo theo hai hướng ngược nhau.</p>
+
+<h5>Độ linh hoạt quyết định vị trí trên thước đo</h5>
+<p>Mô hình càng linh hoạt, tức là càng nhiều tham số hay nhiều <b>bậc tự do</b> (degrees of freedom), thì độ chệch càng nhỏ nhưng phương sai càng lớn. Hai ví dụ ở hai cực:</p>
+<ul>
+  <li><b>Một láng giềng gần nhất</b> (1-NN) gần như không giả định gì về hình dạng của f. Sai số huấn luyện bằng 0, vì mỗi điểm là láng giềng gần nhất của chính nó. Nhưng chỉ cần dời một điểm dữ liệu, ranh giới quyết định quanh điểm đó nhảy theo. Độ chệch thấp, phương sai rất cao.</li>
+  <li><b>Hồi quy tuyến tính</b> giả định quan hệ là một đường thẳng. Mẫu đổi thì đường thẳng chỉ xoay nhẹ, nên kết quả ổn định. Nhưng nếu quan hệ thật cong, mô hình sẽ sai một cách có hệ thống và không có thêm dữ liệu nào chữa được. Lối thoát là tự tạo đặc trưng mới như x<sup>2</sup>, sin x, … rồi vẫn hồi quy tuyến tính trên chúng. Mỗi đặc trưng thêm vào lại đẩy mô hình về phía phương sai cao.</li>
 </ul>
 
-<h4>Công thức</h4>
-<div class="formula"><span class="lbl">Phân rã sai số kiểm tra kỳ vọng tại điểm x, với Y = f(x) + ε và Var(ε) = σ<sub>ε</sub><sup>2</sup></span>E[ (Y − f̂(x))<sup>2</sup> ] = σ<sub>ε</sub><sup>2</sup> + ( E[f̂(x)] − f(x) )<sup>2</sup> + Var( f̂(x) )<br><span style="font-size:14px;color:var(--muted)">nhiễu &nbsp;+&nbsp; bình phương độ chệch &nbsp;+&nbsp; phương sai</span></div>
-<div class="formula"><span class="lbl">Cạnh của khối lập phương con chứa tỉ lệ r dữ liệu phân bố đều trong khối đơn vị p chiều</span>e<sub>p</sub>(r) = r<sup>1/p</sup></div>
-<div class="formula"><span class="lbl">Tỉ lệ điểm nằm cách một mặt nào đó dưới 5% độ dài cạnh</span>P(sát biên) = 1 − 0,9<sup>p</sup></div>
-
-<h4>Ví dụ minh hoạ: chấp nhận chệch để giảm phương sai</h4>
-<p>Cần ước lượng kỳ vọng μ = 1 từ n = 10 quan sát có độ lệch chuẩn σ = 2. Xét họ ước lượng co rút (shrinkage) μ̂<sub>c</sub> = c · X̄.</p>
+<h5>Ví dụ có lời giải: chấp nhận chệch để giảm phương sai</h5>
+<p>Đánh đổi này có thể thấy ngay trên bài toán đơn giản nhất. Cần ước lượng kỳ vọng μ = 1 từ n = 10 quan sát có độ lệch chuẩn σ = 2. Xét họ ước lượng co rút (shrinkage) μ̂<sub>c</sub> = c · X̄, với c từ 0 đến 1.</p>
 <ol>
-  <li>Độ chệch là (c − 1)μ. Phương sai là c<sup>2</sup>σ<sup>2</sup>/n = 0,4c<sup>2</sup>.</li>
-  <li>Với c = 1 (trung bình mẫu thông thường): độ chệch bằng 0, sai số bình phương trung bình (MSE) = 0,4.</li>
-  <li>Với c = 0,7: bình phương độ chệch = 0,09, phương sai = 0,49 × 0,4 = 0,196, MSE = 0,286. Thấp hơn hẳn dù có chệch.</li>
-  <li>Giá trị tối ưu là c* = μ<sup>2</sup> / (μ<sup>2</sup> + σ<sup>2</sup>/n) = 1 / 1,4 ≈ 0,714, cho MSE = 2/7 ≈ 0,286.</li>
+  <li>Kỳ vọng của μ̂<sub>c</sub> là cμ, nên độ chệch là (c − 1)μ. Phương sai là c<sup>2</sup>σ<sup>2</sup>/n = 0,4c<sup>2</sup>.</li>
+  <li>Với c = 1 (trung bình mẫu thông thường): độ chệch bằng 0, sai số bình phương trung bình (MSE) bằng 0,4.</li>
+  <li>Với c = 0,7: bình phương độ chệch là 0,3<sup>2</sup> = 0,09, phương sai là 0,49 × 0,4 = 0,196, nên MSE = 0,286. Thấp hơn rõ rệt dù ước lượng đã bị chệch.</li>
+  <li>Lấy đạo hàm của MSE(c) = (c − 1)<sup>2</sup>μ<sup>2</sup> + c<sup>2</sup>σ<sup>2</sup>/n theo c rồi cho bằng 0, được c* = μ<sup>2</sup> / (μ<sup>2</sup> + σ<sup>2</sup>/n) = 1/1,4 ≈ 0,714. MSE tối ưu là 0,4/1,4 = 2/7 ≈ 0,286.</li>
 </ol>
-<p>Về số chiều, với r = 10%: cạnh lân cận là 0,10 khi p = 1, 0,32 khi p = 2, 0,79 khi p = 10 và 0,95 khi p = 50. Tỉ lệ điểm sát biên là 1 − 0,9<sup>5</sup> ≈ 41% khi p = 5, và 1 − 0,9<sup>50</sup> ≈ 99,5% khi p = 50.</p>
+<p>Bài học: ước lượng không chệch chưa chắc là ước lượng tốt nhất. Kéo nhẹ về 0 làm mất một ít độ chính xác trung bình nhưng đổi được độ ổn định lớn hơn nhiều. Ridge và lasso ở bài 11 làm đúng việc này với các hệ số hồi quy.</p>
 
 <figure class="demo">
   <div class="stage" id="demo-09"></div>
   <div class="controls" id="ctl-09"></div>
   <div class="readout" id="out-09"></div>
-  <figcaption><b>Mô hình 9.1 – Phòng thí nghiệm quá khớp.</b> 18 điểm rải gần đều trên [0, 1], nhãn là sóng sin cộng nhiễu có độ lệch chuẩn 0,3. Bên trái: đường cong sin thật (nét đứt) và đa thức bậc d khớp bằng bình phương tối thiểu. Bên phải, thang log: sai số huấn luyện (nét đứt) chỉ giảm, sai số kiểm tra (cam) giảm rồi tăng. Hai đường xanh dương và tím là bình phương độ chệch và phương sai, ước lượng từ 200 mẫu huấn luyện khác nhau. Ở bậc 12 trở lên, vài lần khớp bùng nổ ở hai đầu đoạn, nên cả độ chệch ước lượng cũng nhảy lên. Bật “Hiện 20 lần khớp khác” ở bậc 1 rồi ở bậc 14 để thấy tận mắt phương sai thấp và phương sai cao.</figcaption>
+  <figcaption><b>Hình 9.1 – Phòng thí nghiệm quá khớp.</b> 18 điểm rải gần đều trên [0, 1], nhãn là sóng sin cộng nhiễu có độ lệch chuẩn 0,3. Bên trái: đường sin thật (nét đứt) và đa thức bậc d khớp bằng bình phương tối thiểu. Bên phải, thang log: sai số huấn luyện (nét đứt) chỉ giảm, sai số kiểm tra (cam) giảm rồi tăng. Hai đường xanh dương và tím là bình phương độ chệch và phương sai, ước lượng từ 200 mẫu huấn luyện khác nhau. Bấm “Mẫu huấn luyện mới” vài lần ở bậc 1, rồi ở bậc 14: ở bậc 1 đường khớp gần như đứng yên, ở bậc 14 nó vặn vẹo khác hẳn sau mỗi lần bấm. Bật “Hiện 20 lần khớp khác” để thấy cùng lúc phương sai thấp và phương sai cao. Ở bậc 12 trở lên, vài lần khớp bùng nổ ở hai đầu đoạn, nên cả độ chệch ước lượng cũng nhảy lên.</figcaption>
 </figure>
+
+<p>Hình cần mang theo sau bài này là <b>đường cong chữ U</b> của sai số kiểm tra. Sai số huấn luyện luôn thưởng cho độ phức tạp: thêm tham số thì nó chỉ có thể giảm. Sai số kiểm tra cũng giảm lúc đầu, khi độ chệch còn chiếm ưu thế, rồi tăng trở lại khi phương sai bắt đầu lấn át. Đáy chữ U là độ phức tạp nên chọn, và chỉ dữ liệu chưa dùng để huấn luyện mới cho biết đáy nằm ở đâu.</p>
+
+<h4>Lời nguyền số chiều</h4>
+<p>Phương pháp láng giềng gần nhất dựa trên một giả định ngầm: quanh mỗi điểm cần dự báo luôn có vài điểm dữ liệu thật sự ở gần. Khi số chiều lớn, giả định này sụp đổ. Hiện tượng đó gọi là <b>lời nguyền số chiều</b> (curse of dimensionality).</p>
+<p>Giả sử dữ liệu phân bố đều trong khối lập phương đơn vị p chiều. Ta muốn lấy một khối lập phương con quanh một điểm sao cho nó chứa tỉ lệ r của dữ liệu. Thể tích khối con là e<sup>p</sup>, với e là độ dài cạnh, và thể tích phải bằng r. Vậy:</p>
+<div class="formula"><span class="lbl">Cạnh của khối lập phương con chứa tỉ lệ r dữ liệu</span>e<sub>p</sub>(r) = r<sup>1/p</sup></div>
+<p>Với r = 10%: cạnh là 0,10 khi p = 1, 0,32 khi p = 2, 0,79 khi p = 10 và 0,95 khi p = 50. Nói cách khác, trong 10 chiều, muốn gom được 10% dữ liệu thì “lân cận” phải trải gần 80% chiều dài của mọi trục. Một lân cận rộng như vậy không còn gì là địa phương: nó gần như là toàn bộ không gian, và trung bình trên nó chẳng khác mấy trung bình toàn cục.</p>
+<p><b>Điểm dữ liệu dồn ra biên.</b> Một điểm nằm cách mọi mặt ít nhất 5% khi từng toạ độ của nó nằm trong [0,05; 0,95], xác suất 0,9 cho mỗi trục. Các trục độc lập, nên xác suất nằm trong phần lõi là 0,9<sup>p</sup>, và:</p>
+<div class="formula"><span class="lbl">Tỉ lệ điểm nằm cách một mặt nào đó dưới 5% độ dài cạnh</span>P(sát biên) = 1 − 0,9<sup>p</sup></div>
+<p>Con số này là 1 − 0,9<sup>5</sup> ≈ 41% khi p = 5, và 1 − 0,9<sup>50</sup> ≈ 99,5% khi p = 50. Khi gần như mọi điểm đều nằm sát biên, dự báo tại một điểm mới thường phải với ra phía có ít dữ liệu. Đó là <b>ngoại suy</b> (extrapolation), không còn là nội suy giữa các điểm đã thấy, và ngoại suy là việc kNN làm kém nhất.</p>
 
 <figure class="demo">
   <div class="stage" id="demo2-09"></div>
   <div class="controls" id="ctl2-09"></div>
   <div class="readout" id="out2-09"></div>
-  <figcaption><b>Mô hình 9.2 – Một “lân cận” phải lớn đến đâu.</b> 800 điểm phân bố đều trong khối lập phương p chiều, vẽ theo 3 toạ độ đầu (khi p &lt; 3, trục dư không thuộc dữ liệu nên lân cận trải hết trục đó). Khối xanh dương là lân cận quanh tâm chứa tỉ lệ r dữ liệu, cạnh r<sup>1/p</sup> trên mọi trục. Điểm tô đậm là các điểm thật sự nằm trong lân cận khi xét đủ p toạ độ. Tăng p để thấy lân cận phình ra gần hết không gian. Chuyển sang chế độ “Sát biên” để đếm số điểm nằm cách một mặt dưới 5%. Kéo để xoay.</figcaption>
+  <figcaption><b>Hình 9.2 – Một “lân cận” phải lớn đến đâu.</b> 800 điểm phân bố đều trong khối lập phương p chiều, vẽ theo 3 toạ độ đầu (khi p &lt; 3, trục dư không thuộc dữ liệu nên lân cận trải hết trục đó). Khối xanh dương là lân cận quanh tâm chứa tỉ lệ r dữ liệu, cạnh r<sup>1/p</sup> trên mọi trục. Điểm tô đậm là các điểm thật sự nằm trong lân cận khi xét đủ p toạ độ. Tăng p để thấy lân cận “địa phương” phình ra gần hết mọi trục; ô nhỏ góc trái vẽ cạnh r<sup>1/p</sup> theo p. Chuyển sang chế độ “Sát biên” để đếm số điểm nằm cách một mặt dưới 5% và so với 1 − 0,9<sup>p</sup>. Kéo để xoay.</figcaption>
 </figure>
 
-<h4>Lưu ý khi phỏng vấn</h4>
+<p>Kết luận thực hành: láng giềng gần nhất thắng khi dữ liệu ít chiều và dồi dào. Khi số chiều tăng, mô hình tuyến tính vượt lên, chính vì giả định mạnh của nó. Giả định “quan hệ gần tuyến tính” cho phép mô hình mượn thông tin từ toàn bộ dữ liệu thay vì chỉ từ một lân cận vốn đã trống rỗng. Thêm điều chuẩn (regularization, bài 11) thì mô hình tuyến tính xử lý được cả hàng nghìn đặc trưng.</p>
+
+<h4>Ứng dụng trên bàn giao dịch</h4>
 <ul>
-  <li>Câu hỏi mẫu: thêm 40 đặc trưng vào mô hình huấn luyện trên 300 điểm. Sai số huấn luyện giảm từ 0,21 xuống 0,12, sai số kiểm định tăng từ 0,24 lên 0,29. Đáp án: phương sai tăng, mô hình đang quá khớp (overfitting). Chỉ sai số kiểm định mới quan trọng.</li>
-  <li>Quá khớp backtest là đánh đổi chệch – phương sai có gắn tiền. Thử đủ nhiều quy tắc trên cùng một lịch sử thì sẽ có một quy tắc trông xuất sắc trong mẫu. Hãy giữ riêng dữ liệu kiểm tra đến cuối cùng, và đếm số lần đã thử.</li>
-  <li>Ngân sách đặc trưng: 10 năm dữ liệu ngày chỉ có khoảng 2.500 điểm. Một mô hình 500 tham số đã ở vùng phương sai cao. Kết hợp mô hình (ensemble) và co rút (ridge, lasso) giảm mạnh phương sai với cái giá là một chút độ chệch.</li>
-  <li>Nhiễu σ<sub>ε</sub><sup>2</sup> là sàn không thể vượt qua. Nếu sai số kiểm tra thấp hơn mức nhiễu hợp lý, hãy nghi ngờ rò rỉ dữ liệu (look-ahead) trước khi ăn mừng.</li>
+  <li><b>Quá khớp backtest</b> chính là đánh đổi chệch – phương sai, chỉ khác là có gắn tiền. Thử đủ nhiều quy tắc giao dịch trên cùng một đoạn lịch sử thì gần như chắc chắn sẽ có một quy tắc trông xuất sắc trong mẫu. Ngoài mẫu, lợi nhuận của nó lùi về đúng số hạng nhiễu. Cách phòng vệ: giữ riêng một phần dữ liệu không đụng tới cho đến bước cuối cùng, và ghi lại mình đã thử bao nhiêu cấu hình.</li>
+  <li><b>Ngân sách đặc trưng.</b> Mười năm dữ liệu ngày chỉ cho khoảng 2.500 quan sát. Một mô hình 500 tham số, tức là 5 quan sát cho mỗi tham số, đã nằm sâu trong vùng phương sai cao. Vì vậy các bàn giao dịch dùng rộng rãi kết hợp mô hình (ensemble, lấy trung bình nhiều mô hình) và co rút (ridge, lasso): chúng đổi một chút độ chệch lấy mức giảm phương sai rất lớn.</li>
+  <li><b>Sàn nhiễu là phép thử nhanh.</b> Lợi suất ngắn hạn gần như toàn nhiễu. Nếu sai số kiểm tra của mô hình thấp hơn mức nhiễu hợp lý, hãy nghi ngờ rò rỉ dữ liệu tương lai (look-ahead) trước khi ăn mừng.</li>
 </ul>
+
+<h4>Trong code</h4>
+<p>Đoạn TypeScript dưới đây tái hiện Hình 9.1 trên một mẫu cố định: 18 điểm ngẫu nhiên, khớp đa thức bậc 1, 3, 9 và 14 trên cơ sở Chebyshev, rồi in sai số huấn luyện và sai số kiểm tra (sai số so với hàm thật trên lưới 400 điểm, cộng thêm σ<sup>2</sup> = 0,09). Phần cuối in cạnh lân cận chứa 10% dữ liệu. Chạy bằng <span class="kbd">bun bv.ts</span>.</p>
+<pre class="code"><code><span class="c">// Bộ sinh số ngẫu nhiên có hạt giống và phân phối chuẩn (Box–Muller)</span>
+function rng(seed: number) {
+  let s = seed &gt;&gt;&gt; 0;
+  return () =&gt; { s = (s + 0x6d2b79f5) | 0; let t = Math.imul(s ^ (s &gt;&gt;&gt; 15), 1 | s);
+    t = (t + Math.imul(t ^ (t &gt;&gt;&gt; 7), 61 | t)) ^ t; return ((t ^ (t &gt;&gt;&gt; 14)) &gt;&gt;&gt; 0) / 2 ** 32; };
+}
+const r = rng(7);
+const gauss = () =&gt; Math.sqrt(-2 * Math.log(1 - r())) * Math.cos(2 * Math.PI * r());
+const f = (x: number) =&gt; Math.sin(2 * Math.PI * x);
+
+<span class="c">// Cơ sở Chebyshev T0..Td trên t = 2x − 1 (ổn định hơn 1, x, x², …)</span>
+const cheb = (x: number, d: number) =&gt; {
+  const t = 2 * x - 1, T = [1, t];
+  for (let k = 2; k &lt;= d; k++) T.push(2 * t * T[k - 1] - T[k - 2]);
+  return T.slice(0, d + 1);
+};
+
+<span class="c">// Bình phương tối thiểu bằng QR (Gram–Schmidt cải tiến)</span>
+function lstsq(A: number[][], y: number[]): number[] {
+  const m = A.length, n = A[0].length;
+  const Qc = Array.from({ length: n }, (_, j) =&gt; A.map(row =&gt; row[j]));
+  const R = Array.from({ length: n }, () =&gt; new Array(n).fill(0));
+  for (let j = 0; j &lt; n; j++) {
+    for (let i = 0; i &lt; j; i++) {
+      const d = Qc[i].reduce((s, q, k) =&gt; s + q * Qc[j][k], 0);
+      R[i][j] = d; Qc[j] = Qc[j].map((v, k) =&gt; v - d * Qc[i][k]);
+    }
+    R[j][j] = Math.hypot(...Qc[j]); Qc[j] = Qc[j].map(v =&gt; v / R[j][j]);
+  }
+  const qty = Qc.map(q =&gt; q.reduce((s, v, k) =&gt; s + v * y[k], 0));
+  const b = new Array(n).fill(0);
+  for (let j = n - 1; j &gt;= 0; j--) {
+    let s = qty[j]; for (let k = j + 1; k &lt; n; k++) s -= R[j][k] * b[k];
+    b[j] = s / R[j][j];
+  }
+  return b;
+}
+
+const x = Array.from({ length: 18 }, () =&gt; r()).sort((a, b) =&gt; a - b);
+const y = x.map(v =&gt; f(v) + 0.3 * gauss());
+const xt = Array.from({ length: 400 }, (_, i) =&gt; i / 399);
+const mse = (p: number[], q: number[]) =&gt; p.reduce((s, v, i) =&gt; s + (v - q[i]) ** 2, 0) / p.length;
+
+for (const d of [1, 3, 9, 14]) {
+  const b = lstsq(x.map(v =&gt; cheb(v, d)), y);
+  const g = (v: number) =&gt; cheb(v, d).reduce((s, c, k) =&gt; s + c * b[k], 0);
+  const train = mse(x.map(g), y);
+  const test = mse(xt.map(g), xt.map(f)) + 0.3 ** 2;   <span class="c">// + nhiễu σ²</span>
+  console.log(d, train.toFixed(3), test.toFixed(3));
+}
+
+<span class="c">// Cạnh lân cận chứa 10% dữ liệu trong p chiều</span>
+for (const p of [1, 2, 10, 50]) console.log(p, (0.1 ** (1 / p)).toFixed(2));
+<span class="c">// Kết quả:
+// 1 0.287 0.303     bậc 1: chệch, cả hai sai số đều cao
+// 3 0.063 0.106     bậc 3: gần đáy chữ U
+// 9 0.024 7.855     bậc 9: huấn luyện tốt hơn, kiểm tra tệ hẳn
+// 14 0.009 5366848.513
+// 1 0.10 · 2 0.32 · 10 0.79 · 50 0.95</span></code></pre>
+<p>Hàng bậc 14 đáng để ý: sai số huấn luyện gần bằng 0, còn sai số kiểm tra lên tới hàng triệu. Với 15 hệ số và chỉ 18 điểm rải ngẫu nhiên, đa thức bị buộc đi qua gần như mọi điểm và phóng vọt ở những khoảng trống, nhất là ở hai đầu đoạn. Đó là phương sai ở dạng cực đoan nhất.</p>
+
+<h4>Tự kiểm tra</h4>
+<details class="qa"><summary>Thêm 40 đặc trưng vào một mô hình huấn luyện trên 300 điểm. Sai số huấn luyện giảm từ 0,21 xuống 0,12, còn sai số kiểm định (validation) tăng từ 0,24 lên 0,29. Chuyện gì đã xảy ra? (A) độ chệch tăng; (B) phương sai tăng, mô hình đang quá khớp; (C) số hạng nhiễu tăng; (D) không có gì, sai số huấn luyện thấp hơn nghĩa là mô hình tốt hơn.</summary>
+<p><b>Đáp án: B.</b> Thêm 40 đặc trưng làm mô hình linh hoạt hơn, nên nó bám mẫu huấn luyện sát hơn: độ chệch giảm, kéo sai số huấn luyện xuống. Cái giá là mô hình phụ thuộc nhiều hơn vào chính mẫu này, tức phương sai tăng. Với 300 điểm, phần phương sai tăng thêm lớn hơn phần độ chệch giảm đi, nên sai số kiểm định tăng từ 0,24 lên 0,29.</p>
+<p>Loại các phương án còn lại. (A) sai, vì nếu độ chệch tăng thì sai số huấn luyện phải tăng chứ không giảm. (C) sai, vì nhiễu là thuộc tính của dữ liệu, không đổi khi ta thêm đặc trưng. (D) sai, vì sai số huấn luyện luôn giảm khi thêm tham số, nên nó không nói lên chất lượng dự báo. Chỉ sai số kiểm định mới đáng tin, và nó đã xấu đi. Khoảng cách giữa sai số huấn luyện và kiểm định nới rộng từ 0,03 lên 0,17 cũng là dấu hiệu điển hình của quá khớp (overfitting).</p>
+</details>
 
 <script>
 (()=>{

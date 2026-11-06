@@ -2,58 +2,118 @@
 <header>
   <span class="num">06</span>
   <h3>Luật số lớn và định lý giới hạn trung tâm</h3>
-  <p class="meta">12 phút · Ứng dụng: đánh giá độ tin cậy của backtest; xác định cỡ mẫu · <a href="https://hft.md/learn/lln-clt/">Bài gốc (tiếng Anh)</a></p>
+  <p class="meta">Phần 2 · Thống kê · Bài 6 · 12 phút · <a href="https://hft.md/learn/lln-clt/">Bài gốc (tiếng Anh)</a></p>
 </header>
 
-<p>Thị trường không bao giờ cho ta thấy tham số thật, chỉ cho ta dữ liệu. Hai định lý trong bài này cho biết một trung bình mẫu sai lệch bao nhiêu so với sự thật. Mọi câu hỏi “backtest này có thật không?” đều quy về chúng.</p>
+<p><i>Trung bình mẫu tiến dần về giá trị thật, và sai số của nó luôn có dạng chuẩn, bất kể dữ liệu ban đầu có hình dạng gì. Bài này giải thích hai sự kiện đó và cách dùng chúng trên bàn giao dịch.</i></p>
 
-<h4>Ý chính</h4>
-<ul>
-  <li>Xác suất đi xuôi: biết đồng xu, đoán kết quả tung. <b>Thống kê</b> đi ngược: thấy kết quả tung, đoán đồng xu. Ta chỉ có dữ liệu, nên luôn phải đi ngược.</li>
-  <li>Khung làm việc chuẩn: coi mỗi quan sát là một biến ngẫu nhiên thuộc một họ phân phối, thường giả định <b>độc lập và cùng phân phối</b> (i.i.d.). Sau đó chọn một <b>ước lượng</b> (estimator) nối tham số với dữ liệu, chẳng hạn p̂ = X̄<sub>n</sub> cho đồng xu.</li>
-  <li><b>Luật số lớn</b> (law of large numbers, LLN): trung bình mẫu tiến về kỳ vọng thật khi n tăng. Đây là lý do một ước lượng dựa trên trung bình là hợp lý.</li>
-  <li><b>Định lý giới hạn trung tâm</b> (central limit theorem, CLT): sai số của trung bình có dạng xấp xỉ chuẩn, với độ lệch chuẩn σ/√n. Điều này đúng với hầu như mọi phân phối gốc, miễn là phương sai hữu hạn.</li>
-  <li>Đại lượng σ/√n gọi là <b>sai số chuẩn</b> (standard error). Muốn sai số giảm 10 lần thì cần dữ liệu nhiều gấp 100 lần.</li>
-  <li>Phân phối gốc càng lệch thì cần n càng lớn để trung bình trông chuẩn. Một đồng xu rất lệch cần nhiều quan sát hơn hẳn một phân phối đều.</li>
-</ul>
+<p>Xác suất và thống kê đi theo hai chiều ngược nhau. Xác suất đi xuôi: cho biết đồng xu, hỏi các lần tung sẽ trông thế nào. Thống kê đi ngược: cho biết các lần tung, hỏi đồng xu là đồng xu gì. Trên thị trường, ta không bao giờ được nhìn thấy tham số thật, chẳng hạn lợi suất kỳ vọng hay xác suất một lệnh được khớp. Ta chỉ có dữ liệu. Có hai định lý bắc cầu giữa hai chiều này, và gần như mọi con số mà một quant báo cáo, từ hệ số Sharpe tới khoảng tin cậy của một tín hiệu, đều dựa vào chúng.</p>
 
-<h4>Công thức</h4>
-<div class="formula"><span class="lbl">Luật số lớn: hội tụ theo xác suất và hầu chắc chắn</span>X̄<sub>n</sub> = <span class="frac"><span>1</span><span>n</span></span> Σ<sub>i=1</sub><sup>n</sup> X<sub>i</sub> &nbsp;⟶&nbsp; μ &nbsp;&nbsp;khi n → ∞</div>
-<div class="formula"><span class="lbl">Định lý giới hạn trung tâm: hội tụ theo phân phối</span>√n · <span class="frac"><span>X̄<sub>n</sub> − μ</span><span>σ</span></span> &nbsp;⟶&nbsp; N(0, 1) &nbsp;&nbsp;khi n → ∞</div>
-<div class="formula"><span class="lbl">Sai số chuẩn của trung bình</span>SE(X̄<sub>n</sub>) = <span class="frac"><span>σ</span><span>√n</span></span></div>
-<div class="formula"><span class="lbl">Hai quy tắc trên bàn giao dịch: thống kê t của chiến lược có hệ số Sharpe năm S sau T năm, và số lệnh cần để lợi thế e vượt nhiễu σ</span>t ≈ S · √T &nbsp;&nbsp;&nbsp;&nbsp; n ≫ <span class="frac"><span>σ<sup>2</sup></span><span>e<sup>2</sup></span></span></div>
-
-<h4>Ví dụ minh hoạ: lợi thế nhỏ, rất nhiều lệnh</h4>
-<p>Một chiến lược tần suất cao lãi trung bình e = 0,02 USD mỗi lệnh. Lãi/lỗ của từng lệnh có độ lệch chuẩn σ = 1 USD. Cần bao nhiêu lệnh để lợi nhuận nổi lên khỏi nhiễu?</p>
+<h4>Khung làm việc của nhà thống kê</h4>
+<p>Mọi bài toán ước lượng đều đi qua cùng một trình tự ba bước.</p>
 <ol>
-  <li>Sau n lệnh, tổng lãi/lỗ có kỳ vọng n·e = 0,02n và độ lệch chuẩn σ√n = √n.</li>
-  <li>Tỉ số tín hiệu trên nhiễu là t = 0,02n / √n = 0,02√n.</li>
-  <li>Muốn t = 2 thì √n = 100, tức n = 10.000 lệnh. Với 2.000 lệnh mỗi ngày, chỉ mất 5 ngày.</li>
-  <li>Theo CLT, tổng lãi/lỗ xấp xỉ chuẩn. Xác suất lỗ sau 10.000 lệnh là P(Z &lt; −2) ≈ 2,3%.</li>
+  <li><b>Mô hình hoá dữ liệu.</b> Coi mỗi quan sát là một biến ngẫu nhiên, và giả định nó thuộc một họ phân phối quen thuộc: Bernoulli cho kết quả có/không, Poisson cho số lần đếm, chuẩn cho sai số đo. Thông thường ta còn giả định các quan sát <b>độc lập và cùng phân phối</b> (independent and identically distributed, viết tắt i.i.d.): lần quan sát này không ảnh hưởng lần sau, và mọi lần đều sinh ra từ cùng một cơ chế.</li>
+  <li><b>Nối tham số với dữ liệu bằng một ước lượng</b> (estimator). Ước lượng là một công thức tính từ dữ liệu, dùng để đoán tham số chưa biết. Với đồng xu, nếu mỗi X<sub>i</sub> ~ Bernoulli(p) thì E[X<sub>i</sub>] = p. Vì tham số chính là kỳ vọng, cách tự nhiên là ước lượng nó bằng trung bình mẫu: p̂ = X̄<sub>n</sub>, tức tỉ lệ số lần ra mặt ngửa.</li>
+  <li><b>Nói rõ mình chắc chắn đến đâu.</b> Một con số đơn lẻ chưa đủ. Nếu p̂ = 0,55, liệu giá trị thật có nằm trong [0,5; 0,6] không? Trong khoảng hẹp hơn nhiều, [0,54; 0,56]? Câu trả lời phụ thuộc vào số lần tung: 100 lần tung chỉ đủ cho khoảng rộng, còn 10.000 lần mới đủ cho khoảng hẹp. Bài 07 sẽ trả lời câu hỏi này một cách định lượng.</li>
 </ol>
-<p>So sánh với một chiến lược theo ngày có hệ số Sharpe năm bằng 1. Theo t ≈ S√T, cần T = (2/1)<sup>2</sup> = 4 năm dữ liệu để đạt t ≈ 2. Với Sharpe 0,5, con số là 16 năm. Phần lớn các backtest ngắn mà trông “rất đẹp” chỉ là nhiễu.</p>
+<p>Bước 2 chỉ hợp lý nếu trung bình mẫu thực sự tiến về kỳ vọng. Bước 3 cần biết sai số của trung bình phân bố ra sao. Đó chính là nội dung của hai định lý dưới đây.</p>
+
+<h4>Luật số lớn</h4>
+<div class="formula"><span class="lbl">Luật số lớn (law of large numbers, LLN): hội tụ theo xác suất, và hầu chắc chắn</span>X̄<sub>n</sub> = <span class="frac"><span>1</span><span>n</span></span> Σ<sub>i=1</sub><sup>n</sup> X<sub>i</sub> &nbsp;⟶&nbsp; μ &nbsp;&nbsp;khi n → ∞</div>
+<p>Phát biểu bằng lời: khi số quan sát tăng, trung bình mẫu tiến về kỳ vọng thật μ. Có hai cách hiểu chữ “tiến về”. Dạng <b>yếu</b> nói rằng với mọi sai số ε &gt; 0 cho trước, xác suất để |X̄<sub>n</sub> − μ| &gt; ε giảm về 0. Dạng <b>mạnh</b> nói rằng, với xác suất 1, toàn bộ dãy trung bình chạy hội tụ về μ.</p>
+<p>Dạng yếu có một chứng minh ngắn, đáng nhớ vì nó cho luôn tốc độ. Do các quan sát độc lập, phương sai cộng lại: Var(X̄<sub>n</sub>) = nσ<sup>2</sup>/n<sup>2</sup> = σ<sup>2</sup>/n. Áp dụng bất đẳng thức Chebyshev:</p>
+<div class="formula"><span class="lbl">Chứng minh dạng yếu bằng bất đẳng thức Chebyshev</span>P(|X̄<sub>n</sub> − μ| ≥ ε) ≤ <span class="frac"><span>Var(X̄<sub>n</sub>)</span><span>ε<sup>2</sup></span></span> = <span class="frac"><span>σ<sup>2</sup></span><span>n ε<sup>2</sup></span></span> &nbsp;⟶&nbsp; 0</div>
+<p>Đây là cơ sở cho bước 2 ở trên. Với mọi phân phối thông dụng, kỳ vọng là một hàm đơn giản của tham số: p với Bernoulli, λ với Poisson, 1/λ với phân phối mũ. Vì vậy, một trung bình đủ dài sẽ khoá được tham số. Lưu ý rằng luật số lớn không hề “bù trừ” một chuỗi thua. Một độ lệch đã xảy ra không bị sửa lại; nó chỉ bị pha loãng dần bởi các quan sát mới. Tin điều ngược lại là ngụy biện của con bạc (gambler’s fallacy).</p>
 
 <figure class="demo">
-  <div class="stage" id="demo-06"></div>
-  <div class="controls" id="ctl-06"></div>
-  <div class="readout" id="out-06"></div>
-  <figcaption><b>Mô hình 6.1 – Trung bình chạy và phân phối của sai số.</b> Bên trái: 10 người cùng rút 1.000 quan sát từ một phân phối gốc và theo dõi trung bình tích luỹ (trục ngang theo thang log). Phễu màu xanh là μ ± 1,96σ/√n. Bên phải: 4.000 trung bình, mỗi trung bình gồm n quan sát, đã chuẩn hoá thành Z = √n(X̄ − μ)/σ, so với đường cong N(0, 1). Ô nhỏ góc phải là hình dạng phân phối gốc. Chọn phân phối gốc rồi kéo n để xem lúc nào histogram bám vào đường chuẩn.</figcaption>
+  <div class="stage" id="demo3-06"></div>
+  <div class="controls" id="ctl3-06"></div>
+  <div class="readout" id="out3-06"></div>
+  <figcaption><b>Hình 6.1 – Trung bình chạy ổn định dần.</b> Tám người, mỗi người tung một đồng xu có xác suất ngửa p tổng cộng 1.000 lần, và theo dõi tỉ lệ mặt ngửa tích luỹ của mình. Ở những lần tung đầu, tám đường lệch nhau rất xa; về cuối, tất cả bám sát p. Phễu xanh là p ± 1,96√(p(1 − p)/n), co lại theo 1/√n. Kéo thanh trượt p, bấm “Tung lại” để xem một nhóm khác; khung số so sánh độ phân tán thực tế của tám người với độ rộng của phễu ở n = 10, 100 và 1.000.</figcaption>
 </figure>
+
+<h4>Định lý giới hạn trung tâm</h4>
+<p>Luật số lớn chỉ nói trung bình tiến <i>gần</i> μ. <b>Định lý giới hạn trung tâm</b> (central limit theorem, CLT) nói gần đến mức nào, và sai số có hình dạng ra sao:</p>
+<div class="formula"><span class="lbl">Hội tụ theo phân phối</span>√n · <span class="frac"><span>X̄<sub>n</sub> − μ</span><span>σ</span></span> &nbsp;⟶&nbsp; N(0, 1) &nbsp;&nbsp;khi n → ∞</div>
+<p>Điều đáng chú ý là định lý không đòi hỏi gì về hình dạng phân phối của từng quan sát, chỉ cần phương sai σ<sup>2</sup> hữu hạn. Dữ liệu gốc có thể lệch, có hai đỉnh, hay chỉ nhận hai giá trị 0 và 1; sai số của trung bình vẫn xấp xỉ chuẩn, với độ lệch chuẩn bằng</p>
+<div class="formula"><span class="lbl">Sai số chuẩn của trung bình (standard error)</span>SE(X̄<sub>n</sub>) = <span class="frac"><span>σ</span><span>√n</span></span></div>
+<p>Sai số chuẩn giảm theo căn bậc hai của cỡ mẫu. Muốn sai số nhỏ đi 10 lần, ta cần dữ liệu nhiều gấp 100 lần. Đây là quy luật “lợi suất giảm dần” mà mọi người làm định lượng phải sống cùng.</p>
+<p>CLT cũng giải thích vì sao đường cong hình chuông xuất hiện khắp nơi: rất nhiều đại lượng đo được là tổng của vô số tác động nhỏ, độc lập với nhau. Biến động giá trong một ngày là tổng của hàng nghìn giao dịch nhỏ; sai số đo là tổng của nhiều nguồn nhiễu.</p>
+<p>Hai lưu ý quan trọng. Thứ nhất, định lý cần phương sai hữu hạn. Phân phối Cauchy không có phương sai, thậm chí không có kỳ vọng, và trung bình của n quan sát Cauchy vẫn có đúng phân phối Cauchy ban đầu, không bao giờ ổn định. Lợi suất tài chính có đuôi dày không tới mức đó, nhưng CLT hội tụ với chúng chậm hơn nhiều so với sách giáo khoa gợi ý. Thứ hai, giả định i.i.d. thường bị vi phạm: khi lợi suất có tự tương quan, cỡ mẫu hiệu dụng nhỏ hơn n, và sai số chuẩn thật lớn hơn σ/√n.</p>
 
 <figure class="demo">
   <div class="stage" id="demo2-06"></div>
   <div class="controls" id="ctl2-06"></div>
   <div class="readout" id="out2-06"></div>
-  <figcaption><b>Mô hình 6.2 – Bảng Galton (Galton board) trong không gian 3D.</b> Ở mỗi hàng đinh, viên bi nảy sang phải với xác suất p. Ô cuối cùng của nó là tổng các lần nảy phải, tức một biến nhị thức. Khi đủ nhiều bi, các cột xếp theo đường cong chuẩn màu cam. Đặt p lệch khỏi 0,5 thì đỉnh dịch đi nhưng hình chuông vẫn còn. Kéo để xoay.</figcaption>
+  <figcaption><b>Hình 6.2 – Bảng Galton (Galton board) trong không gian 3D.</b> Ở mỗi hàng đinh, viên bi nảy sang phải với xác suất p. Ô cuối cùng của nó là tổng các lần nảy phải, tức một biến nhị thức với kỳ vọng Rp và phương sai Rp(1 − p). Khi đủ nhiều bi, các cột xếp theo đường cong chuẩn màu cam. Đặt p lệch khỏi 0,5 thì đỉnh dịch sang một bên nhưng hình chuông vẫn còn. Dùng “Thêm ngay 5.000 bi” để thấy sự khớp rõ hơn. Kéo để xoay.</figcaption>
 </figure>
 
-<h4>Lưu ý khi phỏng vấn</h4>
-<ul>
-  <li>Câu hỏi quen thuộc: 100 quan sát cho sai số chuẩn 0,4, cần bao nhiêu để sai số còn 0,1? Giảm 4 lần cần 4<sup>2</sup> = 16 lần dữ liệu, tức 1.600 quan sát.</li>
-  <li>CLT cần phương sai hữu hạn. Phân phối Cauchy không có phương sai, nên trung bình của nó không bao giờ ổn định. Lợi suất có đuôi dày làm CLT hội tụ chậm hơn nhiều.</li>
-  <li>Giả định i.i.d. thường bị vi phạm. Lợi suất có tự tương quan làm cỡ mẫu hiệu dụng nhỏ hơn n, nên sai số chuẩn thật lớn hơn σ/√n.</li>
-  <li>Luật số lớn không “bù trừ” chuỗi thua. Độ lệch cũ không bị sửa, nó chỉ bị pha loãng bởi các quan sát mới. Nghĩ ngược lại là ngụy biện của con bạc (gambler’s fallacy).</li>
-</ul>
+<figure class="demo">
+  <div class="stage" id="demo-06"></div>
+  <div class="controls" id="ctl-06"></div>
+  <div class="readout" id="out-06"></div>
+  <figcaption><b>Hình 6.3 – Máy lấy mẫu minh hoạ CLT.</b> Chọn một phân phối gốc “xấu” (hình dạng của nó hiện ở ô nhỏ góc trên bên phải) và số quan sát n trong mỗi trung bình. Histogram bên phải gồm 4.000 trung bình đã trừ μ và chia cho σ/√n, đặt cạnh đường N(0, 1). Với n = 1, histogram chính là phân phối gốc; tới n = 30, gần như mọi thứ đã nằm trên đường chuẩn. Nguồn rất lệch, như đồng xu có p = 5%, cần n lớn hơn hẳn. Bảng bên trái vẽ trung bình chạy của 10 người cho cùng nguồn đó, kèm phễu μ ± 1,96σ/√n.</figcaption>
+</figure>
+<p>Có thể đo mức “chưa chuẩn” bằng độ xiên (skewness). Độ xiên của trung bình n quan sát bằng độ xiên của một quan sát chia cho √n. Phân phối mũ có độ xiên 2, nên ở n = 30 trung bình còn độ xiên 2/√30 ≈ 0,37. Đồng xu p = 0,05 có độ xiên (1 − 2p)/√(p(1 − p)) ≈ 4,13; ở n = 30 trung bình vẫn còn độ xiên khoảng 0,75, và phải tới n ≈ 430 mới xuống dưới 0,2.</p>
+
+<div class="note"><b>Cần nhớ.</b> Sai số chuẩn của một trung bình là σ/√n, và trung bình có phân phối xấp xỉ chuẩn. Hai sự kiện này nằm phía sau mọi khoảng tin cậy, mọi kiểm định t và mọi cuộc tranh luận “backtest này có thật không?” mà bạn sẽ gặp.</div>
+
+<h4>Ứng dụng trên bàn giao dịch</h4>
+<h5>Chiến lược này có thật không?</h5>
+<p>Một chiến lược giao dịch theo ngày có lợi suất ngày trung bình m và độ lệch chuẩn s. Hệ số Sharpe năm là S = √252 · m/s. Sau T năm, tức N = 252T ngày, thống kê t của lợi suất trung bình là t = m/(s/√N) = (m/s)√(252T) = S√T. Vậy:</p>
+<div class="formula"><span class="lbl">Thống kê t của chiến lược có Sharpe năm S sau T năm</span>t ≈ S · √T</div>
+<p>Với Sharpe thật bằng 1, cần T = (2/1)<sup>2</sup> = 4 năm dữ liệu để đạt t ≈ 2. Với Sharpe 0,5, con số là 16 năm. Hệ quả: phần lớn các backtest ngắn mà trông “rất đẹp” chỉ là nhiễu.</p>
+<h5>Cần bao nhiêu lệnh?</h5>
+<p>Giả sử mỗi lệnh có lợi thế (edge) kỳ vọng e và độ nhiễu σ. Sau n lệnh, tổng lãi/lỗ có kỳ vọng ne và độ lệch chuẩn σ√n. Tỉ số tín hiệu trên nhiễu là ne/(σ√n) = (e/σ)√n, nên lợi nhuận vượt hẳn nhiễu khi</p>
+<div class="formula">n ≫ (σ / e)<sup>2</sup></div>
+<p><b>Ví dụ.</b> Một chiến lược tần suất cao lãi trung bình e = 0,02 USD mỗi lệnh, với σ = 1 USD. Tỉ số tín hiệu trên nhiễu là 0,02√n. Muốn nó đạt 2 thì √n = 100, tức n = 10.000 lệnh; với 2.000 lệnh mỗi ngày chỉ mất 5 ngày. Theo CLT, tổng lãi/lỗ sau 10.000 lệnh xấp xỉ chuẩn, nên xác suất vẫn lỗ là P(Z &lt; −2) ≈ 2,3%. Đây là lý do các công ty tần suất cao, với lợi thế rất nhỏ mỗi lệnh nhưng số lệnh khổng lồ, kiếm tiền đều đặn đến vậy.</p>
+<h5>Sai số của định giá Monte Carlo</h5>
+<p>Giá Monte Carlo là trung bình của kết quả trên các đường mô phỏng, nên sai số của nó giảm theo 1/√(số đường). Muốn chính xác gấp 10 lần, cần gấp 100 lần số đường. Vì thế người ta đầu tư nhiều vào các kỹ thuật giảm phương sai (variance reduction) thay vì chỉ tăng số đường.</p>
+
+<h4>Trong code</h4>
+<p>Đoạn TypeScript dưới đây lặp lại thí nghiệm của Hình 6.3 với 200.000 trung bình, mỗi trung bình gồm 30 quan sát mũ, rồi kiểm tra rằng Z có trung bình gần 0, độ lệch chuẩn gần 1 và khoảng 95% nằm trong ±1,96. Dòng cuối tính số năm cần cho một chiến lược Sharpe 1.</p>
+<pre class="code"><code><span class="c">// mulberry32: bộ sinh số giả ngẫu nhiên có hạt giống</span>
+function rng(seed: number) {
+  let s = seed &gt;&gt;&gt; 0;
+  return () =&gt; {
+    s = (s + 0x6d2b79f5) | 0;
+    let t = Math.imul(s ^ (s &gt;&gt;&gt; 15), 1 | s);
+    t = (t + Math.imul(t ^ (t &gt;&gt;&gt; 7), 61 | t)) ^ t;
+    return ((t ^ (t &gt;&gt;&gt; 14)) &gt;&gt;&gt; 0) / 4294967296;
+  };
+}
+const u = rng(4);
+const expDraw = () =&gt; -Math.log(1 - u()); <span class="c">// phân phối mũ, μ = σ = 1</span>
+
+<span class="c">// Trung bình của n quan sát mũ, chuẩn hoá: tiến về N(0, 1)</span>
+const n = 30, reps = 200_000;
+const z: number[] = [];
+for (let r = 0; r &lt; reps; r++) {
+  let sum = 0;
+  for (let i = 0; i &lt; n; i++) sum += expDraw();
+  z.push((sum / n - 1) / (1 / Math.sqrt(n)));
+}
+const mean = z.reduce((s, v) =&gt; s + v, 0) / reps;
+const sd = Math.sqrt(z.reduce((s, v) =&gt; s + (v - mean) ** 2, 0) / reps);
+console.log(mean.toFixed(3), sd.toFixed(3)); <span class="c">// -0.003 1.001</span>
+console.log((z.filter((v) =&gt; Math.abs(v) &lt; 1.96).length / reps).toFixed(3)); <span class="c">// 0.952</span>
+
+<span class="c">// Chiến lược Sharpe 1 cần bao nhiêu năm để đạt t = 2?</span>
+const sharpe = 1.0;
+console.log((2 / sharpe) ** 2); <span class="c">// 4</span></code></pre>
+<p>Tỉ lệ 0,952 hơi lệch khỏi 0,950 không chỉ vì sai số lấy mẫu: ở n = 30, trung bình các quan sát mũ vẫn còn xiên nhẹ, đúng như phân tích độ xiên ở trên.</p>
+
+<h4>Tự kiểm tra</h4>
+<p>Bạn ước lượng một kỳ vọng từ 100 quan sát i.i.d. và được sai số chuẩn 0,4. Cần khoảng bao nhiêu quan sát để sai số chuẩn còn 0,1?</p>
+<ol type="A">
+  <li>400</li>
+  <li>800</li>
+  <li>1.600</li>
+  <li>10.000</li>
+</ol>
+<details class="qa"><summary>Đáp án và lời giải</summary>
+<p>Đáp án <b>C</b>. Sai số chuẩn bằng σ/√n. Từ 0,4 = σ/√100 suy ra σ = 4. Muốn σ/√n = 0,1 thì √n = 40, tức n = 1.600. Nói gọn: giảm sai số 4 lần cần 4<sup>2</sup> = 16 lần dữ liệu. Phương án A (400) là lỗi thường gặp khi nghĩ sai số giảm tỉ lệ với n chứ không phải √n.</p>
+</details>
 
 <script>
 (()=>{
@@ -239,6 +299,57 @@
   Q.button(ctl,'Thêm ngay 5.000 bi',()=>instant(5000));
   Q.button(ctl,'Xoá',reset);
   queue=200;
+})();
+
+(()=>{
+  /* ---------- Hình 6.1: tám người tung xu, trung bình chạy và phễu 1/√n ---------- */
+  const stage=document.getElementById('demo3-06'), ctl=document.getElementById('ctl3-06'), out=document.getElementById('out3-06');
+  const S={p:0.5, seed:7, log:false};
+  const K=8, T=1000;
+  let paths=[], prog=0;
+  function sim(){
+    const r=Q.rng(S.seed*7919+11); paths=[];
+    for(let k=0;k<K;k++){ const a=new Float32Array(T); let h=0; for(let t=0;t<T;t++){ if(r()<S.p) h++; a[t]=h/(t+1); } paths.push(a); }
+    prog=0; report();
+  }
+  function report(){
+    const sd=Math.sqrt(S.p*(1-S.p));
+    const rows=[10,100,1000].map(n=>{ let lo=1,hi=0; paths.forEach(a=>{ lo=Math.min(lo,a[n-1]); hi=Math.max(hi,a[n-1]); });
+      return `n = ${String(n).padStart(4)}:  tám người nằm trong [${Q.fmt(lo,3)}; ${Q.fmt(hi,3)}], độ phân tán ${Q.fmt(hi-lo,3)};  phễu 95% rộng ${Q.fmt(2*1.96*sd/Math.sqrt(n),3)}`; });
+    out.textContent=`p thật = ${Q.fmt(S.p,2)};  độ lệch chuẩn một lần tung σ = √(p(1 − p)) = ${Q.fmt(sd,3)}\n`+rows.join('\n')+`\nMỗi lần n tăng 100 lần, phễu hẹp đi 10 lần.`;
+  }
+  const cv=Q.canvas(stage,340,draw);
+  function draw(ctx,w,h){
+    const C=Q.colors(); ctx.clearRect(0,0,w,h);
+    const L=52, R=w-18, Tp=28, B=h-40;
+    const X=t=>S.log?L+Math.log10(t)/3*(R-L):L+(t-1)/(T-1)*(R-L), Y=v=>B-v*(B-Tp);
+    ctx.strokeStyle=C.line; ctx.lineWidth=1; ctx.strokeRect(L,Tp,R-L,B-Tp);
+    const sd=Math.sqrt(S.p*(1-S.p));
+    ctx.fillStyle=C.a; ctx.globalAlpha=0.15; ctx.beginPath();
+    const ts=[]; for(let t=1;t<=T;t=t<20?t+1:Math.ceil(t*1.03)) ts.push(t); ts.push(T);
+    ts.forEach((t,j)=>{ const v=Math.min(1,S.p+1.96*sd/Math.sqrt(t)); j?ctx.lineTo(X(t),Y(v)):ctx.moveTo(X(t),Y(v)); });
+    ts.slice().reverse().forEach(t=>ctx.lineTo(X(t),Y(Math.max(0,S.p-1.96*sd/Math.sqrt(t)))));
+    ctx.closePath(); ctx.fill(); ctx.globalAlpha=1;
+    ctx.strokeStyle=C.a; ctx.lineWidth=1.5; ctx.setLineDash([5,4]); ctx.beginPath(); ctx.moveTo(L,Y(S.p)); ctx.lineTo(R,Y(S.p)); ctx.stroke(); ctx.setLineDash([]);
+    const shown=Math.max(1,Math.round(T*prog)), pal=[C.c,C.b,C.d,C.ink];
+    ctx.save(); ctx.beginPath(); ctx.rect(L,Tp,R-L,B-Tp); ctx.clip();
+    paths.forEach((a,k)=>{ ctx.strokeStyle=pal[k%pal.length]; ctx.globalAlpha=k<4?0.9:0.55; ctx.lineWidth=1.4; ctx.beginPath();
+      for(let t=1;t<=shown;t++){ const x=X(t), y=Y(a[t-1]); t>1?ctx.lineTo(x,y):ctx.moveTo(x,y); } ctx.stroke(); });
+    ctx.restore(); ctx.globalAlpha=1;
+    ctx.font='12px JetBrains Mono,ui-monospace,monospace'; ctx.fillStyle=C.muted; ctx.textAlign='right';
+    [0,0.25,0.5,0.75,1].forEach(v=>ctx.fillText(Q.fmt(v,2),L-6,Y(v)+4));
+    ctx.textAlign='center';
+    (S.log?[1,10,100,1000]:[1,200,400,600,800,1000]).forEach(t=>ctx.fillText(t.toLocaleString('vi-VN'),X(t),B+15));
+    ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif';
+    ctx.fillText(S.log?'số lần tung n (thang log)':'số lần tung n',(L+R)/2,B+31);
+    ctx.textAlign='left'; ctx.fillStyle=C.ink; ctx.fillText('Tỉ lệ mặt ngửa tích luỹ của tám người',L,Tp-10);
+    ctx.fillStyle=C.a; ctx.textAlign='right'; ctx.fillText(`phễu p ± 1,96σ/√n, p = ${Q.fmt(S.p,2)}`,R,Tp-10); ctx.textAlign='left';
+  }
+  Q.loop(stage,()=>{ if(prog<1){ prog=Math.min(1,prog+0.01); cv.redraw(); } });
+  Q.slider(ctl,'Xác suất ngửa p',0.05,0.95,0.05,S.p,v=>{ S.p=v; sim(); cv.redraw(); },v=>Q.fmt(v,2));
+  Q.button(ctl,'Tung lại',()=>{ S.seed++; sim(); cv.redraw(); },true);
+  const bl=Q.button(ctl,'Trục ngang: thang log',()=>{ S.log=!S.log; bl.textContent=S.log?'Trục ngang: tuyến tính':'Trục ngang: thang log'; cv.redraw(); });
+  sim();
 })();
 </script>
 </section>

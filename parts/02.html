@@ -2,74 +2,153 @@
 <header>
   <span class="num">02</span>
   <h3>Kỳ vọng và tính tuyến tính</h3>
-  <p class="meta">12 phút · Ứng dụng: định giá mọi khoản chi trả: quyền chọn, cược, trò chơi · <a href="https://hft.md/learn/expectation/">Bài gốc (tiếng Anh)</a></p>
+  <p class="meta">Phần 1 · Xác suất · Bài 2 · 12 phút · <a href="https://hft.md/learn/expectation/">Bài gốc (tiếng Anh)</a></p>
 </header>
 
-<p>Giá hợp lý của một quyền chọn, một trái phiếu hay một ván cược đều là giá trị kỳ vọng của khoản chi trả. Biết tính kỳ vọng và biết dùng tính tuyến tính là đủ để giải gọn khoảng một nửa số câu hỏi xác suất trong phỏng vấn.</p>
+<p><i>Bài này nói về trung bình có trọng số dùng để định giá mọi trò chơi, và về tính tuyến tính, mẹo giải được một nửa số câu hỏi phỏng vấn.</i></p>
 
-<h4>Ý chính</h4>
-<ul>
-  <li><b>Giá trị kỳ vọng</b> (expected value), hay trung bình μ, là trung bình có trọng số của các kết quả. Trọng số chính là xác suất của từng kết quả.</li>
-  <li>Muốn định giá một khoản chi trả g(X), ta giữ nguyên trọng số p(x) và chỉ thay giá trị x bằng g(x). Nói chung E[g(X)] khác g(E[X]).</li>
-  <li>Bài toán có quyền lựa chọn được giải bằng <b>quy nạp lùi</b> (backward induction). Ở mỗi bước, so giá trị đang cầm với giá trị của phương án đi tiếp.</li>
-  <li><b>Tính tuyến tính</b> (linearity): kỳ vọng của một tổng bằng tổng các kỳ vọng. Điều này đúng cả khi các biến phụ thuộc nhau.</li>
-  <li>Câu hỏi dạng “số lượng kỳ vọng” hầu như luôn giải được bằng <b>biến chỉ báo</b> (indicator variable). Không cần biết phân phối đồng thời.</li>
-  <li>Trên bàn giao dịch, lãi/lỗ kỳ vọng của cả sổ là tổng lợi thế kỳ vọng của từng lệnh. Tương quan chỉ ảnh hưởng tới rủi ro, không ảnh hưởng tới trung bình.</li>
-</ul>
+<p>Trong tài chính, mọi mức giá đều là giá trị kỳ vọng của một thứ gì đó. Một quyền chọn, một trái phiếu hay một ván cược xúc xắc đều như nhau: khi đã liệt kê được khoản chi trả trong từng kịch bản và xác suất của từng kịch bản, giá hợp lý là trung bình có trọng số của các khoản chi trả ấy. Bài này hướng dẫn cách tính trung bình đó, rồi đi sâu vào một tính chất của nó, tính chất biến nhiều câu hỏi khó thành phép cộng đơn giản.</p>
 
-<h4>Công thức</h4>
-<div class="formula"><span class="lbl">Định nghĩa: biến rời rạc với hàm khối xác suất p(x), biến liên tục với mật độ f(x)</span>E[X] = Σ<sub>x</sub> x · p(x) &nbsp;&nbsp;hoặc&nbsp;&nbsp; E[X] = ∫ x · f(x) dx</div>
-<div class="formula"><span class="lbl">Định giá một khoản chi trả g(X)</span>E[g(X)] = Σ<sub>x</sub> g(x) · p(x) &nbsp;&nbsp;hoặc&nbsp;&nbsp; ∫ g(x) · f(x) dx</div>
-<div class="formula"><span class="lbl">Tính tuyến tính: không cần điều kiện độc lập</span>E[aX + b] = a · E[X] + b, &nbsp;&nbsp; E[X<sub>1</sub> + X<sub>2</sub> + … + X<sub>n</sub>] = E[X<sub>1</sub>] + E[X<sub>2</sub>] + … + E[X<sub>n</sub>]</div>
-<div class="formula"><span class="lbl">Đếm bằng biến chỉ báo: I<sub>i</sub> = 1 nếu sự kiện i xảy ra, 0 nếu không</span>N = Σ<sub>i</sub> I<sub>i</sub> &nbsp;⇒&nbsp; E[N] = Σ<sub>i</sub> P(sự kiện i)</div>
-<div class="formula"><span class="lbl">Xúc xắc n mặt, đổ lại không giới hạn với phí c, giữ mọi mặt ≥ t (có k = n − t + 1 mặt được giữ)</span>V = <span class="frac"><span>(t + … + n) − (t − 1) · c</span><span>k</span></span></div>
+<h4>Trung bình có trọng số</h4>
+<p>Một biến ngẫu nhiên (random variable) X được mô tả bởi <b>hàm khối xác suất</b> (probability mass function) p(x) nếu nó rời rạc, hoặc bởi <b>hàm mật độ</b> (density) f(x) nếu nó liên tục. <b>Giá trị kỳ vọng</b> (expected value), còn gọi là trung bình và ký hiệu μ, gán cho mỗi giá trị một trọng số đúng bằng xác suất của nó rồi cộng lại:</p>
+<div class="formula"><span class="lbl">Định nghĩa kỳ vọng: rời rạc và liên tục</span>E[X] = Σ<sub>x</sub> x · p(x) &nbsp;&nbsp;hoặc&nbsp;&nbsp; E[X] = ∫ x · f(x) dx</div>
+<p>Hình dung vật lý rất hữu ích: đặt khối lượng p(x) tại mỗi điểm x trên một thanh cứng. Kỳ vọng là điểm mà thanh cân bằng, tức trọng tâm của phân phối. Nó không nhất thiết là một giá trị mà X có thể nhận. Không ai đổ xúc xắc ra 3,5 chấm, nhưng 3,5 vẫn là trọng tâm.</p>
+<p>Cùng công thức ấy định giá được mọi khoản chi trả g(X). Trọng số giữ nguyên là p(x), chỉ thay giá trị x bằng số tiền nhận được g(x):</p>
+<div class="formula"><span class="lbl">Kỳ vọng của một khoản chi trả g(X)</span>E[g(X)] = Σ<sub>x</sub> g(x) · p(x) &nbsp;&nbsp;hoặc&nbsp;&nbsp; ∫ g(x) · f(x) dx</div>
+<p>Chú ý: nói chung E[g(X)] khác g(E[X]). Ví dụ với xúc xắc, E[X<sup>2</sup>] = 91/6 ≈ 15,17, trong khi (E[X])<sup>2</sup> = 12,25. Với một quyền chọn mua có giá thực hiện K, giá trị là E[max(X − K, 0)], không phải max(E[X] − K, 0). Phần chênh lệch đó chính là giá trị của sự bất định, và bài sau về phương sai sẽ đo nó.</p>
+<p>Ví dụ cơ bản nhất: một xúc xắc sáu mặt cân đối cho</p>
+<div class="formula">E[X] = <span class="frac"><span>1 + 2 + 3 + 4 + 5 + 6</span><span>6</span></span> = <span class="frac"><span>21</span><span>6</span></span> = 3,5</div>
+<p>Nếu một trò chơi trả cho bạn số đô bằng số chấm, giá hợp lý của nó là 3,5 đô. Mua vé rẻ hơn mức đó thì về trung bình bạn có lãi. Mua đắt hơn thì về trung bình bạn lỗ. Một nhà tạo lập thị trường được hỏi giá trò chơi này sẽ yết giá mua thấp hơn 3,5 một chút và giá bán cao hơn 3,5 một chút. Phần chênh lệch là tiền công cho việc gánh rủi ro.</p>
 
-<h4>Ví dụ minh hoạ: trò chơi đổ lại xúc xắc</h4>
-<p>Bạn đổ một xúc xắc sáu mặt và nhận số tiền bằng số chấm. Không có lựa chọn nào thì giá hợp lý là (1 + 2 + … + 6)/6 = 3,5 đô. Giờ thêm quyền đổ lại một lần, và phải nhận kết quả lần hai.</p>
+<h4>Định giá một lựa chọn: trò chơi đổ lại xúc xắc</h4>
+<p>Người phỏng vấn rất thích thêm một quyết định vào trò chơi. Bạn đổ một xúc xắc. Bạn được quyền đổ lại một lần, nhưng nếu đổ lại thì bắt buộc nhận kết quả lần hai. Trò chơi đáng giá bao nhiêu?</p>
+<p>Nguyên tắc là <b>đi ngược từ cuối</b>, hay quy nạp lùi (backward induction). Ở bước cuối không còn lựa chọn gì, nên mọi thứ đã biết. Sau đó lùi lại từng bước, ở mỗi bước so sánh giá trị đang cầm với giá trị của phương án đi tiếp.</p>
 <ol>
-  <li>Bắt đầu từ bước cuối. Lần đổ thứ hai không còn lựa chọn, nên có giá trị 3,5.</li>
-  <li>Ở lần đầu, giữ mặt nào lớn hơn 3,5, tức 4, 5, 6. Đổ lại khi ra 1, 2, 3.</li>
-  <li>Giá trị trò chơi: E = <span class="frac"><span>3</span><span>6</span></span> · 3,5 + <span class="frac"><span>4 + 5 + 6</span><span>6</span></span> = 1,75 + 2,5 = 4,25.</li>
-  <li>Nếu mỗi lần đổ lại tốn 1 đô, phương án đổ lại chỉ còn đáng 2,5. Ta chỉ đổ lại khi ra 1 hoặc 2: E = <span class="frac"><span>2</span><span>6</span></span> · 2,5 + <span class="frac"><span>3 + 4 + 5 + 6</span><span>6</span></span> = 23/6 ≈ 3,83.</li>
-  <li>Nếu được đổ lại không giới hạn, mỗi lần 1 đô, gọi giá trị trò chơi là V. Ta giữ mặt nào lớn hơn V − 1. Thử giữ 4, 5, 6: V = 2,5 + ½(V − 1), suy ra V = 4. Giữ từ 3 trở lên cũng cho V = 4, vì mặt 3 đúng bằng điểm hoà vốn.</li>
+  <li>Lần đổ thứ hai là một lần đổ mới, không có lựa chọn, nên có giá trị 3,5.</li>
+  <li>Ở lần đổ đầu, nếu ra mặt lớn hơn 3,5 thì giữ, nếu nhỏ hơn thì đổ lại. Vậy giữ 4, 5, 6 và đổ lại khi ra 1, 2, 3.</li>
+  <li>Giá trị trò chơi:</li>
 </ol>
-<p>Cùng lập luận cho xúc xắc 100 mặt, đổ lại không giới hạn với phí 1 đô: nên giữ mọi mặt từ 87 trở lên. Giá trị trò chơi là (87 + … + 100 − 86)/14 = 1.223/14 ≈ 87,36 đô.</p>
+<div class="formula">E = <span class="frac"><span>3</span><span>6</span></span> · 3,5 + <span class="frac"><span>1</span><span>6</span></span> (4 + 5 + 6) = 1,75 + 2,5 = 4,25</div>
+<p>Quyền đổ lại có giá 4,25 − 3,5 = 0,75 đô. Đây là một quyền chọn đúng nghĩa: bạn chỉ dùng nó khi có lợi, nên giá trị của nó không bao giờ âm.</p>
+<p><b>Thêm phí.</b> Nếu mỗi lần đổ lại tốn 1 đô, phương án đổ lại chỉ còn đáng 3,5 − 1 = 2,5. Giữ mọi mặt lớn hơn 2,5, nghĩa là chỉ đổ lại khi ra 1 hoặc 2:</p>
+<div class="formula">E = <span class="frac"><span>2</span><span>6</span></span> · 2,5 + <span class="frac"><span>1</span><span>6</span></span> (3 + 4 + 5 + 6) = <span class="frac"><span>5 + 18</span><span>6</span></span> = <span class="frac"><span>23</span><span>6</span></span> ≈ 3,83</div>
+<p><b>Đổ lại không giới hạn.</b> Giờ cho phép đổ lại bao nhiêu lần cũng được, mỗi lần 1 đô. Gọi V là giá trị của trò chơi. Mỗi lần đổ lại đưa bạn về đúng vị trí ban đầu, nên giá trị của việc đổ lại là V − 1. Quy tắc tối ưu là giữ mặt nào lớn hơn V − 1. Thử quy tắc giữ 4, 5, 6: với xác suất 1/2 bạn được trung bình (4 + 5 + 6)/3 = 5, với xác suất 1/2 bạn trả 1 đô và quay về đầu. Suy ra</p>
+<div class="formula">V = <span class="frac"><span>1</span><span>2</span></span> · 5 + <span class="frac"><span>1</span><span>2</span></span> (V − 1) = 2,5 + <span class="frac"><span>1</span><span>2</span></span>(V − 1) &nbsp;⇒&nbsp; <span class="frac"><span>V</span><span>2</span></span> = 2 &nbsp;⇒&nbsp; V = 4</div>
+<p>Kiểm tra tính nhất quán: V − 1 = 3, nên giữ mọi mặt lớn hơn 3, đúng như giả định. Nếu thử giữ từ 3 trở lên, ta được V = (3 + 4 + 5 + 6)/4 · (4/6) + (2/6)(V − 1), giải ra cũng V = 4. Hai quy tắc cho cùng giá trị vì mặt 3 đúng bằng điểm hoà vốn: giữ 3 hay trả 1 đô để nhận lại một trò chơi trị giá 4 là như nhau.</p>
+<p><b>Công thức tổng quát.</b> Với xúc xắc n mặt, đổ lại không giới hạn với phí c, quy tắc “giữ mọi mặt ≥ t” giữ k = n − t + 1 mặt. Phương trình V = (t + … + n)/n + ((t − 1)/n)(V − c) cho</p>
+<div class="formula"><span class="lbl">Giá trị khi giữ mọi mặt ≥ t, đổ lại không giới hạn với phí c</span>V(t) = <span class="frac"><span>(t + (t + 1) + … + n) − (t − 1) · c</span><span>n − t + 1</span></span></div>
+<p>Ta chỉ cần quét t từ 1 đến n và lấy giá trị lớn nhất. Hai hình dưới đây làm đúng việc đó.</p>
 
 <figure class="demo">
   <div class="stage" id="demo-02"></div>
   <div class="controls" id="ctl-02"></div>
   <div class="readout" id="out-02"></div>
-  <figcaption><b>Mô hình 2.1 – Bản đồ giá trị 3D của trò chơi đổ lại.</b> Trục ngang là ngưỡng t (giữ mọi mặt ≥ t). Trục sâu là phí mỗi lần đổ lại c. Chiều cao cột là giá trị trò chơi với quy tắc đó. Cột xanh lá là quy tắc tối ưu của từng mức phí; cột cam là giá trị âm. Thanh trượt chọn hàng phí đang xét. Bấm “Chơi 10.000 ván” để xem trung bình mô phỏng hội tụ về giá hợp lý (biểu đồ nhỏ góc phải). Kéo để xoay.</figcaption>
+  <figcaption><b>Hình 2.1 – Trò chơi đổ lại xúc xắc, dựng trong 3D.</b> Mỗi cột là giá trị trò chơi nếu giữ mọi mặt từ ngưỡng t trở lên (trục ngang). Mỗi hàng là một mức phí đổ lại c (trục sâu), hàng đậm là mức phí đang chọn. Cột xanh lá cao nhất trong hàng là quy tắc tối ưu; cột cam là giá trị âm. Bấm “Chơi 10.000 ván” để chơi theo quy tắc tối ưu và xem trung bình tích luỹ hội tụ về giá hợp lý ở góc phải. Bật chế độ không giới hạn và tăng phí để thấy ngưỡng dịch chuyển. Kéo để xoay.</figcaption>
 </figure>
 
-<h4>Ví dụ minh hoạ: xếp hàng nam nữ</h4>
-<p>Mười bạn nam và mười bạn nữ đứng thành một hàng theo thứ tự ngẫu nhiên. Hỏi số cặp đứng cạnh nhau khác giới có kỳ vọng bằng bao nhiêu?</p>
+<figure class="demo">
+  <div class="stage" id="demo3-02"></div>
+  <div class="controls" id="ctl3-02"></div>
+  <div class="readout" id="out3-02"></div>
+  <figcaption><b>Hình 2.2 – Phòng thử chiến lược cho xúc xắc bất kỳ.</b> Cùng phép tính như Hình 2.1, vẽ thành biểu đồ cột và cho phép xúc xắc tới 100 mặt. Mỗi cột là giá trị trò chơi với quy tắc “giữ mọi mặt ≥ t”. Cột cao nhất (xanh lá) là quy tắc tối ưu, và chiều cao của nó là giá hợp lý. Bấm vào một cột để chọn quy tắc đó, rồi bấm “Mô phỏng 20.000 ván” để đối chiếu lý thuyết với thực nghiệm. Thử 100 mặt ở chế độ không giới hạn với phí 1 đô.</figcaption>
+</figure>
+
+<div class="note"><b>Đính chính so với tài liệu gốc.</b> Với phiên bản đổ lại không giới hạn, tài liệu gốc dừng ở câu “khoản chi trả 3,5 là tối ưu”. Đó là chỗ sai. Trò chơi đáng giá <b>4 đô</b>: giữ từ 3 trở lên hoặc từ 4 trở lên, cả hai đều cho 4. Với xúc xắc 100 mặt và phí đổ lại 1 đô, quy tắc tối ưu là giữ từ 87 trở lên. Khi đó tử số là (87 + … + 100) − 86 = 1.309 − 86 = 1.223, mẫu số là 14, nên trò chơi đáng 1.223/14 ≈ 87,36 đô. Hai ngưỡng kề bên cho 86: 1.310/15 ≈ 87,33 và 88: 1.135/13 ≈ 87,31, đều thấp hơn.</div>
+
+<h4>Tính tuyến tính: mẹo giải được một nửa số câu hỏi</h4>
+<p>Kỳ vọng là một phép toán <b>tuyến tính</b> (linear). Trước hết, đổi đơn vị hay dịch gốc đều đi thẳng qua kỳ vọng:</p>
+<div class="formula">E[aX + b] = a · E[X] + b</div>
+<p>Điều bất ngờ hơn là kỳ vọng cộng được qua <b>mọi</b> tổng biến ngẫu nhiên, kể cả khi chúng phụ thuộc nhau rất chặt:</p>
+<div class="formula"><span class="lbl">Không cần điều kiện độc lập</span>E[X<sub>1</sub> + X<sub>2</sub> + ⋯ + X<sub>n</sub>] = E[X<sub>1</sub>] + E[X<sub>2</sub>] + ⋯ + E[X<sub>n</sub>]</div>
+<p>Lý do rất đơn giản: kỳ vọng là một tổng có trọng số trên các kết quả, và tổng thì đổi thứ tự cộng được. Với mỗi kết quả ω, giá trị của tổng là X<sub>1</sub>(ω) + ⋯ + X<sub>n</sub>(ω). Nhân với xác suất của ω rồi cộng theo ω, ta có thể cộng theo từng X<sub>i</sub> trước. Không có bước nào cần đến độc lập. Độc lập chỉ cần khi ta muốn tính kỳ vọng của một <b>tích</b>, hoặc phương sai của một tổng.</p>
+<p>Từ đó có một phương pháp rất mạnh. Khi đề bài hỏi <b>số lượng kỳ vọng</b> của một thứ gì đó, hãy viết số lượng đó thành tổng các <b>biến chỉ báo</b> (indicator variable): I<sub>i</sub> = 1 nếu sự việc thứ i xảy ra, I<sub>i</sub> = 0 nếu không. Mỗi biến chỉ báo có kỳ vọng E[I<sub>i</sub>] = 1 · P(sự việc i) + 0 · P(không) = P(sự việc i). Cộng các xác suất đó lại là xong. Ta không bao giờ cần tới phân phối đồng thời, vốn thường rất khó tính.</p>
+<div class="formula"><span class="lbl">Đếm bằng biến chỉ báo</span>N = Σ<sub>i</sub> I<sub>i</sub> &nbsp;⇒&nbsp; E[N] = Σ<sub>i</sub> P(sự việc i)</div>
+<p><b>Ví dụ.</b> Mười bạn nam và mười bạn nữ đứng thành một hàng theo thứ tự ngẫu nhiên. Số cặp đứng cạnh nhau mà khác giới có kỳ vọng bằng bao nhiêu?</p>
 <ol>
-  <li>Hàng 20 người có 19 vị trí liền kề. Đặt I<sub>i</sub> = 1 nếu cặp thứ i gồm một nam và một nữ.</li>
-  <li>Với một cặp bất kỳ, P(khác giới) = <span class="frac"><span>2 · 10 · 10</span><span>20 · 19</span></span> = <span class="frac"><span>10</span><span>19</span></span>.</li>
-  <li>Theo tính tuyến tính, E[số cặp khác giới] = 19 · 10/19 = 10.</li>
-  <li>Các I<sub>i</sub> phụ thuộc nhau, vì cặp này lấy người nào thì cặp sau bớt người đó. Điều này không ảnh hưởng tới kết quả.</li>
+  <li>Hàng 20 người có 19 vị trí liền kề. Đặt I<sub>i</sub> = 1 nếu vị trí liền kề thứ i gồm một nam và một nữ.</li>
+  <li>Xét riêng một vị trí. Hai người đứng ở đó là một cặp có thứ tự lấy ngẫu nhiên từ 20 người, có 20 · 19 khả năng như nhau. Số khả năng khác giới là 10 · 10 (nam trước nữ) cộng 10 · 10 (nữ trước nam). Do đó</li>
 </ol>
-<p>Tổng quát với b nam và g nữ, n = b + g người, đáp số là 2bg/n.</p>
+<div class="formula">P(khác giới) = <span class="frac"><span>2 · 10 · 10</span><span>20 · 19</span></span> = <span class="frac"><span>10</span><span>19</span></span></div>
+<ol start="3">
+  <li>Theo tính tuyến tính, E[số cặp khác giới] = 19 × 10/19 = 10.</li>
+</ol>
+<p>Các vị trí liền kề rõ ràng phụ thuộc nhau: nếu vị trí này là một cặp khác giới thì số người còn lại cho vị trí kế tiếp đã thay đổi. Nhưng điều đó hoàn toàn không ảnh hưởng tới đáp số. Tổng quát với b nam và g nữ, n = b + g người, đáp số là (n − 1) · 2bg/(n(n − 1)) = 2bg/n.</p>
 
 <figure class="demo">
   <div class="stage" id="demo2-02"></div>
   <div class="controls" id="ctl2-02"></div>
   <div class="readout" id="out2-02"></div>
-  <figcaption><b>Mô hình 2.2 – Xếp hàng ngẫu nhiên và biến chỉ báo.</b> Chấm xanh dương là nam, chấm cam là nữ. Mỗi cặp khác giới liền kề được nối bằng một vạch xanh lá, tức một chỉ báo bằng 1. Biểu đồ cột phía dưới là tần suất của số cặp khác giới qua các lần xếp. Vạch đứt là giá trị lý thuyết 2bg/n, vạch liền là trung bình mô phỏng. Đổi số nam, số nữ rồi chạy liên tục để kiểm tra.</figcaption>
+  <figcaption><b>Hình 2.3 – Mô phỏng xếp hàng.</b> Mỗi lần xếp đặt ngẫu nhiên các bạn nam (chấm xanh dương) và nữ (chấm cam) thành một hàng, rồi đếm các cặp liền kề khác giới (vạch nối xanh lá, mỗi vạch là một chỉ báo bằng 1). Biểu đồ cột phía dưới là tần suất số cặp khác giới qua các lần xếp. Vạch đứt là giá trị lý thuyết 2bg/n, vạch liền là trung bình mô phỏng. Chạy liên tục vài nghìn lần: trung bình hội tụ về 10, đúng như tính tuyến tính dự đoán. Đổi số nam, số nữ để kiểm tra công thức tổng quát.</figcaption>
 </figure>
 
-<h4>Lưu ý khi phỏng vấn</h4>
+<details class="qa"><summary>Trong phỏng vấn: giải đấu loại trực tiếp có n đội ngang sức, sơ đồ thi đấu bốc thăm ngẫu nhiên. Xác suất hai đội cho trước gặp nhau ở một trận nào đó là bao nhiêu? <span class="firm">(Five Rings)</span></summary>
+<p>Đây là câu hỏi giải đấu của Five Rings trong ngân hàng câu hỏi. Mẹo chính là đổi xác suất thành một kỳ vọng.</p>
+<ol>
+  <li>Hai đội A và B gặp nhau nhiều nhất một lần, vì đội thua bị loại. Do đó P(A gặp B) = E[số trận giữa A và B]. Một biến chỉ báo có kỳ vọng bằng xác suất của nó.</li>
+  <li>Số trận giữa A và B là tổng các biến chỉ báo trên tất cả các trận của giải: trận thứ j có phải là trận A gặp B không.</li>
+  <li>Giải loại trực tiếp luôn có đúng n − 1 trận, vì mỗi trận loại đúng một đội và cuối cùng còn một nhà vô địch.</li>
+  <li>Các đội ngang sức và sơ đồ ngẫu nhiên, nên theo tính đối xứng, mỗi trong C(n, 2) = n(n − 1)/2 cặp đội có cùng số trận kỳ vọng. Tổng số trận kỳ vọng của mọi cặp bằng n − 1.</li>
+  <li>Vậy P(A gặp B) = (n − 1) / (n(n − 1)/2) = 2/n.</li>
+</ol>
+<p>Với n = 8 đội, đáp số là 1/4. Không cần vẽ sơ đồ hay xét từng vòng. Hãy nghĩ tới cách này mỗi khi đề bài có cụm từ “số lượng kỳ vọng”, hoặc khi một xác suất có thể viết lại thành kỳ vọng của một biến chỉ báo.</p>
+</details>
+
+<div class="note"><b>Ứng dụng trên bàn giao dịch.</b>
 <ul>
-  <li>Thấy cụm từ “số lượng kỳ vọng” thì nghĩ ngay tới tổng các biến chỉ báo. Ví dụ: xáo 52 lá bài, số lá nằm đúng vị trí cũ có kỳ vọng 52 × 1/52 = 1, với mọi kích thước bộ bài.</li>
-  <li>Giải đấu loại trực tiếp n đội ngang sức: luôn có đúng n − 1 trận. Mỗi trong C(n, 2) cặp đội có khả năng gặp nhau như nhau, nên P(hai đội cho trước gặp nhau) = (n − 1)/C(n, 2) = 2/n.</li>
-  <li>Với trò chơi có lựa chọn, ngưỡng dừng luôn bằng giá trị của phương án đi tiếp. Hãy kiểm tra: có thêm quyền lựa chọn thì giá trị không bao giờ giảm.</li>
-  <li>Khi được hỏi giá mua bán một trò chơi, hãy nêu giá hợp lý trước. Sau đó mới nói về chênh lệch giá mua bán cần thêm vào.</li>
-</ul>
+  <li><b>Định giá.</b> Một quyền chọn đáng giá bằng kỳ vọng khoản chi trả của nó dưới xác suất định giá (pricing probabilities). Định giá một sản phẩm cấu trúc (structured note) là dùng tính tuyến tính: tách thành từng mảnh, định giá từng mảnh rồi cộng lại.</li>
+  <li><b>Lãi/lỗ kỳ vọng.</b> Lãi/lỗ kỳ vọng của cả bàn giao dịch là tổng lợi thế kỳ vọng (expected edge) của từng giao dịch, bất kể các giao dịch tương quan với nhau thế nào. Tương quan chỉ ảnh hưởng tới rủi ro, chủ đề của bài sau, chứ không ảnh hưởng tới trung bình.</li>
+  <li><b>Đếm trên sổ lệnh.</b> “Trong 500 lệnh đang chờ của tôi, hôm nay có bao nhiêu lệnh được khớp?” là một tổng biến chỉ báo: lấy xác suất khớp của từng lệnh cộng lại.</li>
+</ul></div>
+
+<h4>Viết bằng code</h4>
+<p>Đoạn TypeScript dưới đây kiểm tra hai kết quả của bài bằng mô phỏng: giá trị 4,25 của trò chơi đổ lại một lần, và kỳ vọng 10 cặp khác giới khi xếp 10 nam, 10 nữ. Chạy bằng <span class="kbd">bun expectation.ts</span>.</p>
+<pre class="code"><code><span class="c">// Bộ sinh số ngẫu nhiên có hạt giống (mulberry32) để kết quả lặp lại được</span>
+function rng(seed: number) {
+  return () =&gt; {
+    seed = (seed + 0x6d2b79f5) | 0;
+    let t = Math.imul(seed ^ (seed &gt;&gt;&gt; 15), 1 | seed);
+    t = (t + Math.imul(t ^ (t &gt;&gt;&gt; 7), 61 | t)) ^ t;
+    return ((t ^ (t &gt;&gt;&gt; 14)) &gt;&gt;&gt; 0) / 4294967296;
+  };
+}
+const rand = rng(7);
+const die = () =&gt; 1 + Math.floor(rand() * 6);
+
+<span class="c">// Trò chơi: đổ một lần, nếu ra 1, 2, 3 thì đổ lại và nhận lần hai</span>
+let total = 0;
+const games = 1_000_000;
+for (let i = 0; i &lt; games; i++) {
+  const first = die();
+  total += first &lt;= 3 ? die() : first;
+}
+console.log((total / games).toFixed(3));         <span class="c">// ≈ 4.25</span>
+
+<span class="c">// Tính tuyến tính: số cặp liền kề khác giới khi xếp 10 nam + 10 nữ</span>
+const line = [...Array(10).fill(0), ...Array(10).fill(1)];
+let mixed = 0;
+const shuffles = 100_000;
+for (let s = 0; s &lt; shuffles; s++) {
+  for (let i = line.length - 1; i &gt; 0; i--) {      <span class="c">// xáo Fisher–Yates</span>
+    const j = Math.floor(rand() * (i + 1));
+    [line[i], line[j]] = [line[j], line[i]];
+  }
+  for (let i = 1; i &lt; line.length; i++) if (line[i] !== line[i - 1]) mixed++;
+}
+console.log((mixed / shuffles).toFixed(2));      <span class="c">// ≈ 10.00</span></code></pre>
+
+<details class="qa"><summary>Tự kiểm tra: xáo đều một bộ 52 lá bài. Số vị trí mà lá bài vẫn nằm đúng chỗ như trong bộ bài chưa xáo có kỳ vọng bằng bao nhiêu: 0, 1, 52/e ≈ 19, hay phụ thuộc vào cách xáo theo kiểu không tính được?</summary>
+<p>Đáp án: <b>1</b>.</p>
+<ol>
+  <li>Đặt I<sub>i</sub> = 1 nếu lá bài ở vị trí i sau khi xáo đúng là lá vốn ở vị trí i.</li>
+  <li>Xáo đều nên mỗi lá có khả năng như nhau rơi vào vị trí i: P(I<sub>i</sub> = 1) = 1/52.</li>
+  <li>Theo tính tuyến tính, số điểm bất động (fixed point) có kỳ vọng 52 × 1/52 = 1.</li>
+</ol>
+<p>Đáp số này đúng với bộ bài có kích thước bất kỳ. Các chỉ báo phụ thuộc nhau (nếu 51 lá đúng chỗ thì lá cuối cũng phải đúng chỗ), nhưng tính tuyến tính không quan tâm. Con số 1/e xuất hiện ở một câu hỏi khác: xác suất <b>không có</b> lá nào đúng chỗ tiến tới 1/e ≈ 36,8% khi bộ bài lớn.</p>
+</details>
 
 <script>
 (()=>{
-  /* ---------- Mô hình 2.1: bản đồ giá trị 3D ---------- */
+  /* ---------- Hình 2.1: trò chơi đổ lại, bản đồ giá trị 3D ---------- */
   const stage=document.getElementById('demo-02'), ctl=document.getElementById('ctl-02'), out=document.getElementById('out-02');
   const COSTS=[0,0.5,1,1.5,2,2.5,3];
   const S={N:6, unl:false, ci:0};
@@ -168,7 +247,7 @@
 })();
 
 (()=>{
-  /* ---------- Mô hình 2.2: xếp hàng và biến chỉ báo ---------- */
+  /* ---------- Hình 2.3: xếp hàng và biến chỉ báo ---------- */
   const stage=document.getElementById('demo2-02'), ctl=document.getElementById('ctl2-02'), out=document.getElementById('out2-02');
   const S={b:10,g:10,run:false};
   const r=Q.rng(11);
@@ -221,6 +300,71 @@
   const br=Q.button(ctl,'Chạy liên tục',()=>{ S.run=!S.run; br.textContent=S.run?'Tạm dừng':'Chạy liên tục'; },true);
   Q.button(ctl,'Xoá thống kê',redo);
   report(); cv.redraw();
+})();
+
+(()=>{
+  /* ---------- Hình 2.2: phòng thử chiến lược cho xúc xắc bất kỳ ---------- */
+  const stage=document.getElementById('demo3-02'), ctl=document.getElementById('ctl3-02'), out=document.getElementById('out3-02');
+  const FONT='px Be Vietnam Pro,-apple-system,sans-serif', MONO='px JetBrains Mono,ui-monospace,monospace';
+  const S={N:6, unl:false, c:0, sel:0};
+  const r=Q.rng(99);
+  let vals=[], best=0, sim=null, geo=null;
+  function value(N,t,c,unl){ const k=N-t+1, sumK=(t+N)*k/2, mean=(N+1)/2;
+    return unl ? (sumK-(t-1)*c)/k : ((t-1)*(mean-c)+sumK)/N; }
+  function compute(){ vals=[]; for(let t=1;t<=S.N;t++) vals.push(value(S.N,t,S.c,S.unl));
+    best=0; vals.forEach((v,i)=>{ if(v>vals[best]+1e-12) best=i; }); S.sel=best; sim=null; }
+  function play(t){ const N=S.N; let paid=0, x=1+Math.floor(r()*N), n=0;
+    while(x<t && (S.unl||n<1)){ paid+=S.c; x=1+Math.floor(r()*N); n++; } return x-paid; }
+  function report(){
+    const t=S.sel+1;
+    let s=`Xúc xắc ${S.N} mặt · ${S.unl?'đổ lại không giới hạn':'đổ lại tối đa một lần'} · phí c = ${Q.fmt(S.c,1)}\n`+
+      `Quy tắc tối ưu: giữ mọi mặt ≥ ${best+1}, giá hợp lý ${Q.fmt(vals[best],3)}\n`+
+      `Quy tắc đang chọn: giữ ≥ ${t}, lý thuyết ${Q.fmt(vals[S.sel],3)}`;
+    if(sim) s+=`\nMô phỏng ${sim.n.toLocaleString('vi-VN')} ván: trung bình ${Q.fmt(sim.mean,3)} ± ${Q.fmt(1.96*sim.se,3)} (khoảng 95%)`;
+    out.textContent=s;
+  }
+  const cv=Q.canvas(stage,300,draw);
+  function draw(ctx,w,h){
+    const C=Q.colors(); ctx.clearRect(0,0,w,h);
+    const L=50, R=w-16, T=30, B=h-34, N=S.N;
+    let lo=Math.min(0,...vals), hi=Math.max(...vals); hi=hi+(hi-lo)*0.08||1;
+    const Y=v=>B-(v-lo)/(hi-lo)*(B-T), bw=(R-L)/N;
+    geo={L,bw,N};
+    // lưới trục tung
+    ctx.font='11'+MONO; ctx.textAlign='right'; ctx.fillStyle=C.muted; ctx.strokeStyle=C.line; ctx.lineWidth=1;
+    const step=Math.pow(10,Math.floor(Math.log10((hi-lo)/4))); const st=(hi-lo)/step>8?step*2:step;
+    for(let v=Math.ceil(lo/st)*st; v<=hi; v+=st){ const y=Y(v); ctx.beginPath(); ctx.moveTo(L,y); ctx.lineTo(R,y); ctx.stroke(); ctx.fillText(Q.fmt(v,st<1?1:0),L-6,y+4); }
+    // cột
+    vals.forEach((v,i)=>{ const x=L+i*bw+bw*0.12, ww=Math.max(1,bw*0.76), y0=Y(0), y1=Y(v);
+      ctx.fillStyle = i===best ? C.a : (v<0 ? C.b : C.c);
+      ctx.globalAlpha = i===S.sel || i===best ? 1 : 0.55;
+      ctx.fillRect(x,Math.min(y0,y1),ww,Math.abs(y1-y0)||1); });
+    ctx.globalAlpha=1;
+    if(S.sel!==best){ const x=L+S.sel*bw+bw/2; ctx.strokeStyle=C.ink; ctx.lineWidth=2; ctx.strokeRect(L+S.sel*bw+bw*0.12,Math.min(Y(0),Y(vals[S.sel])),Math.max(1,bw*0.76),Math.abs(Y(vals[S.sel])-Y(0))||1); ctx.lineWidth=1; }
+    // giá hợp lý
+    ctx.setLineDash([5,4]); ctx.strokeStyle=C.ink; ctx.beginPath(); ctx.moveTo(L,Y(vals[best])); ctx.lineTo(R,Y(vals[best])); ctx.stroke(); ctx.setLineDash([]);
+    // điểm mô phỏng
+    if(sim){ const x=L+S.sel*bw+bw/2, y=Y(sim.mean), e=Math.abs(Y(sim.mean+1.96*sim.se)-y);
+      ctx.strokeStyle=C.d; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(x,y-e); ctx.lineTo(x,y+e); ctx.stroke();
+      ctx.fillStyle=C.d; ctx.beginPath(); ctx.arc(x,y,5,0,7); ctx.fill(); ctx.lineWidth=1; }
+    // nhãn trục hoành
+    ctx.textAlign='center'; ctx.fillStyle=C.muted; ctx.font='11'+MONO;
+    const lab=N<=10?1:N<=30?5:10;
+    for(let t=1;t<=N;t++) if(t===1||t%lab===0) ctx.fillText('≥'+t,L+(t-0.5)*bw,B+15);
+    ctx.textAlign='left'; ctx.font='12'+FONT;
+    ctx.fillText('Giá trị trò chơi theo ngưỡng giữ t (trục ngang) · vạch đứt: giá hợp lý · chấm tím: mô phỏng',L,18);
+
+  }
+  stage.addEventListener('click',e=>{ if(!geo) return; const rc=stage.getBoundingClientRect();
+    const i=Math.floor((e.clientX-rc.left-geo.L)/geo.bw); if(i>=0&&i<geo.N){ S.sel=i; sim=null; report(); cv.redraw(); } });
+  function refresh(){ compute(); report(); cv.redraw(); }
+  const bm=Q.button(ctl,'Chế độ: đổ lại một lần',()=>{ S.unl=!S.unl; bm.textContent=S.unl?'Chế độ: không giới hạn':'Chế độ: đổ lại một lần'; refresh(); });
+  [6,20,100].forEach(n=>Q.button(ctl,n+' mặt',()=>{ S.N=n; refresh(); }));
+  Q.slider(ctl,'Phí mỗi lần đổ lại c',0,5,0.5,0,v=>{ S.c=v; refresh(); },v=>Q.fmt(v,1));
+  Q.button(ctl,'Mô phỏng 20.000 ván',()=>{ const t=S.sel+1, n=20000; let s=0, s2=0;
+    for(let i=0;i<n;i++){ const x=play(t); s+=x; s2+=x*x; }
+    const m=s/n; sim={n,mean:m,se:Math.sqrt(Math.max(0,s2/n-m*m)/n)}; report(); cv.redraw(); },true);
+  compute(); report(); cv.redraw();
 })();
 </script>
 </section>

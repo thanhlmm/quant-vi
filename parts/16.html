@@ -2,57 +2,129 @@
 <header>
   <span class="num">16</span>
   <h3>Tình huống: dự báo nhu cầu CitiBike</h3>
-  <p class="meta">10 phút · Ứng dụng: Tính mùa vụ của khối lượng giao dịch và độ biến động · <a href="https://hft.md/learn/case-citibike/">Bài gốc (tiếng Anh)</a></p>
+  <p class="meta">Phần 4 · Nghiên cứu tình huống · Bài 16 · 10 phút · <a href="https://hft.md/learn/case-citibike/">Bài gốc (tiếng Anh)</a></p>
 </header>
 
-<p>Đây là tình huống mở nhất trong ba bài. Đề không cho sẵn danh sách biến, nên một phần bài kiểm tra là tự quyết định dữ liệu nào đáng thu thập trước khi chạy bất kỳ hồi quy nào. Kỹ thuật mã hoá thời gian ở đây cũng chính là cách bàn giao dịch dự báo khối lượng trong ngày.</p>
+<p><i>Bài này giải một bài toán mở kiểu Two Sigma: tự nghĩ ra các biến đầu vào, mã hoá thời gian như một vòng tròn, và chế ngự các biến thời tiết tương quan với nhau.</i></p>
 
-<div class="note"><b>Đề bài.</b> Xây mô hình dự báo số xe CitiBike đang đỗ tại mỗi trạm ở Manhattan trong thời gian tới, và con số đó sẽ thay đổi thế nào. Trong buổi phỏng vấn, bạn xen kẽ giữa liệt kê biến và bàn cách tiền xử lý, tinh chỉnh chúng.</div>
+<p>Trong ba tình huống của phần này, đây là bài mở nhất. Đề không cho sẵn danh sách biến. Một phần của bài kiểm tra chính là tự quyết định dữ liệu nào đáng thu thập, trước khi chạy bất kỳ hồi quy nào. Người phỏng vấn muốn thấy bạn suy nghĩ có cấu trúc: liệt kê biến theo từng vòng, với mỗi biến thì nói cách đưa nó vào mô hình, rồi mới bàn chuyện tinh chỉnh.</p>
 
-<h4>Ý chính</h4>
+<div class="note"><b>Trong buổi phỏng vấn – đề bài.</b> Hãy xây một mô hình dự báo số xe CitiBike đang đỗ tại mỗi trạm ở Manhattan trong thời gian sắp tới, và con số đó sẽ thay đổi ra sao.</div>
+
+<p>Trong buổi phỏng vấn, bạn sẽ đi qua lại giữa hai việc: nghĩ thêm biến, và bàn cách tiền xử lý, tinh chỉnh các biến đã có. Dưới đây là hai vòng như vậy.</p>
+
+<h4>Vòng 1: các yếu tố hiển nhiên</h4>
+<p>Những thứ ai cũng nghĩ tới trước tiên: giờ trong ngày, tháng hoặc mùa trong năm, vị trí của trạm, nhiệt độ, và thời tiết (nắng, nhiều mây, mưa). Mỗi biến đặt ra một câu hỏi riêng về cách mã hoá.</p>
+
+<h5>Thời gian là một vòng tròn</h5>
+<p>Giờ và tháng là biến có thứ tự, nhưng thứ tự ấy quay vòng: 23 giờ nằm ngay cạnh 0 giờ, tháng 12 nằm ngay cạnh tháng 1. Nếu ghi giờ thành một con số từ 0 tới 23, mô hình tuyến tính sẽ coi 23 giờ và 0 giờ là hai đầu xa nhất của thang đo, và tạo ra một <b>bước nhảy giả</b> lúc nửa đêm: đường khớp ở 23:59 và ở 00:00 có thể khác nhau rất nhiều, dù trên thực tế chỉ cách nhau một phút. Tệ hơn, một hệ số duy nhất cho giờ chỉ cho phép nhu cầu tăng đều hoặc giảm đều suốt ngày. Có ba cách sửa:</p>
 <ul>
-  <li><b>Vòng 1, các yếu tố hiển nhiên:</b> giờ trong ngày, tháng hoặc mùa, vị trí trạm, nhiệt độ, thời tiết. <b>Vòng 2, các yếu tố khó thấy hơn:</b> thứ trong tuần, ngày lễ, giao thông, lượng khách tàu điện ngầm, lượng mưa, chất lượng không khí, hoạt động kinh doanh quanh trạm.</li>
-  <li><b>Thời gian là một vòng tròn.</b> 23 giờ nằm sát 0 giờ, tháng 12 nằm sát tháng 1. Ghi giờ thành số 0–23 tạo ra một bước nhảy giả lúc nửa đêm và ép nhu cầu thay đổi theo đường thẳng.</li>
-  <li>Ba cách sửa: mã hoá one-hot 24 giờ (nhiều biến, mất thứ tự); gom thành vài khung giờ rồi one-hot (ít biến hơn); hoặc dùng <b>cơ sở tuần hoàn</b> (cyclical basis) sin/cos cùng các <b>điều hoà bậc cao</b> (higher harmonics). Spline tuần hoàn (cyclic spline) làm cùng việc đó linh hoạt hơn.</li>
-  <li><b>Vị trí:</b> one-hot theo khu phố ngầm giả định nhu cầu đồng đều trong khu. Tốt hơn là dùng vĩ độ, kinh độ qua một hàm trơn, chẳng hạn đa thức bậc vừa hoặc spline bậc thấp.</li>
-  <li><b>Thời tiết tương quan với thời gian.</b> Mưa đi cùng nhiệt độ, cả hai lại theo giờ và mùa. Đo bằng <b>tương quan điểm–nhị phân</b> (point-biserial) hoặc hồi quy logistic. Mẹo hay: dùng “nhiệt độ trừ cùng giờ hôm qua” thay cho nhiệt độ thô, để bỏ phần chu kỳ.</li>
-  <li><b>Khi có hơn mười biến tương quan:</b> xem thống kê t, kiểm định F cho nhóm biến yếu trước khi loại, dùng <b>elastic net</b> (kết hợp ridge và lasso), và chạy chọn biến từng bước (stepwise) để thấy bức tranh tổng thể.</li>
+  <li><b>Mã hoá one-hot</b> giờ (24 biến giả, bỏ một làm mốc nên còn 23 cột) và tháng (12 biến giả). Cách này không áp đặt thứ tự giả nào, nhưng tốn nhiều biến đầu vào, và đánh mất luôn thứ tự tự nhiên: mô hình không biết 8 giờ và 9 giờ là hai giờ liền nhau, nên mỗi giờ phải tự học từ dữ liệu của riêng nó.</li>
+  <li><b>Gom nhóm trước, rồi mới one-hot</b>: chia ngày thành bốn khung sáng, chiều, tối, đêm, và chia năm thành bốn mùa. Số biến ít đi nhiều, và một phần thứ tự được khôi phục vì các giờ liền nhau nằm chung một khung. Đổi lại, nhu cầu bị coi là không đổi trong cả khung, và vẫn có bước nhảy ở ranh giới giữa các khung.</li>
+  <li><b>Dùng cơ sở tuần hoàn</b> (cyclical basis): đặt giờ h lên một vòng tròn bằng cặp (sin(2πh/24), cos(2πh/24)). Trên vòng tròn, 23 giờ và 0 giờ là hai điểm sát nhau, và đường khớp tự động khép kín. Muốn đường khớp có nhiều chi tiết hơn, thêm các <b>điều hoà bậc cao</b> (higher harmonics) sin(4πh/24), cos(4πh/24), sin(6πh/24), … Đây chính là chuỗi Fourier của nhu cầu theo giờ. <b>Spline tuần hoàn</b> (cyclic splines) làm cùng việc đó một cách linh hoạt hơn: các đa thức từng đoạn nối trơn với nhau, và đoạn cuối nối trơn về đoạn đầu.</li>
 </ul>
-
-<h4>Công thức</h4>
 <div class="formula"><span class="lbl">Mã hoá tuần hoàn giờ h với K điều hoà: 2K biến đầu vào</span>φ(h) = ( sin <span class="frac"><span>2πkh</span><span>24</span></span>, cos <span class="frac"><span>2πkh</span><span>24</span></span> )<sub>k = 1, …, K</sub>,&nbsp;&nbsp; ŷ(h) = β<sub>0</sub> + Σ<sub>k=1</sub><sup>K</sup> [ a<sub>k</sub> sin <span class="frac"><span>2πkh</span><span>24</span></span> + b<sub>k</sub> cos <span class="frac"><span>2πkh</span><span>24</span></span> ]</div>
+<p>Vì sao cần cả sin lẫn cos? Một mình sin(2πh/24) cho cùng một giá trị ở 1 giờ và 11 giờ, nên mô hình không phân biệt được hai giờ đó. Cặp (sin, cos) thì xác định duy nhất một điểm trên vòng tròn. Thêm nữa, một cặp sin/cos với hệ số tự do là một sóng có biên độ và vị trí đỉnh tuỳ ý. Mô hình tự học được đỉnh nằm ở giờ nào:</p>
 <div class="formula"><span class="lbl">Một cặp sin/cos là một sóng có biên độ R và đỉnh tại pha φ</span>a sin θ + b cos θ = R cos(θ − φ),&nbsp;&nbsp; R = √(a² + b²),&nbsp;&nbsp; φ = atan2(a, b)</div>
 <div class="formula"><span class="lbl">Khoảng cách giữa hai giờ trên vòng tròn đơn vị (chiều dài dây cung)</span>d(h<sub>1</sub>, h<sub>2</sub>) = 2 · sin( <span class="frac"><span>π · Δ</span><span>24</span></span> ),&nbsp;&nbsp; Δ = min( |h<sub>1</sub> − h<sub>2</sub>|, 24 − |h<sub>1</sub> − h<sub>2</sub>| )</div>
-<div class="formula"><span class="lbl">Tương quan điểm–nhị phân giữa biến 0/1 (mưa) và biến liên tục (nhiệt độ); p là tỉ lệ ngày mưa</span>r<sub>pb</sub> = <span class="frac"><span>M<sub>1</sub> − M<sub>0</sub></span><span>s</span></span> · √( p (1 − p) )</div>
-<div class="formula"><span class="lbl">Khử chu kỳ ngày và elastic net</span>T̃<sub>t</sub> = T<sub>t</sub> − T<sub>t − 24h</sub>,&nbsp;&nbsp; β̂ = argmin<sub>β</sub> ‖y − Xβ‖² + λ<sub>1</sub>‖β‖<sub>1</sub> + λ<sub>2</sub>‖β‖<sub>2</sub>²</div>
-
-<h4>Ví dụ minh hoạ: vì sao sin/cos tốt hơn số giờ</h4>
+<p><b>Ví dụ.</b></p>
 <ol>
   <li>Ghi dạng số, 23:00 và 01:00 cách nhau 22 đơn vị. Trên vòng tròn, φ(23) ≈ (−0,259; 0,966) và φ(1) ≈ (0,259; 0,966). Khoảng cách chỉ là 2 sin(15°) ≈ 0,518, bằng đúng khoảng cách giữa 11:00 và 13:00.</li>
-  <li>Đếm số biến. One-hot 24 giờ cần 23 cột (bỏ một mốc). Bốn khung giờ cần 3 cột. Sin/cos với K = 3 chỉ cần 6 cột mà vẫn giữ thứ tự và tính tuần hoàn.</li>
-  <li>Giả sử mô hình K = 1 ước lượng được ŷ = 60 − 10 sin θ − 25 cos θ. Biên độ R = √(10² + 25²) ≈ 26,9. Pha φ = atan2(−10, −25) ≈ 201,8°, ứng với 201,8 / 15 ≈ 13,45 giờ.</li>
-  <li>Vậy mô hình dự báo đỉnh khoảng 60 + 26,9 ≈ 86,9 xe lúc 13:27 và đáy 33,1 xe lúc 01:27. Một điều hoà chỉ vẽ được một đỉnh. Nhu cầu ngày thường có hai giờ cao điểm, sáng và chiều, nên cần K ≥ 2.</li>
+  <li>Đếm số biến. One-hot 24 giờ cần 23 cột. Bốn khung giờ cần 3 cột. Sin/cos với K = 3 chỉ cần 6 cột mà vẫn giữ thứ tự và tính tuần hoàn.</li>
+  <li>Giả sử mô hình K = 1 ước lượng được ŷ = 60 − 10 sin θ − 25 cos θ. Biên độ R = √(10² + 25²) ≈ 26,9. Pha φ = atan2(−10, −25) ≈ 201,8°, ứng với 201,8 / 15 ≈ 13,45 giờ (mỗi giờ là 15° trên mặt đồng hồ 24 giờ).</li>
+  <li>Vậy mô hình dự báo đỉnh khoảng 60 + 26,9 ≈ 86,9 xe lúc 13:27 và đáy 60 − 26,9 ≈ 33,1 xe lúc 01:27. Một điều hoà chỉ vẽ được một đỉnh. Nhu cầu ngày thường có hai giờ cao điểm, sáng và chiều, nên cần K ≥ 2.</li>
 </ol>
 
 <figure class="demo">
   <div class="stage" id="demo-16"></div>
   <div class="controls" id="ctl-16"></div>
   <div class="readout" id="out-16"></div>
-  <figcaption><b>Mô hình 16.1 – Nhu cầu quanh mặt đồng hồ.</b> Mỗi cột là nhu cầu trung bình của một giờ, đặt quanh một mặt đồng hồ 24 giờ, nên 23 giờ đứng cạnh 0 giờ. Đường cam là đường khớp của cách mã hoá đang chọn, hồi quy trên 2.000 quan sát mô phỏng. Giờ dạng số tạo một đường xoắn và để lại vách đứt ở nửa đêm (đoạn nét đứt màu đậm). Sin/cos khép kín vòng; tăng K để bắt được cả hai giờ cao điểm. Hai chấm trên mặt đồng hồ là hai giờ A, B: so khoảng cách dạng số với dây cung. Bật “Cuối tuần” để thấy hình dạng nhu cầu đổi hẳn. Kéo để xoay.</figcaption>
+  <figcaption><b>Hình 16.1 – Nhu cầu quanh mặt đồng hồ.</b> Mỗi cột xanh là nhu cầu trung bình của một giờ, dựng quanh một mặt đồng hồ 24 giờ, nên các giờ sát nửa đêm đứng cạnh nhau. Đường cam là đường khớp của cách mã hoá đang chọn, hồi quy trên 2.000 quan sát mô phỏng. Giờ dạng số cho một đường xoắn ốc và để lại một vách đứt ở nửa đêm (đoạn nét đứt màu đậm). Sin/cos khép kín vòng, và tăng K thì bắt được cả hai giờ cao điểm. Bật “Cuối tuần” để thấy hình dạng nhu cầu đổi hẳn. Kéo để xoay.</figcaption>
 </figure>
 
-<h4>Lưu ý khi phỏng vấn</h4>
+<figure class="demo">
+  <div class="stage" id="demo2-16"></div>
+  <div class="controls" id="ctl2-16"></div>
+  <div class="readout" id="out2-16"></div>
+  <figcaption><b>Hình 16.2 – Bộ mã hoá mặt đồng hồ.</b> Chọn hai giờ A và B. Bên trái, trục số bên dưới cho khoảng cách dạng số (23:00 và 01:00 cách nhau 22), còn mặt đồng hồ cho khoảng cách thật trên vòng tròn (hai giờ đó là hàng xóm). Bên phải, nhu cầu theo giờ có một đỉnh sáng và một đỉnh chiều, được khớp theo bốn cách: giờ dạng số (xám), 4 khung giờ (tím), 24 biến giả (xanh dương) và sin/cos với K điều hoà (cam). Giờ dạng số chỉ vẽ được một đường thẳng. Sin/cos với vài điều hoà bắt được cả hai đỉnh mà chỉ cần một nhúm biến. Bấm vào tên từng cách mã hoá để ẩn hoặc hiện đường của nó.</figcaption>
+</figure>
+
+<h5>Vị trí</h5>
+<p>Các khu phố có hình dạng không đều và mức độ hoạt động rất khác nhau. Cách đơn giản nhất là mã hoá one-hot theo khu phố. Cách này ngầm giả định nhu cầu đồng đều trong cả khu, trong khi một trạm cạnh ga tàu điện và một trạm ở góc phố vắng trong cùng khu có thể khác hẳn nhau. Tốt hơn là dùng <b>vĩ độ và kinh độ</b>, vốn là biến liên tục, và để một hàm phi tuyến trơn của chúng mô tả cách hoạt động thay đổi trên khắp thành phố. Hàm đó có thể là một đa thức bậc vừa phải theo hai biến, hoặc spline bậc thấp nếu muốn giữ số biến đầu vào ít. Lưu ý số biến tăng nhanh theo bậc: một đa thức bậc d theo hai biến có (d + 1)(d + 2)/2 số hạng, tức 10 số hạng ở bậc 3 và 21 số hạng ở bậc 5.</p>
+
+<h5>Nhiệt độ và thời tiết</h5>
+<p>Nhiệt độ vào mô hình ở dạng số. Thời tiết là biến phân loại (nắng, nhiều mây, mưa), nên mã hoá one-hot. Cái bẫy ở đây là <b>tương quan</b>: mưa và nhiệt độ đi cùng nhau, và cả hai lại thay đổi theo giờ trong ngày và theo mùa. Hãy đo mức tương quan trước. Với cặp biến phân loại – liên tục, dùng <b>tương quan điểm – nhị phân</b> (point-biserial correlation), hoặc chạy hồi quy logistic của biến phân loại theo biến liên tục.</p>
+<div class="formula"><span class="lbl">Tương quan điểm – nhị phân giữa biến 0/1 (mưa) và biến liên tục (nhiệt độ); M<sub>1</sub>, M<sub>0</sub> là nhiệt độ trung bình ngày mưa và ngày khô, s là độ lệch chuẩn của nhiệt độ, p là tỉ lệ ngày mưa</span>r<sub>pb</sub> = <span class="frac"><span>M<sub>1</sub> − M<sub>0</sub></span><span>s</span></span> · √( p (1 − p) )</div>
+<p><b>Ví dụ.</b> Ngày mưa có nhiệt độ trung bình 14 °C, ngày khô 18 °C, độ lệch chuẩn nhiệt độ là 6 °C, và 25% số ngày có mưa. Khi đó r<sub>pb</sub> = (−4/6) · √(0,25 × 0,75) ≈ −0,667 × 0,433 ≈ −0,29. Mức này vừa phải: VIF chỉ khoảng 1,09. Nếu tương quan cao, hãy dùng ridge, lasso, chọn tập con biến, hoặc gộp hai biến thành một, chẳng hạn một chỉ số “thời tiết xấu”.</p>
+<p>Một mẹo gọn cho tương quan có tính chu kỳ là <b>trừ đi chu kỳ trước</b>. Thay cho nhiệt độ thô, dùng “nhiệt độ trừ nhiệt độ cùng giờ hôm qua”. Nhiệt độ thô chứa sẵn chu kỳ ngày đêm, nên trùng lặp thông tin với các biến giờ. Phần chênh lệch so với hôm qua đã loại bỏ chu kỳ đó, chỉ còn phần bất thường, tức là đúng thứ mô hình cần biết thêm.</p>
+<div class="formula"><span class="lbl">Khử chu kỳ ngày</span>T̃<sub>t</sub> = T<sub>t</sub> − T<sub>t − 24h</sub></div>
+
+<h4>Vòng 2: các biến khó thấy hơn</h4>
+<p>Vòng thứ hai mở rộng danh sách: thứ trong tuần, ngày lễ, mật độ giao thông, lượng khách đi tàu điện ngầm, lượng mưa tính bằng inch (chi tiết hơn biến “có mưa / không mưa”), chất lượng không khí, giá nhà quanh trạm, mức độ hoạt động kinh doanh quanh trạm. Cách tiền xử lý tương tự vòng 1: thứ trong tuần cũng là một vòng tròn (chủ nhật nằm cạnh thứ hai), ngày lễ là biến giả, các biến lệch phải như lượng mưa thì lấy log. Một nguyên tắc bắt buộc: chỉ dùng thông tin có sẵn tại thời điểm dự báo. Muốn dự báo hai giờ tới thì phải dùng <i>dự báo</i> thời tiết, không được dùng thời tiết thực tế đo sau đó.</p>
+<p>Khi có từ mười biến trở lên và nhiều biến tương quan với nhau, phần tinh chỉnh trở nên quan trọng nhất:</p>
 <ul>
-  <li>Câu hỏi kiểm tra hay gặp: vì sao giờ dạng số 0–23 là biến kém cho mô hình tuyến tính? Đáp: nó coi 23:00 và 00:00 là xa nhau, và chỉ cho nhu cầu tăng hoặc giảm theo một đường thẳng suốt ngày.</li>
-  <li>Hãy chia câu trả lời thành các vòng rõ ràng: liệt kê biến, tiền xử lý, xử lý tương quan, tinh chỉnh. Người phỏng vấn chấm cấu trúc nhiều hơn danh sách dài.</li>
-  <li>Chỉ dùng thông tin có sẵn tại thời điểm dự báo. Muốn dự báo 2 giờ tới thì phải dùng dự báo thời tiết, không phải thời tiết thực tế đo sau đó.</li>
-  <li>Trên bàn giao dịch, khối lượng và độ biến động có chu kỳ trong ngày và trong tuần: sôi động lúc mở và đóng cửa, trầm lắng buổi trưa, khác biệt vào thứ Sáu và quanh ngày lễ. Mô hình khớp lệnh dùng đúng các mẹo này (khung giờ, điều hoà, so với cùng giờ hôm qua) để dự báo khối lượng 5 phút tới.</li>
+  <li>Tính thống kê t cho mọi biến đầu vào và đánh dấu các biến yếu.</li>
+  <li>Trước khi loại một nhóm biến yếu có tương quan với nhau, kiểm định F cho cả nhóm. Từng biến riêng lẻ có thể không có ý nghĩa thống kê, trong khi cả nhóm cùng nhau lại có, chính vì chúng chia nhau cùng một phần thông tin.</li>
+  <li>Dùng <b>elastic net</b>: phần phạt của ridge co các hệ số theo tỉ lệ, nên xử lý tốt các nhóm biến tương quan; phần phạt của lasso có tác dụng ngưỡng mềm (soft thresholding), loại hẳn những biến không quan trọng.</li>
+  <li>Để có cái nhìn tổng thể về những gì thúc đẩy nhu cầu, chạy chọn biến từng bước tiến hoặc lùi (forward / backward stepwise selection): thêm dần hoặc bớt dần từng biến và xem sai số kiểm định thay đổi ra sao.</li>
 </ul>
+<div class="formula"><span class="lbl">Elastic net: λ<sub>1</sub> điều khiển phần lasso, λ<sub>2</sub> điều khiển phần ridge</span>β̂ = argmin<sub>β</sub> ‖y − Xβ‖² + λ<sub>1</sub>‖β‖<sub>1</sub> + λ<sub>2</sub>‖β‖<sub>2</sub>²</div>
+
+<div class="note"><b>Ứng dụng trên bàn giao dịch.</b> Khối lượng giao dịch và độ biến động có chu kỳ trong ngày và trong tuần rất rõ: sôi động lúc mở cửa và đóng cửa, trầm lắng giờ trưa, khác thường vào thứ Sáu và quanh các ngày lễ. Các mô hình khớp lệnh mã hoá thời gian trong ngày bằng đúng những mẹo này (khung giờ, điều hoà, so với cùng giờ hôm qua) để dự báo khối lượng sẽ có trong năm phút tới.</div>
+
+<h4>Viết bằng code</h4>
+<p>Đoạn code mô phỏng 3.000 quan sát nhu cầu với đỉnh sáng quanh 8:30 và đỉnh chiều quanh 17:48, rồi khớp ba cách mã hoá giờ. Kết quả khi chạy <span class="kbd">bun c16.ts</span>: giờ dạng số (1 biến) chỉ đạt R² = 0,062; 24 giờ one-hot (23 biến) đạt 0,869; sin/cos với K = 3 (6 biến) đạt 0,859. Với K = 2 (4 biến), R² là 0,598, vì hai điều hoà chưa đủ để tạo hai đỉnh hẹp. Với K = 4 (8 biến), R² là 0,862. Vài điều hoà đạt gần bằng 23 biến giả với số biến ít hơn nhiều.</p>
+<pre class="code"><code><span class="c">// Nhu cầu xe theo giờ có hai giờ cao điểm; so ba cách mã hoá giờ trong hồi quy tuyến tính</span>
+function rng(seed: number) {
+  let s = seed &gt;&gt;&gt; 0;
+  return () =&gt; {
+    s = (s + 0x6d2b79f5) | 0;
+    let t = Math.imul(s ^ (s &gt;&gt;&gt; 15), 1 | s);
+    t = (t + Math.imul(t ^ (t &gt;&gt;&gt; 7), 61 | t)) ^ t;
+    return ((t ^ (t &gt;&gt;&gt; 14)) &gt;&gt;&gt; 0) / 4294967296;
+  };
+}
+const r = rng(16);
+const gauss = () =&gt; Math.sqrt(-2 * Math.log(1 - r())) * Math.cos(2 * Math.PI * r());
+const bump = (h: number, c: number, w: number) =&gt; Math.exp(-0.5 * ((h - c) / w) ** 2);
+
+const hours = Array.from({ length: 3000 }, () =&gt; 24 * r());
+const demand = hours.map(h =&gt; 30 + 70 * bump(h, 8.5, 1.3) + 85 * bump(h, 17.8, 1.6) + 9 * gauss());
+
+<span class="c">// Bình phương tối thiểu có hệ số chặn, trả về R² trên chính dữ liệu khớp</span>
+function r2(features: (h: number) =&gt; number[]): { k: number; r2: number } {
+  const X = hours.map(h =&gt; [1, ...features(h)]), p = X[0].length;
+  const A = Array.from({ length: p }, () =&gt; new Array(p + 1).fill(0));
+  X.forEach((x, i) =&gt; x.forEach((xa, a) =&gt; { A[a][p] += xa * demand[i]; x.forEach((xb, b) =&gt; (A[a][b] += xa * xb)); }));
+  for (let c = 0; c &lt; p; c++)
+    for (let k = 0; k &lt; p; k++) if (k !== c) { const f = A[k][c] / A[c][c]; for (let m = c; m &lt;= p; m++) A[k][m] -= f * A[c][m]; }
+  const beta = A.map((row, i) =&gt; row[p] / row[i]);
+  const mean = demand.reduce((s, v) =&gt; s + v, 0) / demand.length;
+  let sse = 0, sst = 0;
+  X.forEach((x, i) =&gt; { const yhat = x.reduce((s, v, j) =&gt; s + v * beta[j], 0); sse += (demand[i] - yhat) ** 2; sst += (demand[i] - mean) ** 2; });
+  return { k: p - 1, r2: 1 - sse / sst };
+}
+
+const asNumber = (h: number) =&gt; [h];
+const oneHot = (h: number) =&gt; Array.from({ length: 23 }, (_, k) =&gt; (Math.floor(h) === k + 1 ? 1 : 0)); <span class="c">// 0 giờ làm mốc</span>
+const harmonics = (K: number) =&gt; (h: number) =&gt;
+  Array.from({ length: K }, (_, k) =&gt; [Math.sin((2 * Math.PI * (k + 1) * h) / 24), Math.cos((2 * Math.PI * (k + 1) * h) / 24)]).flat();
+
+for (const [name, f] of [["giờ dạng số", asNumber], ["24 giờ one-hot", oneHot], ["sin/cos, K = 3", harmonics(3)]] as const) {
+  const { k, r2: v } = r2(f);
+  console.log(`${name.padEnd(15)} số biến = ${String(k).padStart(2)}  R² = ${v.toFixed(3)}`);
+}</code></pre>
+
+<h4>Tự kiểm tra</h4>
+<details class="qa"><summary>Vì sao “giờ trong ngày dạng số từ 0 đến 23” là một biến đầu vào kém cho mô hình tuyến tính của nhu cầu xe đạp? (A) Không thể dùng số trong hồi quy. (B) Nó coi 23:00 và 00:00 là xa nhau, và ép nhu cầu thay đổi theo một đường thẳng suốt ngày. (C) Nó dùng quá nhiều biến đầu vào. (D) Nó làm mô hình trở thành phi tuyến.</summary>
+<p><b>Đáp án: B.</b> Với một số hạng tuyến tính duy nhất β · h, đường khớp chỉ có thể dốc lên hoặc dốc xuống đều đặn từ 0 giờ tới 23 giờ. Khi đồng hồ quay về 0 giờ, đường khớp nhảy đột ngột từ β<sub>0</sub> + 23β về β<sub>0</sub>, một bước nhảy giả mà nhu cầu thật không có. Nhu cầu thật có hai giờ cao điểm và quay vòng theo ngày, điều mà một cách mã hoá tuần hoàn như sin/cos với vài điều hoà nắm được. Trong đoạn code, R² của giờ dạng số chỉ là 0,062.</p>
+<p>Các phương án khác đều sai. A sai vì biến số hoàn toàn dùng được trong hồi quy, vấn đề nằm ở dạng quan hệ. C sai vì giờ dạng số chỉ tốn đúng một biến, ít nhất trong mọi cách. D sai vì mô hình vẫn tuyến tính theo tham số; thực ra chính sự tuyến tính theo h mới là vấn đề.</p>
+</details>
 
 <script>
 (()=>{
   const stage=document.getElementById('demo-16'), ctl=document.getElementById('ctl-16'), out=document.getElementById('out-16');
-  const S={enc:'harm', K:2, weekend:false, seed:16, hA:23, hB:1};
+  const S={enc:'harm', K:2, weekend:false, seed:16};
   const view={yaw:0.5,pitch:0.5,dist:12,auto:true};
   const n=2000;
   // đường nhu cầu thật: ngày thường có hai giờ cao điểm, cuối tuần có một đỉnh rộng giữa trưa
@@ -84,11 +156,9 @@
   const names={num:'giờ dạng số',bucket:'4 khung giờ (one-hot)',onehot:'24 giờ (one-hot)',harm:'sin/cos'};
   function report(){
     const jump0=pred(0)-pred(23.999), jump=Math.abs(jump0)<0.05?0:jump0;
-    const dNum=Math.abs(S.hA-S.hB), dl=Math.min(dNum,24-dNum), chord=2*Math.sin(Math.PI*dl/24);
     let peak=0,ph=0; for(let i=0;i<480;i++){ const h=24*i/480, v=pred(h); if(v>peak){peak=v;ph=h;} }
     out.textContent=`Mã hoá: ${names[S.enc]}${S.enc==='harm'?', K = '+S.K:''}   Số biến đầu vào: ${nIn}   R² = ${Q.fmt(r2,3)}\n`+
-      `Bước nhảy của đường khớp tại nửa đêm: ${Q.fmt(jump,1)} xe   Đỉnh khớp: ${Q.fmt(peak,1)} xe lúc ${Math.floor(Math.round(ph*60)/60)%24}:${String(Math.round(ph*60)%60).padStart(2,"0")}\n`+
-      `Giờ A = ${S.hA}:00, giờ B = ${S.hB}:00   Khoảng cách dạng số = ${dNum}   Dây cung trên vòng tròn = ${Q.fmt(chord,3)} (tối đa 2)`;
+      `Bước nhảy của đường khớp tại nửa đêm: ${Q.fmt(jump,1)} xe   Đỉnh khớp: ${Q.fmt(peak,1)} xe lúc ${Math.floor(Math.round(ph*60)/60)%24}:${String(Math.round(ph*60)%60).padStart(2,"0")}`;
   }
   const c=Q.canvas(stage,420,draw);
   const RAD=2.2, ZS=2.4/150;
@@ -102,10 +172,6 @@
     for(let i=0;i<=96;i++){ const q=P(at(24*i/96,RAD,0)); i?ctx.lineTo(q[0],q[1]):ctx.moveTo(q[0],q[1]); } ctx.stroke();
     ctx.fillStyle=C.muted; ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif';
     for(let k=0;k<24;k+=3){ const q=P(at(k,RAD+0.5,0)); ctx.fillText(k+'h',q[0]-8,q[1]+4); }
-    // dây cung giữa giờ A và B
-    const pa=P(at(S.hA,RAD+0.35,0)), pb=P(at(S.hB,RAD+0.35,0));
-    ctx.strokeStyle=C.d; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(pa[0],pa[1]); ctx.lineTo(pb[0],pb[1]); ctx.stroke();
-    ctx.fillStyle=C.d; [pa,pb].forEach((q,i)=>{ ctx.beginPath(); ctx.arc(q[0],q[1],5,0,7); ctx.fill(); ctx.fillText(i?'B':'A',q[0]+7,q[1]-6); });
     // các phần tử 3D: cột trung bình theo giờ và đoạn đường khớp, vẽ từ xa tới gần
     const items=[];
     for(let k=0;k<24;k++){ const b0=at(k+0.5,RAD,0), t0=at(k+0.5,RAD,hourMean[k]*ZS); items.push({d:P(t0)[2],f:()=>{ const a=P(b0), b=P(t0), fz=view.dist/(view.dist+a[2]);
@@ -119,7 +185,7 @@
     const j0=P(at(0,RAD,pred(0)*ZS)), j1=P(at(0,RAD,pred(23.999)*ZS));
     if(Math.abs(pred(0)-pred(23.999))>1){ ctx.strokeStyle=C.ink; ctx.lineWidth=3; ctx.setLineDash([4,3]); ctx.beginPath(); ctx.moveTo(j0[0],j0[1]); ctx.lineTo(j1[0],j1[1]); ctx.stroke(); ctx.setLineDash([]); }
     ctx.lineCap='butt'; ctx.fillStyle=C.muted; ctx.font='13px Be Vietnam Pro,-apple-system,sans-serif';
-    ctx.fillText('cột xanh: nhu cầu trung bình mỗi giờ   đường cam: mô hình   tím: hai giờ A, B',12,20);
+    ctx.fillText('cột xanh: nhu cầu trung bình mỗi giờ   đường cam: mô hình',12,20);
   }
   Q.orbit(c.cv,view,()=>c.redraw());
   Q.loop(stage,()=>{ if(view.auto){ view.yaw+=0.003; c.redraw(); } });
@@ -130,10 +196,93 @@
   encBtns.onehot=Q.button(ctl,'24 biến giả',()=>setEnc('onehot'));
   encBtns.harm=Q.button(ctl,'sin/cos',()=>setEnc('harm'),true);
   Q.slider(ctl,'Số điều hoà K',1,6,1,S.K,v=>{ S.K=v; setEnc('harm'); },v=>v);
-  Q.slider(ctl,'Giờ A',0,23,1,S.hA,v=>{ S.hA=v; report(); c.redraw(); },v=>v+'h');
-  Q.slider(ctl,'Giờ B',0,23,1,S.hB,v=>{ S.hB=v; report(); c.redraw(); },v=>v+'h');
   const bW=Q.button(ctl,'Cuối tuần: tắt',()=>{ S.weekend=!S.weekend; bW.textContent='Cuối tuần: '+(S.weekend?'bật':'tắt'); bW.className=S.weekend?'primary':''; simulate(); });
   simulate();
+})();
+</script>
+<script>
+(()=>{
+  /* ---------- Hình 16.2: bộ mã hoá mặt đồng hồ, bốn cách khớp ---------- */
+  const stage=document.getElementById('demo2-16'), ctl=document.getElementById('ctl2-16'), out=document.getElementById('out2-16');
+  const S={hA:23, hB:1, K:3, show:{num:true,bucket:true,onehot:true,harm:true}};
+  const N=1500, g=Q.rng(1602), H=[], Y=[];
+  const bump=(h,c,w)=>Math.exp(-0.5*((h-c)/w)**2);
+  const truth=h=>30+70*bump(h,8.5,1.3)+85*bump(h,17.8,1.6);
+  for(let i=0;i<N;i++){ const h=24*g(); H.push(h); Y.push(truth(h)+9*Q.normal(g)); }
+  const ENC={
+    num:{name:'giờ dạng số',col:'muted',phi:h=>[1,h]},
+    bucket:{name:'4 khung giờ',col:'d',phi:h=>{ const b=Math.floor(h/6); return [1,b===1?1:0,b===2?1:0,b===3?1:0]; }},
+    onehot:{name:'24 biến giả',col:'c',phi:h=>{ const v=new Array(24).fill(0); v[0]=1; const k=Math.floor(h); if(k>0) v[k]=1; return v; }},
+    harm:{name:'sin/cos',col:'b',phi:h=>{ const v=[1]; for(let k=1;k<=S.K;k++){ const t=2*Math.PI*k*h/24; v.push(Math.sin(t),Math.cos(t)); } return v; }}
+  };
+  function ols(phi){
+    const p=phi(0).length, A=Array.from({length:p},()=>new Array(p+1).fill(0));
+    for(let i=0;i<N;i++){ const x=phi(H[i]); for(let a=0;a<p;a++){ A[a][p]+=x[a]*Y[i]; for(let b=0;b<p;b++) A[a][b]+=x[a]*x[b]; } }
+    for(let c=0;c<p;c++){ let m=c; for(let r=c+1;r<p;r++) if(Math.abs(A[r][c])>Math.abs(A[m][c])) m=r; [A[c],A[m]]=[A[m],A[c]];
+      for(let r=0;r<p;r++) if(r!==c){ const f=A[r][c]/A[c][c]; for(let k=c;k<=p;k++) A[r][k]-=f*A[c][k]; } }
+    const beta=A.map((r,i)=>r[p]/r[i]);
+    const pred=h=>{ const x=phi(h); let s=0; for(let j=0;j<p;j++) s+=x[j]*beta[j]; return s; };
+    let m=0; for(const y of Y) m+=y; m/=N; let se=0,st=0; for(let i=0;i<N;i++){ se+=(Y[i]-pred(H[i]))**2; st+=(Y[i]-m)**2; }
+    return {pred, r2:1-se/st, k:p-1};
+  }
+  let fits={};
+  function refit(){ for(const k in ENC) fits[k]=ols(ENC[k].phi); report(); c.redraw(); }
+  function report(){
+    const dn=Math.abs(S.hA-S.hB), dl=Math.min(dn,24-dn), ch=2*Math.sin(Math.PI*dl/24);
+    out.textContent=`Giờ A = ${S.hA}:00, giờ B = ${S.hB}:00   dạng số: |A − B| = ${dn}   trên vòng tròn: cách ${dl} giờ, dây cung = ${Q.fmt(ch,3)} (tối đa 2)\n`+
+      Object.keys(ENC).map(k=>`${ENC[k].name}${k==='harm'?' K = '+S.K:''}: ${fits[k].k} biến, R² = ${Q.fmt(fits[k].r2,3)}`).join('   ');
+  }
+  function draw(ctx,w,h){
+    const C=Q.colors(); ctx.clearRect(0,0,w,h); if(!fits.num) return;
+    const wide=w>=640, F='12px Be Vietnam Pro,-apple-system,sans-serif', M='11px JetBrains Mono,ui-monospace,monospace';
+    ctx.font=F;
+    // ----- mặt đồng hồ và trục số -----
+    const lw=wide?Math.min(300,w*0.36):w, ch=wide?h:150;
+    const R=wide?Math.min(lw*0.36,95):48, cx=wide?lw/2:R+30, cy=wide?R+40:R+14;
+    const pt=(hh,r)=>[cx+r*Math.sin(2*Math.PI*hh/24), cy-r*Math.cos(2*Math.PI*hh/24)];
+    ctx.strokeStyle=C.line; ctx.lineWidth=1.5; ctx.beginPath(); ctx.arc(cx,cy,R,0,2*Math.PI); ctx.stroke();
+    ctx.font=M; ctx.fillStyle=C.muted;
+    for(let k=0;k<24;k++){ const a=pt(k,R), b=pt(k,R-(k%3?3:7)); ctx.strokeStyle=C.muted; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(a[0],a[1]); ctx.lineTo(b[0],b[1]); ctx.stroke();
+      if(k%6===0){ const q=pt(k,R+14); const t=String(k); ctx.fillText(t,q[0]-ctx.measureText(t).width/2,q[1]+4); } }
+    const A=pt(S.hA,R), B=pt(S.hB,R);
+    ctx.strokeStyle=C.d; ctx.lineWidth=2.5; ctx.beginPath(); ctx.moveTo(A[0],A[1]); ctx.lineTo(B[0],B[1]); ctx.stroke();
+    ctx.font=F;
+    [[A,'A'],[B,'B']].forEach(([q,l])=>{ ctx.fillStyle=C.d; ctx.beginPath(); ctx.arc(q[0],q[1],5,0,7); ctx.fill(); const dx=q[0]>=cx?8:-16; ctx.fillText(l,q[0]+dx,q[1]-6); });
+    // trục số 0–23
+    const nx0=wide?20:cx+R+40, nx1=wide?lw-20:w-20, ny=wide?cy+R+70:cy+10;
+    ctx.strokeStyle=C.muted; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(nx0,ny); ctx.lineTo(nx1,ny); ctx.stroke();
+    const NX=v=>nx0+v/23*(nx1-nx0);
+    ctx.font=M; ctx.fillStyle=C.muted; [0,6,12,18,23].forEach(v=>{ const t=String(v); ctx.fillText(t,NX(v)-ctx.measureText(t).width/2,ny+16); ctx.fillRect(NX(v)-0.5,ny-3,1,6); });
+    ctx.strokeStyle=C.d; ctx.globalAlpha=0.5; ctx.lineWidth=5; ctx.beginPath(); ctx.moveTo(NX(S.hA),ny); ctx.lineTo(NX(S.hB),ny); ctx.stroke(); ctx.globalAlpha=1;
+    ctx.fillStyle=C.d; [S.hA,S.hB].forEach(v=>{ ctx.beginPath(); ctx.arc(NX(v),ny,4.5,0,7); ctx.fill(); });
+    ctx.font=F; ctx.fillStyle=C.muted;
+    const dn=Math.abs(S.hA-S.hB), dl=Math.min(dn,24-dn);
+    ctx.fillText('dạng số: cách '+dn+' đơn vị',nx0,ny-12);
+    ctx.fillText('trên vòng tròn: cách '+dl+' giờ',wide?nx0:nx0,wide?ny+38:ny+36);
+    // ----- biểu đồ nhu cầu -----
+    const L=wide?lw+44:44, Rr=w-14, T=wide?30:ch+30, Bt=h-30;
+    const X=v=>L+v/24*(Rr-L), lo=0, hi=150, Yp=v=>Bt-(v-lo)/(hi-lo)*(Bt-T);
+    ctx.strokeStyle=C.line; ctx.strokeRect(L,T,Rr-L,Bt-T);
+    ctx.font=M; ctx.fillStyle=C.muted;
+    for(let v=0;v<=24;v+=6){ const t=v+'h'; ctx.fillText(t,X(v)-ctx.measureText(t).width/2,Bt+16); }
+    [0,50,100,150].forEach(v=>{ const t=String(v); ctx.fillText(t,L-6-ctx.measureText(t).width,Yp(v)+4); });
+    ctx.font=F; ctx.fillText('số xe mỗi giờ',L,T-8);
+    ctx.save(); ctx.beginPath(); ctx.rect(L,T,Rr-L,Bt-T); ctx.clip();
+    ctx.fillStyle=C.muted; ctx.globalAlpha=0.25; for(let i=0;i<N;i+=2){ ctx.fillRect(X(H[i])-1,Yp(Y[i])-1,2,2); } ctx.globalAlpha=1;
+    for(const k of ['num','bucket','onehot','harm']){ if(!S.show[k]) continue; const f=fits[k];
+      ctx.strokeStyle=C[ENC[k].col]; ctx.lineWidth=k==='harm'?3:2; ctx.beginPath();
+      for(let i=0;i<=480;i++){ const x=24*i/480-(i===480?1e-6:0), y=f.pred(x); i?ctx.lineTo(X(x),Yp(y)):ctx.moveTo(X(x),Yp(y)); } ctx.stroke(); }
+    ctx.restore();
+    // chú giải
+    let lx=L+8, ly=T+16; ctx.font=F;
+    for(const k of ['num','bucket','onehot','harm']){ const t=(S.show[k]?'— ':'· ')+ENC[k].name+(k==='harm'?' K='+S.K:'')+'  R² '+Q.fmt(fits[k].r2,2), tw=ctx.measureText(t).width; if(lx+tw>Rr-6&&lx>L+8){ lx=L+8; ly+=16; } ctx.fillStyle=C.panel; ctx.globalAlpha=0.8; ctx.fillRect(lx-3,ly-12,tw+6,16); ctx.globalAlpha=1; ctx.fillStyle=S.show[k]?C[ENC[k].col]:C.muted; ctx.fillText(t,lx,ly); lx+=tw+14; }
+  }
+  const c=Q.canvas(stage,360,draw);
+  Q.slider(ctl,'Giờ A',0,23,1,S.hA,v=>{S.hA=v; report(); c.redraw();},v=>v+'h');
+  Q.slider(ctl,'Giờ B',0,23,1,S.hB,v=>{S.hB=v; report(); c.redraw();},v=>v+'h');
+  Q.slider(ctl,'Số điều hoà K',1,6,1,S.K,v=>{S.K=v; fits.harm=ols(ENC.harm.phi); report(); c.redraw();},v=>v);
+  for(const k of ['num','bucket','onehot','harm']){ const b=Q.button(ctl,ENC[k].name,()=>{ S.show[k]=!S.show[k]; b.className=S.show[k]?'primary':''; c.redraw(); },true); }
+  refit();
 })();
 </script>
 </section>

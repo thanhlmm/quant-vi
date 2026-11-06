@@ -2,67 +2,187 @@
 <header>
   <span class="num">14</span>
   <h3>Tình huống: dự báo giá nhà ở New York</h3>
-  <p class="meta">10 phút · Ứng dụng: Xây dựng đặc trưng trên dữ liệu lệch · <a href="https://hft.md/learn/case-housing/">Bài gốc (tiếng Anh)</a></p>
+  <p class="meta">Phần 4 · Nghiên cứu tình huống · Bài 14 · 10 phút · <a href="https://hft.md/learn/case-housing/">Bài gốc (tiếng Anh)</a></p>
 </header>
 
-<p>Vòng phỏng vấn nghiên cứu định lượng (quant research) thường khép lại bằng một câu hỏi mô hình hoá mở. Không có đáp án duy nhất. Người phỏng vấn theo dõi cách bạn biến dữ liệu thô thành một mô hình mà chính bạn dám tin.</p>
+<p><i>Bài này đi trọn một lượt bài toán mô hình hoá kiểu Two Sigma: mã hoá các biến, chuẩn hoá, lấy logarit, chạy hồi quy, rồi xử lý chuyện các biến đầu vào tương quan với nhau.</i></p>
 
-<div class="note"><b>Đề bài.</b> Có dữ liệu các giao dịch nhà ở New York: giá bán, số phòng ngủ, số phòng tắm, diện tích (ft²), năm xây, quận (borough), khu phố, cùng vài thông tin phụ như diện tích lô đất, loại nhà, số nhà hàng gần đó. Hãy dự báo giá cho những căn chưa bán.</div>
+<p>Vòng phỏng vấn nghiên cứu định lượng (quant research) thường khép lại bằng một câu hỏi mô hình hoá mở. Câu hỏi kiểu này không có một đáp án đúng duy nhất. Người phỏng vấn không chấm con số cuối cùng mà quan sát quá trình: bạn đi từ một bảng dữ liệu thô tới một mô hình mà chính bạn dám tin như thế nào, bạn nhận ra những cái bẫy nào trên đường đi, và bạn có biết lúc nào nên dừng lại. Dưới đây là một lời giải đầy đủ, chia thành năm bước, cộng thêm những điểm làm một câu trả lời nổi bật.</p>
 
-<h4>Ý chính</h4>
+<div class="note"><b>Trong buổi phỏng vấn – đề bài.</b> Bạn có dữ liệu các giao dịch mua bán nhà ở thành phố New York: giá bán, số phòng ngủ, số phòng tắm, diện tích sàn (ft²), năm xây dựng và vị trí (quận, hay borough, và khu phố), cùng vài thông tin phụ như diện tích lô đất, loại bất động sản, số nhà hàng và địa điểm giải trí về đêm ở gần. Hãy dự báo giá bán của những căn nhà chưa được bán.</div>
+
+<h4>Bước 1: ý tưởng chính</h4>
+<p>Hãy bắt đầu đơn giản và nói thành lời ngay từ đầu: phương án nền là một <b>hồi quy bội</b> (multiple regression) của giá bán theo diện tích, số phòng ngủ, số phòng tắm, năm xây và vị trí. Một câu như vậy cho người phỏng vấn thấy bạn có khung sườn trước khi đi vào chi tiết. Mọi bước phía sau chỉ phục vụ hai mục tiêu: làm cho hồi quy này <i>hợp lệ</i> (các giả định của nó không bị vi phạm nặng) và <i>hữu ích</i> (dự báo tốt trên những căn chưa bán, hệ số đọc được).</p>
+<p>Vì sao không mở đầu bằng một mô hình phức tạp như rừng ngẫu nhiên hay mạng nơ-ron? Vì hồi quy cho ta một chuẩn so sánh dễ hiểu, hệ số có ý nghĩa kinh tế, và các lỗi trong dữ liệu lộ ra nhanh. Mô hình phức tạp hơn chỉ đáng dùng khi nó thắng hồi quy rõ ràng trên dữ liệu kiểm tra.</p>
+
+<h4>Bước 2: mã hoá từng biến đầu vào</h4>
+<p>Mỗi cột trong bảng cần một cách đưa vào mô hình phù hợp với bản chất của nó.</p>
 <ul>
-  <li>Nói ngay phương án nền: <b>hồi quy bội</b> (multiple regression) của giá theo diện tích, số phòng, năm xây và vị trí. Mọi bước sau chỉ nhằm làm hồi quy này hợp lệ và hữu ích.</li>
-  <li><b>Mã hoá từng biến.</b> Diện tích và năm xây có rất nhiều giá trị nên coi như biến liên tục. Số phòng là biến đếm nhỏ có thứ tự, vẫn đưa vào dạng số được. Quận và khu phố là biến định danh, dùng <b>mã hoá one-hot</b> (one-hot encoding) và bỏ một nhóm làm mốc.</li>
-  <li><b>Nhìn hình dạng phân phối trước khi chuẩn hoá.</b> Diện tích luôn dương, tập trung quanh cỡ nhà phổ biến, có đuôi phải rất dài. Đó là dáng của <b>phân phối log-chuẩn</b> (lognormal). Lấy logarit trước, rồi mới trừ trung bình và chia độ lệch chuẩn.</li>
-  <li>Giá bán cũng gần log-chuẩn. Hồi quy log(giá) theo log(diện tích) cho hệ số đọc được như <b>độ co giãn</b> (elasticity), tức tác động tính theo phần trăm.</li>
-  <li>Diện tích, phòng ngủ, phòng tắm đi cùng nhau. Đo mức đó bằng <b>tương quan hạng Spearman</b> (Spearman rank correlation) khi có biến rời rạc. <b>Đa cộng tuyến</b> (multicollinearity) làm sai số chuẩn phình to; xử lý bằng ridge, lasso, trực giao hoá tuần tự hoặc kiểm định F cho cả nhóm.</li>
-  <li>Một câu trả lời mạnh còn thêm: kiểm tra trên các giao dịch gần nhất (out-of-time), mô tả vị trí bằng toạ độ hoặc giá các căn lân cận, và thêm xu hướng theo ngày bán.</li>
+  <li><b>Diện tích và năm xây</b> là số nguyên, nhưng có quá nhiều giá trị khác nhau nên hành xử như biến liên tục. Tạm thời giữ chúng ở dạng số. Bước 3 sẽ quay lại câu hỏi có nên biến đổi chúng không.</li>
+  <li><b>Số phòng ngủ và số phòng tắm</b> là biến đếm nhỏ và có thứ tự (1 &lt; 2 &lt; 3). Chúng cũng có thể vào mô hình ở dạng số. Cách này ngầm giả định mỗi phòng thêm vào có cùng một tác động. Nếu nghi ngờ điều đó, có thể mã hoá từng mức thành biến giả.</li>
+  <li><b>Quận và khu phố</b> là biến định danh, không có thứ tự. Gán Manhattan = 1, Brooklyn = 2, … rồi đưa vào như số là sai, vì mô hình sẽ hiểu Brooklyn “gấp đôi” Manhattan. Cách đúng là <b>mã hoá one-hot</b> (one-hot encoding): mỗi nhóm một cột 0/1. Phải bỏ đi một nhóm làm mốc, chẳng hạn Staten Island. Nếu giữ đủ năm cột, tổng của chúng luôn bằng 1 và trùng với cột hệ số chặn, gây <b>đa cộng tuyến hoàn hảo</b> (perfect collinearity): ma trận XᵀX suy biến và hồi quy không có nghiệm duy nhất. Hiện tượng này còn được gọi là bẫy biến giả (dummy variable trap).</li>
 </ul>
+<p>Với cách mã hoá đó, hệ số của cột Brooklyn được đọc là chênh lệch giữa một căn ở Brooklyn và một căn giống hệt ở Staten Island. Khu phố có hàng trăm giá trị, nên cột one-hot của nó rất thưa. Mục “một câu trả lời mạnh” ở dưới sẽ bàn cách tốt hơn để mô tả vị trí.</p>
 
-<h4>Công thức</h4>
-<div class="formula"><span class="lbl">Mô hình nền, quận làm mốc là Staten Island</span>log(giá)<sub>i</sub> = β<sub>0</sub> + β<sub>1</sub> log(diện tích)<sub>i</sub> + β<sub>2</sub> phòng ngủ<sub>i</sub> + β<sub>3</sub> phòng tắm<sub>i</sub> + Σ<sub>k</sub> γ<sub>k</sub> · 𝟙[quận<sub>i</sub> = k] + ε<sub>i</sub></div>
-<div class="formula"><span class="lbl">Log-chuẩn: nếu ln X ~ N(μ, σ²) thì trung bình luôn lớn hơn trung vị</span>trung vị = e<sup>μ</sup>,&nbsp;&nbsp; E[X] = e<sup>μ + σ²/2</sup></div>
+<h4>Bước 3: chuẩn hoá, và nhìn hình dạng phân phối</h4>
+<p>Đưa các biến về cùng thang đo bằng cách trừ trung bình rồi chia cho độ lệch chuẩn. Việc này tránh rắc rối số học khi giải hệ phương trình (một cột tính bằng ft² cỡ hàng nghìn, cột khác là số phòng cỡ vài đơn vị), và làm các hệ số so sánh được với nhau: mỗi hệ số là tác động của việc tăng một độ lệch chuẩn. Chuẩn hoá cũng bắt buộc trước khi dùng ridge hay lasso, vì mức phạt phụ thuộc vào thang đo của từng hệ số.</p>
+<p>Nhưng <b>trước khi chuẩn hoá, hãy nhìn phân phối của từng biến</b>. Diện tích nhà không bao giờ âm. Phần lớn các căn tập trung quanh cỡ một nhà một hoặc hai tầng điển hình. Phía trái có một đuôi ngắn (căn hộ studio nhỏ), còn phía phải có một đuôi rất dài: vài biệt thự rộng gấp mấy chục lần căn trung bình. Đó là dáng của <b>phân phối log-chuẩn</b> (lognormal): bản thân biến thì lệch phải, nhưng logarit của nó có dạng chuẩn. Thứ tự đúng là lấy logarit trước, rồi mới chuẩn hoá. Nếu chuẩn hoá thẳng trên thang gốc, vài biệt thự sẽ nằm cách trung bình hàng chục độ lệch chuẩn và chi phối toàn bộ đường hồi quy.</p>
+<div class="formula"><span class="lbl">Phân phối log-chuẩn: nếu ln X ~ N(μ, σ²) thì trung bình luôn lớn hơn trung vị</span>trung vị = e<sup>μ</sup>,&nbsp;&nbsp; E[X] = e<sup>μ + σ²/2</sup></div>
+<p>Ví dụ: nếu ln(diện tích) có trung vị 900 ft² và σ = 0,55, thì diện tích trung bình là 900 · e<sup>0,55²/2</sup> = 900 · e<sup>0,151</sup> ≈ 1.047 ft². Vài căn rất lớn kéo trung bình lên cao hơn trung vị khoảng 16%. Đây là dấu hiệu nhanh nhất để nhận ra một biến lệch phải: trung bình nằm bên phải trung vị.</p>
+<p>Bản thân giá bán thường cũng gần log-chuẩn. Hồi quy log(giá) thay vì giá có hai lợi ích. Thứ nhất, phần dư đối xứng hơn và phương sai ổn định hơn: sai số 50.000 USD là lớn với căn 300.000 USD nhưng nhỏ với căn 5 triệu, còn sai số theo phần trăm thì so được. Thứ hai, hệ số đọc được như tác động theo phần trăm. Khi cả hai vế đều lấy log, hệ số của log(diện tích) là <b>độ co giãn</b> (elasticity):</p>
+<div class="formula"><span class="lbl">Mô hình nền, quận mốc là Staten Island</span>log(giá)<sub>i</sub> = β<sub>0</sub> + β<sub>1</sub> log(diện tích)<sub>i</sub> + β<sub>2</sub> phòng ngủ<sub>i</sub> + β<sub>3</sub> phòng tắm<sub>i</sub> + Σ<sub>k</sub> γ<sub>k</sub> · 𝟙[quận<sub>i</sub> = k] + ε<sub>i</sub></div>
 <div class="formula"><span class="lbl">Độ co giãn: diện tích nhân k lần thì giá nhân k<sup>β₁</sup></span>β<sub>1</sub> = <span class="frac"><span>∂ log(giá)</span><span>∂ log(diện tích)</span></span> ≈ <span class="frac"><span>% thay đổi của giá</span><span>% thay đổi của diện tích</span></span></div>
-<div class="formula"><span class="lbl">Tương quan hạng Spearman (không có giá trị trùng), d<sub>i</sub> là chênh lệch hạng</span>ρ<sub>S</sub> = 1 − <span class="frac"><span>6 Σ d<sub>i</sub>²</span><span>n(n² − 1)</span></span></div>
-<div class="formula"><span class="lbl">Hệ số phóng đại phương sai; với hai biến chuẩn hoá tương quan ρ thì R²<sub>j</sub> = ρ²</span>VIF<sub>j</sub> = <span class="frac"><span>1</span><span>1 − R<sub>j</sub>²</span></span>,&nbsp;&nbsp; Var(β̂<sub>1</sub>) ≈ <span class="frac"><span>σ²</span><span>n (1 − ρ²)</span></span></div>
-<div class="formula"><span class="lbl">Ridge: kéo các hệ số tương quan về gần nhau</span>β̂<sub>ridge</sub> = (XᵀX + λI)<sup>−1</sup> Xᵀy</div>
-
-<h4>Ví dụ minh hoạ: đọc kết quả hồi quy</h4>
-<p>Giả sử mô hình ước lượng được: log(giá) = 6,2 + 0,9 · ln(diện tích) + 0,05 · phòng tắm + γ<sub>quận</sub>. Phụ trội quận so với mốc là γ = 0,3 cho Brooklyn và γ = 0,6 cho Manhattan. Độ lệch chuẩn phần dư là 0,2.</p>
-<ol>
-  <li>Căn 1.200 ft², 2 phòng tắm, ở Brooklyn: ln 1.200 ≈ 7,090, nên 0,9 × 7,090 ≈ 6,381.</li>
-  <li>Cộng các thành phần: 6,2 + 6,381 + 0,05 × 2 + 0,3 ≈ 12,981. Giá dự báo ≈ e<sup>12,981</sup> ≈ 434.000 USD.</li>
-  <li>Cùng căn đó ở Manhattan: log tăng thêm 0,3, giá nhân e<sup>0,3</sup> ≈ 1,35, thành khoảng 586.000 USD.</li>
-  <li>Diện tích tăng 10%: giá nhân 1,1<sup>0,9</sup> ≈ 1,090, tức đắt hơn khoảng 9,0%. Gấp đôi diện tích thì giá nhân 2<sup>0,9</sup> ≈ 1,87, không phải 2.</li>
-  <li>Lưu ý: e<sup>ŷ</sup> là trung vị dự báo. Muốn trung bình thì nhân thêm e<sup>σ²/2</sup> = e<sup>0,02</sup> ≈ 1,02.</li>
-</ol>
-<p>Cùng lý do, nếu ln(diện tích) có trung vị 900 ft² và σ = 0,55 thì diện tích trung bình là 900 · e<sup>0,151</sup> ≈ 1.047 ft². Vài căn biệt thự kéo trung bình cao hơn trung vị khoảng 16%.</p>
 
 <figure class="demo">
   <div class="stage" id="demo-14"></div>
   <div class="controls" id="ctl-14"></div>
   <div class="readout" id="out-14"></div>
-  <figcaption><b>Mô hình 14.1 – Lấy log một biến lệch phải.</b> Biểu đồ tần suất của 4.000 diện tích nhà mô phỏng. Đường nét là phân phối chuẩn có cùng trung bình và độ lệch chuẩn. Ở thang gốc, trung bình nằm bên phải trung vị và đường chuẩn khớp kém. Chuyển sang thang log, hai đường gần trùng nhau và độ lệch (skewness) về gần 0. Tăng độ phân tán σ để thấy hiệu ứng rõ hơn.</figcaption>
+  <figcaption><b>Hình 14.1 – Phòng thí nghiệm biến đổi log.</b> Biểu đồ tần suất của 4.000 diện tích nhà mô phỏng. Đường nét đứt là phân phối chuẩn có cùng trung bình và độ lệch chuẩn. Ở thang gốc, biểu đồ lệch phải, trung bình (cam) nằm bên phải trung vị (xanh lá) và đường chuẩn khớp kém. Bấm “Thang log” để chuyển sang ln(diện tích): hình dạng trở nên đối xứng, đường chuẩn khớp gần khít và độ lệch (skewness) về gần 0. Kéo độ phân tán σ lên cao để thấy hiệu ứng rõ hơn.</figcaption>
 </figure>
+
+<p><b>Ví dụ: đọc kết quả hồi quy.</b> Giả sử mô hình ước lượng được log(giá) = 6,2 + 0,9 · ln(diện tích) + 0,05 · phòng tắm + γ<sub>quận</sub>, với phụ trội quận so với mốc là γ = 0,3 cho Brooklyn và γ = 0,6 cho Manhattan, và độ lệch chuẩn phần dư là 0,2.</p>
+<ol>
+  <li>Căn 1.200 ft², 2 phòng tắm, ở Brooklyn: ln 1.200 ≈ 7,090, nên 0,9 × 7,090 ≈ 6,381.</li>
+  <li>Cộng các thành phần: 6,2 + 6,381 + 0,05 × 2 + 0,3 ≈ 12,981. Giá dự báo ≈ e<sup>12,981</sup> ≈ 434.000 USD.</li>
+  <li>Cùng căn đó ở Manhattan: log tăng thêm 0,3, nên giá nhân với e<sup>0,3</sup> ≈ 1,35, thành khoảng 586.000 USD.</li>
+  <li>Diện tích tăng 10%: giá nhân 1,1<sup>0,9</sup> ≈ 1,090, tức đắt hơn khoảng 9,0%. Gấp đôi diện tích thì giá nhân 2<sup>0,9</sup> ≈ 1,87, không phải 2: mỗi ft² thêm vào đáng giá ít hơn một chút so với ft² trước nó.</li>
+  <li>Một điểm tinh tế: e<sup>ŷ</sup> là <i>trung vị</i> dự báo của giá, không phải trung bình. Muốn dự báo trung bình thì nhân thêm e<sup>σ²/2</sup> = e<sup>0,02</sup> ≈ 1,02, đúng theo công thức log-chuẩn ở trên.</li>
+</ol>
+
+<h4>Bước 4: tương quan giữa các biến đầu vào</h4>
+<p>Diện tích, số phòng ngủ và số phòng tắm hiển nhiên đi cùng nhau: nhà rộng thì nhiều phòng. Trước khi xử lý, hãy đo mức độ đó. Hệ số tương quan Pearson đo quan hệ <i>tuyến tính</i> giữa hai biến liên tục. Khi một biến là biến rời rạc có thứ tự (số phòng ngủ) và biến kia là biến liên tục (log diện tích), quan hệ giữa chúng có dạng bậc thang và không nhất thiết tuyến tính. Công cụ phù hợp hơn là <b>tương quan hạng Spearman</b> (Spearman’s rank correlation): thay mỗi giá trị bằng thứ hạng của nó trong mẫu, rồi tính tương quan Pearson trên các thứ hạng. Spearman chỉ hỏi “hai biến có cùng tăng không”, không quan tâm tăng theo đường thẳng hay đường cong, và không bị vài biệt thự cực lớn chi phối.</p>
+<div class="formula"><span class="lbl">Tương quan hạng Spearman khi không có giá trị trùng; d<sub>i</sub> là chênh lệch giữa hai thứ hạng của quan sát i</span>ρ<sub>S</sub> = 1 − <span class="frac"><span>6 Σ d<sub>i</sub>²</span><span>n(n² − 1)</span></span></div>
+<p><b>Ví dụ.</b> Năm căn nhà có hạng diện tích 1, 2, 3, 4, 5 và hạng của một biến khác lần lượt là 2, 1, 3, 5, 4. Chênh lệch hạng là −1, 1, 0, −1, 1, nên Σd² = 4 và ρ<sub>S</sub> = 1 − 6 · 4 / (5 · 24) = 1 − 0,2 = 0,8. Với số phòng ngủ thì luôn có giá trị trùng. Khi đó mỗi nhóm trùng nhận hạng trung bình, rồi tính Pearson trên hạng. Chẳng hạn các căn có diện tích 650, 820, 1.100, 1.500, 2.400 ft² và số phòng ngủ 1, 1, 2, 3, 3: hạng số phòng ngủ là 1,5; 1,5; 3; 4,5; 4,5, và tương quan Spearman bằng 0,95. Trong dữ liệu mô phỏng ở mục code, tương quan Spearman giữa diện tích và số phòng ngủ là 0,81.</p>
+
+<h4>Bước 5: xử lý đa cộng tuyến</h4>
+<p>Khi các biến đầu vào tương quan mạnh, hồi quy khó tách phần đóng góp của từng biến. Hậu quả, như đã thấy ở bài 10, là sai số chuẩn phình to và hệ số mất ổn định: chỉ cần đổi vài quan sát là hệ số của diện tích và của số phòng ngủ có thể đổi chỗ cho nhau, thậm chí đổi dấu, trong khi tổng tác động của chúng hầu như không đổi. Mức độ phình to đo bằng <b>hệ số phóng đại phương sai</b> (variance inflation factor, VIF):</p>
+<div class="formula"><span class="lbl">R<sub>j</sub>² là R² khi hồi quy biến j theo các biến đầu vào còn lại; với hai biến chuẩn hoá tương quan ρ thì R<sub>j</sub>² = ρ²</span>VIF<sub>j</sub> = <span class="frac"><span>1</span><span>1 − R<sub>j</sub>²</span></span>,&nbsp;&nbsp; Var(β̂<sub>1</sub>) ≈ <span class="frac"><span>σ²</span><span>n (1 − ρ²)</span></span></div>
+<p>Với ρ = 0,9, VIF = 1/(1 − 0,81) ≈ 5,26: phương sai của hệ số gấp hơn năm lần, sai số chuẩn gấp khoảng 2,3 lần so với khi hai biến độc lập. Với ρ = 0,95, VIF ≈ 10,3. Có mấy hướng xử lý, xếp từ đơn giản tới phức tạp:</p>
+<ul>
+  <li><b>Điều chuẩn.</b> Ridge co các hệ số tương quan về gần nhau, chia đều tác động cho cả nhóm. Lasso thì giữ lại biến mạnh nhất trong nhóm và đẩy các biến còn lại về đúng 0 (bài 11). Ridge hợp khi tin rằng cả nhóm đều có ích, lasso hợp khi muốn một mô hình gọn.</li>
+  <li><b>Trực giao hoá tuần tự</b> (successive orthogonalisation). Đưa biến quan trọng nhất (log diện tích) vào trước. Với biến tiếp theo (số phòng ngủ), hồi quy nó theo log diện tích và chỉ đưa phần dư vào mô hình. Với số phòng tắm, hồi quy theo cả hai biến trước và lại chỉ dùng phần dư. Các biến mới không còn tương quan với nhau, nên hệ số ổn định. Mỗi hệ số giờ mang nghĩa “thông tin thêm ngoài các biến đã có”, ví dụ hệ số của số phòng ngủ trả lời câu hỏi: với cùng diện tích, nhiều phòng ngủ hơn mức bình thường thì giá cao hơn hay thấp hơn? Giá trị dự báo không đổi so với hồi quy gốc, chỉ có cách đọc hệ số thay đổi.</li>
+  <li><b>Một lượt diễn giải.</b> Tính thống kê t của từng hệ số. Với một nhóm biến yếu, kiểm định chung cả nhóm bằng <b>kiểm định F</b> (F-test), vì từng biến riêng có thể không ý nghĩa dù cả nhóm có ý nghĩa, đúng do đa cộng tuyến. Cân nhắc chọn tập con biến (subset selection) để loại những biến không đóng góp gì.</li>
+</ul>
+<div class="formula"><span class="lbl">Kiểm định F cho q ràng buộc: RSS<sub>r</sub> của mô hình bỏ nhóm biến, RSS<sub>u</sub> của mô hình đầy đủ có p tham số</span>F = <span class="frac"><span>(RSS<sub>r</sub> − RSS<sub>u</sub>) / q</span><span>RSS<sub>u</sub> / (n − p)</span></span></div>
+<p><b>Ví dụ.</b> Với n = 5.000 và mô hình đầy đủ có p = 8 tham số, bỏ hai biến phòng ngủ và phòng tắm làm tổng bình phương phần dư tăng từ 200,0 lên 200,2. Khi đó F = (0,2/2) / (200/4.992) = 0,1 / 0,0401 ≈ 2,5. Giá trị tới hạn 5% của phân phối F(2, ∞) là khoảng 3,0, nên không bác bỏ được giả thuyết cả nhóm bằng 0. Có thể bỏ nhóm này mà mô hình hầu như không kém đi.</p>
 
 <figure class="demo">
   <div class="stage" id="demob-14"></div>
   <div class="controls" id="ctlb-14"></div>
   <div class="readout" id="outb-14"></div>
-  <figcaption><b>Mô hình 14.2 – Mặt phẳng hồi quy chao đảo khi hai biến tương quan.</b> Mỗi điểm là một căn nhà: trục x<sub>1</sub> là log diện tích, trục x<sub>2</sub> là số phòng ngủ (đều đã chuẩn hoá), trục đứng là log giá. Giá thật = x<sub>1</sub> + x<sub>2</sub> + nhiễu. Khi ρ gần 1, các điểm dồn về một đường chéo và mặt phẳng ước lượng xoay quanh đường đó sau mỗi lần lấy mẫu. Ô góc phải ghi lại các cặp (β̂<sub>1</sub>, β̂<sub>2</sub>): chúng trải dài theo đường β̂<sub>1</sub> + β̂<sub>2</sub> = 2. Tăng λ của ridge để thấy đám điểm co lại. Kéo để xoay.</figcaption>
+  <figcaption><b>Hình 14.2 – Mặt phẳng hồi quy chao đảo khi hai biến tương quan.</b> Mô hình bổ sung cho bước 5. Mỗi điểm là một căn nhà: trục x<sub>1</sub> là log diện tích, trục x<sub>2</sub> là số phòng ngủ (đều đã chuẩn hoá), trục đứng là log giá. Giá thật = x<sub>1</sub> + x<sub>2</sub> + nhiễu. Khi ρ gần 1, các điểm dồn về một đường chéo và mặt phẳng ước lượng xoay quanh đường đó sau mỗi lần lấy mẫu. Ô góc phải ghi lại các cặp (β̂<sub>1</sub>, β̂<sub>2</sub>): chúng trải dài theo đường β̂<sub>1</sub> + β̂<sub>2</sub> = 2. Tăng λ của ridge để thấy đám điểm co lại. Kéo để xoay.</figcaption>
 </figure>
 
-<h4>Lưu ý khi phỏng vấn</h4>
+<h4>Một câu trả lời mạnh còn có thêm gì</h4>
 <ul>
-  <li>Nói phương án nền trong một câu trước, rồi mới đi vào chi tiết. Người phỏng vấn muốn thấy bạn có khung sườn.</li>
-  <li>Khi mã hoá one-hot, nhớ bỏ một nhóm. Giữ đủ năm cột quận cùng hệ số chặn thì ma trận XᵀX suy biến (bẫy biến giả, dummy variable trap).</li>
-  <li>Câu hỏi kiểm tra hay gặp: hệ số 0,9 trong hồi quy log–log nghĩa là gì? Đáp: căn rộng hơn 1% thì giá cao hơn khoảng 0,9%, các yếu tố khác giữ nguyên. Đó không phải R² hay hệ số tương quan.</li>
-  <li>Trên bàn giao dịch, vốn hoá, khối lượng và độ biến động đều gần log-chuẩn. Không ai đưa chúng vào mô hình dự báo lợi suất ở dạng thô.</li>
+  <li><b>Kiểm định đúng cách.</b> Mục tiêu là dự báo giá trong tương lai, nên hãy giữ riêng các giao dịch gần nhất làm tập kiểm tra và đo sai số trên đó (kiểm định ngoài thời gian, out-of-time). Chia ngẫu nhiên sẽ để mô hình “nhìn thấy” giá của cùng giai đoạn với các căn cần dự báo, và đánh giá quá lạc quan.</li>
+  <li><b>Mô tả vị trí cho tốt.</b> Biến giả khu phố là công cụ thô: ranh giới hành chính không phải ranh giới giá, và khu phố ít giao dịch thì hệ số rất nhiễu. Dùng vĩ độ và kinh độ qua một hàm trơn, hoặc dùng giá bán của các căn lân cận (một trung bình có trọng số theo hạt nhân, như bài tình huống tiếp theo), sẽ nắm vị trí tốt hơn.</li>
+  <li><b>Thời gian.</b> Giá nhà trôi theo thời gian, theo lãi suất và chu kỳ thị trường. Hãy thêm xu hướng theo ngày bán hoặc biến giả theo tháng, nếu không mô hình sẽ lẫn “bán năm nào” với “căn nhà thế nào”.</li>
 </ul>
+
+<div class="note"><b>Ứng dụng trên bàn giao dịch.</b> Quy trình này, gồm nhìn phân phối, biến đổi các biến lệch, mã hoá biến phân loại, kiểm tra tương quan, điều chuẩn và kiểm định ngoài thời gian, cũng chính là cách xây đặc trưng (features) cho mô hình dự báo lợi suất. Vốn hoá thị trường, khối lượng giao dịch và độ biến động đều gần log-chuẩn. Không ai đưa chúng vào mô hình ở dạng thô. Ngành nghề hay sàn niêm yết là biến phân loại, cần mã hoá one-hot như quận ở đây.</div>
+
+<h4>Viết bằng code</h4>
+<p>Đoạn code dưới đây mô phỏng 5.000 giao dịch theo đúng cấu trúc của bài: diện tích log-chuẩn quanh 900 ft², số phòng ngủ tăng theo diện tích, số phòng tắm tăng theo số phòng ngủ, phụ trội theo quận, và log(giá) tuyến tính theo log diện tích. Sau đó nó mã hoá one-hot (bỏ Staten Island), chuẩn hoá, in tương quan Spearman, và chọn mức phạt ridge λ trên một tập kiểm định riêng. Kết quả khi chạy bằng <span class="kbd">bun c14.ts</span>: tương quan Spearman diện tích – phòng ngủ 0,81, diện tích – phòng tắm 0,67, phòng ngủ – phòng tắm 0,81; λ được chọn ≈ 32; R² trên tập kiểm tra 0,900.</p>
+<pre class="code"><code><span class="c">// Dữ liệu nhà mô phỏng → one-hot, chuẩn hoá, Spearman, ridge chọn λ trên tập kiểm định</span>
+function rng(seed: number) {
+  let s = seed &gt;&gt;&gt; 0;
+  return () =&gt; {
+    s = (s + 0x6d2b79f5) | 0;
+    let t = Math.imul(s ^ (s &gt;&gt;&gt; 15), 1 | s);
+    t = (t + Math.imul(t ^ (t &gt;&gt;&gt; 7), 61 | t)) ^ t;
+    return ((t ^ (t &gt;&gt;&gt; 14)) &gt;&gt;&gt; 0) / 4294967296;
+  };
+}
+const r = rng(14);
+const gauss = () =&gt; Math.sqrt(-2 * Math.log(1 - r())) * Math.cos(2 * Math.PI * r());
+const clip = (x: number, a: number, b: number) =&gt; Math.min(b, Math.max(a, x));
+
+const prem: Record&lt;string, number&gt; = { Manhattan: 0.6, Brooklyn: 0.3, Queens: 0.1, Bronx: -0.1, "Staten Island": 0 };
+const boros = Object.keys(prem);
+const n = 5000, rows: number[][] = [], y: number[] = [], sqft: number[] = [], beds: number[] = [], baths: number[] = [];
+for (let i = 0; i &lt; n; i++) {
+  const s = Math.exp(Math.log(900) + 0.55 * gauss());
+  const b = clip(Math.round(s / 450 + 0.7 * gauss()), 0, 6);
+  const ba = clip(Math.round(0.7 * b + 0.5 * gauss()), 1, 5);
+  const boro = boros[Math.floor(r() * 5)];
+  sqft.push(s); beds.push(b); baths.push(ba);
+  y.push(5.3 + 0.9 * Math.log(s) + 0.05 * ba + prem[boro] + 0.2 * gauss());
+  <span class="c">// one-hot: bỏ Staten Island làm nhóm mốc</span>
+  rows.push([Math.log(s), b, ba, ...boros.slice(0, 4).map(k =&gt; (k === boro ? 1 : 0))]);
+}
+
+<span class="c">// Spearman = Pearson trên hạng (giá trị trùng nhận hạng trung bình)</span>
+function ranks(v: number[]): number[] {
+  const idx = v.map((_, i) =&gt; i).sort((a, b) =&gt; v[a] - v[b]), out = new Array(v.length);
+  for (let i = 0; i &lt; idx.length; ) {
+    let j = i; while (j + 1 &lt; idx.length &amp;&amp; v[idx[j + 1]] === v[idx[i]]) j++;
+    for (let k = i; k &lt;= j; k++) out[idx[k]] = (i + j) / 2 + 1;
+    i = j + 1;
+  }
+  return out;
+}
+function pearson(a: number[], b: number[]): number {
+  const ma = a.reduce((s, x) =&gt; s + x, 0) / a.length, mb = b.reduce((s, x) =&gt; s + x, 0) / b.length;
+  let sab = 0, saa = 0, sbb = 0;
+  a.forEach((x, i) =&gt; { sab += (x - ma) * (b[i] - mb); saa += (x - ma) ** 2; sbb += (b[i] - mb) ** 2; });
+  return sab / Math.sqrt(saa * sbb);
+}
+const sp = (a: number[], b: number[]) =&gt; pearson(ranks(a), ranks(b)).toFixed(2);
+console.log("Spearman diện tích–phòng ngủ:", sp(sqft, beds), " diện tích–phòng tắm:", sp(sqft, baths), " ngủ–tắm:", sp(beds, baths));
+
+<span class="c">// Chuẩn hoá từng cột (trừ trung bình, chia độ lệch chuẩn)</span>
+const p = rows[0].length;
+for (let j = 0; j &lt; p; j++) {
+  const col = rows.map(x =&gt; x[j]), m = col.reduce((s, x) =&gt; s + x, 0) / n;
+  const sd = Math.sqrt(col.reduce((s, x) =&gt; s + (x - m) ** 2, 0) / (n - 1));
+  rows.forEach(x =&gt; (x[j] = (x[j] - m) / sd));
+}
+
+<span class="c">// Ridge có hệ số chặn: giải (XᵀX + λI)β = Xᵀy bằng khử Gauss (không phạt hệ số chặn)</span>
+function ridge(X: number[][], Y: number[], lam: number): number[] {
+  const q = X[0].length + 1, A = Array.from({ length: q }, () =&gt; new Array(q + 1).fill(0));
+  X.forEach((x, i) =&gt; {
+    const z = [1, ...x];
+    for (let a = 0; a &lt; q; a++) { A[a][q] += z[a] * Y[i]; for (let b = 0; b &lt; q; b++) A[a][b] += z[a] * z[b]; }
+  });
+  for (let a = 1; a &lt; q; a++) A[a][a] += lam;
+  for (let c = 0; c &lt; q; c++)
+    for (let k = 0; k &lt; q; k++) if (k !== c) {
+      const f = A[k][c] / A[c][c];
+      for (let m = c; m &lt;= q; m++) A[k][m] -= f * A[c][m];
+    }
+  return A.map((row, i) =&gt; row[q] / row[i]);
+}
+const predict = (b: number[], x: number[]) =&gt; x.reduce((s, v, j) =&gt; s + b[j + 1] * v, b[0]);
+function r2(b: number[], X: number[][], Y: number[]): number {
+  const m = Y.reduce((s, v) =&gt; s + v, 0) / Y.length;
+  let sse = 0, sst = 0;
+  X.forEach((x, i) =&gt; { sse += (Y[i] - predict(b, x)) ** 2; sst += (Y[i] - m) ** 2; });
+  return 1 - sse / sst;
+}
+
+<span class="c">// Chia 60% huấn luyện, 20% chọn λ, 20% kiểm tra (dữ liệu đã ngẫu nhiên nên cắt theo thứ tự)</span>
+const a1 = 0.6 * n, a2 = 0.8 * n;
+const [Xtr, Xva, Xte] = [rows.slice(0, a1), rows.slice(a1, a2), rows.slice(a2)];
+const [ytr, yva, yte] = [y.slice(0, a1), y.slice(a1, a2), y.slice(a2)];
+let best = { lam: 0, score: -Infinity };
+for (let e = -3; e &lt;= 3; e += 0.5) {
+  const lam = 10 ** e, sc = r2(ridge(Xtr, ytr, lam), Xva, yva);
+  if (sc &gt; best.score) best = { lam, score: sc };
+}
+const b = ridge([...Xtr, ...Xva], [...ytr, ...yva], best.lam);
+console.log("λ tốt nhất:", best.lam.toPrecision(2), " R² trên tập kiểm tra:", r2(b, Xte, yte).toFixed(3));</code></pre>
+
+<h4>Tự kiểm tra</h4>
+<details class="qa"><summary>Hồi quy log(giá) theo log(diện tích) cho hệ số 0,9. Hệ số này nghĩa là gì? (A) Mỗi ft² thêm vào làm giá tăng 0,90 USD. (B) Căn rộng hơn 1% bán đắt hơn khoảng 0,9%, các yếu tố khác giữ nguyên. (C) Diện tích giải thích 90% biến động của giá. (D) Giá và diện tích có hệ số tương quan 0,9.</summary>
+<p><b>Đáp án: B.</b> Trong hồi quy log–log, hệ số là độ co giãn: phần trăm thay đổi của biến kết quả khi biến đầu vào thay đổi 1%, giữ nguyên các biến hồi quy khác. Để thấy vì sao, so hai căn chỉ khác nhau về diện tích, căn thứ hai rộng hơn 1%. Chênh lệch log diện tích là ln 1,01 ≈ 0,01, nên chênh lệch log giá là 0,9 × 0,01 = 0,009, tức giá cao hơn khoảng 0,9%.</p>
+<p>Các phương án khác đều nhầm loại đại lượng. A là cách đọc của hồi quy giá theo diện tích ở thang gốc, không có log. C mô tả R², một thước đo mức độ khớp của cả mô hình. D mô tả hệ số tương quan, không phải hệ số hồi quy. Hệ số hồi quy chỉ bằng hệ số tương quan khi cả hai biến đã chuẩn hoá và chỉ có một biến đầu vào.</p>
+</details>
 
 <script>
 (()=>{
-  /* ---------- Mô hình 14.1: biểu đồ tần suất thang gốc và thang log ---------- */
+  /* ---------- Hình 14.1: biểu đồ tần suất thang gốc và thang log ---------- */
   const stA=document.getElementById('demo-14'), ctA=document.getElementById('ctl-14'), ouA=document.getElementById('out-14');
   const N=4000, r=Q.rng(1414), z=Array.from({length:N},()=>Q.normal(r));
   const A={sigma:0.55, log:false};
@@ -103,7 +223,7 @@
     const vline=(x,col,lab,dy)=>{ ctx.strokeStyle=col; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(X(x),T); ctx.lineTo(X(x),T+ph); ctx.stroke(); ctx.fillStyle=col; ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif'; ctx.fillText(lab,X(x)+4,T+12+dy); };
     vline(stats.med,C.a,'trung vị',0); vline(stats.m,C.b,'trung bình',16);
     ctx.fillStyle=C.muted; ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif';
-    for(let i=0;i<=5;i++){ const x=lo+(hi-lo)*i/5; ctx.fillText(A.log?Q.fmt(x,2):Q.fmt(x,0),X(x)-14,T+ph+16); }
+    ctx.font='11px JetBrains Mono,ui-monospace,monospace'; for(let i=0;i<=5;i++){ const x=lo+(hi-lo)*i/5, tx=A.log?Q.fmt(x,2):Q.fmt(x,0), tw=ctx.measureText(tx).width; ctx.fillText(tx,i===0?X(x):i===5?X(x)-tw:X(x)-tw/2,T+ph+16); } ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif';
     ctx.fillText(A.log?'ln(diện tích)':'diện tích (ft²), cắt ở phân vị 99,5%',L,h-4);
     ctx.fillText('cột: tần suất   nét đứt: phân phối chuẩn cùng trung bình và độ lệch chuẩn',L,16);
   }
@@ -112,7 +232,7 @@
   Q.slider(ctA,'Độ phân tán σ của ln(diện tích)',0.15,1.0,0.01,A.sigma,v=>{A.sigma=v; recompute();},v=>Q.fmt(v,2));
   recompute();
 
-  /* ---------- Mô hình 14.2: mặt phẳng hồi quy 3D và đa cộng tuyến ---------- */
+  /* ---------- Hình 14.2: mặt phẳng hồi quy 3D và đa cộng tuyến ---------- */
   const stB=document.getElementById('demob-14'), ctB=document.getElementById('ctlb-14'), ouB=document.getElementById('outb-14');
   const n=60, B={rho:0.9, lam:0, noise:1, auto:false};
   const view={yaw:-0.75,pitch:0.35,dist:16,auto:true};

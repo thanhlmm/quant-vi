@@ -2,70 +2,146 @@
 <header>
   <span class="num">15</span>
   <h3>Tình huống: định giá ghế tại nhà hát opera</h3>
-  <p class="meta">10 phút · Ứng dụng: Định giá động và mô hình không gian · <a href="https://hft.md/learn/case-opera/">Bài gốc (tiếng Anh)</a></p>
+  <p class="meta">Phần 4 · Nghiên cứu tình huống · Bài 15 · 10 phút · <a href="https://hft.md/learn/case-opera/">Bài gốc (tiếng Anh)</a></p>
 </header>
 
-<p>Bài này mở đầu như một bài hồi quy nhưng kết thúc ở hành vi người mua. Nó kiểm tra xem bạn có phân biệt được việc dự báo giá đã trả với việc chọn giá mang lại nhiều tiền nhất hay không.</p>
+<p><i>Bài này giải một bài toán kiểu QuantCo: định giá ghế bằng láng giềng gần nhất trên sơ đồ khán phòng, rồi thêm thời gian còn lại tới buổi diễn và mức độ khan hiếm của ghế.</i></p>
 
-<div class="note"><b>Đề bài.</b> Có toàn bộ lịch sử bán vé của một nhà hát: với mỗi ghế (khu, hàng, số ghế) biết nó bán lúc nào, giá bao nhiêu, cho buổi diễn nào. Hãy xây mô hình định giá vé cho các buổi sắp tới. Câu hỏi tiếp theo: nên đổi giá thế nào để thu được nhiều hơn?</div>
+<p>Bài toán này mở đầu giống hệt một bài hồi quy: có dữ liệu, có biến mục tiêu là giá, hãy khớp một mô hình. Nhưng càng đi sâu, càng thấy giá vé phụ thuộc vào con người nhiều hơn vào hình học: ai mua, mua lúc nào, và họ sợ mất chỗ tới mức nào. Câu hỏi cuối cùng còn chuyển hẳn từ dự báo sang tối ưu hoá. Người phỏng vấn muốn xem bạn có nhận ra bước chuyển đó không.</p>
 
-<h4>Ý chính</h4>
-<ul>
-  <li><b>Bắt đầu từ sơ đồ ghế.</b> Khoảng cách tới sân khấu và góc nhìn quyết định chất lượng ghế. Ghế cạnh nhau nên có giá gần nhau. Đó đúng là giả định của <b>k láng giềng gần nhất</b> (k-nearest neighbours, kNN).</li>
-  <li>Định giá một ghế bằng trung bình có trọng số của k ghế đã bán gần nhất. Trọng số lấy từ một <b>hàm nhân</b> (kernel) giảm theo khoảng cách. Cần chỉnh k và độ rộng nhân h. Ghế đầu hàng chỉ có láng giềng một phía nên cần cửa sổ rộng hơn.</li>
-  <li><b>Hồi quy bổ sung.</b> Thay hàng và số ghế bằng khoảng cách và góc tới sân khấu. Tận dụng <b>tính đối xứng trái–phải</b>: ghế 3 và ghế 28 của hàng 30 ghế là tương đương. Các biến hàng, số ghế, khu tương quan mạnh nên cần ridge hoặc lasso.</li>
-  <li><b>Thời gian tới buổi diễn.</b> Tốc độ mua vé tăng gần theo hàm mũ khi ngày diễn tới gần, còn số ghế trống giảm dần. Thêm đặc trưng log(ngày diễn − ngày bán). Biến này ít liên quan tới hình học ghế nên mang thông tin mới.</li>
-  <li><b>Khan hiếm và tâm lý sợ bỏ lỡ</b> (FOMO). Khi còn ít ghế, người mua chịu trả cao hơn. Thêm biến số ghế còn trống tại lúc bán. Biến này tương quan với biến thời gian, cần kiểm tra đa cộng tuyến. Nó giải thích vì sao hàng cuối bán đắt hơn mức khoảng cách dự đoán: các ghế đó bán sau cùng, cho người mua nóng lòng nhất.</li>
-  <li><b>Dự báo khác tối ưu hoá.</b> Mức sẵn lòng chi trả (willingness to pay, WTP) của đám đông gần log-chuẩn. Mô hình hoá phân phối này cho từng phân khúc, rồi đặt giá sao cho vừa đủ người mua để lấp đầy ghế. Đó là điểm khởi đầu của <b>định giá động</b> (dynamic pricing).</li>
-</ul>
+<div class="note"><b>Trong buổi phỏng vấn – đề bài.</b> Bạn có toàn bộ lịch sử bán vé của một nhà hát: với mỗi ghế (khu, hàng, số ghế) biết nó được bán lúc nào, với giá bao nhiêu, cho buổi diễn nào. Hãy xây một mô hình định giá vé cho các buổi diễn sắp tới. Câu hỏi tiếp theo: bạn sẽ thay đổi giá thế nào để thu được nhiều tiền hơn?</div>
 
-<h4>Công thức</h4>
-<div class="formula"><span class="lbl">Ước lượng kNN có trọng số nhân Gauss; N<sub>k</sub>(s) là k ghế đã bán gần ghế s nhất</span>p̂(s) = <span class="frac"><span>Σ<sub>j ∈ N<sub>k</sub>(s)</sub> w<sub>j</sub> p<sub>j</sub></span><span>Σ<sub>j ∈ N<sub>k</sub>(s)</sub> w<sub>j</sub></span></span>,&nbsp;&nbsp; w<sub>j</sub> = exp(−<span class="frac"><span>d(s, j)²</span><span>2h²</span></span>)</div>
-<div class="formula"><span class="lbl">Khoảng cách trên sơ đồ, co trục số ghế để hai trục cùng đơn vị; dạng đối xứng dùng c̃ = |c − (C + 1)/2|</span>d(s, s′) = √( (r − r′)² + ((c − c′)/2)² )</div>
-<div class="formula"><span class="lbl">Hồi quy mở rộng: hình học, thời gian và khan hiếm</span>giá = β<sub>0</sub> + β<sub>1</sub> · khoảng cách + β<sub>2</sub> · góc² + β<sub>3</sub> · log(T<sub>diễn</sub> − t<sub>bán</sub>) + β<sub>4</sub> · số ghế còn trống + ε</div>
-<div class="formula"><span class="lbl">Chọn giá tối đa doanh thu: M người quan tâm, S ghế, WTP ~ log-chuẩn với trung vị m</span>max<sub>p</sub> &nbsp;p · min( S, M · [1 − Φ(<span class="frac"><span>ln p − ln m</span><span>σ</span></span>)] )</div>
-<div class="formula"><span class="lbl">Giá vừa lấp đầy khán phòng</span>p<sub>đầy</sub> = m · e<sup>σ z</sup>,&nbsp;&nbsp; z = Φ<sup>−1</sup>(1 − S/M)</div>
-
-<h4>Ví dụ minh hoạ: từ láng giềng đến giá tối ưu</h4>
-<p><b>Phần 1, ước lượng kNN.</b> Một ghế chưa bán có 4 láng giềng đã bán ở khoảng cách 1; 1; 2; √5 ≈ 2,24. Giá của chúng là 180, 176, 170, 168 USD. Dùng nhân Gauss với h = 1,5.</p>
+<h4>Bắt đầu từ không gian: láng giềng gần nhất</h4>
+<p>Hàng, số ghế và khu không phải ba con số rời rạc. Chúng là toạ độ trên một sơ đồ thật của khán phòng. Chất lượng một chỗ ngồi chủ yếu do hai yếu tố hình học quyết định: khoảng cách tới sân khấu và góc nhìn. Vì vậy hai ghế cạnh nhau nên có giá gần nhau, còn hai ghế ở xa nhau thì có thể khác hẳn. Đó chính xác là giả định mà phương pháp <b>k láng giềng gần nhất</b> (k-nearest neighbours, kNN) dựa vào: điểm gần nhau thì có giá trị gần nhau.</p>
+<p>Cụ thể, định giá một ghế s bằng trung bình có trọng số của giá k ghế đã bán gần nó nhất. Trọng số lấy từ một <b>hàm nhân</b> (kernel) giảm dần theo khoảng cách, để ghế sát bên có tiếng nói lớn hơn ghế cách mấy hàng:</p>
+<div class="formula"><span class="lbl">Ước lượng kNN có trọng số nhân Gauss; N<sub>k</sub>(s) là k ghế đã bán gần ghế s nhất, h là độ rộng nhân</span>p̂(s) = <span class="frac"><span>Σ<sub>j ∈ N<sub>k</sub>(s)</sub> w<sub>j</sub> p<sub>j</sub></span><span>Σ<sub>j ∈ N<sub>k</sub>(s)</sub> w<sub>j</sub></span></span>,&nbsp;&nbsp; w<sub>j</sub> = exp(−<span class="frac"><span>d(s, j)²</span><span>2h²</span></span>)</div>
+<div class="formula"><span class="lbl">Khoảng cách trên sơ đồ: co trục số ghế (ở đây chia 2) để một bước theo hàng và một bước theo ghế có tầm quan trọng tương đương</span>d(s, s′) = √( (r − r′)² + ((c − c′)/2)² )</div>
+<p>Có hai tham số cần chỉnh. <b>Số láng giềng k</b> quyết định mức làm trơn: k nhỏ thì ước lượng bám sát từng ghế nhưng nhiễu, k lớn thì ổn định hơn nhưng bắt đầu trộn những ghế thật sự khác loại (đánh đổi độ chệch – phương sai của bài 09). <b>Độ rộng nhân h</b> quyết định trọng số rơi nhanh tới đâu theo khoảng cách. Cả hai nên chọn bằng kiểm định chéo: giả vờ chưa biết giá của một phần ghế đã bán, dự báo chúng, và chọn cặp (k, h) cho sai số nhỏ nhất.</p>
+<p>Hãy để ý <b>các ghế ở mép</b>. Ghế ở đầu hàng chỉ có láng giềng ở một phía. Trong bán kính quen dùng, nó có ít láng giềng hơn ghế giữa hàng, nên ước lượng nhiễu hơn. Cách xử lý là nới rộng cửa sổ một chút ở mép để vẫn đủ số láng giềng. Cũng cần nhớ rằng mọi láng giềng của ghế mép đều nằm gần trung tâm hơn nó, tức là có góc nhìn tốt hơn, nên ước lượng có xu hướng hơi cao. Mẹo đối xứng ở mục sau giúp giảm vấn đề này.</p>
+<p><b>Ví dụ.</b> Một ghế chưa bán có 4 láng giềng đã bán ở khoảng cách 1; 1; 2 và √5 ≈ 2,24, với giá lần lượt 180, 176, 170 và 168 USD. Dùng nhân Gauss với h = 1,5, tức 2h² = 4,5.</p>
 <ol>
-  <li>Trọng số: e<sup>−1/4,5</sup> ≈ 0,801 cho hai ghế gần; e<sup>−4/4,5</sup> ≈ 0,411; e<sup>−5/4,5</sup> ≈ 0,329. Tổng trọng số ≈ 2,342.</li>
+  <li>Trọng số: e<sup>−1/4,5</sup> ≈ 0,801 cho hai ghế gần nhất, e<sup>−4/4,5</sup> ≈ 0,411 cho ghế ở khoảng cách 2, e<sup>−5/4,5</sup> ≈ 0,329 cho ghế ở khoảng cách √5. Tổng trọng số ≈ 2,342.</li>
   <li>Tử số: 0,801 × (180 + 176) + 0,411 × 170 + 0,329 × 168 ≈ 410,3.</li>
-  <li>Ước lượng p̂ ≈ 410,3 / 2,342 ≈ 175,2 USD. Trung bình thường là 173,5 USD; hai ghế sát bên kéo ước lượng lên.</li>
-</ol>
-<p><b>Phần 2, chọn giá.</b> Một khu có S = 300 ghế. Có M = 1.000 người quan tâm, WTP log-chuẩn với trung vị 150 USD và σ = 0,4.</p>
-<ol>
-  <li>Cần đúng 30% người quan tâm sẵn lòng trả ít nhất p. Vậy z = Φ<sup>−1</sup>(0,7) ≈ 0,524.</li>
-  <li>Giá lấp đầy: p<sub>đầy</sub> = 150 · e<sup>0,4 × 0,524</sup> ≈ 150 × 1,233 ≈ 185 USD. Doanh thu 300 × 185 = 55.500 USD.</li>
-  <li>Nếu bán 150 USD: 500 người muốn mua nhưng chỉ có 300 ghế. Doanh thu chỉ 45.000 USD; phần chênh là tiền để lại trên bàn.</li>
-  <li>Nếu bán 200 USD: chỉ còn khoảng 236 người mua. Doanh thu ≈ 47.200 USD, kèm 64 ghế trống.</li>
-  <li>Không có giới hạn ghế, doanh thu p · D(p) đạt đỉnh quanh 112 USD. Mức này thấp hơn 185, nên khi sức chứa là ràng buộc thì giá lấp đầy chính là giá tối ưu.</li>
+  <li>Ước lượng p̂ ≈ 410,3 / 2,342 ≈ 175,2 USD. Trung bình không trọng số của bốn ghế là 173,5 USD. Hai ghế sát bên, vốn đắt hơn, kéo ước lượng lên.</li>
 </ol>
 
 <figure class="demo">
   <div class="stage" id="demo-15"></div>
   <div class="controls" id="ctl-15"></div>
   <div class="readout" id="out-15"></div>
-  <figcaption><b>Mô hình 15.1 – Khán phòng 3D và định giá bằng láng giềng.</b> 12 hàng, mỗi hàng 30 ghế, xếp theo vòng cung và dốc dần về phía sau. Ghế xanh dương đã bán, màu càng đậm giá càng cao. Ghế cam chưa bán và được định giá bằng kNN có trọng số nhân. Bấm vào một ghế để xem các láng giềng, ước lượng và giá trị thật của nó. Chú ý hàng cuối: mô hình chỉ dùng hình học định giá thấp một cách có hệ thống. Bật đặc trưng khan hiếm: mô hình hồi quy phần dư kNN của các ghế đã bán theo biến “bán sau cùng”, rồi cộng hệ số β̂ vào hàng cuối. Sai lệch của hàng cuối gần như biến mất. Kéo để xoay.</figcaption>
+  <figcaption><b>Hình 15.1 – Nhà hát opera dưới dạng 3D.</b> 12 hàng, mỗi hàng 30 ghế, xếp theo vòng cung và dốc dần về phía sau. Ghế xanh dương đã bán, màu càng đậm giá càng cao. Ghế cam chưa bán và được định giá bằng kNN có trọng số nhân. Bấm vào một ghế để xem các láng giềng, ước lượng và giá trị thật của nó. Chú ý hàng cuối: nó đáng giá hơn mức mà khoảng cách dự đoán, và mô hình chỉ dùng hình học định giá thấp nó một cách có hệ thống. Bật đặc trưng khan hiếm: mô hình hồi quy phần dư kNN của các ghế đã bán theo biến “bán sau cùng”, rồi cộng hệ số β̂ vào hàng cuối, và sai lệch của hàng cuối gần như biến mất. Kéo để xoay.</figcaption>
 </figure>
+
+<h4>Tiếp theo là hồi quy</h4>
+<p>Song song với kNN, có thể hồi quy giá theo hàng, số ghế và khu. Muốn hồi quy chạy tốt, cần tiền xử lý vài bước:</p>
+<ul>
+  <li><b>Biến đổi toạ độ.</b> Coi hàng là biến thứ tự là một lựa chọn. Tốt hơn nữa là thay hẳn hàng và số ghế bằng <b>khoảng cách thật và góc nhìn tới sân khấu</b>, vì đó mới là thứ khán giả trả tiền. Giá thường giảm gần tuyến tính theo khoảng cách và giảm nhanh dần khi lệch khỏi trục giữa, nên một số hạng bậc hai theo góc là hợp lý.</li>
+  <li><b>Tận dụng tính đối xứng trái – phải.</b> Khán phòng đối xứng qua trục giữa, nên ghế số 3 và ghế số 28 của một hàng 30 ghế có góc nhìn như nhau. Thay số ghế c bằng khoảng cách tới trục giữa c̃ = |c − (C + 1)/2| (với C = 30 thì (C + 1)/2 = 15,5). Hai nửa khán phòng giờ góp dữ liệu cho cùng một biến, số quan sát hữu ích cho mỗi góc nhìn tăng gấp đôi.</li>
+  <li><b>Xử lý tương quan.</b> Hàng, số ghế và khu tương quan rất mạnh với nhau: một khu chính là một dải hàng và ghế. Dùng ridge, lasso, chọn tập con biến hoặc trực giao hoá tuần tự như ở bài 10 và 11.</li>
+</ul>
+<p>Một mô hình chỉ dùng hình học sẽ để lại những điểm ngoại lai (outliers), những ghế bán đắt hoặc rẻ bất thường so với vị trí. Đừng vội xoá chúng. Chúng là tín hiệu cho thấy còn thiếu biến, và hai biến tiếp theo là thời gian và tâm lý người mua.</p>
+<div class="formula"><span class="lbl">Hồi quy mở rộng: hình học, thời gian và khan hiếm</span>giá = β<sub>0</sub> + β<sub>1</sub> · khoảng cách + β<sub>2</sub> · góc² + β<sub>3</sub> · log(T<sub>diễn</sub> − t<sub>bán</sub>) + β<sub>4</sub> · số ghế còn trống + ε</div>
+
+<h4>Thời gian tới buổi diễn</h4>
+<p>Tốc độ mua vé tăng gần như theo hàm mũ khi ngày diễn tới gần, trong khi số ghế còn lại giảm dần. Cầu tăng, cung giảm, nên giá cũng phải thay đổi theo thời gian. Hãy thêm đặc trưng log(ngày diễn − ngày bán). Dùng log vì tác động không đều theo từng ngày: chênh lệch giữa mua trước 30 ngày và trước 31 ngày gần như không đáng kể, còn chênh lệch giữa mua trước 1 ngày và trước 2 ngày thì lớn. Log kéo giãn đoạn sát ngày diễn và nén đoạn xa.</p>
+<p>Ví dụ: nếu hồi quy cho β<sub>3</sub> = −8 USD cho mỗi đơn vị log ngày, thì một vé mua trước 1 ngày đắt hơn vé cùng ghế mua trước 30 ngày khoảng 8 × (ln 30 − ln 1) = 8 × 3,40 ≈ 27 USD. Biến thời gian khó có tương quan mạnh với các biến hình học ghế, vì ghế nào cũng có thể bán sớm hoặc muộn. Nó mang thông tin mà mô hình không gian chưa có. Dù vậy vẫn nên kiểm tra: nếu ghế đẹp luôn bán sớm, tương quan sẽ xuất hiện.</p>
+
+<h4>Khan hiếm và tâm lý sợ bỏ lỡ</h4>
+<p>Khi chỉ còn ít ghế, tâm lý <b>sợ mất mát</b> (loss aversion) bắt đầu tác động: người ta chịu trả thêm để không bỏ lỡ buổi diễn, hiện tượng thường gọi là FOMO (fear of missing out). Để mô hình nắm được điều này, thêm một <b>biến khan hiếm</b>: số ghế còn trống tại thời điểm vé được bán. Biến này chắc chắn tương quan với biến thời gian, vì càng gần ngày diễn thì càng ít ghế trống. Phải kiểm tra đa cộng tuyến. Ví dụ, nếu tương quan giữa hai biến là 0,8 thì VIF = 1/(1 − 0,64) ≈ 2,8, chấp nhận được. Nếu tương quan lên tới 0,95 thì nên dùng ridge hoặc trực giao hoá biến khan hiếm theo biến thời gian.</p>
+<p>Biến khan hiếm cũng giải thích điểm lạ trong Hình 15.1: hàng cuối cùng bán được giá cao hơn mức khoảng cách gợi ý. Lý do là những ghế đó thường bán sau cùng, khi khán phòng gần kín, cho những người mua nóng lòng nhất. Mô hình hình học không thấy được thứ tự bán, nên nó định giá thấp hàng cuối. Tăng k hay đổi nhân đều không chữa được, vì đây là sai số có hệ thống chứ không phải nhiễu.</p>
+
+<h4>Từ dự báo giá đến tối đa hoá lợi nhuận</h4>
+<p>Dự báo giá mà người ta <i>đã trả</i> khác với việc chọn mức giá <i>mang lại nhiều tiền nhất</i>. Dữ liệu chỉ cho biết người mua sẵn lòng trả ít nhất mức giá niêm yết. Mức sẵn lòng chi trả (willingness to pay, WTP) thật của họ có thể cao hơn nhiều, tức là dữ liệu bị chặn dưới (censored). Còn những người thấy giá rồi bỏ đi thì hoàn toàn không xuất hiện trong dữ liệu.</p>
+<p>Trong một tổng thể, WTP phân phối gần log-chuẩn, giống như thu nhập: phần lớn người mua có WTP quanh một mức điển hình, và một đuôi phải dài những người sẵn lòng trả rất cao. Hãy mô hình hoá phân phối này cho từng phân khúc (theo hàng, số ghế, khu, thời gian và mức khan hiếm), rồi đặt giá sao cho có vừa đủ người sẵn lòng trả để lấp đầy số ghế. Đó là điểm khởi đầu của một hệ thống <b>định giá động</b> (dynamic pricing) thật sự.</p>
+<div class="formula"><span class="lbl">Chọn giá tối đa doanh thu: M người quan tâm, S ghế, WTP ~ log-chuẩn với trung vị m và độ phân tán σ</span>max<sub>p</sub> &nbsp;p · min( S, M · [1 − Φ(<span class="frac"><span>ln p − ln m</span><span>σ</span></span>)] )</div>
+<div class="formula"><span class="lbl">Giá vừa lấp đầy khán phòng: đúng S/M người quan tâm có WTP ≥ p</span>p<sub>đầy</sub> = m · e<sup>σ z</sup>,&nbsp;&nbsp; z = Φ<sup>−1</sup>(1 − S/M)</div>
+<p><b>Ví dụ.</b> Một khu có S = 300 ghế. Có M = 1.000 người quan tâm, WTP log-chuẩn với trung vị 150 USD và σ = 0,4.</p>
+<ol>
+  <li>Cần đúng 30% người quan tâm sẵn lòng trả ít nhất p. Vậy z = Φ<sup>−1</sup>(0,7) ≈ 0,524.</li>
+  <li>Giá lấp đầy: p<sub>đầy</sub> = 150 · e<sup>0,4 × 0,524</sup> ≈ 150 × 1,233 ≈ 185 USD. Doanh thu 300 × 185 = 55.500 USD.</li>
+  <li>Nếu bán 150 USD: 500 người muốn mua nhưng chỉ có 300 ghế. Doanh thu chỉ 45.000 USD. Khoản chênh 10.500 USD là tiền để lại trên bàn, còn 200 người ra về tay trắng.</li>
+  <li>Nếu bán 200 USD: chỉ còn khoảng 236 người mua. Doanh thu ≈ 47.200 USD, kèm 64 ghế trống.</li>
+  <li>Nếu không có giới hạn ghế, doanh thu p · D(p) đạt đỉnh ở mức giá mà độ co giãn của cầu theo giá bằng −1, ở đây quanh 112 USD. Mức này thấp hơn 185 USD, nên khi sức chứa là ràng buộc thì giá lấp đầy chính là giá tối ưu. Nếu khán phòng rộng tới mức giá lấp đầy thấp hơn 112 USD, nên bán ở 112 USD và chấp nhận để trống ghế.</li>
+</ol>
 
 <figure class="demo">
   <div class="stage" id="demob-15"></div>
   <div class="controls" id="ctlb-15"></div>
   <div class="readout" id="outb-15"></div>
-  <figcaption><b>Mô hình 15.2 – Từ phân phối WTP đến giá tối đa doanh thu.</b> Đường xanh là số vé bán được ở mỗi mức giá, bị chặn bởi số ghế. Đường cam là doanh thu. Vạch đứng là giá đang chọn; chấm đen là giá tối ưu. Giảm số ghế hoặc tăng số người quan tâm để thấy giá tối ưu dịch lên theo giá lấp đầy.</figcaption>
+  <figcaption><b>Hình 15.2 – Từ phân phối WTP đến giá tối đa doanh thu.</b> Mô hình bổ sung cho mục này. Đường xanh là số vé bán được ở mỗi mức giá, bị chặn bởi số ghế. Đường cam là doanh thu. Vạch đứng là giá đang chọn, chấm đen là giá tối ưu. Giảm số ghế hoặc tăng số người quan tâm để thấy giá tối ưu dịch lên theo giá lấp đầy.</figcaption>
 </figure>
 
-<h4>Lưu ý khi phỏng vấn</h4>
-<ul>
-  <li>Câu hỏi kiểm tra hay gặp: mô hình kNN luôn định giá thấp hàng cuối, bước tiếp theo là gì? Đáp: thêm đặc trưng khan hiếm hoặc thứ tự bán. Sai số có hệ thống không biến mất khi tăng k.</li>
-  <li>Dữ liệu chỉ cho biết người mua sẵn lòng trả ít nhất mức giá niêm yết. WTP thật bị chặn dưới (censored), nên đừng coi giá đã trả là WTP.</li>
-  <li>Đem ví dụ về bàn giao dịch: quyền chọn kém thanh khoản được định giá từ các mức giá thực hiện và kỳ hạn lân cận, tức một hàm nhân trên mặt biến động (volatility surface). Khi tồn kho cạn, báo giá nới rộng hoặc lệch đi, giống biến khan hiếm.</li>
-</ul>
+<div class="note"><b>Ứng dụng trên bàn giao dịch.</b> Nhà tạo lập thị trường định giá hàng nghìn công cụ liên quan theo đúng cách này. Một quyền chọn kém thanh khoản được định giá từ các mức giá thực hiện và kỳ hạn lân cận đang giao dịch sôi động, tức là một hàm nhân trên mặt biến động (volatility surface). Khi tồn kho của một công cụ cạn dần, báo giá được nới rộng hoặc lệch về một phía. Đó là phiên bản giao dịch của biến khan hiếm.</div>
+
+<h4>Viết bằng code</h4>
+<p>Đoạn code dựng một khán phòng 12 × 30 ghế. Giá trị thật của ghế giảm theo hàng và theo bình phương góc lệch, cộng 18 USD phụ trội khan hiếm cho hàng cuối. Khoảng 40% số ghế đã bán, với giá bằng giá trị thật cộng nhiễu có độ lệch chuẩn 12 USD. Phần đầu định giá các ghế chưa bán bằng kNN (k = 6, nhân Gauss h = 1,5). Phần sau so sánh hồi quy chỉ dùng hình học với hồi quy có thêm biến khan hiếm. Kết quả khi chạy <span class="kbd">bun c15.ts</span>: kNN có RMSE 8,6 USD trên các ghế chưa bán. Hồi quy hình học có RMSE 4,3 USD nhưng định giá thấp hàng cuối trung bình 12,2 USD. Thêm biến khan hiếm, RMSE còn 0,4 USD và sai lệch hàng cuối chỉ còn −1,0 USD. Khi cấu trúc thật đúng là dạng mà hồi quy giả định, hồi quy thắng kNN. kNN đổi lại không cần giả định gì về dạng hàm.</p>
+<pre class="code"><code><span class="c">// Khán phòng 12 hàng × 30 ghế: định giá ghế chưa bán bằng kNN có trọng số nhân Gauss</span>
+function rng(seed: number) {
+  let s = seed &gt;&gt;&gt; 0;
+  return () =&gt; {
+    s = (s + 0x6d2b79f5) | 0;
+    let t = Math.imul(s ^ (s &gt;&gt;&gt; 15), 1 | s);
+    t = (t + Math.imul(t ^ (t &gt;&gt;&gt; 7), 61 | t)) ^ t;
+    return ((t ^ (t &gt;&gt;&gt; 14)) &gt;&gt;&gt; 0) / 4294967296;
+  };
+}
+const r = rng(15);
+const gauss = () =&gt; Math.sqrt(-2 * Math.log(1 - r())) * Math.cos(2 * Math.PI * r());
+
+type Seat = { row: number; col: number; value: number; price: number; sold: boolean };
+const seats: Seat[] = [];
+for (let row = 0; row &lt; 12; row++)
+  for (let col = 0; col &lt; 30; col++) {
+    const angle = Math.abs(col - 14.5) / 14.5;                    <span class="c">// 0 ở giữa, 1 ở mép</span>
+    const value = 210 - 10.5 * row - 70 * angle ** 2 + (row === 11 ? 18 : 0); <span class="c">// hàng cuối: khan hiếm</span>
+    seats.push({ row, col, value, price: value + 12 * gauss(), sold: r() &lt; 0.4 });
+  }
+const sold = seats.filter(s =&gt; s.sold), unsold = seats.filter(s =&gt; !s.sold);
+
+<span class="c">// Khoảng cách trên sơ đồ: chia số ghế cho 3 để hai trục cùng đơn vị</span>
+const dist = (a: Seat, b: Seat) =&gt; Math.hypot(a.row - b.row, (a.col - b.col) / 3);
+function knn(s: Seat, k: number, h: number): number {
+  const nb = sold.map(q =&gt; ({ q, d: dist(s, q) })).sort((a, b) =&gt; a.d - b.d).slice(0, k);
+  let sw = 0, sp = 0;
+  for (const { q, d } of nb) { const w = Math.exp(-(d * d) / (2 * h * h)); sw += w; sp += w * q.price; }
+  return sp / sw;
+}
+const rmse = (xs: Seat[], f: (s: Seat) =&gt; number) =&gt;
+  Math.sqrt(xs.reduce((a, s) =&gt; a + (f(s) - s.value) ** 2, 0) / xs.length);
+const meanErr = (xs: Seat[], f: (s: Seat) =&gt; number) =&gt;
+  xs.reduce((a, s) =&gt; a + (f(s) - s.value), 0) / xs.length;
+
+const geo = (s: Seat) =&gt; knn(s, 6, 1.5);
+const last = unsold.filter(s =&gt; s.row === 11);
+console.log("RMSE trên ghế chưa bán:", rmse(unsold, geo).toFixed(1));
+console.log("Sai lệch TB ở hàng cuối:", meanErr(last, geo).toFixed(1));
+
+<span class="c">// Hồi quy chỉ dùng hình học (hàng, góc²) và hồi quy có thêm biến khan hiếm (bán sau cùng)</span>
+function ols(X: number[][], y: number[]): number[] {
+  const p = X[0].length, A = Array.from({ length: p }, () =&gt; new Array(p + 1).fill(0));
+  X.forEach((x, i) =&gt; x.forEach((xa, a) =&gt; { A[a][p] += xa * y[i]; x.forEach((xb, b) =&gt; (A[a][b] += xa * xb)); }));
+  for (let c = 0; c &lt; p; c++)
+    for (let k = 0; k &lt; p; k++) if (k !== c) { const f = A[k][c] / A[c][c]; for (let m = c; m &lt;= p; m++) A[k][m] -= f * A[c][m]; }
+  return A.map((row, i) =&gt; row[p] / row[i]);
+}
+const ang2 = (s: Seat) =&gt; (Math.abs(s.col - 14.5) / 14.5) ** 2;
+const fGeo = (s: Seat) =&gt; [1, s.row, ang2(s)];
+const fScar = (s: Seat) =&gt; [...fGeo(s), s.row === 11 ? 1 : 0];
+for (const [name, f] of [["hình học", fGeo], ["+ khan hiếm", fScar]] as const) {
+  const b = ols(sold.map(f), sold.map(s =&gt; s.price));
+  const pred = (s: Seat) =&gt; f(s).reduce((a, v, j) =&gt; a + v * b[j], 0);
+  console.log(`Hồi quy ${name}: RMSE ${rmse(unsold, pred).toFixed(1)}, sai lệch hàng cuối ${meanErr(last, pred).toFixed(1)}`);
+}</code></pre>
+
+<h4>Tự kiểm tra</h4>
+<details class="qa"><summary>Mô hình kNN định giá ghế của bạn luôn định giá thấp hàng cuối. Bước tiếp theo tốt nhất là gì? (A) Tăng k. (B) Thêm một đặc trưng nắm được mức khan hiếm hoặc thứ tự bán. (C) Bỏ hàng cuối ra khỏi dữ liệu. (D) Chuyển sang hồi quy tuyến tính theo số hàng.</summary>
+<p><b>Đáp án: B.</b> Điểm mấu chốt là sai số này có hệ thống, không phải nhiễu: nó lặp lại ở cùng một chỗ và cùng một chiều. Nguồn gốc của nó là thứ mà hình học không nhìn thấy. Ghế hàng cuối được bán sau cùng, khi khán phòng gần kín, cho những người mua nóng lòng nhất. Một đặc trưng khan hiếm (số ghế còn trống lúc bán) hoặc thời điểm bán cho phép mô hình học được phụ trội đó.</p>
+<p>Các phương án khác không chạm tới nguyên nhân. Tăng k chỉ làm trơn mạnh hơn, kéo ước lượng hàng cuối về phía các hàng phía trước, và thường làm sai lệch nặng thêm. Bỏ hàng cuối thì mất dữ liệu và vẫn phải định giá những ghế đó. Hồi quy tuyến tính theo số hàng cũng chỉ dùng hình học, nên mắc cùng lỗi, như đoạn code ở trên cho thấy (sai lệch −12,2 USD).</p>
+</details>
 
 <script>
 (()=>{
-  /* ---------- Mô hình 15.1: khán phòng 3D, kNN có trọng số nhân ---------- */
+  /* ---------- Hình 15.1: khán phòng 3D, kNN có trọng số nhân ---------- */
   const stage=document.getElementById('demo-15'), ctl=document.getElementById('ctl-15'), out=document.getElementById('out-15');
   const NR=12, NC=30, S={sold:0.4, k:8, h:1.5, sym:false, scarce:false, seed:15};
   const view={yaw:Math.PI,pitch:0.9,dist:14,auto:false};
@@ -158,7 +234,7 @@
   Q.button(ctl,'Buổi diễn khác',()=>{ S.seed++; sel=null; simulate(); });
   simulate();
 
-  /* ---------- Mô hình 15.2: đường cầu log-chuẩn và doanh thu ---------- */
+  /* ---------- Hình 15.2: đường cầu log-chuẩn và doanh thu ---------- */
   const stB=document.getElementById('demob-15'), ctB=document.getElementById('ctlb-15'), ouB=document.getElementById('outb-15');
   const D={m:150, sig:0.4, M:1000, S:300, p:185};
   function Phi(x){ const t=1/(1+0.3275911*Math.abs(x)/Math.SQRT2); const y=1-(((((1.061405429*t-1.453152027)*t)+1.421413741)*t-0.284496736)*t+0.254829592)*t*Math.exp(-x*x/2); return x>=0?(1+y)/2:(1-y)/2; }

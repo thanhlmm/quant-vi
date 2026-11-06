@@ -2,62 +2,130 @@
 <header>
   <span class="num">03</span>
   <h3>Phương sai và cơ sở của đa dạng hoá</h3>
-  <p class="meta">10 phút · Ứng dụng: rủi ro danh mục và đa dạng hoá · <a href="https://hft.md/learn/variance/">Bài gốc (tiếng Anh)</a></p>
+  <p class="meta">Phần 1 · Xác suất · Bài 3 · 10 phút · <a href="https://hft.md/learn/variance/">Bài gốc (tiếng Anh)</a></p>
 </header>
 
-<p>Kỳ vọng cho biết trung bình một chiến lược kiếm được bao nhiêu. Phương sai cho biết kết quả dao động quanh mức đó ra sao. Hai chiến lược cùng lợi thế có thể khác hẳn nhau: một cái chạy được lâu dài, cái kia cháy tài khoản trước khi lợi thế kịp thể hiện.</p>
+<p><i>Bài này nói về cách độ phân tán cộng dồn, quy tắc căn n cho trung bình, và cách xem độ lệch chuẩn như những mũi tên.</i></p>
 
-<h4>Ý chính</h4>
-<ul>
-  <li><b>Phương sai</b> (variance) là kỳ vọng của bình phương khoảng cách tới trung bình. <b>Độ lệch chuẩn</b> (standard deviation) σ là căn bậc hai của nó, có cùng đơn vị với X.</li>
-  <li>Cộng một hằng số không làm thay đổi độ phân tán. Nhân với a thì phương sai nhân với a<sup>2</sup>.</li>
-  <li>Phương sai của tổng có thêm số hạng chéo 2·Cov(X, Y). Chỉ bỏ được số hạng này khi X và Y không tương quan.</li>
-  <li>Có thể coi mỗi độ lệch chuẩn là một mũi tên. Góc giữa hai mũi tên có cos bằng hệ số tương quan ρ. Độ biến động của tổng là độ dài mũi tên tổng hợp, theo định lý cos.</li>
-  <li><b>Quy tắc căn n</b>: trung bình của n biến độc lập có độ lệch chuẩn σ/√n. Muốn giảm sai số một nửa phải có gấp bốn lần dữ liệu.</li>
-  <li>Khi các biến có cùng tương quan ρ &gt; 0, đa dạng hoá có giới hạn. Độ lệch chuẩn của trung bình không xuống dưới σ√ρ, dù n lớn tới đâu.</li>
-</ul>
+<p>Kỳ vọng cho biết trung bình một ván cược rơi vào đâu. Phương sai cho biết nó thường rơi cách điểm đó bao xa. Trong giao dịch, khác biệt này là ranh giới giữa một chiến lược chạy được và một chiến lược cháy tài khoản trước khi lợi thế kịp hiện ra. Hai chiến lược có cùng lợi nhuận kỳ vọng nhưng độ phân tán khác nhau sẽ cần vốn khác nhau, giới hạn rủi ro khác nhau, và mang lại trải nghiệm rất khác nhau cho người vận hành.</p>
 
-<h4>Công thức</h4>
+<h4>Định nghĩa</h4>
+<p><b>Phương sai</b> (variance) là kỳ vọng của bình phương khoảng cách từ X tới trung bình μ của nó. <b>Độ lệch chuẩn</b> (standard deviation) σ là căn bậc hai của phương sai. Lấy căn để đưa đại lượng về cùng đơn vị với X: nếu X tính bằng đô thì phương sai tính bằng “đô bình phương”, còn σ lại tính bằng đô.</p>
 <div class="formula"><span class="lbl">Định nghĩa và dạng tiện tính toán</span>Var(X) = E[(X − μ)<sup>2</sup>] = E[X<sup>2</sup>] − (E[X])<sup>2</sup>, &nbsp;&nbsp; σ = √Var(X)</div>
-<div class="formula"><span class="lbl">Biến đổi tuyến tính: hằng số b biến mất</span>Var(aX + b) = a<sup>2</sup> · Var(X)</div>
-<div class="formula"><span class="lbl">Tổng và hiệu của hai biến, với Cov(X, Y) = ρ σ<sub>X</sub> σ<sub>Y</sub></span>σ<sup>2</sup><sub>X ± Y</sub> = σ<sup>2</sup><sub>X</sub> + σ<sup>2</sup><sub>Y</sub> ± 2ρ σ<sub>X</sub> σ<sub>Y</sub></div>
-<div class="formula"><span class="lbl">Trung bình của n biến cùng phương sai σ<sup>2</sup>, mọi cặp có tương quan ρ (ρ = 0 là trường hợp độc lập)</span>Var(X̄) = σ<sup>2</sup> · [ <span class="frac"><span>1</span><span>n</span></span> + (1 − <span class="frac"><span>1</span><span>n</span></span>) · ρ ] &nbsp;→&nbsp; ρσ<sup>2</sup> khi n → ∞</div>
-<div class="formula"><span class="lbl">Tỉ lệ phòng ngừa tối thiểu hoá phương sai của X − hY</span>h* = <span class="frac"><span>ρ σ<sub>X</sub></span><span>σ<sub>Y</sub></span></span>, &nbsp;&nbsp; σ<sub>X − h*Y</sub> = σ<sub>X</sub> √(1 − ρ<sup>2</sup>)</div>
-
-<h4>Ví dụ minh hoạ: từ xúc xắc tới danh mục hai chiến lược</h4>
+<p>Dạng thứ hai có được bằng cách khai triển bình phương rồi dùng tính tuyến tính của kỳ vọng (bài 2). Vì μ là hằng số:</p>
+<div class="formula">E[(X − μ)<sup>2</sup>] = E[X<sup>2</sup> − 2μX + μ<sup>2</sup>] = E[X<sup>2</sup>] − 2μ · E[X] + μ<sup>2</sup> = E[X<sup>2</sup>] − μ<sup>2</sup></div>
+<p>Dạng này thường dễ tính hơn: “trung bình của bình phương trừ bình phương của trung bình”. Nó cũng cho thấy E[X<sup>2</sup>] ≥ (E[X])<sup>2</sup>, vì phương sai không bao giờ âm.</p>
+<p><b>Ví dụ với xúc xắc cân đối.</b></p>
 <ol>
-  <li>Xúc xắc cân đối: E[X<sup>2</sup>] = (1 + 4 + 9 + 16 + 25 + 36)/6 = 91/6. Mà (E[X])<sup>2</sup> = 3,5<sup>2</sup> = 12,25. Vậy Var(X) = 91/6 − 12,25 = 35/12 ≈ 2,92, và σ ≈ 1,71.</li>
-  <li>Hai tài sản có σ<sub>X</sub> = 3, σ<sub>Y</sub> = 2, ρ = 0,3. Khi nắm cả hai: σ<sub>X+Y</sub> = √(9 + 4 + 2 · 0,3 · 6) = √16,6 ≈ 4,07. Con số này nhỏ hơn 3 + 2 = 5.</li>
-  <li>Mua X và bán Y: σ<sub>X−Y</sub> = √(13 − 3,6) = √9,4 ≈ 3,07. Tương quan thấp nên phòng ngừa không giảm rủi ro được bao nhiêu.</li>
-  <li>Nếu ρ = 0,8, tỉ lệ phòng ngừa tối ưu là h* = 0,8 · 3/2 = 1,2. Rủi ro còn lại là 3 · √(1 − 0,64) = 3 · 0,6 = 1,8.</li>
-  <li>Hai chiến lược cùng độ biến động năm 10%, tương quan 0,5, chia vốn đều. Var = 0,25 · 0,01 + 0,25 · 0,01 + 2 · 0,5 · 0,5 · 0,5 · 0,01 = 0,0075, nên σ ≈ 8,7%. Nếu không tương quan thì σ ≈ 7,1%; tương quan hoàn hảo thì vẫn là 10%.</li>
+  <li>E[X<sup>2</sup>] = (1 + 4 + 9 + 16 + 25 + 36)/6 = 91/6 ≈ 15,17.</li>
+  <li>(E[X])<sup>2</sup> = 3,5<sup>2</sup> = 12,25 = 147/12.</li>
+  <li>Var(X) = 182/12 − 147/12 = 35/12 ≈ 2,92, nên σ = √(35/12) ≈ 1,71.</li>
 </ol>
+<p>Một kết quả điển hình của xúc xắc cách trung bình 3,5 khoảng 1,7 chấm. Chú ý σ không phải là khoảng cách trung bình |X − μ|, vốn bằng 1,5 ở đây. Bình phương làm các điểm xa có trọng số lớn hơn, nên σ luôn lớn hơn hoặc bằng khoảng cách trung bình.</p>
+
+<h4>Phương sai co giãn và cộng dồn thế nào</h4>
+<p>Dịch chuyển một biến không làm thay đổi độ phân tán của nó. Nhân biến với a thì độ phân tán nhân với |a|, tức phương sai nhân với a<sup>2</sup>:</p>
+<div class="formula"><span class="lbl">Biến đổi tuyến tính</span>Var(aX + b) = a<sup>2</sup> · Var(X)</div>
+<p>Chứng minh một dòng: trung bình của aX + b là aμ + b, nên độ lệch khỏi trung bình là (aX + b) − (aμ + b) = a(X − μ). Hằng số b biến mất ngay ở bước này. Bình phương rồi lấy kỳ vọng cho a<sup>2</sup> · E[(X − μ)<sup>2</sup>].</p>
+
+<div class="note"><b>Đính chính so với tài liệu gốc.</b> Tài liệu gốc viết Var(aX + b) = a<sup>2</sup> Var(X) + b. Hằng số b không có mặt trong kết quả: cộng thêm 5 đô vào mọi kết quả chỉ dời trung bình đi 5 đô, còn độ phân tán giữ nguyên.</div>
+
+<p>Với tổng của hai biến thì xuất hiện thêm một <b>số hạng chéo</b>. Định nghĩa <b>hiệp phương sai</b> (covariance) Cov(X, Y) = E[(X − μ<sub>X</sub>)(Y − μ<sub>Y</sub>)]. Khai triển bình phương của tổng độ lệch:</p>
+<div class="formula">Var(X + Y) = E[((X − μ<sub>X</sub>) + (Y − μ<sub>Y</sub>))<sup>2</sup>] = Var(X) + Var(Y) + 2 Cov(X, Y)</div>
+<p>Chỉ khi X và Y <b>không tương quan</b> (uncorrelated), tức Cov(X, Y) = 0, công thức mới rút gọn thành Var(X) + Var(Y). Hai biến độc lập thì không tương quan, nên đây là trường hợp quen thuộc nhất. Tương tự, Var(X − Y) = Var(X) + Var(Y) − 2 Cov(X, Y): bán khống một tài sản tương quan dương làm giảm rủi ro.</p>
+
+<div class="note"><b>Đính chính thứ hai.</b> Tài liệu gốc phát biểu Var(X + Y) = Var(X) + Var(Y) mà không kèm điều kiện. Đây là lỗi hay gặp nhất trong phỏng vấn. Mỗi khi dùng công thức này, hãy nói thành lời “với điều kiện X và Y độc lập” (hoặc ít nhất không tương quan). Một hệ quả trực tiếp: <b>không cộng độ lệch chuẩn</b>. Hãy cộng phương sai rồi mới lấy căn. Độ lệch chuẩn chỉ cộng thẳng được khi tương quan bằng 1.</div>
+
+<h4>Độ lệch chuẩn là những mũi tên</h4>
+<p>Viết hiệp phương sai qua <b>hệ số tương quan</b> (correlation) ρ: Cov(X, Y) = ρ σ<sub>X</sub> σ<sub>Y</sub>, với −1 ≤ ρ ≤ 1. Công thức phương sai của tổng trở thành</p>
+<div class="formula">σ<sup>2</sup><sub>X+Y</sub> = σ<sup>2</sup><sub>X</sub> + σ<sup>2</sup><sub>Y</sub> + 2ρ σ<sub>X</sub> σ<sub>Y</sub></div>
+<p>Đây chính là <b>định lý cos</b> (law of cosines) trong hình học. Vẽ σ<sub>X</sub> và σ<sub>Y</sub> thành hai mũi tên chung gốc, có độ dài bằng hai độ lệch chuẩn, và đặt góc θ giữa chúng sao cho cos θ = ρ. Khi đó mũi tên tổng (đường chéo của hình bình hành) có bình phương độ dài đúng bằng σ<sub>X</sub><sup>2</sup> + σ<sub>Y</sub><sup>2</sup> + 2σ<sub>X</sub>σ<sub>Y</sub> cos θ. Vậy <b>độ biến động của tổng là độ dài của mũi tên tổng hợp</b>.</p>
+<ul>
+  <li>ρ = 1: góc bằng 0, hai mũi tên cùng hướng, rủi ro cộng thẳng: σ<sub>X+Y</sub> = σ<sub>X</sub> + σ<sub>Y</sub>.</li>
+  <li>ρ = 0: góc vuông, ta có định lý Pythagoras: σ<sub>X+Y</sub> = √(σ<sub>X</sub><sup>2</sup> + σ<sub>Y</sub><sup>2</sup>).</li>
+  <li>ρ = −1: hai mũi tên ngược chiều, rủi ro triệt tiêu một phần hoặc toàn bộ: σ<sub>X+Y</sub> = |σ<sub>X</sub> − σ<sub>Y</sub>|.</li>
+</ul>
+<p><b>Ví dụ.</b> σ<sub>X</sub> = 3, σ<sub>Y</sub> = 2, ρ = 0,3. Nắm cả hai: σ<sub>X+Y</sub> = √(9 + 4 + 2 · 0,3 · 3 · 2) = √16,6 ≈ 4,07, nhỏ hơn 3 + 2 = 5. Mua X và bán Y: σ<sub>X−Y</sub> = √(13 − 3,6) = √9,4 ≈ 3,07. Tương quan thấp nên phòng hộ gần như không giảm được rủi ro.</p>
+<p>Phòng hộ X − hY với tỉ lệ h tuỳ chọn: phương sai σ<sub>X</sub><sup>2</sup> + h<sup>2</sup>σ<sub>Y</sub><sup>2</sup> − 2hρσ<sub>X</sub>σ<sub>Y</sub> là một parabol theo h. Đạo hàm bằng 0 cho <b>tỉ lệ phòng hộ tối thiểu phương sai</b> h* = ρσ<sub>X</sub>/σ<sub>Y</sub>, và rủi ro còn lại là σ<sub>X</sub>√(1 − ρ<sup>2</sup>). Trong hình mũi tên, đó là lúc mũi tên tổng vuông góc với hướng của Y. Với ρ = 0,8 ở ví dụ trên, h* = 0,8 · 3/2 = 1,2 và rủi ro còn lại 3 · √0,36 = 1,8.</p>
 
 <figure class="demo">
   <div class="stage" id="demo-03"></div>
   <div class="controls" id="ctl-03"></div>
   <div class="readout" id="out-03"></div>
-  <figcaption><b>Mô hình 3.1 – Độ lệch chuẩn là mũi tên trong không gian 3D.</b> Mũi tên xanh dương dài σ<sub>X</sub>, mũi tên cam dài σ<sub>Y</sub>, góc giữa chúng là arccos ρ. Mũi tên xanh lá là độ biến động của danh mục. Ở chế độ phòng ngừa X − hY, mũi tên cam đổi chiều và co giãn theo h. Mũi tên xanh lá ngắn nhất khi nó vuông góc với Y, đó là h*. Kéo để xoay; bấm “Đặt h = h*” để xem phòng ngừa tối ưu.</figcaption>
+  <figcaption><b>Hình 3.1 – Độ biến động dưới dạng mũi tên, trong không gian 3D.</b> Tương quan quyết định góc giữa hai mũi tên: mũi tên xanh dương dài σ<sub>X</sub>, mũi tên cam dài σ<sub>Y</sub>, góc giữa chúng là arccos ρ. Mũi tên xanh lá là độ biến động của tổng. Đặt ρ = 1 để thấy rủi ro cộng thẳng, ρ = 0 để thấy tam giác vuông. Bấm “Chế độ” để chuyển sang phòng hộ X − hY: với tương quan cao, mũi tên tổng gần như biến mất, và đó chính là mục đích của phòng hộ. Bấm “Đặt h = h*” để xem tỉ lệ phòng hộ tối ưu. Kéo để xoay.</figcaption>
 </figure>
+<p>Hình ảnh này còn giải thích câu đố ba tương quan ở bài 5: ba mũi tên không thể có các góc từng đôi tuỳ ý. Chẳng hạn nếu X gần như cùng hướng với Y, và Y gần như cùng hướng với Z, thì X không thể gần như ngược hướng với Z.</p>
+
+<h4>Quy tắc căn n</h4>
+<p>Cho X<sub>1</sub>, …, X<sub>n</sub> độc lập, mỗi biến có phương sai σ<sup>2</sup>. Mọi số hạng chéo đều bằng 0, nên phương sai của tổng là tổng các phương sai. Trung bình X̄ = (X<sub>1</sub> + ⋯ + X<sub>n</sub>)/n là tổng nhân với 1/n, nên phương sai nhân với 1/n<sup>2</sup>:</p>
+<div class="formula"><span class="lbl">Tổng và trung bình của n biến độc lập</span>Var(Σ X<sub>i</sub>) = nσ<sup>2</sup>, &nbsp;&nbsp; Var(X̄) = <span class="frac"><span>σ<sup>2</sup></span><span>n</span></span>, &nbsp;&nbsp; sd(X̄) = <span class="frac"><span>σ</span><span>√n</span></span></div>
+<p>Lấy trung bình của n thứ độc lập làm nhiễu giảm theo √n, không phải theo n. Muốn sai số giảm một nửa thì cần gấp bốn lần dữ liệu. Muốn giảm mười lần thì cần gấp một trăm lần. Vì vậy kéo dài một backtest gấp đôi chỉ làm sai số của ước lượng giảm khoảng 29%, từ σ/√n xuống σ/√(2n).</p>
+<p>Nếu thay vào đó mọi cặp đều có cùng tương quan ρ, thì trong n<sup>2</sup> số hạng của Var(Σ X<sub>i</sub>) có n số hạng phương sai σ<sup>2</sup> và n(n − 1) số hạng hiệp phương sai ρσ<sup>2</sup>. Chia cho n<sup>2</sup>:</p>
+<div class="formula"><span class="lbl">Trung bình của n biến cùng tương quan ρ</span>Var(X̄) = <span class="frac"><span>nσ<sup>2</sup> + n(n − 1)ρσ<sup>2</sup></span><span>n<sup>2</sup></span></span> = σ<sup>2</sup> ( <span class="frac"><span>1</span><span>n</span></span> + (1 − <span class="frac"><span>1</span><span>n</span></span>) ρ )</div>
+<p>Khi n tăng, số hạng 1/n biến mất nhưng số hạng (1 − 1/n)ρ tiến tới ρ. Phương sai của trung bình không bao giờ xuống dưới ρσ<sup>2</sup>, tức độ lệch chuẩn có <b>mức sàn</b> σ√ρ. Với ρ = 0,25, mười nghìn chiến lược cũng không đưa rủi ro xuống dưới một nửa rủi ro của một chiến lược. Phần rủi ro chung đó, gọi là rủi ro hệ thống, không thể đa dạng hoá được.</p>
 
 <figure class="demo">
   <div class="stage" id="demo2-03"></div>
   <div class="controls" id="ctl2-03"></div>
   <div class="readout" id="out2-03"></div>
-  <figcaption><b>Mô hình 3.2 – Quy tắc căn n và mức sàn của đa dạng hoá.</b> Nửa trên: 150 lần rút một biến đơn lẻ (cam) đặt cạnh 150 trung bình của n biến (xanh dương); dải mờ là ±1σ lý thuyết. Nửa dưới: σ của trung bình theo n trên trục log; chấm là ước lượng từ mô phỏng. Tăng ρ để thấy đường cong nằm bẹt trên mức sàn √ρ.</figcaption>
+  <figcaption><b>Hình 3.2 – Quy tắc căn n và mức sàn của nó.</b> Nửa trên: 160 lần rút một biến đơn lẻ (cam) đặt cạnh 160 trung bình của n biến (xanh dương); dải mờ là ±1σ lý thuyết. Nửa dưới: σ của trung bình theo n, trục log, đường đứt xám là trường hợp độc lập 1/√n, chấm xanh lá là ước lượng từ mô phỏng. Tăng tương quan ρ để thấy đường cong nằm bẹt trên mức sàn √ρ: thêm những cược tương quan với nhau không còn làm giảm rủi ro.</figcaption>
 </figure>
 
-<h4>Lưu ý khi phỏng vấn</h4>
+<div class="note"><b>Ứng dụng trên bàn giao dịch.</b>
 <ul>
-  <li>Khi viết Var(X + Y) = Var(X) + Var(Y), hãy nói rõ “với điều kiện X và Y không tương quan”. Quên điều kiện này là lỗi rất hay gặp.</li>
-  <li>Đừng cộng độ lệch chuẩn. Cộng phương sai rồi mới lấy căn. Độ lệch chuẩn chỉ cộng thẳng được khi ρ = 1.</li>
-  <li>Var(aX + b) không có thành phần b. Thêm 5 đô vào mọi kết quả chỉ dời trung bình.</li>
-  <li>Câu hỏi về danh mục n chiến lược: nếu không tương quan thì rủi ro giảm theo 1/√n. Nếu tương quan ρ thì rủi ro dừng ở khoảng σ√ρ. Vì vậy quỹ định lượng cần nhiều lệnh nhỏ, tương quan yếu.</li>
-</ul>
+  <li><b>Đa dạng hoá.</b> Một danh mục gồm n chiến lược không tương quan, có rủi ro bằng nhau và chia vốn đều, có độ biến động bằng 1/√n độ biến động của một chiến lược. Lợi nhuận kỳ vọng thì không đổi. Vì vậy các quỹ định lượng chạy hàng nghìn cược nhỏ, tương quan yếu, thay vì vài cược lớn.</li>
+  <li><b>Phòng hộ.</b> Mua một cổ phiếu và bán khống một cổ phiếu tương quan cao với nó: hai mũi tên gần như triệt tiêu, chỉ để lại một rủi ro dư nhỏ. Đây là cốt lõi của giao dịch cặp (pairs trading) và của phòng hộ delta (delta-hedging) cho quyền chọn.</li>
+  <li><b>Giới hạn rủi ro.</b> Các bàn giao dịch đặt giới hạn theo đơn vị độ lệch chuẩn, ví dụ “lãi/lỗ trong ngày ở mức 1σ”. Giá trị chịu rủi ro (value-at-risk) là một bội số của σ khi lợi suất xấp xỉ phân phối chuẩn.</li>
+</ul></div>
+
+<h4>Viết bằng code</h4>
+<p>Đoạn TypeScript dưới đây tính độ biến động của tổng và của vị thế phòng hộ theo định lý cos, rồi kiểm tra quy tắc căn n bằng mô phỏng. Chạy bằng <span class="kbd">bun variance.ts</span>.</p>
+<pre class="code"><code><span class="c">// Độ biến động của aX + bY khi biết σX, σY và tương quan ρ</span>
+const vol = (sx: number, sy: number, rho: number, a = 1, b = 1) =&gt;
+  Math.sqrt(a * a * sx * sx + b * b * sy * sy + 2 * a * b * rho * sx * sy);
+
+console.log(vol(3, 2, 0.3).toFixed(2));          <span class="c">// X + Y: 4.07</span>
+console.log(vol(3, 2, 0.3, 1, -1).toFixed(2));   <span class="c">// phòng hộ X − Y: 3.07</span>
+
+<span class="c">// Quy tắc căn n: σ của trung bình n biến chuẩn tắc độc lập ≈ 1/√n</span>
+function rng(seed: number) {
+  return () =&gt; {
+    seed = (seed + 0x6d2b79f5) | 0;
+    let t = Math.imul(seed ^ (seed &gt;&gt;&gt; 15), 1 | seed);
+    t = (t + Math.imul(t ^ (t &gt;&gt;&gt; 7), 61 | t)) ^ t;
+    return ((t ^ (t &gt;&gt;&gt; 14)) &gt;&gt;&gt; 0) / 4294967296;
+  };
+}
+const rand = rng(2);
+const gauss = () =&gt; Math.sqrt(-2 * Math.log(1 - rand())) * Math.cos(2 * Math.PI * rand());
+
+for (const n of [1, 4, 16, 64]) {
+  const reps = 100_000;
+  let s = 0, s2 = 0;
+  for (let r = 0; r &lt; reps; r++) {
+    let sum = 0;
+    for (let i = 0; i &lt; n; i++) sum += gauss();
+    const mean = sum / n;
+    s += mean; s2 += mean * mean;
+  }
+  const sd = Math.sqrt(s2 / reps - (s / reps) ** 2);
+  console.log(n, sd.toFixed(3), (1 / Math.sqrt(n)).toFixed(3));
+}
+<span class="c">// 1 0.998 1.000 · 4 0.500 0.500 · 16 0.250 0.250 · 64 0.125 0.125</span></code></pre>
+
+<details class="qa"><summary>Tự kiểm tra: hai chiến lược, mỗi chiến lược có độ biến động năm 10%, tương quan 0,5. Bạn chia vốn đều, mỗi chiến lược một nửa. Độ biến động của cả sổ là bao nhiêu: 10%, khoảng 8,7%, 7,1% hay 5%?</summary>
+<p>Đáp án: <b>khoảng 8,7%</b>.</p>
+<ol>
+  <li>Sổ giao dịch là 0,5X + 0,5Y, với σ<sub>X</sub> = σ<sub>Y</sub> = 0,1 và ρ = 0,5.</li>
+  <li>Var = 0,5<sup>2</sup> · 0,01 + 0,5<sup>2</sup> · 0,01 + 2 · 0,5 · 0,5 · 0,5 · 0,1 · 0,1 = 0,0025 + 0,0025 + 0,0025 = 0,0075.</li>
+  <li>σ = √0,0075 ≈ 0,0866, tức khoảng 8,7%.</li>
+</ol>
+<p>Để so sánh: nếu không tương quan thì Var = 0,005 và σ ≈ 7,1%, đúng bằng 10%/√2. Nếu tương quan hoàn hảo thì σ vẫn là 10%, không có lợi ích đa dạng hoá nào. Đáp án 5% là lỗi chia độ lệch chuẩn cho 2 như thể hai rủi ro triệt tiêu nhau.</p>
+</details>
 
 <script>
 (()=>{
-  /* ---------- Mô hình 3.1: mũi tên độ lệch chuẩn ---------- */
+  /* ---------- Hình 3.1: mũi tên độ lệch chuẩn ---------- */
   const stage=document.getElementById('demo-03'), ctl=document.getElementById('ctl-03'), out=document.getElementById('out-03');
   const S={sx:3, sy:2, rho:0.3, hedge:false, h:1};
   const view={yaw:-0.35,pitch:0.35,dist:14,auto:true};
@@ -125,10 +193,10 @@
 })();
 
 (()=>{
-  /* ---------- Mô hình 3.2: quy tắc căn n và mức sàn ---------- */
+  /* ---------- Hình 3.2: quy tắc căn n và mức sàn ---------- */
   const stage=document.getElementById('demo2-03'), ctl=document.getElementById('ctl2-03'), out=document.getElementById('out2-03');
   const S={n:16, rho:0, seed:5};
-  const M=150, NMAX=128, NS=[1,2,4,8,16,32,64,128];
+  const M=160, NMAX=128, NS=[1,2,4,8,16,32,64,128];
   let singles=[], avgs=[], emp=[];
   const sdT=(n,rho)=>Math.sqrt(1/n+(1-1/n)*rho);
   // Mô hình một nhân tố: X_i = √ρ·F + √(1−ρ)·e_i, mỗi biến có σ = 1, mọi cặp có tương quan ρ
@@ -144,7 +212,7 @@
     const sd=x=>{ const m=x.reduce((a,b)=>a+b,0)/x.length; return Math.sqrt(x.reduce((a,b)=>a+(b-m)**2,0)/x.length); };
     out.textContent=`n = ${S.n}, ρ = ${Q.fmt(S.rho,2)}, σ của một biến = 1\n`+
       `Lý thuyết: σ(X̄) = √(1/n + (1 − 1/n)ρ) = ${Q.fmt(sdT(S.n,S.rho),3)}   (độc lập: 1/√n = ${Q.fmt(1/Math.sqrt(S.n),3)};  sàn √ρ = ${Q.fmt(Math.sqrt(S.rho),3)})\n`+
-      `Mẫu 150 trung bình: σ ≈ ${Q.fmt(sd(avgs),3)};   mẫu 150 biến đơn lẻ: σ ≈ ${Q.fmt(sd(singles),3)}`;
+      `Mẫu 160 trung bình: σ ≈ ${Q.fmt(sd(avgs),3)};   mẫu 160 biến đơn lẻ: σ ≈ ${Q.fmt(sd(singles),3)}`;
   }
   sample();
   const cv=Q.canvas(stage,400,draw);

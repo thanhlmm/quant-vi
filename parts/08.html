@@ -2,66 +2,135 @@
 <header>
   <span class="num">08</span>
   <h3>Bình phương tối thiểu và láng giềng gần nhất</h3>
-  <p class="meta">12 phút · Ứng dụng: mô hình cơ sở cho mọi bài toán dự báo · <a href="https://hft.md/learn/least-squares-vs-knn/">Bài gốc (tiếng Anh)</a></p>
+  <p class="meta">Phần 3 · Nghiên cứu định lượng: khoa học dữ liệu · Bài 8 · 12 phút · <a href="https://hft.md/learn/least-squares-vs-knn/">Bài gốc (tiếng Anh)</a></p>
 </header>
 
-<p>Phần lớn công việc nghiên cứu định lượng là dự báo: lợi suất ngày mai, xác suất một lệnh được khớp, giá một căn nhà. Hai bộ dự báo đơn giản nhất, một cứng nhắc và một linh hoạt, đã chứa sẵn mọi sự đánh đổi sẽ gặp về sau. Phần này đi theo chương 2 của cuốn <i>The Elements of Statistical Learning</i> (ESL).</p>
+<p><i>Hai bộ dự báo đơn giản nhất, một cứng nhắc và một linh hoạt, cùng những ranh giới quyết định mà chúng vẽ ra.</i></p>
 
-<h4>Ý chính</h4>
-<ul>
-  <li><b>Mô hình tuyến tính</b> (linear model) dự báo bằng một tổng có trọng số của các biến đầu vào cộng hệ số chặn. Các hệ số được chọn bằng <b>bình phương tối thiểu</b> (least squares), tức cực tiểu tổng bình phương phần dư (residual sum of squares, RSS).</li>
-  <li>RSS không phải lựa chọn tuỳ tiện. Với sai số bình phương, bộ dự báo tốt nhất là <b>kỳ vọng có điều kiện</b> E[Y | X]. Bình phương tối thiểu cho xấp xỉ tuyến tính tốt nhất của hàm đó.</li>
-  <li>Để phân loại, mã hoá hai lớp thành 0 và 1, khớp hồi quy, rồi gán lớp 1 khi Ŷ &gt; 0,5. Ranh giới quyết định khi đó là một đường thẳng.</li>
-  <li><b>Láng giềng gần nhất</b> (k-nearest neighbours, kNN) không khớp công thức nào. Nó giữ nguyên dữ liệu huấn luyện và lấy trung bình nhãn của k điểm gần nhất.</li>
-  <li>Với k = 1, mỗi điểm huấn luyện sở hữu vùng không gian gần nó nhất. Các vùng này tạo thành <b>phân hoạch Voronoi</b> (Voronoi tessellation), nên ranh giới lởm chởm và đầy “đảo” nhỏ. Tăng k làm ranh giới mượt hơn.</li>
-  <li>Dù chỉ có một tham số k, kNN hành xử như có khoảng N/k tham số, mỗi lân cận một tham số. k nhỏ nghĩa là mô hình rất linh hoạt.</li>
-</ul>
+<p>Phần lớn công việc nghiên cứu định lượng là dự báo: lợi suất ngày mai, xác suất một lệnh được khớp, giá một căn nhà. Phần này của giáo trình đi theo cuốn <i>The Elements of Statistical Learning</i> (ESL) của Hastie, Tibshirani và Friedman, cuốn sách mà giới nghiên cứu thường mở ra đầu tiên. Chương mở đầu của nó không bàn về mạng nơ-ron hay cây quyết định, mà đặt cạnh nhau hai bộ dự báo đơn giản nhất có thể. Lý do: giữa hai thái cực ấy đã có mặt mọi sự đánh đổi mà ta sẽ gặp lại trong các mô hình phức tạp hơn.</p>
 
-<h4>Công thức</h4>
+<h4>Mô hình tuyến tính</h4>
+<p>Cho vectơ đầu vào X = (X<sub>1</sub>, …, X<sub>p</sub>), chẳng hạn p đặc trưng của thị trường hôm nay. <b>Mô hình tuyến tính</b> (linear model) dự báo đầu ra bằng một tổng có trọng số của các đầu vào, cộng thêm một hệ số chặn (intercept):</p>
 <div class="formula"><span class="lbl">Mô hình tuyến tính với p biến đầu vào</span>Ŷ = β̂<sub>0</sub> + Σ<sub>j=1</sub><sup>p</sup> X<sub>j</sub> β̂<sub>j</sub></div>
-<div class="formula"><span class="lbl">Tổng bình phương phần dư và nghiệm bình phương tối thiểu (X là ma trận thiết kế có cột hằng số 1)</span>RSS(β) = Σ<sub>i=1</sub><sup>N</sup> ( y<sub>i</sub> − x<sub>i</sub><sup>⊤</sup>β )<sup>2</sup> &nbsp;&nbsp;&nbsp;&nbsp; β̂ = (X<sup>⊤</sup>X)<sup>−1</sup> X<sup>⊤</sup>y</div>
-<div class="formula"><span class="lbl">Dự báo kNN: N<sub>k</sub>(x) là tập k điểm huấn luyện gần x nhất</span>Ŷ(x) = <span class="frac"><span>1</span><span>k</span></span> Σ<sub>x<sub>i</sub> ∈ N<sub>k</sub>(x)</sub> y<sub>i</sub> &nbsp;&nbsp;&nbsp;&nbsp; số tham số hiệu dụng ≈ <span class="frac"><span>N</span><span>k</span></span></div>
-
-<h4>Ví dụ minh hoạ: hai bộ dự báo trên năm điểm</h4>
-<p>Dữ liệu gồm 5 điểm (x, y): (1, 1), (2, 3), (3, 2), (4, 5), (5, 4). Cần dự báo y tại x = 3,4.</p>
+<p>Để gọn, thường thêm một cột hằng số 1 vào X, khi đó Ŷ = x<sup>⊤</sup>β̂. Các hệ số được chọn bằng phương pháp <b>bình phương tối thiểu</b> (least squares): tìm β làm nhỏ nhất <b>tổng bình phương phần dư</b> (residual sum of squares, RSS) trên N quan sát huấn luyện:</p>
+<div class="formula"><span class="lbl">Hàm mục tiêu</span>RSS(β) = Σ<sub>i=1</sub><sup>N</sup> ( y<sub>i</sub> − x<sub>i</sub><sup>⊤</sup>β )<sup>2</sup></div>
+<p>RSS là một hàm bậc hai lồi theo β, nên cực tiểu nằm tại nơi gradient bằng 0. Viết dưới dạng ma trận, RSS(β) = (y − Xβ)<sup>⊤</sup>(y − Xβ), với X là ma trận thiết kế N × (p + 1). Đạo hàm theo β bằng −2X<sup>⊤</sup>(y − Xβ). Cho nó bằng 0 ta được <b>phương trình chuẩn</b> (normal equations) X<sup>⊤</sup>Xβ = X<sup>⊤</sup>y, và nếu X<sup>⊤</sup>X khả nghịch:</p>
+<div class="formula"><span class="lbl">Nghiệm dạng đóng</span>β̂ = (X<sup>⊤</sup>X)<sup>−1</sup> X<sup>⊤</sup>y</div>
+<p><b>Vì sao lại là bình phương?</b> RSS không phải lựa chọn tuỳ tiện. Nếu đo chất lượng dự báo bằng sai số bình phương, bộ dự báo tốt nhất có thể là <b>hàm kỳ vọng có điều kiện</b> (conditional expectation function) m(x) = E[Y | X = x]. Lý do: với mọi hàm f, ta có thể tách E[(Y − f(X))<sup>2</sup>] = E[(Y − m(X))<sup>2</sup>] + E[(m(X) − f(X))<sup>2</sup>]. Số hạng chéo biến mất vì E[Y − m(X) | X] = 0. Số hạng đầu là nhiễu không thể tránh, số hạng sau nhỏ nhất (bằng 0) khi f = m. Bình phương tối thiểu chính là cách tìm <i>xấp xỉ tuyến tính tốt nhất</i> của hàm m đó.</p>
+<p><b>Dùng để phân loại.</b> Mã hoá hai lớp thành 0 và 1, khớp hồi quy như bình thường, rồi dự báo lớp 1 khi Ŷ &gt; 0,5. Với mã hoá 0/1, E[Y | X] chính là xác suất thuộc lớp 1, nên Ŷ là một xấp xỉ tuyến tính (khá thô) của xác suất đó. Tập các điểm có Ŷ = 0,5 là {x : x<sup>⊤</sup>β̂ = 0,5}, một đường thẳng trong hai chiều, hay một siêu phẳng trong nhiều chiều. Vậy ranh giới quyết định của mô hình tuyến tính luôn thẳng, bất kể dữ liệu trông thế nào.</p>
+<p><b>Ví dụ.</b> Năm điểm (x, y): (1, 1), (2, 3), (3, 2), (4, 5), (5, 4). Cần dự báo y tại x = 3,4.</p>
 <ol>
-  <li>Trung bình: x̄ = 3, ȳ = 3. Tổng tích chéo Σ(x − x̄)(y − ȳ) = 4 + 0 + 0 + 2 + 2 = 8. Tổng bình phương Σ(x − x̄)<sup>2</sup> = 10.</li>
-  <li>Hệ số góc β̂<sub>1</sub> = 8 / 10 = 0,8. Hệ số chặn β̂<sub>0</sub> = 3 − 0,8 × 3 = 0,6.</li>
-  <li>Dự báo tuyến tính tại 3,4: 0,6 + 0,8 × 3,4 = 3,32. RSS trên tập huấn luyện bằng 0,16 + 0,64 + 1 + 1,44 + 0,36 = 3,6.</li>
-  <li>Với kNN, khoảng cách từ 3,4 tới các điểm là 0,4 (x = 3), 0,6 (x = 4), 1,4 (x = 2), …</li>
-  <li>k = 1 cho dự báo 2. k = 3 cho (2 + 5 + 3) / 3 ≈ 3,33, rất gần dự báo tuyến tính.</li>
-  <li>1-NN có RSS huấn luyện bằng 0, vì mỗi điểm là láng giềng gần nhất của chính nó. Con số đó không nói gì về chất lượng trên dữ liệu mới.</li>
+  <li>Trung bình x̄ = 3, ȳ = 3. Tổng tích chéo Σ(x − x̄)(y − ȳ) = 4 + 0 + 0 + 2 + 2 = 8. Tổng bình phương Σ(x − x̄)<sup>2</sup> = 4 + 1 + 0 + 1 + 4 = 10.</li>
+  <li>Với một biến, phương trình chuẩn cho hệ số góc β̂<sub>1</sub> = 8/10 = 0,8 và hệ số chặn β̂<sub>0</sub> = ȳ − β̂<sub>1</sub>x̄ = 3 − 2,4 = 0,6.</li>
+  <li>Dự báo tại 3,4: 0,6 + 0,8 · 3,4 = 3,32.</li>
+  <li>Các giá trị khớp là 1,4; 2,2; 3,0; 3,8; 4,6, nên phần dư là −0,4; 0,8; −1; 1,2; −0,6 và RSS = 0,16 + 0,64 + 1 + 1,44 + 0,36 = 3,6.</li>
 </ol>
 
-<table class="t">
-  <tr><th></th><th>Mô hình tuyến tính (bình phương tối thiểu)</th><th>Láng giềng gần nhất</th></tr>
-  <tr><td>Độ chệch và phương sai</td><td>độ chệch cao, phương sai thấp</td><td>độ chệch thấp, phương sai cao</td></tr>
-  <tr><td>Giả định</td><td>quan hệ (gần) tuyến tính</td><td>gần như không có</td></tr>
-  <tr><td>Hợp nhất khi</td><td>mỗi lớp xấp xỉ một cụm Gauss</td><td>mỗi lớp là hỗn hợp của nhiều cụm nhỏ</td></tr>
-  <tr><td>Số chiều</td><td>chịu được nhiều biến đầu vào</td><td>cần ít chiều và nhiều dữ liệu</td></tr>
-</table>
+<h4>Láng giềng gần nhất</h4>
+<p>Cách tiếp cận thứ hai đi theo hướng ngược lại hoàn toàn. Thay vì khớp một công thức, ta <i>giữ nguyên</i> toàn bộ dữ liệu huấn luyện. Muốn dự báo tại điểm x, tìm k điểm huấn luyện gần x nhất, gọi tập đó là N<sub>k</sub>(x), rồi lấy trung bình nhãn của chúng. Đó là phương pháp <b>k láng giềng gần nhất</b> (k-nearest neighbours, kNN):</p>
+<div class="formula"><span class="lbl">Dự báo kNN</span>Ŷ(x) = <span class="frac"><span>1</span><span>k</span></span> Σ<sub>x<sub>i</sub> ∈ N<sub>k</sub>(x)</sub> y<sub>i</sub></div>
+<p>Ở đây không có gì để khớp, ngoài việc chọn k (và chọn cách đo khoảng cách, thường là khoảng cách Euclid). Với bài toán phân loại 0/1, Ŷ(x) là tỉ lệ láng giềng thuộc lớp 1, và ta lại gán lớp 1 khi tỉ lệ này vượt 0,5, tức theo đa số phiếu.</p>
+<p>Với k = 1, mỗi điểm huấn luyện “sở hữu” phần không gian gần nó hơn mọi điểm khác. Các vùng sở hữu này tạo thành <b>phân hoạch Voronoi</b> (Voronoi tessellation) của mặt phẳng, và ranh giới quyết định chạy dọc các cạnh Voronoi ngăn cách hai điểm khác lớp. Kết quả là một ranh giới lởm chởm, đầy những “hòn đảo” nhỏ quanh từng điểm nằm lạc giữa lớp kia. Tăng k làm mỗi dự báo là trung bình của nhiều điểm hơn, nên ranh giới mượt dần.</p>
+<p><b>Số tham số hiệu dụng.</b> Tuy k chỉ là một con số, mô hình hành xử như thể có khoảng N/k tham số: hình dung không gian được chia thành khoảng N/k vùng lân cận không chồng lấn, mỗi vùng có một giá trị trung bình riêng. Với N = 200, k = 1 tương đương khoảng 200 tham số, còn k = 15 chỉ còn khoảng 13. Vì vậy k nhỏ nghĩa là mô hình rất linh hoạt, còn k = N thì mô hình chỉ còn đoán tỉ lệ chung của cả tập dữ liệu ở mọi nơi.</p>
+<p><b>Phương pháp hạt nhân</b> (kernel methods) là bản tinh chỉnh của kNN: thay vì đếm đều k điểm gần nhất rồi bỏ qua phần còn lại, ta đánh trọng số cho mọi điểm theo khoảng cách bằng một hàm hạt nhân trơn, điểm càng gần trọng số càng lớn. Bài 15 sẽ dùng một bộ làm mượt hạt nhân như vậy để định giá ghế ở nhà hát opera.</p>
+<p><b>Ví dụ (tiếp).</b> Với năm điểm ở trên và x = 3,4, khoảng cách tới các điểm huấn luyện là 0,4 (x = 3), 0,6 (x = 4), 1,4 (x = 2), 1,6 (x = 5) và 2,4 (x = 1). Với k = 1, dự báo bằng nhãn của điểm x = 3, tức 2. Với k = 3, dự báo là (2 + 5 + 3)/3 ≈ 3,33, rất gần dự báo tuyến tính 3,32. Ngoài ra, 1-NN có RSS huấn luyện bằng 0, vì mỗi điểm huấn luyện là láng giềng gần nhất của chính nó. So với 3,6 của đường thẳng, con số 0 này trông rất ấn tượng, nhưng nó không nói gì về chất lượng trên dữ liệu mới.</p>
 
 <figure class="demo">
   <div class="stage" id="demo-08"></div>
   <div class="controls" id="ctl-08"></div>
   <div class="readout" id="out-08"></div>
-  <figcaption><b>Mô hình 8.1 – Bộ phân loại dưới dạng địa hình 3D.</b> Hai trục ngang là hai biến đầu vào. Độ cao là xác suất dự báo của lớp xanh dương. Điểm xanh dương nằm ở độ cao 1, điểm cam ở độ cao 0. Tấm kính màu xanh lá là ngưỡng quyết định 0,5. Với k = 1, địa hình là một rừng gai chạm vào từng điểm. Tăng k thì gai mòn thành đồi. Bình phương tối thiểu là một mặt phẳng nghiêng (cắt ở 0 và 1 khi hiển thị). Kéo để xoay.</figcaption>
+  <figcaption><b>Hình 8.1 – Bộ phân loại như một địa hình.</b> Mô hình 3D. Hai trục ngang là hai biến đầu vào; độ cao là xác suất dự báo của lớp xanh dương. Các điểm huấn luyện nằm ở độ cao 1 (xanh dương) hoặc 0 (cam). Tấm kính xanh lá là ngưỡng quyết định 0,5: phần địa hình nhô lên trên tấm kính được gán cho lớp xanh dương. Đặt k = 1 để thấy một rừng gai chạm tới từng điểm huấn luyện; tăng k thì gai mòn dần thành đồi. Chọn “Bình phương tối thiểu” để thấy một mặt phẳng nghiêng duy nhất (cắt ở 0 và 1 khi hiển thị). Kéo chuột để xoay.</figcaption>
 </figure>
 
 <figure class="demo">
   <div class="stage" id="demo2-08"></div>
   <div class="controls" id="ctl2-08"></div>
   <div class="readout" id="out2-08"></div>
-  <figcaption><b>Mô hình 8.2 – Ranh giới quyết định nhìn từ trên xuống.</b> Mỗi lớp là hỗn hợp của 10 cụm Gauss, giống ví dụ trong chương 2 của ESL. Bên trái là vùng mà mô hình gán cho từng lớp. Bên phải là sai số trên 200 điểm huấn luyện (nét đứt) và trên 1.000 điểm kiểm tra mới (nét liền) theo k. Đường ngang xanh dương là sai số kiểm tra của bình phương tối thiểu, đường xanh lá là sai số Bayes, mức thấp nhất có thể đạt được. Kéo k về 1 để thấy sai số huấn luyện bằng 0 còn sai số kiểm tra tăng lên.</figcaption>
+  <figcaption><b>Hình 8.2 – Vẽ ranh giới quyết định, nhìn từ trên xuống.</b> Hai lớp, mỗi lớp là hỗn hợp của 10 cụm Gauss, giống ví dụ ở chương 2 của ESL. Bên trái là vùng mà mô hình gán cho từng lớp. Chuyển qua lại giữa đường thẳng bình phương tối thiểu và kNN, rồi kéo k. Bên phải là sai số phân loại theo k: trên 200 điểm huấn luyện (nét đứt xám) và trên 1.000 điểm kiểm tra mới (nét liền cam). Đường ngang xanh dương là sai số kiểm tra của bình phương tối thiểu, đường xanh lá là sai số Bayes, mức thấp nhất có thể đạt được. Với k = 1, mô hình đúng hoàn toàn trên dữ liệu huấn luyện nhưng kém hơn trên dữ liệu mới.</figcaption>
 </figure>
 
-<h4>Lưu ý khi phỏng vấn</h4>
+<h4>Cứng nhắc và linh hoạt</h4>
+<p>Đặt hai phương pháp cạnh nhau, ta thấy chúng nằm ở hai đầu của cùng một trục. Mô hình tuyến tính đưa ra một giả định mạnh về hình dạng của E[Y | X]; nếu giả định sai, nó sai một cách có hệ thống, nhưng dự báo của nó ổn định khi dữ liệu thay đổi. kNN gần như không giả định gì; nó bám sát dữ liệu tới mức bám cả nhiễu, nên dự báo thay đổi mạnh từ mẫu này sang mẫu khác.</p>
+<table class="t">
+  <tr><th></th><th>Mô hình tuyến tính (bình phương tối thiểu)</th><th>Láng giềng gần nhất</th></tr>
+  <tr><td>Độ chệch và phương sai</td><td>độ chệch (bias) cao, phương sai (variance) thấp</td><td>độ chệch thấp, phương sai cao</td></tr>
+  <tr><td>Giả định</td><td>quan hệ (gần) tuyến tính</td><td>gần như không có</td></tr>
+  <tr><td>Hợp nhất khi</td><td>mỗi lớp xấp xỉ một cụm Gauss</td><td>mỗi lớp là hỗn hợp của nhiều cụm nhỏ</td></tr>
+  <tr><td>Số chiều</td><td>chịu được nhiều biến đầu vào</td><td>cần ít chiều và nhiều dữ liệu</td></tr>
+</table>
+<p>Dòng thứ ba giải thích kết quả ở Hình 8.2: khi mỗi lớp là một cụm Gauss duy nhất với cùng hiệp phương sai, ranh giới tối ưu đúng là một đường thẳng và mô hình tuyến tính gần như không thể thua. Khi mỗi lớp là hỗn hợp nhiều cụm, ranh giới tối ưu cong queo và kNN với k vừa phải có lợi thế. Bài 09 sẽ định nghĩa chính xác “độ chệch” và “phương sai”, đồng thời giải thích dòng cuối của bảng: <b>lời nguyền số chiều</b> (curse of dimensionality).</p>
+
+<h4>Ứng dụng trên bàn giao dịch</h4>
 <ul>
-  <li>Câu hỏi hay gặp: mô hình nào chắc chắn có sai số huấn luyện bằng 0 (khi không có hai đầu vào trùng nhau mà khác nhãn)? Đáp án là 1-NN. Vì thế sai số huấn luyện của nó vô nghĩa.</li>
-  <li>Ở các quỹ định lượng, mọi mô hình alpha mới đều được so với hồi quy tuyến tính trên cùng tập đặc trưng. Nếu mô hình phức tạp không thắng được nó ngoài mẫu thì không được đưa vào chạy.</li>
-  <li>“Tìm 20 ngày quá khứ giống hôm nay nhất rồi lấy trung bình diễn biến sau đó” chính là kNN. Cách này dùng được với vài biến trạng thái thị trường, nhưng vô vọng với hàng trăm biến (xem bài 09).</li>
-  <li>Hãy nói được vì sao chọn sai số bình phương: nó dẫn tới E[Y | X], và có nghiệm dạng đóng β̂ = (X<sup>⊤</sup>X)<sup>−1</sup>X<sup>⊤</sup>y. Phương pháp hạt nhân (kernel) là bản mượt của kNN, đánh trọng số theo khoảng cách thay vì đếm đều k điểm.</li>
+  <li><b>Mô hình cơ sở</b> (baseline). Ở các quỹ định lượng, mọi mô hình alpha mới trước hết được so với một hồi quy tuyến tính trên cùng tập đặc trưng. Nếu một mô hình học sâu không thắng được nó ngoài mẫu (out of sample), mô hình đó không được đưa vào vận hành. Hồi quy tuyến tính rẻ, nhanh, dễ giải thích, và khó bị quá khớp; mọi sự phức tạp thêm phải tự chứng minh giá trị của mình.</li>
+  <li><b>Phương pháp tương tự</b> (analogues). Câu “tìm 20 ngày trong quá khứ giống hôm nay nhất rồi lấy trung bình những gì xảy ra sau đó” chính là kNN với k = 20. Đây là công cụ đáng tin cậy khi số chiều thấp, chẳng hạn vài đặc trưng mô tả trạng thái thị trường như độ biến động, xu hướng và khối lượng. Với hàng trăm đặc trưng, nó vô vọng: trong không gian nhiều chiều, “20 ngày giống nhất” vẫn khác hôm nay rất xa.</li>
 </ul>
+
+<h4>Trong code</h4>
+<p>Đoạn TypeScript dưới đây dựng lại thí nghiệm kiểu ESL: mỗi lớp có 10 tâm cụm rải quanh (1, 0) hoặc (0, 1), mỗi quan sát chọn ngẫu nhiên một tâm rồi cộng nhiễu với phương sai 0,2. Có 100 điểm huấn luyện và 500 điểm kiểm tra cho mỗi lớp, dùng chung các tâm cụm. Mô hình tuyến tính được khớp bằng cách giải phương trình chuẩn; kNN được tính trực tiếp bằng cách sắp xếp khoảng cách.</p>
+<pre class="code"><code>function rng(seed: number) {
+  let s = seed &gt;&gt;&gt; 0;
+  return () =&gt; {
+    s = (s + 0x6d2b79f5) | 0;
+    let t = Math.imul(s ^ (s &gt;&gt;&gt; 15), 1 | s);
+    t = (t + Math.imul(t ^ (t &gt;&gt;&gt; 7), 61 | t)) ^ t;
+    return ((t ^ (t &gt;&gt;&gt; 14)) &gt;&gt;&gt; 0) / 4294967296;
+  };
+}
+const u = rng(4);
+const gauss = () =&gt; Math.sqrt(-2 * Math.log(1 - u())) * Math.cos(2 * Math.PI * u());
+type P = [number, number];
+
+<span class="c">// Mỗi lớp: 10 tâm cụm quanh một điểm, rồi mỗi quan sát = một tâm ngẫu nhiên + nhiễu N(0, 0,2·I)</span>
+const centres = (c: P) =&gt; Array.from({ length: 10 }, (): P =&gt; [c[0] + gauss(), c[1] + gauss()]);
+const M0 = centres([1, 0]), M1 = centres([0, 1]);
+const draw = (M: P[], n: number) =&gt; Array.from({ length: n }, (): P =&gt; {
+  const m = M[Math.floor(u() * 10)];
+  return [m[0] + Math.sqrt(0.2) * gauss(), m[1] + Math.sqrt(0.2) * gauss()];
+});
+const X = [...draw(M0, 100), ...draw(M1, 100)], y = X.map((_, i) =&gt; (i &lt; 100 ? 0 : 1));
+const Xt = [...draw(M0, 500), ...draw(M1, 500)], yt = Xt.map((_, i) =&gt; (i &lt; 500 ? 0 : 1));
+
+<span class="c">// Bình phương tối thiểu: giải phương trình chuẩn (XᵀX)β = Xᵀy, hệ 3×3, bằng khử Gauss</span>
+const A = [[0, 0, 0, 0], [0, 0, 0, 0], [0, 0, 0, 0]];
+X.forEach((p, i) =&gt; {
+  const v = [1, p[0], p[1]];
+  for (let a = 0; a &lt; 3; a++) { A[a][3] += v[a] * y[i]; for (let b = 0; b &lt; 3; b++) A[a][b] += v[a] * v[b]; }
+});
+for (let c = 0; c &lt; 3; c++)
+  for (let r = 0; r &lt; 3; r++) if (r !== c) {
+    const f = A[r][c] / A[c][c];
+    for (let k = c; k &lt; 4; k++) A[r][k] -= f * A[c][k];
+  }
+const beta = A.map((row, i) =&gt; row[3] / row[i]);
+const lin = (p: P) =&gt; beta[0] + beta[1] * p[0] + beta[2] * p[1];
+const err = (f: (p: P) =&gt; number, D: P[], lab: number[]) =&gt;
+  D.filter((p, i) =&gt; (f(p) &gt; 0.5 ? 1 : 0) !== lab[i]).length / D.length;
+console.log("tuyến tính, sai số kiểm tra", err(lin, Xt, yt)); <span class="c">// 0.211</span>
+
+<span class="c">// kNN: trung bình nhãn của k điểm huấn luyện gần nhất</span>
+const knn = (k: number) =&gt; (q: P) =&gt;
+  X.map((p, i) =&gt; [(p[0] - q[0]) ** 2 + (p[1] - q[1]) ** 2, y[i]])
+    .sort((a, b) =&gt; a[0] - b[0]).slice(0, k)
+    .reduce((s, d) =&gt; s + d[1], 0) / k;
+for (const k of [1, 15, 101])
+  console.log(k, "huấn luyện", err(knn(k), X, y), "kiểm tra", err(knn(k), Xt, yt));
+<span class="c">// 1 huấn luyện 0 kiểm tra 0.238</span>
+<span class="c">// 15 huấn luyện 0.18 kiểm tra 0.19</span>
+<span class="c">// 101 huấn luyện 0.24 kiểm tra 0.251</span></code></pre>
+<p>Kết quả minh hoạ đúng câu chuyện của bài. 1-NN đạt sai số huấn luyện 0 nhưng sai số kiểm tra 23,8%, tệ hơn cả đường thẳng (21,1%). 15-NN, với khoảng 13 tham số hiệu dụng, cho sai số kiểm tra thấp nhất, 19,0%. 101-NN đã gần như mất hết sự linh hoạt và quay lại mức 25,1%. Các con số cụ thể thay đổi theo hạt giống ngẫu nhiên, nhưng hình dạng chữ U của sai số kiểm tra theo k thì lặp lại.</p>
+
+<h4>Tự kiểm tra</h4>
+<p>Mô hình nào chắc chắn có sai số huấn luyện bằng 0 (giả sử không có hai đầu vào trùng nhau mà khác nhãn)?</p>
+<ol type="A">
+  <li>Bình phương tối thiểu với mọi đặc trưng.</li>
+  <li>1 láng giềng gần nhất.</li>
+  <li>15 láng giềng gần nhất.</li>
+  <li>Không mô hình nào.</li>
+</ol>
+<details class="qa"><summary>Đáp án và lời giải</summary>
+<p>Đáp án <b>B</b>. Mỗi điểm huấn luyện có khoảng cách 0 tới chính nó, nên là láng giềng gần nhất của chính nó, và 1-NN tái tạo đúng mọi nhãn huấn luyện. Bình phương tối thiểu chỉ vẽ được ranh giới thẳng, nên sẽ phân loại sai bất cứ khi nào hai lớp không tách được bằng một đường thẳng. 15-NN lấy đa số phiếu trong 15 điểm, nên một điểm nằm lạc giữa lớp kia sẽ bị phân loại sai. Cũng chính vì 1-NN luôn đạt 0 trên tập huấn luyện mà sai số huấn luyện của nó không nói gì về chất lượng trên dữ liệu mới.</p>
+</details>
 
 <script>
 (()=>{
@@ -211,5 +280,6 @@
   Q.button(ctl2,'Mẫu mới',()=>{ st.seed++; gen(); setM1(st.m1); setM2(st.m2); });
   setM1('knn'); setM2('knn');
 })();
+
 </script>
 </section>

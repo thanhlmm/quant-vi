@@ -2,59 +2,126 @@
 <header>
   <span class="num">19</span>
   <h3>Thực hành: tạo lập thị trường trên năm viên xúc xắc</h3>
-  <p class="meta">10 phút · Ứng dụng: Luyện tập cho vòng tạo lập thị trường trực tiếp · <a href="https://hft.md/learn/market-making-game/">Bài gốc (tiếng Anh)</a></p>
+  <p class="meta">Phần 5 · Tạo lập thị trường · Bài 19 · 10 phút · <a href="https://hft.md/learn/market-making-game/">Bài gốc (tiếng Anh)</a></p>
 </header>
 
-<p>Đọc về tạo lập thị trường chỉ giúp được một phần. Bài này là một trò chơi theo đúng kiểu các công ty hay dùng: bạn yết giá cho tổng của năm viên xúc xắc, trong khi đối phương luôn biết trước bạn một viên.</p>
+<p>Bài này cho bạn tự tay yết giá cho tổng năm viên xúc xắc được lật dần, trong khi đối phương luôn biết trước bạn một viên.</p>
 
-<h4>Ý chính</h4>
+<p>Đọc về tạo lập thị trường chỉ đưa bạn đi được một đoạn. Phần còn lại phải học bằng cách chơi. Trò chơi dưới đây mô phỏng đúng kiểu bài tập mà các công ty giao dịch hay dùng: một thị trường trên tổng của vài viên xúc xắc, các viên được lật lần lượt, và người giao dịch với bạn luôn biết nhiều hơn bạn một chút. Cảm giác bị “đọc bài” khi đối phương mua đúng lúc viên sắp lật là 6 chính là điều bài này muốn bạn trải nghiệm.</p>
+
+<h4>Luật chơi</h4>
 <ul>
-  <li><b>Luật chơi.</b> Năm viên xúc xắc được gieo và che lại. Trước mỗi lần lật một viên, bạn yết hai chiều “giá chào mua @ giá chào bán”, rộng từ 1 đến 6. Sau viên thứ năm, mọi vị thế thanh toán theo tổng thật.</li>
-  <li><b>Đối phương có thông tin</b> (informed trader) đã nhìn trộm viên sắp lật. Họ mua một lô nếu ước lượng của họ cao hơn giá chào bán ít nhất 1, bán một lô nếu thấp hơn giá chào mua ít nhất 1, còn lại thì bỏ qua.</li>
-  <li>Thỉnh thoảng có <b>khách không có thông tin</b> (noise trader) giao dịch ngẫu nhiên. Chênh lệch giá (spread) họ trả là nguồn thu duy nhất của bạn.</li>
-  <li><b>Độ rộng theo độ bất định.</b> Lúc đầu còn năm viên ẩn, bạn biết ít và đối phương biết nhiều hơn hẳn. Càng về cuối, độ bất định càng nhỏ, có thể yết hẹp lại.</li>
-  <li><b>Mỗi giao dịch là thông tin.</b> Bị mua nghĩa là viên sắp lật nhiều khả năng là 5 hoặc 6. Bạn vừa bán khống, nên nâng giá vừa bảo vệ vị thế vừa phản ánh tin mới.</li>
-  <li><b>Theo dõi vị thế.</b> Ôm vị thế mua 3 lô khi viên cuối ra 1 là cách thua nhanh nhất. Hãy lệch giá (skew) để về gần phẳng trước khi kết thúc.</li>
+  <li>Năm viên xúc xắc sáu mặt được gieo và che lại. Bạn tạo lập thị trường cho <b>tổng</b> của chúng.</li>
+  <li>Trước khi mỗi viên được lật, bạn phải đưa ra một thị trường hai chiều dạng <b>giá chào mua @ giá chào bán</b> (bid @ ask). Độ rộng, tức hiệu giữa hai giá, phải nằm trong khoảng từ 1 đến 6.</li>
+  <li>Người giao dịch với bạn đã nhìn trộm viên sắp lật. Đây là một nhà giao dịch có thông tin (informed trader). Họ mua một lô ở giá chào bán của bạn nếu giá đó thấp hơn ước lượng của họ ít nhất 1, bán một lô vào giá chào mua nếu giá đó cao hơn ước lượng của họ ít nhất 1, còn lại thì bỏ qua.</li>
+  <li>Thỉnh thoảng họ giao dịch ngẫu nhiên, không dựa vào thông tin nào. Đó là dòng lệnh nhiễu (noise trader) và cũng là nguồn thu thật sự của bạn.</li>
+  <li>Sau khi viên thứ năm được lật, mọi vị thế được thanh toán theo tổng thật.</li>
 </ul>
 
-<h4>Công thức</h4>
+<h4>Giá trị lý thuyết của bạn</h4>
+<p>Một viên xúc xắc cân đối có kỳ vọng 3,5. Phương sai tính từ mômen bậc hai: E[X<sup>2</sup>] = (1 + 4 + 9 + 16 + 25 + 36) / 6 = 91/6.</p>
 <div class="formula"><span class="lbl">Một viên xúc xắc sáu mặt</span>E[X] = 3,5,&nbsp;&nbsp; Var(X) = <span class="frac"><span>91</span><span>6</span></span> − 3,5<sup>2</sup> = <span class="frac"><span>35</span><span>12</span></span> ≈ 2,92</div>
-<div class="formula"><span class="lbl">Giá trị hợp lý khi tổng các viên đã lật là s và còn h viên ẩn</span>giá trị hợp lý = s + 3,5·h,&nbsp;&nbsp; σ = √<span style="text-decoration:overline">35h / 12</span>,&nbsp;&nbsp; lúc đầu: 17,5 ± 3,82</div>
-<div class="formula"><span class="lbl">Ước lượng của đối phương, khi họ đã thấy viên kế tiếp có giá trị d</span>T = s + d + 3,5·(h − 1) = giá trị hợp lý + (d − 3,5)</div>
-<div class="formula"><span class="lbl">Lỗ kỳ vọng mỗi lượt vì đối phương có thông tin, khi yết đối xứng quanh giá trị hợp lý với độ rộng w</span>E[lỗ] = <span class="frac"><span>2</span><span>6</span></span> Σ<sub>d : d − 3,5 ≥ w/2 + 1</sub> (d − 3,5 − w/2)</div>
-
-<h4>Ví dụ minh hoạ: chọn độ rộng ở lượt đầu</h4>
-<ol>
-  <li>Chưa lật viên nào: s = 0, h = 5, giá trị hợp lý 17,5. Yết rộng 2 nghĩa là <b>16,5 @ 18,5</b>.</li>
-  <li>Đối phương mua khi T ≥ 18,5 + 1 = 19,5, tức d − 3,5 ≥ 2. Chỉ có d = 6 thoả, khi đó T = 20.</li>
-  <li>Bạn bán ở 18,5 một thứ có giá trị kỳ vọng 20, lỗ 1,5. Xác suất 1/6. Phía bán đối xứng (d = 1) cũng lỗ 1,5. Lỗ kỳ vọng mỗi lượt: 2 × 1,5 / 6 = 0,5.</li>
-  <li>Yết rộng 3 (16 @ 19): chỉ d = 6 hoặc d = 1 bị khai thác, mỗi lần lỗ 1. Lỗ kỳ vọng còn 1/3.</li>
-  <li>Yết rộng 4 (15,5 @ 19,5): đối phương cần T ≥ 20,5, nhưng T lớn nhất là 20. Họ không bao giờ giao dịch, nhưng khách không có thông tin cũng ít ghé hơn.</li>
-  <li><b>Cập nhật sau giao dịch.</b> Với độ rộng 2, bị mua nghĩa là viên kế tiếp chắc chắn là 6. Giá trị hợp lý nhảy từ 17,5 lên 20, trước cả khi viên đó được lật.</li>
-</ol>
-<p>Kiểm tra nhanh: ba viên đã lật có tổng 9, còn hai viên ẩn. Giá trị hợp lý là 9 + 2 × 3,5 = 16, độ lệch chuẩn √(35/6) ≈ 2,42.</p>
+<p>Các viên độc lập, nên kỳ vọng và phương sai đều cộng được. Gọi s là tổng các viên đã lật, h là số viên còn ẩn. Phần đã lật là chắc chắn; phần còn ẩn đóng góp 3,5 cho mỗi viên vào kỳ vọng và 35/12 cho mỗi viên vào phương sai:</p>
+<div class="formula"><span class="lbl">Giá trị hợp lý và độ lệch chuẩn của tổng</span>giá trị hợp lý = s + 3,5·h,&nbsp;&nbsp;&nbsp; σ = √<span style="text-decoration:overline">35h / 12</span></div>
+<p>Lúc bắt đầu, chưa viên nào được lật: s = 0, h = 5, nên giá trị hợp lý là 17,5 ± 3,8. Độ bất định co lại theo căn bậc hai của số viên còn ẩn:</p>
+<table class="t">
+  <tr><th>Số viên còn ẩn h</th><th>5</th><th>4</th><th>3</th><th>2</th><th>1</th></tr>
+  <tr><td>σ = √(35h/12)</td><td>3,82</td><td>3,42</td><td>2,96</td><td>2,42</td><td>1,71</td></tr>
+</table>
+<p>Đối phương biết thêm giá trị d của viên sắp lật. Ước lượng của họ chỉ khác của bạn ở đúng viên đó:</p>
+<div class="formula"><span class="lbl">Ước lượng của đối phương</span>T = s + d + 3,5·(h − 1) = giá trị hợp lý + (d − 3,5)</div>
+<p>Vậy lợi thế thông tin của họ nằm trong khoảng từ −2,5 đến +2,5. Ô kết quả dưới mô hình hiển thị giá trị hợp lý theo thời gian thực. Ở mỗi lượt, giá giữa tự đặt về giá trị hợp lý và độ rộng mặc định là 4, tức thị trường giá trị hợp lý ± 2. Bạn có thể đổi cả hai tuỳ ý.</p>
 
 <figure class="demo">
   <div class="stage" id="demo-19"></div>
   <div class="controls" id="ctl-19"></div>
   <div class="readout" id="out-19"></div>
-  <figcaption><b>Mô hình 19.1 – Bàn chơi xúc xắc 3D.</b> Năm viên xúc xắc nằm trên bàn; viên viền tím là viên đối phương đã nhìn trộm. Chọn giá giữa và độ rộng rồi bấm “Yết giá này”. Đối phương phản ứng, sau đó một viên được lật. Biểu đồ phía dưới ghi lại các thị trường bạn đã yết (dải xanh dương), giá trị hợp lý (đường tím) và các giao dịch (chấm cam: họ mua, chấm xanh lá: họ bán). Mỗi lượt có 25% khả năng gặp khách không có thông tin. Kéo để xoay bàn.</figcaption>
+  <figcaption><b>Hình 19.1 – Trò chơi tạo lập thị trường trên xúc xắc.</b> Năm viên xúc xắc nằm trên bàn 3D; viên viền tím là viên đối phương đã nhìn trộm. Chọn giá giữa và độ rộng (tức giá chào mua và giá chào bán) rồi bấm “Yết giá này”. Theo dõi phản ứng của đối phương: họ mua thì nhiều khả năng viên kế tiếp lớn, họ bán thì nhiều khả năng viên đó nhỏ. Sau đó một viên được lật. Biểu đồ phía dưới ghi lại các thị trường bạn đã yết (dải xanh dương), giá trị hợp lý (đường tím) và các giao dịch (chấm cam: họ mua, chấm xanh lá: họ bán). Vị thế, tiền mặt và lãi/lỗ tính theo giá trị hợp lý được cập nhật sau mỗi giao dịch. Mỗi lượt có 25% khả năng gặp khách không có thông tin. Chơi vài ván và theo dõi tổng của cả phiên. Kéo để xoay bàn.</figcaption>
 </figure>
+
+<h4>Cách chơi tốt</h4>
+<p><b>Độ rộng đi theo độ bất định.</b> Ở đầu ván, còn năm viên ẩn, bạn biết rất ít. So với hiểu biết của bạn, một viên mà đối phương biết thêm là một lợi thế lớn. Về cuối ván, độ bất định nhỏ đi và bạn có thể yết hẹp hơn. Hãy xem cụ thể lợi thế đó đáng giá bao nhiêu khi bạn yết đối xứng quanh giá trị hợp lý với độ rộng w. Đối phương mua khi T − (giá trị hợp lý + w/2) ≥ 1, tức d − 3,5 ≥ w/2 + 1, và mỗi lần như vậy bạn mất d − 3,5 − w/2. Phía bán đối xứng hoàn toàn. Do đó:</p>
+<div class="formula"><span class="lbl">Lỗ kỳ vọng mỗi lượt cho đối phương có thông tin, khi yết độ rộng w</span>E[lỗ] = <span class="frac"><span>2</span><span>6</span></span> Σ<sub>d : d − 3,5 ≥ w/2 + 1</sub> (d − 3,5 − w/2)</div>
+<ol>
+  <li><b>Độ rộng 2, thị trường 16,5 @ 18,5.</b> Đối phương mua khi T ≥ 19,5, tức d − 3,5 ≥ 2. Chỉ d = 6 thoả, khi đó T = 20. Bạn bán ở 18,5 thứ có kỳ vọng 20, mất 1,5, với xác suất 1/6. Phía bán (d = 1) cũng mất 1,5. Lỗ kỳ vọng mỗi lượt là 2 × 1,5 / 6 = 0,5, cả ván năm lượt là 2,5.</li>
+  <li><b>Độ rộng 3, thị trường 16 @ 19.</b> Vẫn chỉ d = 6 hoặc d = 1 bị khai thác, mỗi lần mất 1. Lỗ kỳ vọng còn 1/3 mỗi lượt, khoảng 1,67 mỗi ván.</li>
+  <li><b>Độ rộng 4, thị trường 15,5 @ 19,5.</b> Đối phương cần T ≥ 20,5, nhưng T lớn nhất chỉ là 20. Họ không bao giờ giao dịch. Bạn không mất gì, nhưng cũng chẳng thu được gì, vì với độ rộng lớn khách không có thông tin cũng ít ghé hơn.</li>
+</ol>
+<p><b>Giao dịch là thông tin.</b> Với độ rộng 2, bị mua có nghĩa là viên kế tiếp chắc chắn là 6. Giá trị hợp lý của bạn phải nhảy từ 17,5 lên 20 ngay lập tức, trước cả khi viên đó được lật. Với độ rộng rộng hơn, một lệnh mua kém chắc chắn hơn vì có thể đến từ khách ngẫu nhiên, nhưng vẫn kéo xác suất về phía 5 hoặc 6. Nếu bạn vừa bị mua và đang bán khống, nâng thị trường lên làm được hai việc cùng lúc: phản ánh tin mới và bảo vệ vị thế.</p>
+<p><b>Để mắt tới vị thế.</b> Kết thúc ván với vị thế mua 3 lô đúng lúc viên cuối ra 1 là cách thua điển hình nhất. Ở hai lượt cuối, hãy lệch giá (skew) về phía giúp bạn phẳng vị thế: đang mua nhiều thì hạ cả hai giá xuống để dễ được người khác mua lại của mình, đang bán nhiều thì nâng lên.</p>
+<p><b>Thỉnh thoảng bạn sẽ thua.</b> Một nhà giao dịch có thông tin, xét trung bình, luôn lấy tiền của nhà tạo lập. Kỹ năng không nằm ở việc tránh lỗ hoàn toàn. Nó nằm ở việc lỗ ít khi bị “bắt bài” (picked off), và thu đủ chênh lệch giá từ các giao dịch ngẫu nhiên để bù lại. Hình 19.2 cho thấy sự cân bằng đó bằng con số.</p>
 
 <figure class="demo">
   <div class="stage" id="demo2-19"></div>
   <div class="controls" id="ctl2-19"></div>
   <div class="readout" id="out2-19"></div>
-  <figcaption><b>Mô hình 19.2 – Độ rộng tối ưu.</b> Đường cong là lãi/lỗ kỳ vọng của cả ván (5 lượt) khi luôn yết đối xứng quanh giá trị hợp lý. Đường cam là phần thu từ khách không có thông tin; đường xanh lá là phần mất cho đối phương có thông tin. Khách không có thông tin chấp nhận độ rộng w với xác suất (6 − w)/5. Kéo tỉ lệ khách không có thông tin về 0 để thấy: khi chỉ còn người biết nhiều hơn bạn, cách tốt nhất là không giao dịch. Bấm “Mô phỏng” để kiểm chứng bằng 4.000 ván ngẫu nhiên.</figcaption>
+  <figcaption><b>Hình 19.2 – Chọn độ rộng tối ưu.</b> Mô hình bổ sung, không có trong bài gốc. Đường xanh dương đậm là lãi/lỗ kỳ vọng của cả ván (5 lượt) khi luôn yết đối xứng quanh giá trị hợp lý. Đường cam là phần thu từ khách không có thông tin; đường xanh lá là phần mất cho đối phương có thông tin. Ở đây giả định khách không có thông tin chấp nhận độ rộng w với xác suất (6 − w)/5. Kéo tỉ lệ khách không có thông tin về 0 để thấy: khi chỉ còn người biết nhiều hơn bạn, cách tốt nhất là yết đủ rộng để không ai giao dịch. Bấm “Mô phỏng 4.000 ván” để kiểm chứng đường cong bằng các ván ngẫu nhiên.</figcaption>
 </figure>
 
-<h4>Lưu ý khi phỏng vấn</h4>
-<ul>
-  <li>Các biến thể hay gặp: tích của một viên sáu mặt và một viên mười hai mặt (kỳ vọng 3,5 × 6,5 = 22,75), giá trị lớn nhất của hai viên (kỳ vọng 161/36 ≈ 4,47), hoặc tổng có vài viên chỉ mình bạn được xem.</li>
-  <li>Phương pháp luôn như nhau: tính kỳ vọng và độ phân tán của phần còn ẩn, yết quanh đó, cập nhật sau mỗi giao dịch, và nói to lập luận của mình.</li>
-  <li>Thua vài ván là bình thường. Đối phương có thông tin trung bình luôn lấy tiền của nhà tạo lập. Kỹ năng là lỗ ít khi bị khai thác và thu đủ chênh lệch từ các giao dịch ngẫu nhiên.</li>
-  <li>Trên sàn thật, đây chính là <b>lựa chọn bất lợi</b> (adverse selection) thu nhỏ. Một phần lệnh đến từ người vừa đọc tin hoặc biết có lệnh lớn sắp vào. Chênh lệch giá phải bù được khoản mất cho họ.</li>
-</ul>
+<div class="note"><b>Trong phỏng vấn.</b> Bạn có thể gặp nhiều biến thể: tích của một viên sáu mặt và một viên mười hai mặt, giá trị lớn nhất của vài viên, hoặc một tổng trong đó vài viên chỉ mình bạn được xem. Phương pháp không đổi. Tính kỳ vọng và độ phân tán của phần còn ẩn, yết quanh kỳ vọng với độ rộng tương xứng, cập nhật sau mỗi giao dịch, và nói to lập luận của mình. Ba lời giải mẫu dưới đây là phần bổ sung.</div>
+
+<details class="qa"><summary>Biến thể 1: yết thị trường cho tích của một viên sáu mặt và một viên mười hai mặt.</summary>
+<p>Hai viên độc lập, nên kỳ vọng của tích bằng tích các kỳ vọng: E[XY] = 3,5 × 6,5 = 22,75.</p>
+<p>Để chọn độ rộng, cần độ phân tán. Với viên n mặt, E[Y<sup>2</sup>] = (n + 1)(2n + 1)/6. Viên sáu mặt cho 91/6, viên mười hai mặt cho 13 × 25 / 6 = 325/6. Do độc lập, E[(XY)<sup>2</sup>] = E[X<sup>2</sup>]·E[Y<sup>2</sup>] = (91/6)(325/6) ≈ 821,5. Phương sai là 821,5 − 22,75<sup>2</sup> ≈ 304, nên σ ≈ 17,4.</p>
+<p>Độ bất định rất lớn so với kỳ vọng, và phân phối lệch phải (tích nằm từ 1 đến 72). Hợp đồng thanh toán theo giá trị thật, nên tâm của thị trường vẫn là kỳ vọng 22,75, chẳng hạn 20 @ 26. Đừng nhầm với trung vị: trung vị của tích chỉ là 18, thấp hơn hẳn kỳ vọng vì vài kết quả rất lớn như 60 hay 72 kéo trung bình lên. Hãy nói rõ với người phỏng vấn rằng một thị trường hẹp như vậy sẽ thường xuyên bị đánh ở cả hai phía, và nới rộng nếu họ yêu cầu. Sau khi một viên được lật, thị trường co lại rất nhanh: nếu viên sáu mặt ra 4, giá trị mới là 4 × 6,5 = 26.</p>
+</details>
+
+<details class="qa"><summary>Biến thể 2: yết thị trường cho giá trị lớn nhất của hai (hoặc ba) viên sáu mặt.</summary>
+<p>Dùng công thức đuôi: với biến nhận giá trị nguyên dương, E[M] = Σ<sub>k=1</sub><sup>6</sup> P(M ≥ k). Giá trị lớn nhất của n viên nhỏ hơn k khi và chỉ khi mọi viên đều nhỏ hơn k, nên P(M ≥ k) = 1 − ((k − 1)/6)<sup>n</sup>.</p>
+<p>Với n = 2: E[M] = 6 − (0 + 1 + 4 + 9 + 16 + 25)/36 = 6 − 55/36 = 161/36 ≈ 4,47.</p>
+<p>Với n = 3: E[M] = 6 − (0 + 1 + 8 + 27 + 64 + 125)/216 = 6 − 225/216 ≈ 4,96.</p>
+<p>Thêm viên làm kỳ vọng tiến dần về 6 và phân phối dồn về mặt 6, nên thị trường càng hẹp và lệch về phía trên.</p>
+</details>
+
+<details class="qa"><summary>Biến thể 3: tổng năm viên, trong đó bạn được xem riêng hai viên mà đối phương không thấy.</summary>
+<p>Lúc này bạn là bên có thông tin ở hai viên đó. Giá trị của bạn là (tổng hai viên bạn thấy) + 3,5 × 3. Ví dụ bạn thấy 6 và 5: giá trị của bạn là 11 + 10,5 = 21,5, trong khi một người không biết gì sẽ ước lượng 17,5.</p>
+<p>Thị trường của bạn phải đặt quanh giá trị của chính bạn, không phải quanh 17,5. Chẳng hạn 19,5 @ 23,5: giá chào mua thấp hơn 21,5 nên mọi lệnh bán vào đó đều có lời, giá chào bán cao hơn 21,5 nên mọi lệnh mua cũng vậy. Điểm tinh tế là một thị trường lệch hẳn lên sẽ để lộ thông tin. Nếu trò chơi kéo dài nhiều lượt, đối phương sẽ suy ra hai viên của bạn từ cách bạn yết giá. Bạn phải cân nhắc giữa lãi trước mắt và lượng thông tin để lộ. Đây là phiên bản thu nhỏ của bài toán thực thi một lệnh lớn mà không làm giá chạy.</p>
+</details>
+
+<div class="note"><b>Ứng dụng trên bàn giao dịch.</b> Trò chơi này là hiện tượng lựa chọn bất lợi (adverse selection) thu nhỏ. Trên sàn thật, một phần lệnh khớp vào giá của nhà tạo lập đến từ những người biết điều gì đó: một tin vừa ra cách đó vài giây, hay một lệnh mẹ lớn đang được chia nhỏ để thực thi. Chênh lệch giá phải đủ rộng để phần thu được từ mọi người còn lại bù lại khoản mất cho nhóm có thông tin. Thị trường càng nhiều người có thông tin, chênh lệch càng phải rộng.</div>
+
+<h4>Trong code</h4>
+<p>Đoạn mô phỏng sau tách riêng phần lựa chọn bất lợi: bạn luôn yết đối xứng quanh giá trị hợp lý với một độ rộng cố định, và chỉ có đối phương có thông tin, luôn thấy trước viên sắp lật. Không có khách ngẫu nhiên nào, nên lãi/lỗ trung bình chỉ có thể âm hoặc bằng 0.</p>
+<pre class="code"><code><span class="c">// Bộ sinh số ngẫu nhiên có hạt giống để kết quả lặp lại được</span>
+function rng(seed: number) {
+  return () =&gt; {
+    seed = (seed + 0x6d2b79f5) | 0;
+    let t = Math.imul(seed ^ (seed &gt;&gt;&gt; 15), 1 | seed);
+    t = (t + Math.imul(t ^ (t &gt;&gt;&gt; 7), 61 | t)) ^ t;
+    return ((t ^ (t &gt;&gt;&gt; 14)) &gt;&gt;&gt; 0) / 4294967296;
+  };
+}
+const rand = rng(19);
+const die = () =&gt; 1 + Math.floor(rand() * 6);
+
+<span class="c">// Lãi/lỗ trung bình mỗi ván khi luôn yết fair ± width/2,</span>
+<span class="c">// và đối phương luôn thấy trước viên sắp lật.</span>
+function play(width: number, games = 20_000): number {
+  let total = 0;
+  for (let g = 0; g &lt; games; g++) {
+    const dice = Array.from({ length: 5 }, die);
+    let pos = 0, cash = 0, seen = 0;           <span class="c">// seen: tổng các viên đã lật</span>
+    for (let k = 0; k &lt; 5; k++) {
+      const fair = seen + 3.5 * (5 - k);
+      const bid = fair - width / 2, ask = fair + width / 2;
+      const trader = fair + (dice[k] - 3.5);   <span class="c">// đối phương biết viên thứ k</span>
+      if (trader - ask &gt;= 1) { pos -= 1; cash += ask; }      <span class="c">// họ mua, bạn bán</span>
+      else if (bid - trader &gt;= 1) { pos += 1; cash -= bid; } <span class="c">// họ bán, bạn mua</span>
+      seen += dice[k];
+    }
+    total += cash + pos * seen;                <span class="c">// thanh toán theo tổng thật</span>
+  }
+  return total / games;
+}
+
+for (const w of [2, 3, 4, 6]) console.log(w, play(w).toFixed(2));
+<span class="c">// 2 -2.50   3 -1.65   4 0.00   6 0.00 : thị trường rộng hơn mất ít hơn</span></code></pre>
+<p>Kết quả mô phỏng khớp với lời giải giải tích ở trên: −2,5 mỗi ván với độ rộng 2, khoảng −5/3 ≈ −1,67 với độ rộng 3 (mô phỏng cho −1,65 do sai số lấy mẫu), và đúng bằng 0 từ độ rộng 4 trở lên vì đối phương không còn giao dịch. Mô hình này cũng cho thấy giới hạn của nó: nếu không có khách ngẫu nhiên, yết thật rộng là tối ưu, nhưng lúc đó bạn không còn là nhà tạo lập thị trường nữa. Hình 19.2 thêm khách ngẫu nhiên vào để tìm điểm cân bằng.</p>
+
+<h4>Tự kiểm tra</h4>
+<details class="qa"><summary>Ba viên đã lật có tổng 9, còn hai viên ẩn. Giá trị hợp lý của bạn cho tổng cuối cùng là bao nhiêu? (A) 14 · (B) 16 · (C) 17,5 · (D) 9</summary>
+<p><b>Đáp án B.</b> Mỗi viên còn ẩn có kỳ vọng 3,5, nên giá trị hợp lý là 9 + 2 × 3,5 = 16. Đáp án C bỏ qua thông tin đã lật, đáp án D bỏ qua hai viên còn ẩn. Độ lệch chuẩn lúc này là √(2 × 35/12) = √(35/6) ≈ 2,42, nên một thị trường rộng khoảng 3 đến 4, chẳng hạn 14,5 @ 17,5, là hợp lý.</p>
+</details>
 
 <script>
 (()=>{

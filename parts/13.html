@@ -2,60 +2,123 @@
 <header>
   <span class="num">13</span>
   <h3>Nhân quả: thiên lệch chọn mẫu, ngẫu nhiên hoá và biến bị bỏ sót</h3>
-  <p class="meta">14 phút · Ứng dụng: Phân biệt hiệu ứng thật với biến gây nhiễu · <a href="https://hft.md/learn/econometrics/">Bài gốc (tiếng Anh)</a></p>
+  <p class="meta">Phần 3 · Khoa học dữ liệu · Bài 13 · 14 phút · <a href="https://hft.md/learn/econometrics/">Bài gốc (tiếng Anh)</a></p>
 </header>
 
-<p>Dự báo hỏi “điều gì sẽ xảy ra”, còn kinh tế lượng (econometrics) hỏi “điều gì sẽ xảy ra nếu ta thay đổi một thứ”. Thuật toán khớp lệnh mới có thật sự giảm độ trượt giá, hay chỉ vì ta dùng nó cho các lệnh dễ? Khớp mô hình tốt chưa đủ để trả lời câu hỏi này.</p>
+<p><i>Bài này tách một chênh lệch đo được giữa hai nhóm thành phần nhân quả và phần do cách các nhóm tự hình thành, cho thấy vì sao một đồng xu xoá được phần thứ hai, và cách đoán chiều của thiên lệch còn sót lại khi thiếu một biến.</i></p>
 
-<h4>Ý chính</h4>
-<ul>
-  <li><b>Kết quả tiềm năng</b> (potential outcomes): mỗi cá thể i có Y<sub>1i</sub> nếu được xử lý (D<sub>i</sub> = 1) và Y<sub>0i</sub> nếu không. Ta chỉ quan sát được một trong hai.</li>
-  <li>Chênh lệch trung bình giữa hai nhóm bằng hiệu ứng nhân quả trên nhóm được xử lý cộng <b>thiên lệch chọn mẫu</b> (selection bias). Thiên lệch hỏi: nếu không được xử lý, nhóm được xử lý có khác nhóm kia không?</li>
-  <li><b>Ngẫu nhiên hoá</b> (randomisation): khi đồng xu quyết định ai được xử lý, D độc lập với Y<sub>0</sub>. Theo luật số lớn, thiên lệch chọn mẫu về 0. Sau đó luôn <b>kiểm tra cân bằng</b> (balance check) các đặc điểm quan sát được.</li>
-  <li>Khi không thể ngẫu nhiên hoá, hồi quy thêm <b>biến kiểm soát</b> (controls). Giả định then chốt là <b>độc lập có điều kiện</b> (conditional independence): với cùng giá trị biến kiểm soát, việc xử lý coi như ngẫu nhiên.</li>
-  <li><b>Thiên lệch do biến bị bỏ sót</b> (omitted-variable bias, OVB) chỉ xuất hiện khi biến bị bỏ vừa đi cùng biến xử lý, vừa tác động lên kết quả. Không có dữ liệu về biến đó, ta vẫn suy luận được dấu của thiên lệch.</li>
-  <li>Hồi quy là xấp xỉ tuyến tính tốt nhất của <b>hàm kỳ vọng có điều kiện</b> (conditional expectation function, CEF) E[Y | X]. Nếu phương sai nhiễu thay đổi theo X, hãy dùng sai số chuẩn vững (robust standard errors).</li>
-</ul>
+<p>Các bài trước chủ yếu lo chuyện dự báo: cho dữ liệu, đoán giá trị tiếp theo. Kinh tế lượng (econometrics) đặt một câu hỏi khó hơn: nếu ta <i>chủ động thay đổi</i> một thứ thì kết quả đổi ra sao? Mua bảo hiểm y tế có làm một người khoẻ hơn không? Thuật toán khớp lệnh mới có thật sự làm giảm độ trượt giá (slippage), hay bàn giao dịch chỉ đang dùng nó cho những lệnh vốn dĩ dễ khớp? Một mô hình khớp dữ liệu rất tốt vẫn có thể trả lời sai cả hai câu. Muốn trả lời đúng, ta cần biết dữ liệu được sinh ra như thế nào, đặc biệt là ai được “xử lý” và vì sao.</p>
 
-<h4>Công thức</h4>
-<div class="formula"><span class="lbl">Phân rã chênh lệch đo được = hiệu ứng nhân quả trên nhóm được xử lý + thiên lệch chọn mẫu</span>E[Y<sub>1i</sub> | D = 1] − E[Y<sub>0i</sub> | D = 0] = E[Y<sub>1i</sub> − Y<sub>0i</sub> | D = 1] + ( E[Y<sub>0i</sub> | D = 1] − E[Y<sub>0i</sub> | D = 0] )</div>
-<div class="formula"><span class="lbl">Sai số chuẩn của trung bình mẫu và của hiệu hai nhóm (S(Y) là độ lệch chuẩn gộp)</span>SE(Ȳ) = <span class="frac"><span>S(Y)</span><span>√n</span></span>,&nbsp;&nbsp; SE(Ȳ<sup>1</sup> − Ȳ<sup>0</sup>) = S(Y) √(1/n<sub>1</sub> + 1/n<sub>0</sub>),&nbsp;&nbsp; t = <span class="frac"><span>Ȳ<sup>1</sup> − Ȳ<sup>0</sup></span><span>SE(Ȳ<sup>1</sup> − Ȳ<sup>0</sup>)</span></span></div>
-<div class="formula"><span class="lbl">Hồi quy có biến kiểm soát A<sub>i</sub> (tuổi, thu nhập, quy mô lệnh, …; biến phân loại đưa vào dưới dạng biến giả)</span>Y<sub>i</sub> = α + β D<sub>i</sub> + γᵀA<sub>i</sub> + ε<sub>i</sub></div>
-<div class="formula"><span class="lbl">Công thức OVB: hồi quy ngắn (bỏ A) so với hồi quy dài (có A); π<sub>1</sub> là hệ số khi hồi quy A theo D</span>β<sup>ngắn</sup> − β<sup>dài</sup> = π<sub>1</sub> × γ</div>
-<div class="formula"><span class="lbl">CEF là dự báo có sai số bình phương trung bình nhỏ nhất; phân rã phương sai (ANOVA)</span>E[Y | X] = arg min<sub>m</sub> E[(Y − m(X))²],&nbsp;&nbsp; Var(Y) = Var(E[Y | X]) + E[Var(Y | X)]</div>
-<p>Khi kết quả là log Y, hệ số β đọc xấp xỉ như phần trăm thay đổi. Phần dư của hồi quy có trung bình 0 và không tương quan với mọi biến đầu vào. Trọng số lấy mẫu (nghịch đảo xác suất được chọn) dùng để sửa mẫu không ngẫu nhiên. Phương sai thay đổi tự nó không phải lý do để dùng bình phương tối thiểu có trọng số.</p>
-
-<h4>Ví dụ minh hoạ: thuật toán khớp lệnh “thông minh”</h4>
-<p>Bàn giao dịch gửi các lệnh khó cho thuật toán thông minh, lệnh dễ cho thuật toán đơn giản. Độ trượt giá trung bình là 9 bp ở nhóm thông minh và 6 bp ở nhóm đơn giản.</p>
-<ol>
-  <li>So sánh ngây thơ: 9 − 6 = +3 bp. Có vẻ thuật toán thông minh làm độ trượt tăng thêm 3 bp.</li>
-  <li>Một thử nghiệm riêng cho thấy các lệnh khó, nếu đi qua thuật toán đơn giản, sẽ trượt trung bình 13 bp. Đó là E[Y<sub>0</sub> | D = 1] = 13.</li>
-  <li>Hiệu ứng thật trên nhóm được xử lý: 9 − 13 = −4 bp. Thiên lệch chọn mẫu: 13 − 6 = +7 bp. Kiểm tra: −4 + 7 = +3, đúng bằng chênh lệch đo được.</li>
-  <li>Cách sửa: chia ngẫu nhiên một phần lệnh. Giả sử 400 lệnh mỗi nhóm, chênh lệch −4 bp, S(Y) = 10 bp. Khi đó SE = 10 · √(1/400 + 1/400) ≈ 0,71 bp và t ≈ −5,7. Hiệu ứng rõ ràng có ý nghĩa.</li>
-  <li>OVB trong nghiên cứu tín hiệu: hồi quy lợi suất theo tín hiệu mới cho hệ số 0,50. Hồi quy động lượng (momentum) theo tín hiệu cho π<sub>1</sub> = 0,6, và trong hồi quy dài động lượng có γ = 0,5. Vậy β<sup>dài</sup> = 0,50 − 0,6 × 0,5 = 0,20. Hơn một nửa “alpha” thực ra là phơi nhiễm động lượng.</li>
-</ol>
+<h4>Bài toán thiên lệch chọn mẫu</h4>
+<p>Gọi D<sub>i</sub> = 1 nếu người thứ i có bảo hiểm và D<sub>i</sub> = 0 nếu không. Khung <b>kết quả tiềm năng</b> (potential outcomes) gán cho mỗi người hai con số: Y<sub>1i</sub> là sức khoẻ của người đó trong thế giới có bảo hiểm, Y<sub>0i</sub> là sức khoẻ của chính người đó trong thế giới không có bảo hiểm. Hiệu ứng nhân quả với riêng người i là Y<sub>1i</sub> − Y<sub>0i</sub>. Khó khăn nằm ở chỗ mỗi người chỉ sống trong một thế giới: ta thấy Y<sub>1i</sub> nếu họ có bảo hiểm, thấy Y<sub>0i</sub> nếu họ không có, và không bao giờ thấy cả hai.</p>
+<p>Điều ta làm được là so trung bình của nhóm có bảo hiểm với trung bình của nhóm không có. Cộng rồi trừ cùng một đại lượng không quan sát được, E[Y<sub>0i</sub> | D = 1], ta được một đẳng thức luôn đúng:</p>
+<div class="formula"><span class="lbl">Phân rã chênh lệch giữa hai nhóm (E[·] ở đây là trung bình trong nhóm)</span>
+<span style="display:inline-flex;flex-direction:column;align-items:center;vertical-align:top"><span>E[Y<sub>1i</sub> | D = 1] − E[Y<sub>0i</sub> | D = 0]</span><span style="font:12px var(--sans);color:var(--muted);border-top:1px solid var(--line);padding-top:2px">điều ta đo được</span></span>
+<span style="white-space:nowrap">&nbsp;=&nbsp;<span style="display:inline-flex;flex-direction:column;align-items:center;vertical-align:top"><span>E[Y<sub>1i</sub> − Y<sub>0i</sub> | D = 1]</span><span style="font:12px var(--sans);color:var(--muted);border-top:1px solid var(--line);padding-top:2px">hiệu ứng nhân quả trên nhóm được xử lý</span></span></span>
+<span style="white-space:nowrap">&nbsp;+&nbsp;<span style="display:inline-flex;flex-direction:column;align-items:center;vertical-align:top"><span>E[Y<sub>0i</sub> | D = 1] − E[Y<sub>0i</sub> | D = 0]</span><span style="font:12px var(--sans);color:var(--muted);border-top:1px solid var(--line);padding-top:2px">thiên lệch chọn mẫu</span></span></div></span>
+<p>Số hạng đầu bên phải là thứ ta muốn biết: trung bình hiệu ứng trên những người thực sự được xử lý (average treatment effect on the treated, ATT). Số hạng thứ hai là <b>thiên lệch chọn mẫu</b> (selection bias). Nó đặt câu hỏi: giả sử không ai có bảo hiểm, thì nhóm vốn có bảo hiểm có khoẻ hơn nhóm kia không? Gần như chắc chắn là có. Người có thu nhập và học vấn cao hơn vừa dễ mua bảo hiểm hơn, vừa khoẻ hơn vì nhiều lý do khác. Phép so sánh ngây thơ cộng lẫn hai thứ đó vào một con số, và không có cách nào tách chúng ra nếu chỉ nhìn vào hai trung bình.</p>
+<p>Một ví dụ số trên bàn giao dịch. Trader đưa lệnh khó cho thuật toán “thông minh” và lệnh dễ cho thuật toán đơn giản. Độ trượt giá trung bình đo được là 9 bp ở nhóm thông minh và 6 bp ở nhóm đơn giản, nên so sánh ngây thơ cho +3 bp: thuật toán thông minh có vẻ tệ hơn. Giả sử một thử nghiệm riêng cho biết các lệnh khó ấy, nếu đi qua thuật toán đơn giản, sẽ trượt trung bình 13 bp, tức E[Y<sub>0</sub> | D = 1] = 13. Khi đó hiệu ứng thật là 9 − 13 = −4 bp (thuật toán thông minh giúp tiết kiệm 4 bp), còn thiên lệch chọn mẫu là 13 − 6 = +7 bp. Kiểm tra: −4 + 7 = +3, đúng bằng con số đo được. Thiên lệch không chỉ làm sai độ lớn mà còn đảo ngược cả dấu của kết luận.</p>
 
 <figure class="demo">
   <div class="stage" id="demo-13"></div>
   <div class="controls" id="ctl-13"></div>
   <div class="readout" id="out-13"></div>
-  <figcaption><b>Mô hình 13.1 – Phòng thí nghiệm định tuyến lệnh.</b> Mỗi chấm là một lệnh: trục ngang là độ khó (trader thấy được, nhà phân tích thì không), trục dọc là độ trượt giá. Chấm xanh dương đi qua thuật toán thông minh, chấm cam đi qua thuật toán đơn giản; gạch ngang là trung bình từng nhóm. Cột bên phải tách chênh lệch đo được thành hiệu ứng thật và thiên lệch chọn mẫu. Bấm “Tung đồng xu” để thấy thiên lệch biến mất. Đặt hiệu ứng thật bằng 0 để thấy một thuật toán vô dụng vẫn “có tác dụng” khi trader tự chọn.</figcaption>
+  <figcaption><b>Hình 13.1 – Mô phỏng thiên lệch chọn mẫu.</b> Mỗi chấm là một người (hoặc một lệnh). Trục ngang là đặc điểm nền mà nhà phân tích không quan sát được (sức khoẻ nền, hay độ khó của lệnh), trục dọc là kết quả. Chấm xanh dương là nhóm được xử lý, chấm cam là nhóm đối chứng, đường đứt là trung bình từng nhóm. Cột bên phải tách chênh lệch đo được (xám) thành hiệu ứng thật (xanh lá) cộng thiên lệch chọn mẫu (cam). Ở chế độ “Tự chọn”, người có đặc điểm nền cao dễ vào nhóm được xử lý hơn, và thiên lệch lớn. Bấm “Tung đồng xu” để thấy thiên lệch co về gần 0. Kéo hiệu ứng thật về 0 để thấy một biện pháp vô dụng vẫn “có tác dụng” khi người ta tự chọn. Nút “Bối cảnh” chuyển giữa ví dụ bảo hiểm và ví dụ định tuyến lệnh.</figcaption>
 </figure>
+
+<h4>Ngẫu nhiên hoá</h4>
+<p>Cách chữa tận gốc là để một đồng xu, chứ không phải con người, quyết định ai được xử lý. Khi đó D không thể liên quan tới thu nhập, học vấn, sức khoẻ nền hay bất cứ đặc điểm nào khác, kể cả những đặc điểm ta không đo được. Hai nhóm trở thành hai mẫu ngẫu nhiên rút từ cùng một tổng thể. Theo luật số lớn, khi mẫu đủ lớn, trung bình Y<sub>0</sub> của hai nhóm gần như bằng nhau: E[Y<sub>0i</sub> | D = 1] ≈ E[Y<sub>0i</sub> | D = 0]. Số hạng thiên lệch chọn mẫu tiến về 0, và hiệu hai trung bình mẫu chính là hiệu ứng nhân quả. Hơn nữa, vì nhóm được xử lý giờ đại diện cho toàn bộ tổng thể, hiệu ứng trên nhóm được xử lý cũng là hiệu ứng trung bình trên mọi người.</p>
+<p>Sau khi chia ngẫu nhiên, hãy <b>kiểm tra cân bằng</b> (balance check): so trung bình tuổi, thu nhập, quy mô lệnh, độ biến động của thị trường lúc đặt lệnh, … giữa hai nhóm. Nếu việc chia thật sự ngẫu nhiên, các chênh lệch này chỉ nhỏ cỡ sai số lấy mẫu. Một chênh lệch lớn là dấu hiệu quy trình chia nhóm có lỗi, hoặc có người đã can thiệp. Trong Hình 13.1, dòng “kiểm tra cân bằng” cho thấy đặc điểm nền trung bình của hai nhóm lệch xa nhau khi tự chọn, nhưng gần như trùng khớp khi tung đồng xu.</p>
+
+<h5>Các thống kê dùng để so sánh hai nhóm</h5>
+<p>Trung bình mẫu Ȳ là ước lượng không chệch của E[Y]. Phương sai lấy mẫu của nó là σ<sub>Y</sub><sup>2</sup>/n, nên độ dao động của Ȳ giảm theo căn bậc hai của cỡ mẫu. Thay σ<sub>Y</sub> chưa biết bằng độ lệch chuẩn mẫu S(Y), ta có sai số chuẩn (standard error) ước lượng được. Để kiểm định giả thuyết “trung bình bằng μ”, ta đo xem Ȳ cách μ bao nhiêu lần sai số chuẩn:</p>
+<div class="formula"><span class="lbl">Sai số chuẩn, thống kê t và khoảng tin cậy xấp xỉ 95% cho một trung bình</span>SE(Ȳ) = <span class="frac"><span>S(Y)</span><span>√n</span></span>,&nbsp;&nbsp; t = <span class="frac"><span>Ȳ − μ</span><span>SE(Ȳ)</span></span>,&nbsp;&nbsp; Ȳ ± 2 · SE(Ȳ)</div>
+<p>Ngưỡng quen dùng là |t| &gt; 2: khi giả thuyết đúng, một độ lệch lớn hơn hai sai số chuẩn chỉ xảy ra khoảng 5% số lần. Với hai nhóm, ta kiểm định giả thuyết “hai trung bình bằng nhau”. Nếu dùng độ lệch chuẩn gộp (pooled) S(Y) của cả hai nhóm, sai số chuẩn của hiệu là:</p>
+<div class="formula"><span class="lbl">So sánh hai nhóm có cỡ n<sub>1</sub> (được xử lý) và n<sub>0</sub> (đối chứng)</span>SE(Ȳ<sup>1</sup> − Ȳ<sup>0</sup>) = S(Y) √(1/n<sub>1</sub> + 1/n<sub>0</sub>),&nbsp;&nbsp; t = <span class="frac"><span>Ȳ<sup>1</sup> − Ȳ<sup>0</sup></span><span>SE(Ȳ<sup>1</sup> − Ȳ<sup>0</sup>)</span></span></div>
+<p>Thống kê t là tỉ số giữa tín hiệu và nhiễu. Muốn t lớn thì cần đồng thời một hiệu ứng thật và một sai số chuẩn nhỏ, tức là đủ dữ liệu. Ngược lại, t nhỏ có hai cách đọc: có thể không có hiệu ứng nào, hoặc có hiệu ứng nhưng dữ liệu quá ít để nhìn thấy. “Không bác bỏ được” không đồng nghĩa với “đã chứng minh bằng 0”.</p>
+<p><b>Ví dụ.</b> Quay lại bàn giao dịch, lần này chia ngẫu nhiên 400 lệnh cho mỗi thuật toán. Chênh lệch độ trượt trung bình là −4 bp và S(Y) = 10 bp. Sai số chuẩn là 10 · √(1/400 + 1/400) = 10 · 0,0707 ≈ 0,71 bp, nên t ≈ −4 / 0,71 ≈ −5,7. Khoảng tin cậy xấp xỉ là −4 ± 1,41, tức từ −5,4 đến −2,6 bp, không chứa 0. Bây giờ thử một tín hiệu khác: trên 100 ngày, lợi suất vượt trội trung bình 1,5 bp với S = 8 bp. Khi đó SE = 8/√100 = 0,8 và t = 1,875, chưa qua ngưỡng 2. Nếu hiệu ứng ấy là thật và ta có 400 ngày, SE giảm còn 0,4 và t tăng lên 3,75. Cùng một hiệu ứng, kết luận khác nhau chỉ vì cỡ mẫu.</p>
+
+<h4>Hồi quy thay cho ngẫu nhiên hoá</h4>
+<p>Nhiều khi ta không được tung đồng xu: không thể bắt ngẫu nhiên một nửa dân số bỏ bảo hiểm, và bàn giao dịch cũng không muốn giao lệnh lớn cho thuật toán kém chỉ để làm thí nghiệm. Khi đó hồi quy giúp kiểm soát những khác biệt quan sát được giữa hai nhóm:</p>
+<div class="formula"><span class="lbl">Hồi quy kết quả theo biến xử lý D<sub>i</sub> và vectơ biến kiểm soát A<sub>i</sub></span>Y<sub>i</sub> = α + β D<sub>i</sub> + γ<sup>⊤</sup>A<sub>i</sub> + ε<sub>i</sub></div>
+<p>Ở đây A<sub>i</sub> chứa các <b>biến kiểm soát</b> (control variables) như tuổi, thu nhập, hay với lệnh giao dịch là quy mô lệnh, độ biến động và chênh lệch giá mua – bán. Hệ số β được đọc là chênh lệch giữa hai nhóm <i>khi giữ nguyên</i> các biến kiểm soát. Cách đọc nhân quả này dựa trên <b>giả định độc lập có điều kiện</b> (conditional independence assumption, CIA): trong số những người có cùng giá trị A, việc ai được xử lý coi như ngẫu nhiên. Giả định này không kiểm chứng được bằng dữ liệu. Nó chỉ đáng tin khi ta hiểu rõ quy trình chọn và tin rằng mọi thứ ảnh hưởng tới cả việc chọn lẫn kết quả đều đã nằm trong A.</p>
+<p>Về cách đưa biến vào mô hình: biến liên tục (tuổi, thu nhập) đưa vào nguyên dạng. Biến phân loại (vùng, sàn giao dịch, ngày trong tuần) đưa vào dưới dạng biến giả mã hoá one-hot (dummy variables), mỗi nhóm một cột 0/1, bỏ đi một nhóm làm mốc để các cột không trùng lặp với hệ số chặn. Nếu kết quả là log Y thay vì Y, hệ số β đọc xấp xỉ như phần trăm thay đổi: β = 0,05 nghĩa là được xử lý làm Y tăng khoảng 5%. Con số chính xác là e<sup>β</sup> − 1, bằng 5,13% khi β = 0,05. Xấp xỉ chỉ tốt khi β nhỏ: với β = 0,30, mức thay đổi thật là e<sup>0,3</sup> − 1 ≈ 35%, không phải 30%.</p>
+
+<h4>Thiên lệch do biến bị bỏ sót</h4>
+<p>Điều gì xảy ra nếu ta quên một biến kiểm soát quan trọng A? Gọi <b>hồi quy ngắn</b> là hồi quy Y theo D (không có A), với hệ số β<sup>s</sup>, và <b>hồi quy dài</b> là hồi quy Y theo D và A, với hệ số β<sup>l</sup> của D và γ của A. Hai hệ số của D liên hệ với nhau bằng một đẳng thức đúng chính xác trên mọi mẫu:</p>
+<div class="formula"><span class="lbl">Công thức thiên lệch do biến bị bỏ sót (omitted-variable bias, OVB)</span>β<sup>s</sup> − β<sup>l</sup> = π<sub>1</sub> × γ</div>
+<p>trong đó γ là tác động của A lên Y trong hồi quy dài, còn π<sub>1</sub> là hệ số góc khi hồi quy A theo biến xử lý D. Phép suy dẫn ngắn gọn. Hệ số của hồi quy đơn là β<sup>s</sup> = Cov(Y, D)/Var(D). Viết Y theo hồi quy dài, Y = α + β<sup>l</sup>D + γA + e, trong đó phần dư e không tương quan với D (một tính chất của bình phương tối thiểu, xem mục sau). Khi đó Cov(Y, D) = β<sup>l</sup>Var(D) + γCov(A, D). Chia cho Var(D):</p>
+<div class="formula"><span class="lbl">Suy dẫn: π<sub>1</sub> = Cov(A, D)/Var(D) chính là hệ số khi hồi quy A theo D</span>β<sup>s</sup> = β<sup>l</sup> + γ · <span class="frac"><span>Cov(A, D)</span><span>Var(D)</span></span> = β<sup>l</sup> + γ · π<sub>1</sub></div>
+<p>Thiên lệch cần <b>đủ cả hai điều kiện</b>: biến bị bỏ phải đi cùng biến xử lý (π<sub>1</sub> ≠ 0) và phải ảnh hưởng tới kết quả (γ ≠ 0). Một biến chỉ thoả một trong hai điều kiện thì bỏ đi cũng không sao. Một biến tác động mạnh tới Y nhưng hoàn toàn không liên quan tới D chỉ làm hồi quy nhiễu hơn, chứ không làm nó chệch. Điểm mạnh nhất của công thức là ta không cần dữ liệu về A vẫn suy ra được <b>dấu</b> của thiên lệch: dấu của β<sup>s</sup> − β<sup>l</sup> bằng dấu của π<sub>1</sub> nhân dấu của γ.</p>
+<table class="t">
+<tr><th></th><th>γ &gt; 0 (A làm Y tăng)</th><th>γ &lt; 0 (A làm Y giảm)</th></tr>
+<tr><td>π<sub>1</sub> &gt; 0 (A cao hơn ở nhóm được xử lý)</td><td>Hồi quy ngắn phóng đại hiệu ứng</td><td>Hồi quy ngắn đánh giá thấp hiệu ứng</td></tr>
+<tr><td>π<sub>1</sub> &lt; 0 (A thấp hơn ở nhóm được xử lý)</td><td>Hồi quy ngắn đánh giá thấp hiệu ứng</td><td>Hồi quy ngắn phóng đại hiệu ứng</td></tr>
+</table>
+<p>Với bảo hiểm, thu nhập là biến bị bỏ sót điển hình: người giàu dễ mua bảo hiểm hơn (π<sub>1</sub> &gt; 0) và khoẻ hơn (γ &gt; 0), nên bỏ thu nhập làm hiệu ứng của bảo hiểm trông lớn hơn thực tế. Một ví dụ số trong nghiên cứu tín hiệu: hồi quy lợi suất theo một tín hiệu mới cho hệ số 0,50. Hồi quy động lượng (momentum) theo tín hiệu cho π<sub>1</sub> = 0,6, và trong hồi quy dài có cả động lượng, γ = 0,5. Vậy β<sup>l</sup> = 0,50 − 0,6 × 0,5 = 0,20. Hơn một nửa “alpha” của tín hiệu thực ra là phơi nhiễm với động lượng.</p>
 
 <figure class="demo">
   <div class="stage" id="demo2-13"></div>
   <div class="controls" id="ctl2-13"></div>
   <div class="readout" id="out2-13"></div>
-  <figcaption><b>Mô hình 13.2 – Biến bị bỏ sót trong không gian 3D.</b> X là tín hiệu mới, A là động lượng (biến gây nhiễu), Y là lợi suất. Lưới xanh lá là mặt phẳng của hồi quy dài Y theo X và A. Trên bức tường phía sau là bóng của các điểm trên mặt X–Y: đường đỏ là hồi quy ngắn bỏ A, đường xanh lá đứt là độ dốc của hồi quy dài. Khung nhỏ cho thấy β<sup>ngắn</sup> = β<sup>dài</sup> + π̂<sub>1</sub>·γ̂ đúng chính xác trên mẫu. Đặt π<sub>1</sub> hoặc γ bằng 0 thì hai đường trùng nhau. Bấm “Nhìn dọc trục A” để thấy đúng thứ mà hồi quy ngắn nhìn thấy. Kéo để xoay.</figcaption>
+  <figcaption><b>Hình 13.2 – Thiên lệch do biến bị bỏ sót.</b> Dữ liệu mô phỏng có một biến gây nhiễu ẩn A. X là biến được quan tâm (một tín hiệu mới), A là động lượng, Y là lợi suất. Lưới xanh lá là mặt phẳng của hồi quy dài Y theo X và A. Trên bức tường phía sau là bóng của các điểm trên mặt X–Y: đường cam là hồi quy ngắn bỏ A, đường xanh lá đứt là độ dốc của hồi quy dài. Khung nhỏ cho thấy β<sup>ngắn</sup> = β<sup>dài</sup> + π̂<sub>1</sub>·γ̂ đúng chính xác trên mẫu. Đặt π<sub>1</sub> hoặc γ bằng 0 thì hai đường trùng nhau. Bấm “Nhìn dọc trục A” để thấy đúng thứ mà hồi quy ngắn nhìn thấy. Kéo để xoay.</figcaption>
 </figure>
 
-<h4>Lưu ý khi phỏng vấn</h4>
+<h4>Những tính chất của hồi quy nên nhớ</h4>
+<p><b>Hồi quy xấp xỉ hàm kỳ vọng có điều kiện.</b> Hàm kỳ vọng có điều kiện (conditional expectation function, CEF) E[Y | X] cho biết trung bình của Y tại mỗi giá trị của X. Nó là dự báo tốt nhất theo nghĩa sai số bình phương trung bình:</p>
+<div class="formula"><span class="lbl">CEF là dự báo có sai số bình phương trung bình nhỏ nhất trong mọi hàm của X</span>E[Y | X] = arg min<sub>m</sub> E[(Y − m(X))<sup>2</sup>]</div>
+<p>Lý do: viết Y − m(X) = (Y − E[Y | X]) + (E[Y | X] − m(X)). Bình phương lên rồi lấy kỳ vọng, số hạng chéo bằng 0 vì phần đầu có trung bình 0 tại mỗi giá trị của X. Còn lại hai số hạng không âm, trong đó chỉ số hạng thứ hai phụ thuộc vào m, và nó bằng 0 khi m(X) = E[Y | X]. Hồi quy tuyến tính, đến lượt nó, là <i>xấp xỉ tuyến tính tốt nhất</i> của CEF. Vì vậy hồi quy vẫn có ý nghĩa ngay cả khi quan hệ thật không tuyến tính: nó tóm tắt CEF bằng đường thẳng gần nhất.</p>
+<p><b>Phần dư.</b> Phần dư của bình phương tối thiểu có trung bình bằng 0 và không tương quan với từng biến đầu vào, cũng như với giá trị khớp. Đây là phương trình chuẩn viết thành lời, và cũng là bước then chốt trong suy dẫn OVB ở trên.</p>
+<p><b>Phân rã phương sai (ANOVA).</b> Tổng phương sai của Y tách thành phần mà X giải thích được và phần còn lại:</p>
+<div class="formula"><span class="lbl">Luật tổng phương sai</span>Var(Y) = Var(E[Y | X]) + E[Var(Y | X)]</div>
+<p>Ví dụ: X nhận 0 hoặc 1 với xác suất bằng nhau. Khi X = 0, Y có trung bình 0 và phương sai 1. Khi X = 1, Y có trung bình 2 và phương sai 3. Phần giải thích được là Var của {0, 2}, bằng 1. Phần còn lại là trung bình của {1, 3}, bằng 2. Tổng là 3. Kiểm tra trực tiếp: E[Y] = 1, E[Y<sup>2</sup>] = ½ · 1 + ½ · (3 + 4) = 4, nên Var(Y) = 4 − 1 = 3.</p>
+<p><b>Phương sai thay đổi.</b> Nếu phương sai của sai số thay đổi theo X (heteroskedasticity), sai số chuẩn thông thường không còn đúng. Hiện tượng này rất phổ biến. Bất kỳ CEF phi tuyến nào được khớp bằng đường thẳng đều gây ra nó, vì phần sai lệch giữa CEF và đường thẳng rơi vào phần dư và có độ lớn khác nhau theo X. Kết quả dạng 0/1 cũng luôn gây ra nó, vì Var(Y | X) = p(X)(1 − p(X)) thay đổi khi p(X) thay đổi. Cách xử lý là dùng <b>sai số chuẩn vững</b> (robust standard errors, còn gọi là sai số chuẩn Eicker–Huber–White). Trên thực tế chúng thường gần với sai số chuẩn thông thường, nhưng dùng chúng thì an toàn hơn.</p>
+<p><b>Trọng số.</b> Trọng số lấy mẫu (bằng nghịch đảo xác suất được chọn vào mẫu) dùng để sửa một mẫu không ngẫu nhiên, ví dụ khi một nhóm bị lấy mẫu dày hơn nhóm khác. Phương sai thay đổi tự nó không phải lý do để chuyển sang bình phương tối thiểu có trọng số (weighted least squares).</p>
+<p><b>Mô hình bão hoà.</b> Một mô hình bão hoà (saturated model) có một biến giả cho mỗi tổ hợp giá trị của các biến đầu vào rời rạc. Với hai biến nhị phân, đó là bốn ô, và hệ số của mỗi ô đúng bằng trung bình của ô đó. Mô hình như vậy khớp CEF một cách chính xác, nhưng phải trả giá: khi có nhiều biến, số ô tăng theo cấp số nhân, mỗi ô có ít quan sát, và các hệ số rất nhiễu.</p>
+
+<div class="note"><b>Ứng dụng trên bàn giao dịch.</b>
 <ul>
-  <li><b>Cổ phiếu được chuyên viên phân tích theo dõi có lợi suất cao hơn 3% mỗi năm.</b> Biến bị bỏ sót nào dễ làm hiệu ứng này bị thổi phồng? Quy mô và thanh khoản của doanh nghiệp: chúng quyết định việc được theo dõi và cũng liên quan tới lợi suất.</li>
-  <li>Khi được hỏi về thiên lệch, hãy nêu cả hai điều kiện của OVB rồi suy ra dấu: dấu của π<sub>1</sub> nhân dấu của γ.</li>
-  <li>t nhỏ không có nghĩa là không có hiệu ứng. Có thể hiệu ứng có thật nhưng dữ liệu quá ít, sai số chuẩn quá lớn.</li>
-  <li>Áp vào bàn giao dịch: ngẫu nhiên hoá định tuyến cho một phần lệnh, hoặc kiểm soát quy mô lệnh, biến động và chênh lệch giá mua – bán. Khi đánh giá tín hiệu, đưa các nhân tố đã biết vào hồi quy dài để thấy phần alpha thật.</li>
-</ul>
+  <li><b>Phân tích chất lượng khớp lệnh.</b> Trader đưa lệnh khó cho thuật toán “thông minh” và lệnh dễ cho thuật toán đơn giản. So độ trượt trung bình giữa hai thuật toán khi đó gần như chỉ đo thiên lệch chọn mẫu. Các bàn giao dịch xử lý bằng cách định tuyến ngẫu nhiên một phần nhỏ lệnh, hoặc đưa quy mô lệnh, độ biến động và chênh lệch giá mua – bán vào hồi quy làm biến kiểm soát.</li>
+  <li><b>Phân bổ lợi suất của tín hiệu.</b> Một tín hiệu mới trông rất tốt có thể chỉ đang ăn theo động lượng hoặc một nhân tố đã biết khác. Hồi quy có thêm các nhân tố đã biết chính là hồi quy dài. Công thức OVB cho biết bao nhiêu phần “alpha” thực ra là phơi nhiễm nhân tố, như ví dụ 0,50 so với 0,20 ở trên.</li>
+</ul></div>
+
+<h4>Viết bằng code</h4>
+<p>Đoạn mô phỏng dưới đây tái tạo ví dụ bảo hiểm. Sức khoẻ nền không quan sát được. Người khoẻ hơn có xác suất mua bảo hiểm cao hơn theo hàm logistic, còn bảo hiểm làm chỉ số sức khoẻ tăng đúng 2 điểm. Khi người ta tự chọn, chênh lệch đo được là 10,85, gấp hơn năm lần hiệu ứng thật. Khi tung đồng xu, chênh lệch là 2,01. Chạy bằng <span class="kbd">bun c13.ts</span>.</p>
+<pre class="code"><code><span class="c">// Bộ sinh số ngẫu nhiên có hạt giống (mulberry32) và phân phối chuẩn (Box–Muller)</span>
+function rng(seed: number) {
+  let s = seed &gt;&gt;&gt; 0;
+  return () =&gt; {
+    s = (s + 0x6d2b79f5) | 0;
+    let t = Math.imul(s ^ (s &gt;&gt;&gt; 15), 1 | s);
+    t = (t + Math.imul(t ^ (t &gt;&gt;&gt; 7), 61 | t)) ^ t;
+    return ((t ^ (t &gt;&gt;&gt; 14)) &gt;&gt;&gt; 0) / 4294967296;
+  };
+}
+const r = rng(13);
+const gauss = () =&gt; Math.sqrt(-2 * Math.log(1 - r())) * Math.cos(2 * Math.PI * r());
+
+const n = 100_000, effect = 2;
+const health = Array.from({ length: n }, gauss);            <span class="c">// không quan sát được</span>
+const y0 = health.map(h =&gt; 70 + 7 * h + 3 * gauss());       <span class="c">// sức khoẻ nếu không có bảo hiểm</span>
+
+function gap(treated: boolean[]): number {
+  let s1 = 0, n1 = 0, s0 = 0, n0 = 0;
+  treated.forEach((d, i) =&gt; {
+    if (d) { s1 += y0[i] + effect; n1++; } else { s0 += y0[i]; n0++; }
+  });
+  return s1 / n1 - s0 / n0;
+}
+
+const chooses = health.map(h =&gt; r() &lt; 1 / (1 + Math.exp(-2.2 * h)));  <span class="c">// tự chọn</span>
+const coin = health.map(() =&gt; r() &lt; 0.5);                            <span class="c">// tung đồng xu</span>
+console.log("tự chọn:     ", gap(chooses).toFixed(2));  <span class="c">// xa 2: thiên lệch chọn mẫu</span>
+console.log("tung đồng xu:", gap(coin).toFixed(2));     <span class="c">// gần 2</span></code></pre>
+
+<h4>Tự kiểm tra</h4>
+<details class="qa"><summary>Các cổ phiếu được chuyên viên phân tích của một công ty môi giới theo dõi có lợi suất cao hơn cổ phiếu không được theo dõi 3% mỗi năm. Biến bị bỏ sót nào nhiều khả năng nhất làm “hiệu ứng được theo dõi” bị thổi phồng? (A) Độ dài mã cổ phiếu. (B) Quy mô và thanh khoản của doanh nghiệp, vốn quyết định cả việc được theo dõi lẫn lợi suất. (C) Ngày trong tuần. (D) Không có, vì việc theo dõi được phân công ngẫu nhiên.</summary>
+<p><b>Đáp án: B.</b> Áp hai điều kiện của OVB. Biến bị bỏ phải đi cùng biến xử lý: chuyên viên phân tích chủ yếu theo dõi các doanh nghiệp lớn, thanh khoản cao, nổi tiếng, nên π<sub>1</sub> ≠ 0. Biến đó cũng phải ảnh hưởng tới kết quả: quy mô và thanh khoản có liên quan tới lợi suất, nên γ ≠ 0. Đủ cả hai điều kiện, nên bỏ chúng ra làm ước lượng bị chệch.</p>
+<p>Các phương án còn lại đều trượt ít nhất một điều kiện. Độ dài mã cổ phiếu không ảnh hưởng tới lợi suất. Ngày trong tuần không quyết định cổ phiếu nào được theo dõi. Phương án D sai vì việc theo dõi hoàn toàn không ngẫu nhiên: chính các chuyên viên chọn cổ phiếu để theo dõi. Khi trả lời trong phỏng vấn, hãy nêu rõ hai điều kiện rồi suy ra dấu của thiên lệch từ dấu của π<sub>1</sub> và γ.</p>
+</details>
 
 <script>
 (()=>{
@@ -69,16 +132,22 @@
   }
   const mean=a=>a.length?a.reduce((s,v)=>s+v,0)/a.length:NaN;
 
-  /* ---------- Mô hình 13.1: thiên lệch chọn mẫu ---------- */
+  /* ---------- Hình 13.1: thiên lệch chọn mẫu ---------- */
   {
     const stage=document.getElementById('demo-13'), ctl=document.getElementById('ctl-13'), out=document.getElementById('out-13');
-    const S={tau:-2, sel:2, n:400, seed:1, mode:'chon'};
-    let H=[], Y0=[], U=[], V=[], D=[], yy=[], c=null, st=null;
+    const CTX={
+      bh:{name:'Bảo hiểm y tế',base:70,slope:7,noise:3,lo:40,hi:100,ticks:[50,70,90],xl:'sức khoẻ nền (không quan sát được) →',yl:'chỉ số sức khoẻ',unit:'điểm',g1:'có bảo hiểm',g0:'không bảo hiểm',tmin:-4,tmax:6,tau:2,sel:2.2},
+      lenh:{name:'Định tuyến lệnh',base:8,slope:3,noise:2,lo:-6,hi:22,ticks:[0,10,20],xl:'độ khó của lệnh →',yl:'độ trượt giá (bp)',unit:'bp',g1:'thông minh',g0:'đơn giản',tmin:-4,tmax:2,tau:-2,sel:2}
+    };
+    const S={ctx:'bh', tau:2, sel:2.2, n:400, seed:1, mode:'chon'};
+    let H=[], Z=[], Y0=[], U=[], V=[], D=[], yy=[], c=null, st=null;
+    const K=()=>CTX[S.ctx];
     function gen(){
-      const r=Q.rng(S.seed*4243+7); H=[]; Y0=[]; U=[]; V=[];
-      for(let i=0;i<S.n;i++){ const h=Q.normal(r); H.push(h); Y0.push(8+3*h+2*Q.normal(r)); U.push(r()); V.push(r()); }
-      yy=Y0.slice(); assign();
+      const r=Q.rng(S.seed*4243+7); H=[]; Z=[]; U=[]; V=[];
+      for(let i=0;i<S.n;i++){ H.push(Q.normal(r)); Z.push(Q.normal(r)); U.push(r()); V.push(r()); }
+      makeY0(); yy=Y0.slice(); assign();
     }
+    function makeY0(){ const k=K(); Y0=H.map((h,i)=>k.base+k.slope*h+k.noise*Z[i]); }
     function assign(){
       D=H.map((h,i)=>S.mode==='xu' ? V[i]<0.5 : U[i]<1/(1+Math.exp(-S.sel*h)));
       const i1=[],i0=[]; D.forEach((d,i)=>(d?i1:i0).push(i));
@@ -93,19 +162,22 @@
       report();
     }
     function report(){
-      if(!st){ out.textContent='Một nhóm quá nhỏ. Hãy giảm mức độ tự chọn hoặc tăng số lệnh.'; return; }
-      out.textContent=`${S.mode==='xu'?'Tung đồng xu':'Trader tự chọn'}: thông minh n₁ = ${st.i1.length} (TB ${Q.fmt(st.m1,2)} bp), đơn giản n₀ = ${st.i0.length} (TB ${Q.fmt(st.m0,2)} bp)\n`+
-        `Đo được ${Q.fmt(st.naive,2)} = hiệu ứng thật ${Q.fmt(st.att,2)} + thiên lệch ${Q.fmt(st.sb,2)};  SE = ${Q.fmt(st.se,2)}, t = ${Q.fmt(st.naive/st.se,1)}\n`+
-        `Kiểm tra cân bằng: độ khó TB nhóm thông minh ${Q.fmt(st.h1,2)}, nhóm đơn giản ${Q.fmt(st.h0,2)}\n`+
-        `Hồi quy độ trượt theo D và độ khó (nếu đo được độ khó): β̂ = ${Q.fmt(st.reg,2)}`;
+      const k=K();
+      if(!st){ out.textContent='Một nhóm quá nhỏ. Hãy giảm mức độ tự chọn hoặc tăng cỡ mẫu.'; return; }
+      out.textContent=`${k.name} · ${S.mode==='xu'?'tung đồng xu':'tự chọn'}: ${k.g1} n₁ = ${st.i1.length} (TB ${Q.fmt(st.m1,2)}), ${k.g0} n₀ = ${st.i0.length} (TB ${Q.fmt(st.m0,2)})\n`+
+        `Đo được ${Q.fmt(st.naive,2)} = hiệu ứng thật ${Q.fmt(st.att,2)} + thiên lệch ${Q.fmt(st.sb,2)} (${k.unit});  SE = ${Q.fmt(st.se,2)}, t = ${Q.fmt(st.naive/st.se,1)}\n`+
+        `Kiểm tra cân bằng: đặc điểm nền TB nhóm được xử lý ${Q.fmt(st.h1,2)}, nhóm đối chứng ${Q.fmt(st.h0,2)}\n`+
+        `Hồi quy kết quả theo D và đặc điểm nền (nếu đo được đặc điểm này): β̂ = ${Q.fmt(st.reg,2)}`;
     }
     function draw(ctx,w,h){
-      const C=Q.colors(); ctx.clearRect(0,0,w,h); ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif';
+      const C=Q.colors(), k=K(); ctx.clearRect(0,0,w,h); ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif';
       const wide=w>=560, r1=wide?w*0.64:w-10, l=40, t=28, b=h-30;
-      const X=v=>l+(v+3)/6*(r1-l), Yl=-6, Yh=22, Y=v=>b-(v-Yl)/(Yh-Yl)*(b-t);
+      const X=v=>l+(v+3)/6*(r1-l), Y=v=>b-(v-k.lo)/(k.hi-k.lo)*(b-t);
       ctx.strokeStyle=C.line; ctx.strokeRect(l,t,r1-l,b-t);
-      ctx.fillStyle=C.muted; ctx.fillText('độ khó của lệnh →',r1-110,b+18); ctx.fillText('độ trượt giá (bp)',l,t-10);
-      [0,10,20].forEach(v=>ctx.fillText(String(v),l-22,Y(v)+4));
+      ctx.fillStyle=C.muted; const xlw=ctx.measureText(k.xl).width; ctx.fillText(k.xl,r1-xlw,b+18); ctx.fillText(k.yl,l,t-10);
+      ctx.font='12px JetBrains Mono,ui-monospace,monospace';
+      k.ticks.forEach(v=>ctx.fillText(String(v),l-26,Y(v)+4));
+      ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif';
       if(st){
         ctx.save(); ctx.beginPath(); ctx.rect(l,t,r1-l,b-t); ctx.clip();
         for(let i=0;i<H.length;i++){ ctx.fillStyle=D[i]?C.c:C.b; ctx.globalAlpha=0.65; ctx.beginPath(); ctx.arc(X(H[i]),Y(yy[i]),2.6,0,7); ctx.fill(); }
@@ -113,33 +185,38 @@
         ctx.strokeStyle=C.c; ctx.beginPath(); ctx.moveTo(l,Y(st.m1)); ctx.lineTo(r1,Y(st.m1)); ctx.stroke();
         ctx.strokeStyle=C.b; ctx.beginPath(); ctx.moveTo(l,Y(st.m0)); ctx.lineTo(r1,Y(st.m0)); ctx.stroke();
         ctx.setLineDash([]); ctx.lineWidth=1; ctx.restore();
-        ctx.fillStyle=C.c; ctx.fillText('● thông minh',l+8,t+16); ctx.fillStyle=C.b; ctx.fillText('● đơn giản',l+100,t+16);
+        ctx.fillStyle=C.c; ctx.fillText('● '+k.g1,l+8,t+16); const g1w=ctx.measureText('● '+k.g1).width; ctx.fillStyle=C.b; ctx.fillText('● '+k.g0,l+22+g1w,t+16);
       }
       if(!wide||!st) return;
-      // cột phân rã
-      const l2=w*0.70, r2=w-14, vals=[[st.naive,'Đo được',C.muted],[st.att,'Hiệu ứng thật',C.a],[st.sb,'Thiên lệch',C.b],[st.reg,'Hồi quy + độ khó',C.c]];
-      // thanh ngang: nhãn bên trái, gốc 0 ở giữa vùng thanh
-      const lab0=l2+100, mx=Math.max(3,...vals.map(v=>Math.abs(v[0])))*1.15, X0=(lab0+r2)/2, Z=v=>X0+v/mx*(r2-lab0)/2-0, rh=(b-t)/vals.length;
+      const l2=w*0.70, r2=w-14, vals=[[st.naive,'Đo được',C.muted],[st.att,'Hiệu ứng thật',C.a],[st.sb,'Thiên lệch',C.b],[st.reg,'Hồi quy có kiểm soát',C.c]];
+      const lo=Math.min(0,...vals.map(v=>v[0])), hi=Math.max(1,...vals.map(v=>v[0])), padL=lo<0?40:0;
+      const Zs=v=>l2+8+padL+(v-lo)/(hi-lo)*(r2-l2-56-padL), X0=Zs(0), rh=(b-t)/vals.length;
       ctx.strokeStyle=C.line; ctx.strokeRect(l2,t,r2-l2,b-t); ctx.strokeStyle=C.muted; ctx.beginPath(); ctx.moveTo(X0,t+6); ctx.lineTo(X0,b-6); ctx.stroke();
-      ctx.fillStyle=C.muted; ctx.fillText('Phân rã (bp)',l2,t-10);
-      vals.forEach(([v,lab,col],k)=>{ const y=t+k*rh+rh/2; ctx.fillStyle=C.muted; ctx.fillText(lab,l2+8,y+4);
-        ctx.fillStyle=col; ctx.globalAlpha=0.85; ctx.fillRect(Math.min(Z(0),Z(v)),y-11,Math.abs(Z(v)-Z(0)),22); ctx.globalAlpha=1;
-        ctx.fillStyle=C.ink; const txt=Q.fmt(v,1), tw=ctx.measureText(txt).width; ctx.fillText(txt,v>=0?Math.min(Z(v)+4,r2-tw-2):Math.max(Z(v)-tw-4,lab0-6),y+4); });
+      ctx.fillStyle=C.muted; ctx.fillText('Phân rã ('+k.unit+')',l2,t-10);
+      vals.forEach(([v,lab,col],kk)=>{ const y=t+kk*rh+rh/2+6; ctx.fillStyle=C.muted; ctx.fillText(lab,l2+8,y-16);
+        ctx.fillStyle=col; ctx.globalAlpha=0.85; ctx.fillRect(Math.min(Zs(0),Zs(v)),y-9,Math.abs(Zs(v)-Zs(0)),18); ctx.globalAlpha=1;
+        ctx.fillStyle=C.ink; ctx.font='12px JetBrains Mono,ui-monospace,monospace'; const txt=Q.fmt(v,1), tw=ctx.measureText(txt).width;
+        ctx.fillText(txt,v>=0?Zs(v)+4:Zs(v)-tw-4,y+4); ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif'; });
       ctx.fillStyle=C.muted; ctx.fillText('Đo được = Hiệu ứng thật + Thiên lệch',l2,b+18);
     }
     gen();
     c=Q.canvas(stage,360,draw);
     Q.loop(stage,()=>{ if(!st) return; let mv=false; for(let i=0;i<yy.length;i++){ const d=st.Y[i]-yy[i]; if(Math.abs(d)>0.01){ yy[i]+=d*0.15; mv=true; } else yy[i]=st.Y[i]; } if(mv) c.redraw(); });
     const re=()=>{ assign(); c.redraw(); };
-    const b1=Q.button(ctl,'Trader tự chọn',()=>{S.mode='chon'; b1.className='primary'; b2.className=''; re();},true);
-    const b2=Q.button(ctl,'Tung đồng xu',()=>{S.mode='xu'; b2.className='primary'; b1.className=''; re();});
-    Q.slider(ctl,'Hiệu ứng thật τ',-4,2,0.25,S.tau,v=>{S.tau=v;re();},v=>Q.fmt(v,2)+' bp');
-    Q.slider(ctl,'Mức độ tự chọn',0,3,0.1,S.sel,v=>{S.sel=v;re();},v=>Q.fmt(v,1));
-    Q.slider(ctl,'Số lệnh',100,2000,50,S.n,v=>{S.n=v;gen();c.redraw();},v=>v);
-    Q.button(ctl,'Lấy mẫu mới',()=>{S.seed++;gen();c.redraw();});
+    function build(){
+      ctl.innerHTML=''; const k=K();
+      const b1=Q.button(ctl,'Tự chọn',()=>{S.mode='chon'; b1.className='primary'; b2.className=''; re();},S.mode==='chon');
+      const b2=Q.button(ctl,'Tung đồng xu',()=>{S.mode='xu'; b2.className='primary'; b1.className=''; re();},S.mode==='xu');
+      Q.slider(ctl,'Hiệu ứng thật τ',k.tmin,k.tmax,0.25,S.tau,v=>{S.tau=v;re();},v=>Q.fmt(v,2));
+      Q.slider(ctl,'Mức độ tự chọn',0,3,0.1,S.sel,v=>{S.sel=v;re();},v=>Q.fmt(v,1));
+      Q.slider(ctl,'Cỡ mẫu',100,2000,50,S.n,v=>{S.n=v;gen();c.redraw();},v=>v);
+      Q.button(ctl,'Lấy mẫu mới',()=>{S.seed++;gen();c.redraw();});
+      Q.button(ctl,'Bối cảnh: '+k.name,()=>{ S.ctx=S.ctx==='bh'?'lenh':'bh'; const k2=K(); S.tau=k2.tau; S.sel=k2.sel; makeY0(); yy=Y0.slice(); assign(); build(); c.redraw(); });
+    }
+    build();
   }
 
-  /* ---------- Mô hình 13.2: biến bị bỏ sót, 3D ---------- */
+  /* ---------- Hình 13.2: biến bị bỏ sót, 3D ---------- */
   {
     const stage=document.getElementById('demo2-13'), ctl=document.getElementById('ctl2-13'), out=document.getElementById('out2-13');
     const S={beta:0.2, pi:0.6, gam:0.5, n:250, seed:1};
@@ -163,7 +240,6 @@
       const scale=Math.min(w,h*1.4)/4.6, Pj=p=>Q.project(p,view,w,h,scale);
       const seg=(a,b)=>{ const A=Pj(a), B=Pj(b); ctx.beginPath(); ctx.moveTo(A[0],A[1]); ctx.lineTo(B[0],B[1]); ctx.stroke(); };
       const xr=2.6/1, wallA=RW/KA;
-      // tường sau (A = hằng số lớn) và sàn
       ctx.strokeStyle=C.line; ctx.lineWidth=1;
       for(let y=-2;y<=2;y++) seg(W(-xr,wallA,y),W(xr,wallA,y));
       for(let x=-2;x<=2;x++) seg(W(x,wallA,-2.6),W(x,wallA,2.6));
@@ -171,26 +247,21 @@
       ctx.fillStyle=C.muted; let L=Pj(W(xr+0.2,0,0)); ctx.fillText('X tín hiệu',L[0],L[1]); L=Pj(W(0,-wallA-0.3,0)); ctx.fillText('A động lượng',L[0],L[1]); L=Pj(W(0,0,2.8)); ctx.fillText('Y lợi suất',L[0],L[1]);
       if(!fit) return;
       const {L:bL,Sh}=fit, zl=(x,a)=>bL[0]+bL[1]*x+bL[2]*a;
-      // bóng điểm trên tường
       ctx.fillStyle=C.muted; ctx.globalAlpha=0.35;
       P.forEach(p=>{ if(Math.abs(p[2])>2.6) return; const q=Pj(W(p[0],wallA,p[2])); ctx.fillRect(q[0]-1.2,q[1]-1.2,2.4,2.4); });
       ctx.globalAlpha=1;
-      // hồi quy ngắn (đỏ) và độ dốc hồi quy dài tại A trung bình (xanh, đứt) trên tường
       ctx.lineWidth=2.5;
       ctx.strokeStyle=C.b; seg(W(-2.4,wallA,Sh[0]-2.4*Sh[1]),W(2.4,wallA,Sh[0]+2.4*Sh[1]));
       ctx.strokeStyle=C.a; ctx.setLineDash([6,4]); seg(W(-2.4,wallA,zl(-2.4,Am)),W(2.4,wallA,zl(2.4,Am))); ctx.setLineDash([]);
       ctx.lineWidth=1;
-      // mặt phẳng hồi quy dài
       ctx.strokeStyle=C.a; ctx.globalAlpha=0.45;
       for(let t=-2;t<=2.001;t+=0.5){ seg(W(t,-2.5,zl(t,-2.5)),W(t,2.5,zl(t,2.5))); seg(W(-2,t*1.25,zl(-2,t*1.25)),W(2,t*1.25,zl(2,t*1.25))); }
       ctx.globalAlpha=1;
-      // điểm: tô theo A cao / thấp
       const items=P.map(p=>({p,q:Pj(W(p[0],p[1],p[2]))})).sort((a,b)=>b.q[2]-a.q[2]);
       items.forEach(it=>{ ctx.fillStyle=it.p[1]>Am?C.d:C.c; ctx.globalAlpha=0.85; ctx.beginPath(); ctx.arc(it.q[0],it.q[1],2.8,0,7); ctx.fill(); });
       ctx.globalAlpha=1;
       ctx.fillStyle=C.d; ctx.fillText('● A cao',12,18); ctx.fillStyle=C.c; ctx.fillText('● A thấp',72,18);
       ctx.fillStyle=C.b; ctx.fillText('— hồi quy ngắn',136,18); ctx.fillStyle=C.a; ctx.fillText('- - độ dốc hồi quy dài',236,18);
-      // khung đẳng thức OVB
       const bl=bL[1], g=bL[2], p1=fit.Ax[1], bs=Sh[1];
       const bx=w-190, by=h-124, bwid=176, bh=110;
       ctx.fillStyle=C.panel; ctx.strokeStyle=C.line; ctx.fillRect(bx,by,bwid,bh); ctx.strokeRect(bx,by,bwid,bh);

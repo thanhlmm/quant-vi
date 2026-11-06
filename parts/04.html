@@ -2,74 +2,131 @@
 <header>
   <span class="num">04</span>
   <h3>Bảy phân phối cần nắm vững</h3>
-  <p class="meta">14 phút · Ứng dụng: dòng lệnh đến, vỡ nợ, lợi suất, thời gian chờ · <a href="https://hft.md/learn/distributions/">Bài gốc (tiếng Anh)</a></p>
+  <p class="meta">Phần 1 · Xác suất · Bài 4 · 14 phút · <a href="https://hft.md/learn/distributions/">Bài gốc (tiếng Anh)</a></p>
 </header>
 
-<p>Phần lớn câu hỏi phỏng vấn là một phân phối quen thuộc được nguỵ trang. Nhận ra đúng phân phối thì kỳ vọng và phương sai có ngay, không cần tính lại. Bài này gom bảy phân phối hay gặp nhất và mối liên hệ giữa chúng.</p>
+<p><i>Bài này giới thiệu bảy phân phối Bernoulli, nhị thức, Poisson, hình học, đều, chuẩn và mũ: hình dạng, kỳ vọng, phương sai, và nơi mỗi phân phối xuất hiện.</i></p>
 
-<h4>Ý chính</h4>
+<p>Phần lớn câu hỏi phỏng vấn là một phân phối quen thuộc được nguỵ trang. Nhận ra đúng phân phối thì kỳ vọng và phương sai có ngay, không phải tính lại từ đầu. Dưới đây là bảy phân phối cần thuộc lòng, kèm theo câu trả lời cho hai câu hỏi: nó đếm hay đo cái gì, và nó xuất hiện ở đâu trên bàn giao dịch. Một thói quen tốt trước khi tính bất cứ thứ gì: tự hỏi “biến này đang đếm số lần, hay đang đo một đại lượng liên tục?”. Câu trả lời đưa ta vào một trong hai bảng dưới đây.</p>
+
+<h4>Rời rạc: đếm số lần</h4>
+<p>Biến <b>rời rạc</b> (discrete) chỉ nhận các giá trị tách biệt, thường là số nguyên. Nó được mô tả bởi hàm khối xác suất p(x) = P(X = x), và tổng của p(x) trên mọi giá trị bằng 1.</p>
+<table class="t">
+  <tr><th>Biến</th><th>Đếm cái gì</th><th>Hàm khối xác suất</th><th>Kỳ vọng</th><th>Phương sai</th></tr>
+  <tr><td>Bernoulli(p)</td><td>một phép thử có/không</td><td>p<sup>x</sup>(1 − p)<sup>1 − x</sup>, x ∈ {0, 1}</td><td>p</td><td>p(1 − p)</td></tr>
+  <tr><td>Nhị thức(n, p)</td><td>số lần thành công trong n phép thử</td><td>C(n, x) p<sup>x</sup>(1 − p)<sup>n − x</sup></td><td>np</td><td>np(1 − p)</td></tr>
+  <tr><td>Poisson(λ)</td><td>số biến cố trong một khoảng cố định</td><td>λ<sup>x</sup> e<sup>−λ</sup> / x!</td><td>λ</td><td>λ</td></tr>
+  <tr><td>Hình học(p)</td><td>số phép thử tới lần thành công đầu tiên</td><td>(1 − p)<sup>x − 1</sup> p, x ≥ 1</td><td>1/p</td><td>(1 − p)/p<sup>2</sup></td></tr>
+</table>
+<p>Mỗi dòng trong bảng có một lý do đơn giản đằng sau, và biết lý do thì không cần học thuộc.</p>
 <ul>
-  <li>Bốn phân phối <b>rời rạc</b> (discrete) dùng để đếm: Bernoulli, nhị thức (binomial), Poisson và hình học (geometric). Ba phân phối <b>liên tục</b> (continuous) dùng để đo: đều (uniform), chuẩn (normal) và mũ (exponential).</li>
-  <li>Với biến liên tục, mật độ f(x) không phải là xác suất. Xác suất là diện tích dưới đường mật độ, đọc qua <b>hàm phân phối tích luỹ</b> (cumulative distribution function) F(a) = P(X ≤ a).</li>
-  <li>Nhị thức với n rất lớn, p rất nhỏ và np = λ cố định thì gần với Poisson(λ). Đó là lý do các biến cố hiếm trong một tập lớn thường được mô hình bằng Poisson.</li>
-  <li>Nếu biến cố đến theo <b>quá trình Poisson</b> (Poisson process) cường độ λ, khoảng cách giữa hai biến cố liên tiếp có phân phối mũ, trung bình 1/λ. Số đếm và thời gian chờ là hai mặt của cùng một quá trình.</li>
-  <li>Hình học và mũ là hai phân phối duy nhất có tính <b>không nhớ</b> (memoryless). Đã chờ bao lâu thì thời gian chờ thêm kỳ vọng vẫn như lúc đầu.</li>
-  <li>Cộng nhiều thành phần độc lập nhỏ thì tổng tiến về phân phối chuẩn, bất kể từng thành phần có dạng gì. Đây là định lý giới hạn trung tâm, sẽ học ở bài 06.</li>
+  <li><b>Bernoulli</b> (Bernoulli distribution): X = 1 với xác suất p, X = 0 với xác suất 1 − p. Kỳ vọng là p. Vì X<sup>2</sup> = X nên E[X<sup>2</sup>] = p, và phương sai là p − p<sup>2</sup> = p(1 − p). Phương sai lớn nhất khi p = 1/2: đồng xu cân đối là thứ bất định nhất.</li>
+  <li><b>Nhị thức</b> (binomial distribution): tổng của n biến Bernoulli độc lập. Theo tính tuyến tính (bài 2), kỳ vọng là np. Do các phép thử độc lập nên phương sai cũng cộng được (bài 3), cho np(1 − p). Hệ số C(n, x) đếm số cách chọn x phép thử thành công trong n phép thử.</li>
+  <li><b>Poisson</b> (Poisson distribution): đếm các biến cố xảy ra ngẫu nhiên, độc lập, với tốc độ trung bình không đổi λ trong một khoảng thời gian. Đặc điểm nhận dạng: kỳ vọng và phương sai <b>bằng nhau</b>, đều bằng λ. Nếu dữ liệu đếm thực tế có phương sai lớn hơn nhiều so với trung bình, các biến cố đang đến thành cụm và mô hình Poisson thuần tuý không đủ.</li>
+  <li><b>Hình học</b> (geometric distribution): số lần thử cho tới khi thành công lần đầu, với P(X &gt; k) = (1 − p)<sup>k</sup> vì k lần đầu đều thất bại. Kỳ vọng tìm được bằng lập luận bước đầu tiên: phải thử ít nhất một lần, và với xác suất 1 − p ta thất bại rồi quay về vạch xuất phát, nên E = 1 + (1 − p)E, tức E = 1/p. Lưu ý có hai quy ước: đếm số phép thử (trung bình 1/p) hoặc đếm số lần thất bại trước thành công (trung bình (1 − p)/p). Trong phỏng vấn, hãy nói rõ mình dùng quy ước nào.</li>
 </ul>
 
-<h4>Bảng tra nhanh</h4>
+<h4>Liên tục: đo một đại lượng</h4>
+<p>Biến <b>liên tục</b> (continuous) có thể nhận mọi giá trị trong một khoảng. Nó được mô tả bởi hàm mật độ f(x) ≥ 0, với diện tích toàn phần dưới đường f bằng 1.</p>
 <table class="t">
-  <tr><th>Phân phối</th><th>Mô tả</th><th>Hàm khối / mật độ</th><th>Kỳ vọng</th><th>Phương sai</th></tr>
-  <tr><td>Bernoulli(p)</td><td>một phép thử có/không</td><td>p<sup>x</sup>(1 − p)<sup>1 − x</sup>, x ∈ {0, 1}</td><td>p</td><td>p(1 − p)</td></tr>
-  <tr><td>Nhị thức(n, p)</td><td>số lần thành công trong n phép thử độc lập</td><td>C(n, x) p<sup>x</sup>(1 − p)<sup>n − x</sup></td><td>np</td><td>np(1 − p)</td></tr>
-  <tr><td>Poisson(λ)</td><td>số biến cố trong một khoảng cố định</td><td>λ<sup>x</sup> e<sup>−λ</sup> / x!</td><td>λ</td><td>λ</td></tr>
-  <tr><td>Hình học(p)</td><td>số phép thử cho tới lần thành công đầu tiên</td><td>(1 − p)<sup>x − 1</sup> p, x ≥ 1</td><td>1/p</td><td>(1 − p)/p<sup>2</sup></td></tr>
-  <tr><td>Đều(a, b)</td><td>giá trị có khả năng như nhau trên [a, b]</td><td>1/(b − a)</td><td>(a + b)/2</td><td>(b − a)<sup>2</sup>/12</td></tr>
-  <tr><td>Chuẩn(μ, σ<sup>2</sup>)</td><td>tổng, trung bình của nhiều tác động nhỏ</td><td>e<sup>−(x − μ)²/(2σ²)</sup> / (σ√(2π))</td><td>μ</td><td>σ<sup>2</sup></td></tr>
-  <tr><td>Mũ(λ)</td><td>thời gian chờ biến cố Poisson kế tiếp</td><td>λ e<sup>−λx</sup>, x ≥ 0</td><td>1/λ</td><td>1/λ<sup>2</sup></td></tr>
+  <tr><th>Biến</th><th>Đo cái gì</th><th>Hàm mật độ</th><th>Kỳ vọng</th><th>Phương sai</th></tr>
+  <tr><td>Đều(a, b)</td><td>một giá trị có khả năng như nhau ở mọi điểm trong [a, b]</td><td>1/(b − a)</td><td>(a + b)/2</td><td>(b − a)<sup>2</sup>/12</td></tr>
+  <tr><td>Chuẩn(μ, σ<sup>2</sup>)</td><td>tổng và trung bình của nhiều tác động nhỏ</td><td><span class="frac"><span>1</span><span>σ√(2π)</span></span> e<sup>−(x − μ)²/(2σ²)</sup></td><td>μ</td><td>σ<sup>2</sup></td></tr>
+  <tr><td>Mũ(λ)</td><td>thời gian chờ tới biến cố Poisson kế tiếp</td><td>λ e<sup>−λx</sup>, x ≥ 0</td><td>1/λ</td><td>1/λ<sup>2</sup></td></tr>
 </table>
-
-<h4>Công thức</h4>
-<div class="formula"><span class="lbl">Hàm phân phối tích luỹ của biến liên tục</span>F(a) = P(X ≤ a) = ∫<sub>−∞</sub><sup>a</sup> f(x) dx, &nbsp;&nbsp; P(a &lt; X ≤ b) = F(b) − F(a)</div>
-<div class="formula"><span class="lbl">Giới hạn nhị thức → Poisson, khi n → ∞, p → 0, np = λ</span>C(n, x) p<sup>x</sup>(1 − p)<sup>n − x</sup> &nbsp;→&nbsp; <span class="frac"><span>λ<sup>x</sup> e<sup>−λ</sup></span><span>x!</span></span></div>
-<div class="formula"><span class="lbl">Tính không nhớ của phân phối mũ (và hình học)</span>P(X &gt; s + t | X &gt; s) = <span class="frac"><span>e<sup>−λ(s + t)</sup></span><span>e<sup>−λs</sup></span></span> = e<sup>−λt</sup> = P(X &gt; t)</div>
-<div class="formula"><span class="lbl">Hàm của biến ngẫu nhiên: Y = g(X) với g tăng ngặt</span>F<sub>Y</sub>(a) = P(g(X) ≤ a) = F<sub>X</sub>(g<sup>−1</sup>(a)); &nbsp; ví dụ X chuẩn thì Y = e<sup>X</sup> có phân phối log-chuẩn (lognormal)</div>
-
-<h4>Ví dụ minh hoạ: danh mục cho vay và dòng lệnh</h4>
-<p>Một danh mục có 1.000 khoản vay. Mỗi khoản vỡ nợ độc lập với xác suất 0,4% trong năm.</p>
-<ol>
-  <li>Số khoản vỡ nợ X ~ Nhị thức(1.000; 0,004). Do đó E[X] = 4 và Var(X) = 1.000 · 0,004 · 0,996 = 3,984.</li>
-  <li>n lớn, p nhỏ nên X xấp xỉ Poisson(4). P(X = 3) ≈ 4<sup>3</sup>e<sup>−4</sup>/3! ≈ 0,1954. Giá trị nhị thức chính xác là 0,1956.</li>
-  <li>Xác suất có không quá 2 vụ: P(X ≤ 2) ≈ e<sup>−4</sup>(1 + 4 + 8) = 13e<sup>−4</sup> ≈ 0,238.</li>
-</ol>
-<p>Giao dịch khớp trên một mã theo quá trình Poisson, trung bình 3 lần mỗi phút.</p>
-<ol>
-  <li>Thời gian chờ T tới giao dịch kế tiếp có phân phối Mũ(3), trung bình 1/3 phút = 20 giây.</li>
-  <li>P(T &lt; 30 giây) = 1 − e<sup>−3 · 0,5</sup> = 1 − e<sup>−1,5</sup> ≈ 0,777.</li>
-  <li>Đã chờ 40 giây mà chưa có giao dịch. Do tính không nhớ, thời gian chờ thêm kỳ vọng vẫn là 20 giây.</li>
-</ol>
-<p>Một lệnh yết giá có xác suất được khớp 0,2 mỗi lần. Số lần yết cho tới khi khớp có phân phối Hình học(0,2), trung bình 1/0,2 = 5 lần.</p>
+<ul>
+  <li><b>Đều</b> (uniform distribution): mật độ phẳng. Trung bình nằm giữa đoạn. Với đoạn [0, 1], E[X<sup>2</sup>] = 1/3 và (E[X])<sup>2</sup> = 1/4, nên phương sai là 1/12; co giãn theo độ dài b − a cho (b − a)<sup>2</sup>/12. Bộ sinh số ngẫu nhiên trong máy tính cho ra phân phối Đều(0, 1), và từ đó ta tạo ra mọi phân phối khác (xem mục hàm của biến ngẫu nhiên).</li>
+  <li><b>Chuẩn</b> (normal distribution): đường hình chuông đối xứng quanh μ, độ rộng do σ quyết định. Nên thuộc: khoảng 68% khối lượng nằm trong μ ± σ, 95% trong μ ± 1,96σ, và 99,7% trong μ ± 3σ.</li>
+  <li><b>Mũ</b> (exponential distribution): thời gian chờ liên tục, P(X &gt; t) = e<sup>−λt</sup>. Đây là phiên bản liên tục của phân phối hình học. λ càng lớn thì biến cố đến càng dày và thời gian chờ càng ngắn.</li>
+</ul>
+<p>Với biến liên tục, xác suất được đọc qua <b>hàm phân phối tích luỹ</b> (cumulative distribution function):</p>
+<div class="formula"><span class="lbl">Hàm phân phối tích luỹ</span>F(a) = P(X ≤ a) = ∫<sub>−∞</sub><sup>a</sup> f(x) dx, &nbsp;&nbsp; P(a &lt; X ≤ b) = F(b) − F(a)</div>
+<p>Bản thân mật độ <b>không phải</b> là xác suất. Xác suất để X rơi đúng vào một điểm bằng 0; chỉ diện tích dưới đường mật độ trên một khoảng mới là xác suất. Vì vậy mật độ có thể lớn hơn 1: Đều(0; 0,5) có mật độ bằng 2 trên cả đoạn, nhưng diện tích vẫn là 0,5 × 2 = 1. Ngược lại, mật độ cho biết khả năng tương đối: f(x) · dx là xác suất để X rơi vào một khoảng rất hẹp quanh x.</p>
 
 <figure class="demo">
   <div class="stage" id="demo-04"></div>
   <div class="controls" id="ctl-04"></div>
-  <figcaption><b>Mô hình 4.1 – Cả họ phân phối trong không gian 3D.</b> Trục ngang là giá trị x, trục sâu là một tham số được quét (p, λ, σ hoặc độ rộng b − a), chiều cao là xác suất hoặc mật độ. Các lát cắt xám là các thành viên trong họ. Lát cắt xanh dương là tham số đang chọn; vạch xanh lá là kỳ vọng và dải trên sàn là ±1σ. Phân phối rời rạc hiện thành các cột, phân phối liên tục thành một tấm màn có diện tích bằng 1. Kéo để xoay.</figcaption>
+  <figcaption><b>Hình 4.1 – Khám phá các phân phối trong không gian 3D.</b> Phân phối rời rạc hiện thành các cột xác suất; phân phối liên tục là một dải liền có diện tích bằng 1. Trục ngang là giá trị x, trục sâu quét qua một tham số (p, λ, σ hoặc độ rộng b − a), nên mỗi lát cắt xám là một thành viên của họ. Lát xanh dương là tham số đang chọn; vạch xanh lá đánh dấu kỳ vọng, dải trên sàn là ±1σ. Chọn phân phối, kéo thanh trượt, rồi xoay để đọc hình dạng từ mọi phía.</figcaption>
 </figure>
 
 <figure class="demo">
   <div class="stage" id="demo2-04"></div>
   <div class="controls" id="ctl2-04"></div>
   <div class="readout" id="out2-04"></div>
-  <figcaption><b>Mô hình 4.2 – Khối xác suất, mật độ và hàm tích luỹ.</b> Chọn phân phối và tham số. Vạch xanh lá là kỳ vọng, dải mờ là ±1σ. Nút “Hàm tích luỹ F(x)” chuyển sang đồ thị F. Với nhị thức, bật “Phủ Poisson(np)” rồi tăng n trong khi giữ np nhỏ: hai phân phối gần như trùng nhau. “Rút 2.000 mẫu” vẽ tần suất thực nghiệm (viền cam) để so với lý thuyết.</figcaption>
+  <figcaption><b>Hình 4.2 – Cùng các phân phối ấy, kèm góc nhìn tích luỹ.</b> Chọn một phân phối và thay đổi tham số. Vạch xanh lá là kỳ vọng, dải mờ là ±1σ. Nút “Hàm tích luỹ F(x)” chuyển sang đồ thị F. Với nhị thức, bật “Phủ Poisson(np)” rồi tăng n trong khi giữ np nhỏ: hai phân phối gần như trùng khít. “Rút 2.000 mẫu” vẽ tần suất thực nghiệm (viền cam) để so với lý thuyết. Với hình học và mũ, dòng cuối của bảng số kiểm tra tính không nhớ.</figcaption>
 </figure>
 
-<h4>Lưu ý khi phỏng vấn</h4>
+<h4>Các phân phối liên hệ với nhau thế nào</h4>
+<p>Bảy phân phối không đứng riêng rẽ. Chúng nối với nhau thành một mạng, và biết các mối nối thì nhớ được cả mạng.</p>
+
+<p><b>Nhị thức → Poisson.</b> Khi n rất lớn, p rất nhỏ và np = λ giữ cố định, phân phối Nhị thức(n, p) tiến tới Poisson(λ). Thay p = λ/n vào hàm khối nhị thức:</p>
+<div class="formula">C(n, x) p<sup>x</sup>(1 − p)<sup>n − x</sup> = <span class="frac"><span>n(n − 1)⋯(n − x + 1)</span><span>n<sup>x</sup></span></span> · <span class="frac"><span>λ<sup>x</sup></span><span>x!</span></span> · (1 − <span class="frac"><span>λ</span><span>n</span></span>)<sup>n</sup> · (1 − <span class="frac"><span>λ</span><span>n</span></span>)<sup>−x</sup><br>khi n → ∞: &nbsp; 1 · <span class="frac"><span>λ<sup>x</sup></span><span>x!</span></span> · e<sup>−λ</sup> · 1</div>
+<p>Biến cố hiếm trong một tập rất lớn vì thế có phân phối Poisson: số khoản vỡ nợ trong một danh mục cho vay, số lệnh lớn xuất hiện trong một giây. Ví dụ: danh mục 1.000 khoản vay, mỗi khoản vỡ nợ độc lập với xác suất 0,4% mỗi năm. Số vụ vỡ nợ là Nhị thức(1.000; 0,004), với kỳ vọng 4 và phương sai 1.000 · 0,004 · 0,996 = 3,984. Xấp xỉ Poisson(4) cho P(X = 3) = 4<sup>3</sup>e<sup>−4</sup>/3! ≈ 0,1954, rất sát giá trị nhị thức chính xác 0,1956. Xác suất có không quá 2 vụ là e<sup>−4</sup>(1 + 4 + 8) = 13e<sup>−4</sup> ≈ 0,238 (giá trị chính xác 0,2375).</p>
+
+<p><b>Poisson ↔ mũ.</b> Nếu các biến cố đến theo một <b>quá trình Poisson</b> (Poisson process) với cường độ λ, khoảng cách giữa hai biến cố liên tiếp có phân phối mũ với trung bình 1/λ. Lý do: thời gian chờ T lớn hơn t khi và chỉ khi không có biến cố nào trong [0, t]. Số biến cố trong khoảng dài t là Poisson(λt), nên P(T &gt; t) = P(N = 0) = e<sup>−λt</sup>, đúng là hàm sống sót của phân phối mũ. Số đếm và thời gian chờ là hai cách nhìn vào cùng một quá trình. Ví dụ: giao dịch khớp trên một mã với tốc độ 3 lần mỗi phút. Thời gian chờ tới giao dịch kế tiếp có trung bình 1/3 phút = 20 giây, và P(chờ dưới 30 giây) = 1 − e<sup>−3 · 0,5</sup> = 1 − e<sup>−1,5</sup> ≈ 0,777.</p>
+
+<p><b>Tính không nhớ.</b> Phân phối hình học và phân phối mũ là hai phân phối duy nhất (lần lượt trong lớp rời rạc và lớp liên tục) có <b>tính không nhớ</b> (memorylessness):</p>
+<div class="formula"><span class="lbl">Chứng minh cho phân phối mũ; với hình học thay e<sup>−λt</sup> bằng (1 − p)<sup>t</sup></span>P(X &gt; s + t | X &gt; s) = <span class="frac"><span>P(X &gt; s + t)</span><span>P(X &gt; s)</span></span> = <span class="frac"><span>e<sup>−λ(s + t)</sup></span><span>e<sup>−λs</sup></span></span> = e<sup>−λt</sup> = P(X &gt; t)</div>
+<p>Đã chờ 5 phút mà chưa thấy giao dịch nào, thì thời gian chờ thêm kỳ vọng vẫn y như lúc mới bắt đầu. Quá khứ không để lại dấu vết. Điều này nghe trái trực giác vì ta quen với những thứ “sắp đến lượt”, như xe buýt chạy theo lịch. Nhưng một quá trình Poisson không có lịch: ở mỗi khoảnh khắc, khả năng biến cố xảy ra trong giây tới luôn như nhau.</p>
+
+<p><b>Tổng → chuẩn.</b> Cộng nhiều thành phần độc lập lại với nhau thì tổng tiến về phân phối chuẩn, bất kể từng thành phần có hình dạng gì. Đó là định lý giới hạn trung tâm (central limit theorem), nội dung của bài 6. Có thể thấy ngay điều này trong Hình 4.2: chọn nhị thức với n = 100, p = 0,5, hoặc Poisson với λ = 15, và đường bao đã có dạng hình chuông.</p>
+
+<h4>Hàm của một biến ngẫu nhiên</h4>
+<p>Giả sử đã biết phân phối của X, và Y = g(X) với g là hàm tăng ngặt. Khi đó sự kiện g(X) ≤ a trùng với sự kiện X ≤ g<sup>−1</sup>(a), nên</p>
+<div class="formula"><span class="lbl">Phương pháp hàm phân phối tích luỹ</span>F<sub>Y</sub>(a) = P(g(X) ≤ a) = F<sub>X</sub>(g<sup>−1</sup>(a))</div>
+<p>Muốn có mật độ thì lấy đạo hàm hai vế theo a, dùng quy tắc hàm hợp: f<sub>Y</sub>(a) = f<sub>X</sub>(g<sup>−1</sup>(a)) · (g<sup>−1</sup>)′(a). Nếu g giảm ngặt thì bất đẳng thức đổi chiều, F<sub>Y</sub>(a) = 1 − F<sub>X</sub>(g<sup>−1</sup>(a)), và trong công thức mật độ ta lấy trị tuyệt đối của đạo hàm.</p>
+<p><b>Ví dụ 1: phân phối log-chuẩn.</b> Nếu X có phân phối chuẩn thì Y = e<sup>X</sup> có phân phối <b>log-chuẩn</b> (lognormal). Ở đây g<sup>−1</sup>(a) = ln a, nên F<sub>Y</sub>(a) = F<sub>X</sub>(ln a) và f<sub>Y</sub>(a) = f<sub>X</sub>(ln a)/a với a &gt; 0. Đây là mô hình chuẩn mực cho giá tài sản, vốn không thể âm: lợi suất log có dạng chuẩn, còn bản thân giá thì log-chuẩn. Bài 14 dùng lại phân phối này cho diện tích nhà ở. Một hệ quả đáng nhớ: E[Y] = e<sup>μ + σ²/2</sup>, lớn hơn e<sup>μ</sup>. Đây lại là ví dụ cho E[g(X)] ≠ g(E[X]).</p>
+<p><b>Ví dụ 2: sinh phân phối mũ từ phân phối đều.</b> Cho U ~ Đều(0, 1) và X = −ln(1 − U)/λ, một hàm tăng của U. Khi đó P(X ≤ a) = P(U ≤ 1 − e<sup>−λa</sup>) = 1 − e<sup>−λa</sup>, đúng là hàm phân phối của Mũ(λ). Kỹ thuật này, gọi là phép biến đổi ngược (inverse transform), là cách Hình 4.2 rút mẫu cho phân phối mũ và hình học.</p>
+
+<div class="note"><b>Ứng dụng trên bàn giao dịch.</b>
 <ul>
-  <li>Trước khi tính, hãy hỏi “biến này đếm gì hay đo gì”. Đếm số lần thành công trong n lần là nhị thức; đếm số lần thử tới khi thành công là hình học; đếm biến cố trong một khoảng thời gian là Poisson.</li>
-  <li>Phân phối hình học có hai quy ước: đếm số phép thử (trung bình 1/p) hoặc số lần thất bại (trung bình (1 − p)/p). Nói rõ mình dùng quy ước nào.</li>
-  <li>Câu hỏi “đã chờ s phút, còn phải chờ bao lâu” là câu hỏi về tính không nhớ. Đáp án vẫn là 1/λ.</li>
-  <li>Nên thuộc lòng: P(|Z| &lt; 1,96) = 95% với Z chuẩn tắc, và lợi suất thực tế có đuôi dày hơn phân phối chuẩn. Vì thế các bàn giao dịch kiểm tra sức chịu đựng ở mức xa hơn mô hình chuẩn dự báo.</li>
-</ul>
+  <li><b>Poisson</b>: dòng lệnh đến theo quá trình Poisson là điểm xuất phát của hầu hết các mô hình vi cấu trúc thị trường (market microstructure). Khoảng cách theo phân phối mũ giữa các lệnh là cơ sở để ước lượng vị trí của mình trong hàng đợi.</li>
+  <li><b>Nhị thức</b>: cây nhị thức (binomial tree) định giá quyền chọn bằng cách cho giá cổ phiếu đi lên hoặc đi xuống ở mỗi bước.</li>
+  <li><b>Chuẩn</b>: lợi suất phân phối chuẩn là phép xấp xỉ đầu tiên trong các mô hình rủi ro. Lợi suất thực tế có đuôi dày hơn (fat tails), nên các bàn giao dịch luôn kiểm tra sức chịu đựng (stress test) ở những kịch bản xa hơn mức mô hình chuẩn dự báo.</li>
+  <li><b>Hình học</b>: “phải yết bao nhiêu lần ở mức giá này thì mới được khớp?”. Nếu mỗi lần yết có xác suất khớp 0,2 thì trung bình là 1/0,2 = 5 lần.</li>
+</ul></div>
+
+<h4>Viết bằng code</h4>
+<p>Đoạn TypeScript dưới đây tự cài các hàm khối và hàm phân phối cần thiết, không dùng thư viện ngoài, rồi in ra những con số đã dùng trong bài. Chạy bằng <span class="kbd">bun distributions.ts</span>.</p>
+<pre class="code"><code><span class="c">// log(n!) để tính hệ số tổ hợp mà không tràn số</span>
+const logFact = (n: number) =&gt; { let s = 0; for (let i = 2; i &lt;= n; i++) s += Math.log(i); return s; };
+const binomPmf = (n: number, p: number, k: number) =&gt;
+  Math.exp(logFact(n) - logFact(k) - logFact(n - k) + k * Math.log(p) + (n - k) * Math.log(1 - p));
+const poissonPmf = (lam: number, k: number) =&gt; Math.exp(k * Math.log(lam) - lam - logFact(k));
+const expCdf = (rate: number, t: number) =&gt; 1 - Math.exp(-rate * t);
+
+<span class="c">// Hàm phân phối chuẩn tắc qua xấp xỉ erf, và phân vị bằng chia đôi</span>
+function erf(x: number) {
+  const s = Math.sign(x); x = Math.abs(x);
+  const t = 1 / (1 + 0.3275911 * x);
+  const y = ((((1.061405429 * t - 1.453152027) * t + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t;
+  return s * (1 - y * Math.exp(-x * x));
+}
+const normCdf = (z: number) =&gt; 0.5 * (1 + erf(z / Math.SQRT2));
+function normPpf(q: number) {
+  let lo = -10, hi = 10;
+  for (let i = 0; i &lt; 60; i++) { const mid = (lo + hi) / 2; if (normCdf(mid) &lt; q) lo = mid; else hi = mid; }
+  return (lo + hi) / 2;
+}
+
+const n = 20, p = 0.3;
+console.log(n * p, (n * p * (1 - p)).toFixed(1));            <span class="c">// nhị thức: 6 4.2</span>
+console.log(poissonPmf(4, 2).toFixed(3));                    <span class="c">// P(đúng 2 biến cố), λ = 4: 0.147</span>
+console.log(1 / 0.2);                                        <span class="c">// hình học p = 0,2: trung bình 5 lần thử</span>
+console.log(expCdf(2, 1).toFixed(3));                        <span class="c">// P(chờ &lt; 1) với tốc độ 2: 0.865</span>
+console.log(normPpf(0.975).toFixed(2));                      <span class="c">// 1.96, ngưỡng z hai phía 95%</span>
+console.log(binomPmf(1000, 0.004, 3).toFixed(4), poissonPmf(4, 3).toFixed(4));
+<span class="c">// nhị thức → Poisson: 0.1956 so với 0.1954</span></code></pre>
+
+<details class="qa"><summary>Tự kiểm tra: giao dịch được in ra theo một quá trình Poisson với tốc độ 3 lần mỗi phút. Bạn đã chờ 40 giây mà chưa có giao dịch nào. Thời gian chờ thêm kỳ vọng là bao nhiêu: 20 giây, 40 giây, 20 giây trừ đi thời gian đã chờ, hay vẫn 20 giây như lúc bắt đầu?</summary>
+<p>Đáp án: <b>vẫn 20 giây, như lúc bắt đầu</b>.</p>
+<ol>
+  <li>Khoảng cách giữa các giao dịch có phân phối Mũ(λ) với λ = 3 lần/phút, trung bình 1/λ = 1/3 phút = 20 giây.</li>
+  <li>Phân phối mũ không nhớ: P(T &gt; 40 + t | T &gt; 40) = P(T &gt; t) với mọi t. Phần thời gian chờ còn lại có cùng phân phối với thời gian chờ ban đầu.</li>
+  <li>Vậy thời gian chờ thêm kỳ vọng vẫn là 20 giây.</li>
+</ol>
+<p>Phương án “20 giây trừ thời gian đã chờ” là lối suy nghĩ “sắp đến lượt”, chỉ đúng với những quá trình có lịch cố định. Thời gian đã chờ không cho bạn biết gì về quá trình Poisson.</p>
+</details>
 
 <script>
 (()=>{
@@ -120,7 +177,7 @@
     const out=[]; for(let x=Math.ceil(lo/st)*st;x<=hi+1e-9;x+=st) out.push(Math.round(x*1e6)/1e6); return out; }
   const poly=(ctx,pts)=>{ ctx.beginPath(); pts.forEach((p,j)=>j?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1])); ctx.closePath(); };
 
-  /* ---------- Mô hình 4.1: cả họ phân phối trong 3D ---------- */
+  /* ---------- Hình 4.1: cả họ phân phối trong 3D ---------- */
   {
     const stage=document.getElementById('demo-04'), ctl=document.getElementById('ctl-04');
     const st={d:'pois',P:defaults('pois')};
@@ -172,7 +229,7 @@
     panel(ctl,st,()=>cv.redraw());
   }
 
-  /* ---------- Mô hình 4.2: khối xác suất, mật độ, hàm tích luỹ ---------- */
+  /* ---------- Hình 4.2: khối xác suất, mật độ, hàm tích luỹ ---------- */
   {
     const stage=document.getElementById('demo2-04'), ctl=document.getElementById('ctl2-04'), out=document.getElementById('out2-04');
     const st={d:'binom',P:defaults('binom'),cdf:false,pois:false,smp:null};

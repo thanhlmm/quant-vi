@@ -2,65 +2,157 @@
 <header>
   <span class="num">05</span>
   <h3>Phân phối đồng thời, hiệp phương sai và hệ số tương quan</h3>
-  <p class="meta">12 phút · Ứng dụng: phòng ngừa rủi ro, giao dịch cặp, mô hình rủi ro · <a href="https://hft.md/learn/correlation/">Bài gốc (tiếng Anh)</a></p>
+  <p class="meta">Phần 1 · Xác suất · Bài 5 · 12 phút · <a href="https://hft.md/learn/correlation/">Bài gốc (tiếng Anh)</a></p>
 </header>
 
-<p>Một biến ngẫu nhiên chỉ đủ để định giá một ván cược. Giao dịch thực tế xoay quanh các cặp và danh mục: một cổ phiếu và công cụ phòng ngừa của nó, một tín hiệu và lợi suất ngày hôm sau. Muốn làm việc với chúng, ta cần mô tả hai đại lượng ngẫu nhiên biến động cùng nhau thế nào.</p>
+<p><i>Bài này mô tả cách hai biến ngẫu nhiên cùng biến động, chỉ ra điều mà hệ số tương quan không nhìn thấy, và giải câu đố ba tương quan.</i></p>
 
-<h4>Ý chính</h4>
+<p>Các bài trước làm việc với một biến ngẫu nhiên tại một thời điểm. Như thế là đủ để định giá một ván cược đơn lẻ. Thế nhưng phần lớn công việc trên bàn giao dịch liên quan tới cặp và danh mục: một cổ phiếu đi cùng công cụ phòng ngừa của nó, một tín hiệu đi cùng lợi suất ngày hôm sau, hàng nghìn mã trong một mô hình rủi ro. Câu hỏi trung tâm luôn là: khi đại lượng này lệch khỏi mức bình thường, đại lượng kia có lệch theo không, và lệch theo hướng nào? Bài này xây dựng ngôn ngữ để trả lời câu hỏi đó.</p>
+
+<h4>Phân phối đồng thời và phân phối biên</h4>
+<p>Muốn mô tả đầy đủ cặp (X, Y), ta cần <b>phân phối đồng thời</b> (joint distribution): xác suất để X và Y <i>cùng lúc</i> nhận các giá trị cho trước. Với biến rời rạc, đó là hàm khối xác suất đồng thời:</p>
+<div class="formula"><span class="lbl">Trường hợp rời rạc</span>p<sub>X,Y</sub>(x, y) = P(X = x, Y = y)</div>
+<p>Với biến liên tục, ta bắt đầu từ <b>hàm phân phối tích luỹ đồng thời</b> (joint CDF) F<sub>X,Y</sub>(x, y) = P(X ≤ x, Y ≤ y), tức xác suất để điểm (X, Y) rơi vào góc phần tư phía dưới bên trái của (x, y). <b>Mật độ đồng thời</b> (joint density) là đạo hàm riêng hỗn hợp của hàm này:</p>
+<div class="formula"><span class="lbl">Trường hợp liên tục</span>f<sub>X,Y</sub>(x, y) = <span class="frac"><span>∂<sup>2</sup> F<sub>X,Y</sub>(x, y)</span><span>∂x ∂y</span></span>, &nbsp;&nbsp; F<sub>X,Y</sub>(x, y) = P(X ≤ x, Y ≤ y)</div>
+<p>Có thể hình dung f<sub>X,Y</sub> như một địa hình trên mặt phẳng: xác suất để (X, Y) rơi vào một vùng bằng thể tích khối đất nằm trên vùng đó. Tổng thể tích của cả địa hình bằng 1.</p>
+<p>Từ phân phối đồng thời luôn lấy lại được phân phối của từng biến riêng lẻ, gọi là <b>phân phối biên</b> (marginal distribution). Cách làm là cộng dồn, hoặc tích phân, theo biến còn lại:</p>
+<div class="formula"><span class="lbl">Phân phối biên</span>p<sub>X</sub>(x) = Σ<sub>y</sub> p<sub>X,Y</sub>(x, y), &nbsp;&nbsp;&nbsp; f<sub>X</sub>(x) = ∫ f<sub>X,Y</sub>(x, y) dy</div>
+<p>Chiều ngược lại thì không được: biết hai phân phối biên chưa đủ để dựng lại phân phối đồng thời. Toàn bộ thông tin về cách hai biến “nói chuyện” với nhau nằm ở phần mà phân phối biên đã bỏ đi.</p>
+<p>Trường hợp đặc biệt là khi hai biến không nói chuyện gì với nhau. X và Y <b>độc lập</b> (independent) khi và chỉ khi phân phối đồng thời tách thành tích hai phân phối biên, tại mọi cặp giá trị:</p>
+<div class="formula"><span class="lbl">Điều kiện độc lập</span>f<sub>X,Y</sub>(x, y) = f<sub>X</sub>(x) · f<sub>Y</sub>(y) &nbsp;&nbsp; với mọi x và y</div>
+<p><b>Ví dụ.</b> Hai mã cổ phiếu, mỗi ngày mỗi mã hoặc tăng (giá trị 1) hoặc không tăng (giá trị 0). Bảng phân phối đồng thời như sau.</p>
+<table class="t">
+  <tr><th></th><th>Y = 0</th><th>Y = 1</th><th>Biên của X</th></tr>
+  <tr><th>X = 0</th><td>0,4</td><td>0,1</td><td>0,5</td></tr>
+  <tr><th>X = 1</th><td>0,1</td><td>0,4</td><td>0,5</td></tr>
+  <tr><th>Biên của Y</th><td>0,5</td><td>0,5</td><td>1</td></tr>
+</table>
+<p>Cột cuối và hàng cuối là phân phối biên, có được bằng cách cộng theo hàng và theo cột. Mỗi mã tăng với xác suất 0,5. Nếu hai mã độc lập, ô (1, 1) phải bằng 0,5 · 0,5 = 0,25. Thực tế ô này bằng 0,4, nên hai mã phụ thuộc nhau: chúng thích tăng cùng ngày. Lưu ý rằng một bảng khác với các ô 0,25 ở khắp nơi cũng cho đúng hai phân phối biên ấy. Đó chính là thông tin mà phân phối biên đánh mất.</p>
+
+<h4>Hiệp phương sai</h4>
+<p>Phân phối đồng thời chứa mọi thứ, nhưng thường quá nhiều để làm việc. Ta cần một con số tóm tắt mức độ hai biến cùng lệch khỏi trung bình. Đó là <b>hiệp phương sai</b> (covariance):</p>
+<div class="formula"><span class="lbl">Định nghĩa và dạng tính toán</span>Cov(X, Y) = E[(X − E[X])(Y − E[Y])] = E[XY] − E[X] E[Y]</div>
+<p>Dạng thứ hai có được bằng cách khai triển tích trong ngoặc. Đặt μ<sub>X</sub> = E[X], μ<sub>Y</sub> = E[Y]. Khi đó E[(X − μ<sub>X</sub>)(Y − μ<sub>Y</sub>)] = E[XY] − μ<sub>Y</sub> E[X] − μ<sub>X</sub> E[Y] + μ<sub>X</sub>μ<sub>Y</sub> = E[XY] − μ<sub>X</sub>μ<sub>Y</sub>. Cách nhớ: <i>kỳ vọng của tích trừ đi tích của các kỳ vọng</i>.</p>
+<p>Ý nghĩa của dấu nằm ở dạng thứ nhất. Tích (X − μ<sub>X</sub>)(Y − μ<sub>Y</sub>) dương khi hai biến cùng nằm trên trung bình hoặc cùng nằm dưới trung bình, và âm khi một biến ở trên còn biến kia ở dưới. Hiệp phương sai dương nghĩa là trường hợp “cùng phía” chiếm ưu thế. Hiệp phương sai âm nghĩa là hai biến thường đi ngược nhau.</p>
+<p>Một số tính chất dùng thường xuyên:</p>
 <ul>
-  <li><b>Phân phối đồng thời</b> (joint distribution) mô tả đầy đủ cặp (X, Y). Muốn lấy lại <b>phân phối biên</b> (marginal distribution) của X, ta cộng hoặc tích phân theo Y.</li>
-  <li>X và Y <b>độc lập</b> khi và chỉ khi phân phối đồng thời tách được thành tích hai phân phối biên, tại mọi điểm (x, y).</li>
-  <li><b>Hiệp phương sai</b> (covariance) bằng kỳ vọng của tích trừ tích các kỳ vọng. Nó dương khi hai biến có xu hướng cùng nằm trên trung bình.</li>
-  <li><b>Hệ số tương quan</b> (correlation) là hiệp phương sai đã chuẩn hoá, luôn nằm trong [−1, 1] và không phụ thuộc đơn vị đo. ρ = ±1 nghĩa là một biến là hàm tuyến tính chính xác của biến kia.</li>
-  <li>Độc lập thì tương quan bằng 0, nhưng chiều ngược lại sai. ρ = 0 chỉ nói không có quan hệ <i>tuyến tính</i>. Ví dụ Y = X<sup>2</sup> với X đối xứng quanh 0.</li>
-  <li>Mọi ma trận tương quan hợp lệ phải <b>nửa xác định dương</b> (positive semidefinite). Vì vậy ba hệ số tương quan của ba biến không thể chọn tuỳ ý.</li>
+  <li>Cov(X, X) = Var(X). Phương sai chỉ là hiệp phương sai của một biến với chính nó.</li>
+  <li>Hiệp phương sai <b>song tuyến tính</b> (bilinear): Cov(aX<sub>1</sub> + bX<sub>2</sub>, Y) = a Cov(X<sub>1</sub>, Y) + b Cov(X<sub>2</sub>, Y), và tương tự với đối số thứ hai. Cộng hằng số vào một biến không làm thay đổi hiệp phương sai.</li>
+  <li>Hệ quả trực tiếp: Var(X + Y) = Var(X) + Var(Y) + 2 Cov(X, Y). Đây là lý do danh mục gồm các tài sản tương quan dương rủi ro hơn tổng các phần riêng lẻ gợi ý.</li>
+  <li>Nếu X và Y độc lập thì Cov(X, Y) = 0. Thật vậy, khi mật độ tách thành tích, tích phân của xy f<sub>X</sub>(x) f<sub>Y</sub>(y) cũng tách thành tích, nên E[XY] = E[X] E[Y].</li>
+  <li>Chiều ngược lại <b>sai</b>. Hiệp phương sai bằng 0 không kéo theo độc lập. Mục sau sẽ đưa ra phản ví dụ.</li>
 </ul>
+<p><b>Ví dụ (tiếp).</b> Với bảng hai mã cổ phiếu ở trên: E[X] = E[Y] = 0,5. Tích XY chỉ bằng 1 khi cả hai cùng tăng, nên E[XY] = P(1, 1) = 0,4. Vậy Cov(X, Y) = 0,4 − 0,5 · 0,5 = 0,15. Dấu dương khớp với nhận xét rằng hai mã thích tăng cùng ngày.</p>
 
-<h4>Công thức</h4>
-<div class="formula"><span class="lbl">Phân phối biên và điều kiện độc lập</span>p<sub>X</sub>(x) = Σ<sub>y</sub> p<sub>X,Y</sub>(x, y), &nbsp; f<sub>X</sub>(x) = ∫ f<sub>X,Y</sub>(x, y) dy; &nbsp;&nbsp; độc lập ⇔ f<sub>X,Y</sub>(x, y) = f<sub>X</sub>(x) · f<sub>Y</sub>(y)</div>
-<div class="formula"><span class="lbl">Hiệp phương sai và các tính chất</span>Cov(X, Y) = E[(X − E[X])(Y − E[Y])] = E[XY] − E[X]E[Y]; &nbsp; Cov(X, X) = Var(X); &nbsp; Cov(aX<sub>1</sub> + bX<sub>2</sub>, Y) = a Cov(X<sub>1</sub>, Y) + b Cov(X<sub>2</sub>, Y)</div>
-<div class="formula"><span class="lbl">Hệ số tương quan</span>ρ(X, Y) = <span class="frac"><span>Cov(X, Y)</span><span>√(Var(X) · Var(Y))</span></span> ∈ [−1, 1]</div>
-<div class="formula"><span class="lbl">Tỉ lệ phòng ngừa tốt nhất của X bằng Y (cũng là hệ số góc hồi quy X theo Y)</span>h* = <span class="frac"><span>Cov(X, Y)</span><span>Var(Y)</span></span></div>
-<div class="formula"><span class="lbl">Ràng buộc cho ba biến: với ρ<sub>XY</sub> = a, ρ<sub>YZ</sub> = b, ρ<sub>XZ</sub> = c, cần det ≥ 0</span>det = 1 − a<sup>2</sup> − b<sup>2</sup> − c<sup>2</sup> + 2abc ≥ 0 &nbsp;⇔&nbsp; c ∈ [ ab − √((1 − a<sup>2</sup>)(1 − b<sup>2</sup>)), &nbsp;ab + √((1 − a<sup>2</sup>)(1 − b<sup>2</sup>)) ]</div>
-
-<h4>Ví dụ minh hoạ: từ bảng đồng thời tới bài toán ba tương quan</h4>
-<p>Hai mã cổ phiếu mỗi ngày tăng (1) hoặc không tăng (0). Phân phối đồng thời: P(0, 0) = 0,4; P(0, 1) = 0,1; P(1, 0) = 0,1; P(1, 1) = 0,4.</p>
-<ol>
-  <li>Phân phối biên: P(X = 1) = 0,1 + 0,4 = 0,5, tương tự P(Y = 1) = 0,5. Vậy E[X] = E[Y] = 0,5 và Var(X) = Var(Y) = 0,25.</li>
-  <li>E[XY] = P(1, 1) = 0,4, nên Cov(X, Y) = 0,4 − 0,5 · 0,5 = 0,15.</li>
-  <li>ρ = 0,15 / √(0,25 · 0,25) = 0,6. Hai biến không độc lập, vì P(1, 1) = 0,4 khác P(X = 1) · P(Y = 1) = 0,25.</li>
-</ol>
-<p>Cho X phân phối đều trên [−1, 1] và Y = |X|. Do đối xứng, E[XY] = E[X|X|] = 0 và E[X] = 0, nên Cov(X, Y) = 0. Thế nhưng biết X là biết chính xác Y. Hai biến không tương quan mà vẫn phụ thuộc hoàn toàn.</p>
-<p>Câu hỏi được ghi nhận ở Jane Street: Corr(X, Y) = 0,9 và Corr(Y, Z) = 0,8. Hỏi khoảng chặt nhất của c = Corr(X, Z)?</p>
-<ol>
-  <li>Ma trận tương quan phải nửa xác định dương. Riêng định thức của nó phải không âm.</li>
-  <li>det = 1 − 0,81 − 0,64 − c<sup>2</sup> + 2 · 0,72 · c = −c<sup>2</sup> + 1,44c − 0,45 ≥ 0.</li>
-  <li>Giải bất phương trình bậc hai: c ∈ 0,72 ± √(0,19 · 0,36) = 0,72 ± 0,2615, tức 0,458 ≤ c ≤ 0,982.</li>
-  <li>Kiểm tra bằng hình học (bài 03): X lệch Y một góc arccos 0,9 ≈ 25,8°, Z lệch Y một góc arccos 0,8 ≈ 36,9°. Góc giữa X và Z nằm trong [11,0°; 62,7°], và cos của hai đầu mút cho đúng hai cận trên.</li>
-</ol>
+<h4>Hệ số tương quan</h4>
+<p>Hiệp phương sai có một nhược điểm: nó mang đơn vị của tích hai biến. Nếu X tính bằng đô la và Y tính bằng số cổ phiếu, hiệp phương sai có đơn vị “đô la nhân cổ phiếu”. Đổi đơn vị từ đô la sang xu sẽ nhân con số lên 100 lần dù quan hệ thực không đổi. Vì vậy con số 0,15 tự nó không cho biết quan hệ mạnh hay yếu. Cách sửa là chia cho độ lệch chuẩn của từng biến, thu được <b>hệ số tương quan</b> (correlation):</p>
+<div class="formula"><span class="lbl">Hệ số tương quan Pearson</span>ρ(X, Y) = <span class="frac"><span>Cov(X, Y)</span><span>√(Var(X) · Var(Y))</span></span> &nbsp;∈ [−1, 1]</div>
+<p>Hệ số này không có đơn vị và không đổi khi ta đổi thang đo của từng biến theo một hàm tuyến tính tăng. Việc nó luôn nằm trong [−1, 1] là hệ quả của bất đẳng thức Cauchy–Schwarz: |Cov(X, Y)| ≤ σ<sub>X</sub> σ<sub>Y</sub>. Ở bài 03, ta đã thấy cách nhìn hình học tương ứng: nếu coi mỗi biến đã trừ trung bình là một mũi tên, hiệp phương sai là tích vô hướng, độ lệch chuẩn là độ dài, và ρ là cosin của góc giữa hai mũi tên.</p>
+<p>Đọc các giá trị đặc biệt:</p>
+<ul>
+  <li>ρ = 1 hoặc ρ = −1 nghĩa là một biến là hàm tuyến tính <i>chính xác</i> của biến kia, Y = a + bX, với dấu của b trùng dấu của ρ. Hai mũi tên nằm trên cùng một đường thẳng.</li>
+  <li>ρ = 0 nghĩa là không có quan hệ <i>tuyến tính</i>. Điều đó không giống với không có quan hệ nào cả.</li>
+</ul>
+<p><b>Ví dụ (tiếp).</b> Mỗi mã là một biến Bernoulli với p = 0,5, nên Var(X) = Var(Y) = 0,5 · 0,5 = 0,25. Do đó ρ = 0,15 / √(0,25 · 0,25) = 0,15 / 0,25 = 0,6. Đây là một quan hệ cùng chiều khá mạnh, nhưng còn xa mức tuyến tính hoàn hảo.</p>
+<p><b>Phản ví dụ kinh điển.</b> Cho X phân phối đều trên [−1, 1] và Y = |X|. Hàm X|X| là hàm lẻ, còn X đối xứng quanh 0, nên E[XY] = E[X|X|] = 0. Cùng với E[X] = 0, ta có Cov(X, Y) = 0 − 0 · E[Y] = 0. Thế nhưng biết X là biết chính xác Y. Hai biến không tương quan mà phụ thuộc hoàn toàn. Lý do: quan hệ giữa chúng có hình chữ V. Nhánh trái đi xuống, nhánh phải đi lên, và hai xu hướng tuyến tính triệt tiêu nhau. Cặp X chuẩn tắc và Y = X<sup>2</sup> cũng vậy, vì E[X<sup>3</sup>] = 0.</p>
 
 <figure class="demo">
   <div class="stage" id="demo-05"></div>
   <div class="controls" id="ctl-05"></div>
   <div class="readout" id="out-05"></div>
-  <figcaption><b>Mô hình 5.1 – Mặt mật độ chuẩn hai chiều trong không gian 3D.</b> Hai biến đã chuẩn hoá về trung bình 0, độ lệch chuẩn 1; chiều cao được co theo đỉnh của mặt. Tăng ρ thì ngọn đồi xoay về đường chéo, còn hai đường mật độ biên trên vách (xám) không đổi. Chấm trên sàn là 400 mẫu, vòng tím chứa khoảng 68% số mẫu. Đường cam trên mặt là lát cắt tại X = x₀, tức phân phối có điều kiện của Y; tâm của nó nằm trên đường hồi quy ρx (vạch đứt cam). Chế độ “Y = X²” cho thấy quan hệ phụ thuộc hoàn toàn mà tương quan gần 0. Kéo để xoay.</figcaption>
+  <figcaption><b>Hình 5.1 – Mật độ đồng thời như một địa hình.</b> Mô hình 3D của mật độ chuẩn hai chiều, với hai biến đã chuẩn hoá về trung bình 0 và độ lệch chuẩn 1; chiều cao được co theo đỉnh của mặt. Kéo thanh trượt ρ: ngọn đồi xoay dần về đường chéo, còn hai đường mật độ biên vẽ trên vách (màu xám) đứng yên. Đó là minh hoạ trực tiếp cho việc phân phối biên không chứa thông tin về tương quan. Chấm trên sàn là 400 mẫu, vòng tím chứa khoảng 68% số mẫu. Đường cam trên mặt là lát cắt tại X = x₀, tức phân phối có điều kiện của Y; tâm của nó nằm trên đường ρx (vạch đứt cam). Nút “Y = X²” chuyển sang trường hợp phụ thuộc hoàn toàn mà tương quan gần 0. Kéo chuột để xoay.</figcaption>
 </figure>
+
+<figure class="demo">
+  <div class="stage" id="demo3-05"></div>
+  <div class="controls" id="ctl3-05"></div>
+  <div class="readout" id="out3-05"></div>
+  <figcaption><b>Hình 5.2 – Đám mây điểm và hệ số tương quan.</b> 120 cặp điểm chuẩn hoá. Kéo thanh trượt ρ và quan sát đám mây nghiêng dần; đường cam là đường bình phương tối thiểu, có hệ số góc bằng Cov(X, Y)/Var(X). Nút “Y = X²” thay Y bằng một hàm bậc hai của X: Y bị X quyết định hoàn toàn, vậy mà tương quan mẫu gần 0. Nút “Thêm 3 ngoại lai” chèn ba điểm cực đoan ở góc trên bên phải; khung số so sánh r trước và sau, cho thấy tương quan mẫu mong manh đến mức nào.</figcaption>
+</figure>
+
+<h4>Câu đố ba tương quan</h4>
+<p>Với hai biến, mọi giá trị ρ trong [−1, 1] đều đạt được. Với ba biến trở lên thì không: các hệ số tương quan ràng buộc lẫn nhau. Đây là một câu hỏi phỏng vấn được nhắc đến nhiều.</p>
+<details class="qa"><summary>Biết Corr(X, Y) = 0,9 và Corr(Y, Z) = 0,8. Khoảng chặt nhất có thể của Corr(X, Z) là gì? <span class="firm">(Jane Street, được ghi nhận)</span></summary>
+<p><b>Trực giác.</b> X gần như đi cùng Y, và Z cũng khá sát Y. Vì thế X và Z không thể quá xa nhau, nhưng cũng không nhất thiết trùng nhau. Đáp số phải là một khoảng nằm hẳn trong vùng dương.</p>
+<p><b>Bước 1: điều kiện cần.</b> Mọi ma trận tương quan, như mọi ma trận hiệp phương sai, đều <b>nửa xác định dương</b> (positive semidefinite): với mọi vectơ trọng số w, phương sai của danh mục w<sub>1</sub>X + w<sub>2</sub>Y + w<sub>3</sub>Z bằng w<sup>T</sup>Cw và không thể âm. Tương đương, mọi giá trị riêng của ma trận đều không âm. Định thức là tích các giá trị riêng nên cũng không âm.</p>
+<p><b>Bước 2: tính định thức.</b> Đặt c = Corr(X, Z). Ma trận tương quan là</p>
+<div class="formula">C = ( 1 &nbsp; 0,9 &nbsp; c ; &nbsp; 0,9 &nbsp; 1 &nbsp; 0,8 ; &nbsp; c &nbsp; 0,8 &nbsp; 1 )</div>
+<p>Khai triển định thức của ma trận tương quan 3 × 3 tổng quát, với a = ρ<sub>XY</sub>, b = ρ<sub>YZ</sub>, ta được det C = 1 − a<sup>2</sup> − b<sup>2</sup> − c<sup>2</sup> + 2abc. Thay số: det C = 1 − 0,81 − 0,64 − c<sup>2</sup> + 2 · 0,9 · 0,8 · c = −c<sup>2</sup> + 1,44c − 0,45.</p>
+<p><b>Bước 3: giải bất phương trình.</b> Cần −c<sup>2</sup> + 1,44c − 0,45 ≥ 0, tức c nằm giữa hai nghiệm của tam thức. Hai nghiệm là c = 0,72 ± √(0,72<sup>2</sup> − 0,45) = 0,72 ± √0,0684 = 0,72 ± 0,2615. Vậy</p>
+<div class="formula"><span class="lbl">Đáp số</span>0,458 ≤ Corr(X, Z) ≤ 0,982</div>
+<p><b>Bước 4: vì sao điều kiện này cũng đủ.</b> Một ma trận đối xứng là nửa xác định dương khi mọi định thức con chính đều không âm. Các định thức con 1 × 1 bằng 1; các định thức con 2 × 2 có dạng 1 − ρ<sup>2</sup>, tự động không âm khi |ρ| ≤ 1. Do đó với ba biến, chỉ còn điều kiện định thức là có tác dụng. Mỗi giá trị c trong khoảng trên đều thực sự đạt được bởi một bộ ba biến nào đó, nên khoảng là chặt.</p>
+<p><b>Công thức tổng quát.</b> Viết det C ≥ 0 thành tam thức theo c: −c<sup>2</sup> + 2ab · c + (1 − a<sup>2</sup> − b<sup>2</sup>) ≥ 0. Biệt thức rút gọn là a<sup>2</sup>b<sup>2</sup> + 1 − a<sup>2</sup> − b<sup>2</sup> = (1 − a<sup>2</sup>)(1 − b<sup>2</sup>). Suy ra</p>
+<div class="formula"><span class="lbl">Khoảng khả thi cho tương quan thứ ba</span>c ∈ ρ<sub>XY</sub> ρ<sub>YZ</sub> ± √((1 − ρ<sub>XY</sub><sup>2</sup>)(1 − ρ<sub>YZ</sub><sup>2</sup>))</div>
+<p><b>Cách nhìn hình học.</b> Theo bài 03, tương quan là cosin của góc giữa hai mũi tên. X lệch khỏi Y một góc arccos 0,9 ≈ 25,8°, còn Z lệch khỏi Y một góc arccos 0,8 ≈ 36,9°. Góc giữa X và Z nhỏ nhất khi X và Z nằm cùng phía của Y, bằng 36,9° − 25,8° = 11,0°; lớn nhất khi chúng nằm hai phía, bằng 25,8° + 36,9° = 62,7°. Lấy cosin hai đầu mút: cos 11,0° ≈ 0,982 và cos 62,7° ≈ 0,458, đúng hai cận đã tìm. Công thức tổng quát chính là công thức cos(α ∓ β) = cos α cos β ± sin α sin β.</p>
+<p><b>Khi trả lời phỏng vấn</b>, nên trình bày cả hai cách: điều kiện định thức cho lời giải chặt chẽ, còn hình ảnh mũi tên cho thấy bạn hiểu vì sao đáp số như vậy, và giúp kiểm tra nhanh mà không cần giấy bút.</p>
+</details>
 
 <figure class="demo">
   <div class="stage" id="demo2-05"></div>
   <div class="controls" id="ctl2-05"></div>
   <div class="readout" id="out2-05"></div>
-  <figcaption><b>Mô hình 5.2 – Bài toán ba tương quan.</b> Đồ thị bên trái là định thức của ma trận tương quan theo c = Corr(X, Z). Chỉ vùng xanh lá, nơi định thức không âm, là đạt được. Hình bên phải vẽ ba biến thành ba mũi tên đơn vị. Z có thể nằm cùng phía với X so với Y (Z₊, cho cận trên của c) hoặc khác phía (Z₋, cho cận dưới). Kéo thanh trượt c để thử một giá trị cụ thể.</figcaption>
+  <figcaption><b>Hình 5.3 – Cận của tương quan thứ ba.</b> Đồ thị bên trái là định thức của ma trận tương quan, xem như hàm của tương quan chưa biết c = Corr(X, Z). Chỉ vùng xanh lá, nơi định thức không âm, là đạt được. Hình bên phải vẽ ba biến thành ba mũi tên đơn vị: Z nằm cùng phía với X so với Y (Z₊) cho cận trên, nằm khác phía (Z₋) cho cận dưới. Thử thay hai tương quan đã biết bằng giá trị của bạn, rồi kéo thanh trượt c để kiểm tra một giá trị cụ thể.</figcaption>
 </figure>
 
-<h4>Lưu ý khi phỏng vấn</h4>
+<h4>Ứng dụng trên bàn giao dịch</h4>
 <ul>
-  <li>Khi nói “không tương quan nên độc lập”, hãy dừng lại. Điều đó chỉ đúng nếu (X, Y) có phân phối chuẩn đồng thời.</li>
-  <li>Hệ số tương quan mẫu rất nhạy với ngoại lai. Vài điểm cực đoan có thể kéo r từ 0 lên mức cao, hoặc ngược lại.</li>
-  <li>Với bài toán ba tương quan, nêu cả hai cách: định thức không âm và góc giữa các mũi tên. Người phỏng vấn thường muốn thấy cách hình học.</li>
-  <li>Tương quan không phải là toàn bộ sự phụ thuộc. Hai tài sản có thể ít tương quan ngày thường nhưng cùng sụp đổ khi khủng hoảng. Vì vậy bàn giao dịch xem thêm phụ thuộc ở đuôi và kịch bản căng thẳng.</li>
+  <li><b>Tỉ lệ phòng ngừa</b> (hedge ratio). Giả sử ta nắm một đơn vị X và bán h đơn vị Y để giảm rủi ro. Phương sai của vị thế là Var(X − hY) = Var(X) − 2h Cov(X, Y) + h<sup>2</sup> Var(Y). Đạo hàm theo h bằng 0 tại h* = Cov(X, Y)/Var(Y), cũng chính là hệ số góc khi hồi quy X theo Y. Phần rủi ro còn lại là Var(X)(1 − ρ<sup>2</sup>). Với ρ = 0,6, phòng ngừa tối ưu chỉ loại bỏ được 36% phương sai; muốn loại bỏ 90% thì cần |ρ| ≈ 0,95.</li>
+  <li><b>Giao dịch cặp</b> (pairs trading) cần hai tài sản có tương quan cao và <i>ổn định</i> theo thời gian. Thứ được giao dịch là chênh lệch (spread) giữa hai giá: khi chênh lệch giãn rộng bất thường, ta mua bên rẻ, bán bên đắt và chờ nó co lại. Nếu tương quan sụp đổ, chênh lệch có thể không bao giờ quay về.</li>
+  <li><b>Mô hình rủi ro</b> (risk model) ước lượng một ma trận hiệp phương sai cho hàng nghìn tài sản. Nếu ma trận không nửa xác định dương, chẳng hạn vì ai đó tự tay sửa vài hệ số tương quan, mô hình có thể báo một danh mục có phương sai âm. Đó là câu đố ba tương quan ở quy mô lớn. Ví dụ: nếu nhập Corr(X, Y) = 0,9, Corr(Y, Z) = 0,8 nhưng Corr(X, Z) = 0,3 (dưới cận 0,458), thì danh mục mua 1 X, bán 2 Y, mua 1 Z có “phương sai” 1 + 4 + 1 + 2(−1,8 + 0,3 − 1,6) = −0,2. Một bộ tối ưu hoá sẽ lao vào danh mục này vì tưởng nó âm rủi ro.</li>
+  <li><b>Tương quan không phải là toàn bộ sự phụ thuộc.</b> Hai tài sản có thể gần như không tương quan trong ngày thường, nhưng cùng sụp đổ trong khủng hoảng. Vì vậy các bàn giao dịch xem thêm <b>phụ thuộc ở đuôi</b> (tail dependence) và các kịch bản căng thẳng (stress scenarios), chứ không chỉ nhìn ρ.</li>
 </ul>
+
+<h4>Trong code</h4>
+<p>Đoạn TypeScript dưới đây kiểm tra lại cả hai kết quả chính của bài. Phần đầu quét c trên lưới mịn trong [−1, 1], giữ lại các giá trị cho ma trận hợp lệ (mọi định thức con chính không âm), rồi in hai đầu mút. Phần sau sinh 100.000 mẫu chuẩn tắc và tính tương quan giữa X và X<sup>2</sup>. Chạy bằng <span class="kbd">bun</span>.</p>
+<pre class="code"><code><span class="c">// Ma trận tương quan 3×3 hợp lệ ⇔ mọi định thức con chính đều ≥ 0</span>
+const valid3 = (a: number, b: number, c: number) =&gt;
+  [1 - a * a, 1 - b * b, 1 - c * c].every((m) =&gt; m &gt;= -1e-12) &amp;&amp;
+  1 - a * a - b * b - c * c + 2 * a * b * c &gt;= -1e-12;
+
+const ok: number[] = [];
+for (let i = 0; i &lt;= 200_000; i++) {
+  const c = -1 + i / 100_000;
+  if (valid3(0.9, 0.8, c)) ok.push(c);
+}
+console.log(Math.min(...ok).toFixed(3), Math.max(...ok).toFixed(3)); <span class="c">// 0.458 0.982</span>
+
+<span class="c">// Phụ thuộc hoàn toàn nhưng không tương quan: Y = X²</span>
+function rng(seed: number) {
+  let s = seed &gt;&gt;&gt; 0;
+  return () =&gt; {
+    s = (s + 0x6d2b79f5) | 0;
+    let t = Math.imul(s ^ (s &gt;&gt;&gt; 15), 1 | s);
+    t = (t + Math.imul(t ^ (t &gt;&gt;&gt; 7), 61 | t)) ^ t;
+    return ((t ^ (t &gt;&gt;&gt; 14)) &gt;&gt;&gt; 0) / 4294967296;
+  };
+}
+const u = rng(3);
+const gauss = () =&gt; Math.sqrt(-2 * Math.log(1 - u())) * Math.cos(2 * Math.PI * u());
+const corr = (x: number[], y: number[]) =&gt; {
+  const n = x.length, mx = x.reduce((s, v) =&gt; s + v) / n, my = y.reduce((s, v) =&gt; s + v) / n;
+  let sxy = 0, sxx = 0, syy = 0;
+  for (let i = 0; i &lt; n; i++) {
+    const a = x[i] - mx, b = y[i] - my;
+    sxy += a * b; sxx += a * a; syy += b * b;
+  }
+  return sxy / Math.sqrt(sxx * syy);
+};
+const x = Array.from({ length: 100_000 }, gauss);
+const y = x.map((v) =&gt; v * v);
+console.log(corr(x, y).toFixed(3)); <span class="c">// -0.006, tức gần 0</span></code></pre>
+<p>Kết quả tương quan mẫu không đúng bằng 0 vì có sai số lấy mẫu. Với 100.000 điểm, sai số này cỡ vài phần nghìn, khớp với giá trị in ra.</p>
+
+<h4>Tự kiểm tra</h4>
+<p>Cho X phân phối đều trên [−1, 1] và Y = |X|. Khẳng định nào đúng?</p>
+<ol type="A">
+  <li>X và Y độc lập.</li>
+  <li>X và Y không tương quan nhưng phụ thuộc.</li>
+  <li>Corr(X, Y) = 1.</li>
+  <li>Corr(X, Y) âm.</li>
+</ol>
+<details class="qa"><summary>Đáp án và lời giải</summary>
+<p>Đáp án <b>B</b>. Do X đối xứng quanh 0 và hàm x|x| là hàm lẻ, E[XY] = E[X|X|] = 0; thêm E[X] = 0 nên Cov(X, Y) = 0, loại C và D. Tuy vậy, biết X thì biết chính xác Y; chẳng hạn P(Y &gt; 0,5 | X = 0,9) = 1 trong khi P(Y &gt; 0,5) = 0,5. Phân phối có điều kiện thay đổi theo X, nên hai biến không độc lập, loại A.</p>
+</details>
 
 <script>
 (()=>{
@@ -192,6 +284,60 @@
   const sB=Q.slider(ctl,'b = Corr(Y, Z)',-0.99,0.99,0.01,S.b,v=>{S.b=v;upd();},v=>Q.fmt(v,2));
   Q.slider(ctl,'Thử c = Corr(X, Z)',-1,1,0.01,S.c,v=>{S.c=v;upd();},v=>Q.fmt(v,2));
   Q.button(ctl,'Đề Jane Street (0,9; 0,8)',()=>{ S.a=0.9; S.b=0.8; [[sA,0.9],[sB,0.8]].forEach(([el,v])=>{ el.value=v; el.dispatchEvent(new Event('input')); }); });
+  report();
+})();
+
+(()=>{
+  /* ---------- Hình 5.2: đám mây điểm, đường bình phương tối thiểu và ngoại lai ---------- */
+  const stage=document.getElementById('demo3-05'), ctl=document.getElementById('ctl3-05'), out=document.getElementById('out3-05');
+  const S={rho:0.5, sq:false, outl:false};
+  const r=Q.rng(205), N=120, U=Array.from({length:N},()=>[Q.normal(r),Q.normal(r)]);
+  const OUT=[[4.3,4.6],[4.7,4.1],[3.9,4.9]];
+  const base=()=>U.map(([a,b])=>S.sq?[a,(a*a-1)/Math.SQRT2]:[a,S.rho*a+Math.sqrt(1-S.rho*S.rho)*b]);
+  const all=()=>S.outl?base().concat(OUT):base();
+  function fit(P){
+    const n=P.length; let mx=0,my=0; P.forEach(p=>{mx+=p[0];my+=p[1];}); mx/=n; my/=n;
+    let sxx=0,syy=0,sxy=0; P.forEach(p=>{ const a=p[0]-mx,b=p[1]-my; sxx+=a*a; syy+=b*b; sxy+=a*b; });
+    return {r:sxy/Math.sqrt(sxx*syy), slope:sxy/sxx, mx, my};
+  }
+  function report(){
+    const f0=fit(base()), f=fit(all());
+    const head=S.sq?'Chế độ Y = (X² − 1)/√2: Y hoàn toàn xác định bởi X, tương quan lý thuyết = 0':`ρ lý thuyết = ${Q.fmt(S.rho,2)}`;
+    let s=`${head}\nTương quan mẫu (${N} điểm): r = ${Q.fmt(f0.r,3)};  hệ số góc OLS = Cov/Var(X) = ${Q.fmt(f0.slope,3)}`;
+    if(S.outl) s+=`\nThêm 3 ngoại lai (${N+3} điểm): r = ${Q.fmt(f.r,3)};  hệ số góc = ${Q.fmt(f.slope,3)}  (ba điểm, chưa tới 3% dữ liệu)`;
+    out.textContent=s;
+  }
+  const cv=Q.canvas(stage,360,draw);
+  function draw(ctx,w,h){
+    const C=Q.colors(); ctx.clearRect(0,0,w,h);
+    const R=5.5, u=Math.min((w-40)/(2*R),(h-30)/(2*R)), cx=w/2, cy=h/2+4;
+    const X=x=>cx+x*u, Y=y=>cy-y*u;
+    ctx.strokeStyle=C.line; ctx.lineWidth=1;
+    for(let k=-5;k<=5;k++){ ctx.globalAlpha=k===0?1:0.45; ctx.beginPath(); ctx.moveTo(X(k),Y(-R)); ctx.lineTo(X(k),Y(R)); ctx.moveTo(X(-R),Y(k)); ctx.lineTo(X(R),Y(k)); ctx.stroke(); }
+    ctx.globalAlpha=1;
+    ctx.font='12px JetBrains Mono,ui-monospace,monospace'; ctx.fillStyle=C.muted; ctx.textAlign='center';
+    [-4,-2,2,4].forEach(k=>{ ctx.fillText(String(k),X(k),Y(0)+14); ctx.fillText(String(k),X(0)-12,Y(k)+4); });
+    ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif'; ctx.fillStyle=C.ink;
+    ctx.fillText('X',X(R)-6,Y(0)-6); ctx.fillText('Y',X(0)+10,Y(R)+10);
+    const clip=(x,y)=>Math.abs(x)<=R&&Math.abs(y)<=R;
+    ctx.fillStyle=C.c; ctx.globalAlpha=0.75;
+    base().forEach(([x,y])=>{ if(!clip(x,y))return; ctx.beginPath(); ctx.arc(X(x),Y(y),3,0,7); ctx.fill(); });
+    ctx.globalAlpha=1;
+    if(S.outl){ ctx.fillStyle=C.d; OUT.forEach(([x,y])=>{ ctx.beginPath(); ctx.arc(X(x),Y(y),5.5,0,7); ctx.fill(); }); }
+    const f=fit(all());
+    ctx.save(); ctx.beginPath(); ctx.rect(X(-R),Y(R),2*R*u,2*R*u); ctx.clip();
+    ctx.strokeStyle=C.b; ctx.lineWidth=2.5; ctx.beginPath(); ctx.moveTo(X(-R),Y(f.my+f.slope*(-R-f.mx))); ctx.lineTo(X(R),Y(f.my+f.slope*(R-f.mx))); ctx.stroke();
+    if(S.outl){ const f0=fit(base()); ctx.strokeStyle=C.muted; ctx.lineWidth=1.5; ctx.setLineDash([5,4]); ctx.beginPath(); ctx.moveTo(X(-R),Y(f0.my+f0.slope*(-R-f0.mx))); ctx.lineTo(X(R),Y(f0.my+f0.slope*(R-f0.mx))); ctx.stroke(); ctx.setLineDash([]); }
+    ctx.restore(); ctx.lineWidth=1;
+    ctx.textAlign='left'; ctx.fillStyle=C.muted;
+    ctx.fillText(`r = ${Q.fmt(f.r,3)}`,12,20);
+    ctx.fillStyle=C.b; ctx.fillText('đường bình phương tối thiểu',12,38);
+    if(S.outl){ ctx.fillStyle=C.muted; ctx.fillText('vạch đứt: đường khi chưa có ngoại lai',12,56); }
+  }
+  const upd=()=>{ report(); cv.redraw(); };
+  Q.slider(ctl,'Tương quan ρ',-0.95,0.95,0.01,S.rho,v=>{S.rho=v;upd();},v=>Q.fmt(v,2));
+  const bq=Q.button(ctl,'Y = X²',()=>{ S.sq=!S.sq; bq.textContent=S.sq?'Quay lại chuẩn hai chiều':'Y = X²'; upd(); });
+  const bo=Q.button(ctl,'Thêm 3 ngoại lai',()=>{ S.outl=!S.outl; bo.textContent=S.outl?'Bỏ 3 ngoại lai':'Thêm 3 ngoại lai'; upd(); });
   report();
 })();
 </script>

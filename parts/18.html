@@ -2,34 +2,40 @@
 <header>
   <span class="num">18</span>
   <h3>Các tình huống tạo lập thị trường, từng giao dịch một</h3>
-  <p class="meta">14 phút · Ứng dụng: Vòng phỏng vấn giao dịch · <a href="https://hft.md/learn/market-making-cases/">Bài gốc (tiếng Anh)</a></p>
+  <p class="meta">Phần 5 · Tạo lập thị trường · Bài 18 · 14 phút · <a href="https://hft.md/learn/market-making-cases/">Bài gốc (tiếng Anh)</a></p>
 </header>
 
-<p>Nhiều công ty giao dịch kiểm tra ứng viên bằng một trò chơi trực tiếp: bạn yết giá, người phỏng vấn mua hoặc bán, bạn yết lại. Cuối buổi họ hỏi vị thế và lãi/lỗ của bạn, nên khả năng ghi nhớ giao dịch (trader memory) quan trọng không kém phần toán.</p>
+<p>Bài này chơi lại từng lượt ba trò chơi tạo lập thị trường kinh điển: số trận thắng của Red Sox, dân số Tanzania và trò “giao dịch hay thắt chặt”, đồng thời giữ sổ vị thế và lãi/lỗ sau mỗi giao dịch.</p>
 
-<h4>Ý chính</h4>
+<p>Ở vòng phỏng vấn giao dịch, nhiều công ty không hỏi lý thuyết mà cho bạn chơi thật. Bạn đưa ra một thị trường gồm giá chào mua (bid) và giá chào bán (ask). Người phỏng vấn chọn mua, bán hoặc bỏ qua. Bạn yết lại, và vòng lặp tiếp tục cho đến khi họ hô dừng. Câu hỏi cuối thường rất đơn giản: “Bây giờ bạn đang có vị thế gì, lãi hay lỗ bao nhiêu?”</p>
+<p>Câu hỏi đó khó hơn vẻ ngoài. Sau năm, sáu lượt yết giá liên tục, phần lớn ứng viên quên mất mình đã bán ở đâu. Khả năng giữ trong đầu toàn bộ chuỗi giao dịch, thường gọi là trí nhớ giao dịch (trader memory), được chấm điểm ngang với phần ước lượng. Một nhà giao dịch thật cũng vậy: không biết chính xác mình đang nắm gì thì không thể yết giá tiếp một cách an toàn.</p>
+<p>Ba trò chơi dưới đây lấy từ tài liệu gốc. Mỗi trò được phát lại từng lượt trong Hình 18.1 để bạn đối chiếu lập luận với diễn biến giá.</p>
+
+<figure class="demo">
+  <div class="stage" id="demo-18"></div>
+  <div class="controls" id="ctl-18"></div>
+  <div class="readout" id="out-18"></div>
+  <figcaption><b>Hình 18.1 – Trình phát lại các tình huống.</b> Chọn một tình huống bằng nút Red Sox, Tanzania hoặc Thắt chặt. Bên trái, mỗi cột là thị trường được yết ở một lượt: xanh dương là giá của bạn, xám là giá của người phỏng vấn (chỉ có trong trò thắt chặt). Chấm cam: họ mua của bạn ở giá chào bán. Chấm xanh lá: họ bán cho bạn ở giá chào mua. Ô chữ bên dưới ghi lý do của từng lần yết giá cùng sổ vị thế và tiền mặt. Bên phải là đường lãi/lỗ theo giá thanh toán X. Ở cuối ván Red Sox, kéo thanh X (chính là số trận thắng) để thấy lãi/lỗ đổi theo kết quả mùa giải.</figcaption>
+</figure>
+
+<h4>Tình huống 1: số trận thắng của Red Sox</h4>
+<p><b>Đề bài.</b> Hãy yết một thị trường rộng 10 cho số trận Boston Red Sox thắng trong mùa giải chính. Sau đó nêu khoảng tin cậy (confidence interval) 50% và 90%. Người phỏng vấn sẽ giao dịch với bạn, bạn yết lại, và cứ thế lặp lại.</p>
+
+<p><b>Bước 1: giá trị lý thuyết.</b> Giá trị lý thuyết (theoretical value) là con số bạn tin là công bằng. Nó chỉ có giá trị khi đi kèm giả định được nói ra. Ở đây:</p>
 <ul>
-  <li><b>Giá trị lý thuyết</b> (theoretical value) phải đi kèm giả định được nói rõ. Người phỏng vấn chấm cách lập luận nhiều hơn chấm con số.</li>
-  <li>Độ rộng thị trường và <b>khoảng tin cậy</b> (confidence interval) phải khớp với mức độ không chắc chắn của bạn. Khoảng 90% rộng gần gấp 2,5 lần khoảng 50%.</li>
-  <li>Đối phương mua ở <b>giá chào bán</b> (ask) thì nâng giá lên. Đối phương bán vào <b>giá chào mua</b> (bid) thì hạ xuống. Giữ nguyên giá là mời họ lặp lại đúng giao dịch đó.</li>
-  <li>Khi còn ít thông tin, hãy dịch mạnh, khoảng nửa độ rộng trở lên. Khi đã có giao dịch ở cả hai phía, giá trị bị kẹp lại, nên dịch ít đi.</li>
-  <li>Sổ sách chỉ cần hai đại lượng: <b>vị thế</b> (position) và <b>tiền mặt</b> (cash). Lãi/lỗ (PnL) bằng tiền mặt cộng vị thế nhân giá thanh toán.</li>
-  <li>Thua lỗ trong trò chơi là chuyện thường. Điều được đánh giá là bạn điều chỉnh giá có hợp lý và nhất quán hay không.</li>
+  <li>Một mùa giải đầy đủ có 162 trận.</li>
+  <li>Ba mùa gần nhất có tỉ lệ thắng lần lượt khoảng 0,519 (84 trận), 0,667 (108 trận, năm đội vô địch World Series) và khoảng 0,400 trong mùa bị rút gọn còn 60 trận.</li>
+  <li>Dữ liệu gần đây đáng tin hơn dữ liệu cũ, nhưng năm 108 trận là một mùa đặc biệt khó lặp lại. Đội hình lại thay đổi nhiều, nên kéo ước lượng xuống.</li>
 </ul>
+<p>Gộp lại, chọn tỉ lệ thắng 0,500, tức 162 × 0,5 = <b>81 trận</b>. Một thị trường rộng 10 đặt cân hai bên giá trị này là <b>76 @ 86</b>: bạn sẵn sàng mua ở 76 và bán ở 86.</p>
 
-<h4>Công thức</h4>
-<div class="formula"><span class="lbl">Sổ sách sau một chuỗi giao dịch của chính bạn (mua: +1, bán: −1)</span>vị thế = Σ<sub>mua</sub> 1 − Σ<sub>bán</sub> 1,&nbsp;&nbsp; tiền mặt = Σ<sub>bán</sub> giá − Σ<sub>mua</sub> giá</div>
-<div class="formula"><span class="lbl">Lãi/lỗ khi hợp đồng thanh toán ở giá X</span>PnL(X) = tiền mặt + vị thế × X</div>
-<div class="formula"><span class="lbl">Ghép cặp: một lần mua ở B và một lần bán ở A khoá lãi chắc chắn, không phụ thuộc X</span>lãi của cặp = A − B</div>
-<div class="formula"><span class="lbl">Khoảng tin cậy cho số trận thắng W ~ Binomial(n, p), xấp xỉ chuẩn</span>μ = np,&nbsp;&nbsp; σ = √<span style="text-decoration:overline">np(1 − p)</span>,&nbsp;&nbsp; khoảng = μ ± z·σ,&nbsp;&nbsp; z<sub>50%</sub> ≈ 0,674,&nbsp; z<sub>90%</sub> ≈ 1,645</div>
+<p><b>Bước 2: khoảng tin cậy.</b> Coi mỗi trận là một phép thử độc lập với xác suất thắng 0,5. Khi đó số trận thắng W theo phân phối nhị thức (binomial) Binomial(162; 0,5). Với n lớn, phân phối này gần với phân phối chuẩn có cùng trung bình và độ lệch chuẩn:</p>
+<div class="formula"><span class="lbl">Trung bình và độ lệch chuẩn của số trận thắng</span>μ = np = 81,&nbsp;&nbsp; σ = √<span style="text-decoration:overline">np(1 − p)</span> = √<span style="text-decoration:overline">162 × 0,5 × 0,5</span> = √<span style="text-decoration:overline">40,5</span> ≈ 6,36</div>
+<p>Khoảng tin cậy đối xứng có dạng μ ± z·σ, với z là phân vị chuẩn: z ≈ 0,67 cho 50% và z ≈ 1,64 cho 90%.</p>
+<div class="formula"><span class="lbl">Hai khoảng tin cậy</span>50%: 81 ± 0,67 × 6,36 = [76,7; 85,3]&nbsp;&nbsp;&nbsp;&nbsp; 90%: 81 ± 1,64 × 6,36 = [70,5; 91,5]</div>
+<p>Hãy để ý một sự trùng hợp có ích: thị trường rộng 10 mà đề bài yêu cầu gần trùng với khoảng 50% của bạn. Theo xấp xỉ chuẩn, khoảng 81 ± 5 chứa khoảng 57% xác suất. Khoảng 90% rộng gần gấp 2,5 lần khoảng 50%, vì 1,64 / 0,67 ≈ 2,45. Giả định các trận độc lập với nhau làm σ hơi nhỏ so với thực tế: chấn thương hay một đợt chuyển nhượng ảnh hưởng tới cả chuỗi trận. Nói thêm điều này với người phỏng vấn là điểm cộng.</p>
 
-<h4>Ví dụ minh hoạ: số trận thắng của Boston Red Sox</h4>
-<p>Đề bài: yết một thị trường rộng 10 cho số trận thắng của Red Sox trong mùa giải chính. Sau đó nêu khoảng tin cậy 50% và 90%. Người phỏng vấn giao dịch, bạn yết lại, lặp lại vài lượt.</p>
-<ol>
-  <li><b>Giả định.</b> Mùa giải đủ 162 trận. Các mùa gần đây có tỉ lệ thắng 0,519 (84 trận), 0,667 (108 trận, năm vô địch) và khoảng 0,400 trong mùa rút gọn 60 trận. Đội hình thay đổi nhiều, nên lấy tỉ lệ 0,500, tức 81 trận. Thị trường mở đầu: <b>76 @ 86</b>.</li>
-  <li><b>Khoảng tin cậy.</b> σ = √(162 × 0,5 × 0,5) ≈ 6,36. Khoảng 50% là 81 ± 0,67 × 6,36 = [76,7; 85,3]. Khoảng 90% là 81 ± 1,64 × 6,36 = [70,5; 91,5].</li>
-  <li><b>Diễn biến.</b> Hai lần đầu người phỏng vấn đều mua. Bạn đang bán khống và chưa có thông tin gì, nên dịch mạnh lên 81 @ 91 rồi 85 @ 95. Sau đó họ bán ở 85. Tín hiệu trái chiều này cho thấy giá trị họ nghĩ nằm đâu đó giữa 85 và 91. Bạn lùi về trung điểm 88 (83 @ 93), rồi chỉ dịch thêm 1 điểm.</li>
-</ol>
+<p><b>Bước 3: trò chơi.</b> Diễn biến như sau, mũi tên ghi hành động của người phỏng vấn:</p>
 <table class="t">
   <tr><th>Lượt</th><th>Bạn yết</th><th>Người phỏng vấn</th><th>Bạn thực hiện</th><th>Vị thế</th><th>Tiền mặt</th></tr>
   <tr><td>1</td><td>76 @ 86</td><td>mua</td><td>bán 86</td><td>−1</td><td>+86</td></tr>
@@ -38,34 +44,113 @@
   <tr><td>4</td><td>83 @ 93</td><td>mua</td><td>bán 93</td><td>−2</td><td>+185</td></tr>
   <tr><td>5</td><td>84 @ 94</td><td>bán</td><td>mua 84</td><td>−1</td><td>+101</td></tr>
 </table>
-<ol start="4">
-  <li><b>Chấm điểm.</b> Ghép cặp bán 86 với mua 85 được +1. Ghép bán 93 với mua 84 được +9. Lệnh bán ở 91 còn mở, nên bạn bán khống 1 hợp đồng ở 91 và đã khoá 10 điểm.</li>
-  <li>Nếu đội thắng W trận thì PnL = 10 + (91 − W) = 101 − W. Thắng 90 trận cho lãi 11. Điểm hoà vốn là 101 trận.</li>
+<p>Ba nguyên tắc chi phối các lần yết lại:</p>
+<ol>
+  <li><b>Bị mua thì nâng giá.</b> Một lệnh mua cho biết đối phương nghĩ hợp đồng đáng giá hơn mức bạn chào bán. Bạn lại vừa bị bán khống (short). Nếu vẫn treo đúng giá cũ, bạn mời họ lặp lại đúng giao dịch đó, và vị thế âm cứ thế phình ra.</li>
+  <li><b>Lúc đầu dịch mạnh.</b> Khi chưa có thông tin, mỗi giao dịch mang nhiều tin. Sau lần mua đầu tiên, nâng cả thị trường lên nửa độ rộng, từ 76 @ 86 thành 81 @ 91. Giá chào bán mới 91 nằm đúng ở mép trên của khoảng 90%. Bị mua lần nữa, tiếp tục dịch lên 85 @ 95.</li>
+  <li><b>Khi đã bị kẹp hai phía thì dịch ít.</b> Họ mua ở 86 rồi lại bán cho bạn ở 85. Hai tín hiệu ngược chiều này kẹp giá trị trong đầu họ vào vùng khoảng 86 đến 90. Bạn đặt tâm gần 88, yết 83 @ 93. Từ đây, mỗi giao dịch chỉ dịch thêm 1 điểm, như lần đổi sang 84 @ 94 ở lượt 5.</li>
 </ol>
-<p><b>Dân số Tanzania</b> (giá chào bán tối đa gấp 1,5 lần giá chào mua). Mở 20 @ 30 triệu, vì Tanzania nhỏ hơn nhiều so với 325 triệu dân Mỹ. Bị mua, và lúc này dịch quá ít còn tệ hơn dịch quá nhiều, nên nhảy lên 60 @ 90. Bị bán, giá trị nằm giữa 25 và 75, nên về 40 @ 60. Bị mua ở 60. Vì đã có giao dịch ở hai phía, trung điểm chỉ dịch nửa bước trước, từ 50 lên 62,5, thành 50 @ 75. Bị bán ở 50. Kết quả: phẳng vị thế, tiền mặt 30 − 60 + 60 − 50 = −20. Bài gốc lấy đáp số khoảng 56 triệu.</p>
-<p><b>Giao dịch hay thắt chặt</b> (trade or tighten). Bạn và người phỏng vấn mỗi người nhận một giá trị riêng cho cổ phiếu XYZ, rút độc lập, đều trên [90; 110]. Của bạn là 100. Mỗi lượt, người đến lượt hoặc giao dịch trên thị trường đang có, hoặc thắt chặt nó (nâng giá chào mua, hạ giá chào bán, hoặc cả hai). Bạn mở 90 @ 110. Họ đáp 95 @ 107, trung điểm 101, gợi ý giá trị của họ trên 100. Giá chào mua bị đẩy dần 100, 101, 102, 103. Bạn hạ giá chào bán 105 rồi 104, và họ mua ở 104. So với giá trị 100 của bạn, lãi +4. Giá trị thật của họ là 105.</p>
 
-<figure class="demo">
-  <div class="stage" id="demo-18"></div>
-  <div class="controls" id="ctl-18"></div>
-  <div class="readout" id="out-18"></div>
-  <figcaption><b>Mô hình 18.1 – Phát lại ba tình huống, từng lượt.</b> Bên trái: mỗi cột là thị trường được yết ở một lượt (xanh dương là của bạn, xám là của người phỏng vấn). Chấm cam: họ mua của bạn ở giá chào bán. Chấm xanh lá: họ bán cho bạn ở giá chào mua. Bên phải: đường lãi/lỗ theo giá thanh toán X với vị thế hiện tại. Bấm “Lượt tiếp” để đi tiếp, kéo thanh X để xem lãi/lỗ đổi theo kết quả.</figcaption>
-</figure>
+<p><b>Bước 4: tính điểm.</b> Cách nhanh nhất là ghép các giao dịch ngược chiều thành từng cặp. Mỗi cặp gồm một lần bán và một lần mua nên không còn rủi ro, lãi của nó là giá bán trừ giá mua.</p>
+<ul>
+  <li>Bán 86, mua 85: +1.</li>
+  <li>Bán 93, mua 84: +9.</li>
+  <li>Lần bán ở 91 chưa có cặp. Bạn đang bán khống một hợp đồng ở giá 91 và đã khoá sẵn 10 điểm.</li>
+</ul>
+<div class="formula"><span class="lbl">Lãi/lỗ khi đội thắng W trận (vị thế −1, tiền mặt +101)</span>PnL(W) = 10 + (91 − W) = 101 − W</div>
+<p>Nếu Red Sox thắng 90 trận, bạn lãi 11. Điểm hoà vốn là 101 trận, nằm ngoài cả khoảng 90% của bạn. Nói cách khác, trừ khi đội có một mùa giải cực kỳ xuất sắc, ván này có lãi. Cách tính bằng sổ cho cùng kết quả: vị thế = 2 lần mua − 3 lần bán = −1, tiền mặt = 86 + 91 − 85 + 93 − 84 = 101, nên PnL = 101 − W.</p>
+
+<h4>Tình huống 2: dân số Tanzania</h4>
+<p><b>Đề bài.</b> Hãy yết thị trường cho dân số Tanzania. Ràng buộc: giá chào bán không được vượt quá 1,5 lần giá chào mua. Người phỏng vấn giao dịch, bạn yết lại.</p>
+<p>Ràng buộc theo tỉ lệ thay vì theo khoảng cách cố định có lý do. Với một đại lượng mà bạn chỉ biết cỡ độ lớn, sai số tự nhiên là sai số phần trăm. Một thị trường 20 @ 30 và một thị trường 60 @ 90 có cùng “độ rộng” trên thang logarit. Vì vậy, mọi lần yết dưới đây đều đúng tỉ lệ 1,5 và trung điểm bằng 1,25 lần giá chào mua.</p>
+<table class="t">
+  <tr><th>Lượt</th><th>Bạn yết (triệu người)</th><th>Người phỏng vấn</th><th>Bạn thực hiện</th><th>Vị thế</th><th>Tiền mặt</th></tr>
+  <tr><td>1</td><td>20 @ 30</td><td>mua</td><td>bán 30</td><td>−1</td><td>+30</td></tr>
+  <tr><td>2</td><td>60 @ 90</td><td>bán</td><td>mua 60</td><td>0</td><td>−30</td></tr>
+  <tr><td>3</td><td>40 @ 60</td><td>mua</td><td>bán 60</td><td>−1</td><td>+30</td></tr>
+  <tr><td>4</td><td>50 @ 75</td><td>bán</td><td>mua 50</td><td>0</td><td>−20</td></tr>
+</table>
+<ol>
+  <li><b>20 @ 30.</b> Mỹ có khoảng 325 triệu dân. Tanzania là một nước châu Phi nhỏ hơn rất nhiều, nên đoán khoảng 25 triệu.</li>
+  <li><b>60 @ 90.</b> Bạn bị mua và gần như không có kiến thức riêng. Trong hoàn cảnh này, dịch quá ít tốn kém hơn dịch quá nhiều: nếu chỉ nhích lên 22 @ 33, bạn có thể bị mua liên tục năm, sáu lần. Bạn khá chắc dân số dưới 100 triệu, nên nhân ước lượng lên ba lần, thành 75 triệu.</li>
+  <li><b>40 @ 60.</b> Họ bán ở 60. Giờ giá trị bị kẹp giữa 25 (họ đã mua) và 75 (họ đã bán). Đặt tâm ở 50.</li>
+  <li><b>50 @ 75.</b> Họ chọn mua ở 60 chứ không bán ở 40, nên giá trị có lẽ gần 60. Vì đã có giao dịch ở cả hai phía, dịch ít lại: trung điểm chỉ đi thêm một nửa bước trước. Bước trước là từ 75 xuống 50, tức 25; nửa bước là 12,5, nên trung điểm mới là 62,5. Với tỉ lệ 1,5, giá chào mua b thoả 1,25b = 62,5, tức b = 50, giá chào bán 75. Họ bán ở 50.</li>
+</ol>
+<p><b>Tính điểm.</b> Hai lần mua và hai lần bán nên bạn kết thúc ở trạng thái phẳng vị thế (flat). Lãi/lỗ đúng bằng tiền mặt và không còn phụ thuộc đáp số. Ghép cặp: bán 30 / mua 60 là −30; bán 60 / mua 50 là +10. Tổng cộng <b>−20</b>. Con số thực tế mà bài gốc đưa ra là khoảng 56 triệu, nằm gọn trong thị trường cuối 50 @ 75 của bạn.</p>
+<p>Lỗ ở trò này là chuyện bình thường. Người phỏng vấn biết đáp số, còn bạn thì không. Họ không chấm bạn lãi bao nhiêu mà xem bạn có dịch giá hợp lý không: nhảy mạnh khi thiếu thông tin, thu hẹp bước khi đã bị kẹp hai phía, và luôn tôn trọng ràng buộc của đề.</p>
+
+<h4>Tình huống 3: giao dịch hay thắt chặt</h4>
+<p><b>Luật chơi.</b> Bạn và người phỏng vấn mỗi người nhận một giá trị riêng cho cổ phiếu XYZ. Hai giá trị được rút độc lập và đều trên đoạn từ 90 đến 110. Giá trị của bạn là 100, và không ai thấy giá trị của người kia. Bạn mở một thị trường. Đến lượt mình, đối phương hoặc giao dịch trên thị trường đó, hoặc thắt chặt (tighten) nó: nâng giá chào mua, hạ giá chào bán, hoặc cả hai. Sau đó đến lượt bạn với cùng hai lựa chọn. Trò chơi kết thúc khi có người giao dịch.</p>
+<table class="t">
+  <tr><th>Lượt</th><th>Ai</th><th>Hành động</th><th>Thị trường sau lượt</th></tr>
+  <tr><td>1</td><td>Bạn</td><td>mở thị trường</td><td>90 @ 110</td></tr>
+  <tr><td>2</td><td>Họ</td><td>thắt chặt hai phía</td><td>95 @ 107</td></tr>
+  <tr><td>3</td><td>Bạn</td><td>thắt chặt hai phía</td><td>97 @ 106</td></tr>
+  <tr><td>4</td><td>Họ</td><td>trả 100</td><td>100 @ 106</td></tr>
+  <tr><td>5</td><td>Bạn</td><td>trả 101</td><td>101 @ 106</td></tr>
+  <tr><td>6</td><td>Họ</td><td>trả 102</td><td>102 @ 106</td></tr>
+  <tr><td>7</td><td>Bạn</td><td>chào bán 105</td><td>102 @ 105</td></tr>
+  <tr><td>8</td><td>Họ</td><td>trả 103</td><td>103 @ 105</td></tr>
+  <tr><td>9</td><td>Bạn</td><td>chào bán 104</td><td>103 @ 104</td></tr>
+  <tr><td>10</td><td>Họ</td><td>mua ở 104</td><td>giao dịch, kết thúc</td></tr>
+</table>
+<p><b>Phân tích từng bước.</b></p>
+<ul>
+  <li><b>Mở 90 @ 110.</b> Bạn chưa biết gì về giá trị của đối phương, nên yết toàn bộ miền có thể. Không ai có thể giao dịch có lời với bạn ở hai đầu mút này.</li>
+  <li><b>Họ đáp 95 @ 107.</b> Trung điểm 101 hơi lệch lên trên. Đó là dấu hiệu đầu tiên, dù còn yếu, rằng giá trị của họ cao hơn 100. Bạn không nên giao dịch: mua ở 107 hay bán ở 95 đều lỗ so với giá trị 100 của bạn. Nhưng bạn ghi nhận thông tin này.</li>
+  <li><b>Bạn trả 101 khi thị trường là 100 @ 106.</b> Đây là một rủi ro có tính toán. Nếu họ bán cho bạn ở 101, bạn lỗ 1. Nhưng họ vừa tự trả 100, nên khó có chuyện họ bán ở 101. Lợi ích là bạn giữ quyền chọn bán cho họ ở giá cao hơn về sau.</li>
+  <li><b>Khi họ trả 102, đừng trả 103.</b> Càng trả cao, rủi ro họ bán cho bạn càng lớn, và mỗi giao dịch như vậy lỗ chắc so với 100. Bạn đổi hướng: hạ giá chào bán xuống 105. Họ trả 103, bạn hạ tiếp xuống 104, và họ mua.</li>
+</ul>
+<p><b>Kết quả.</b> Bạn bán ở 104 trong khi giá trị của bạn là 100, lãi <b>+4</b>. Giá trị thật của người phỏng vấn là 105.</p>
+<details class="qa"><summary>Bài tập của bài gốc: chỉ từ các nước đi của đối phương, bạn có đoán ra giá trị 105 không?</summary>
+<p>Có thể khoanh khá hẹp. Giả sử đối phương hợp lý, tức không bao giờ chào một giá mà nếu bị khớp thì họ lỗ so với giá trị riêng v của họ.</p>
+<ol>
+  <li>Họ chào bán 107 ở lượt 2. Bán ở 107 chỉ có lời nếu v ≤ 107. Vậy v ≤ 107.</li>
+  <li>Họ trả 100, 102 rồi 103. Mua ở 103 chỉ có lời nếu v ≥ 103. Vậy v ≥ 103.</li>
+  <li>Họ mua ở 104. Vậy v ≥ 104.</li>
+  <li>Họ không mua ở 105 hay 106 mà chọn trả thêm giá. Ở 106 họ sẽ lỗ nếu v &lt; 106; ở 105, một giao dịch hoà vốn không đáng để vội. Điều này gợi ý v nằm gần 104 đến 105.</li>
+</ol>
+<p>Ghép lại: v nằm trong khoảng [104; 107], và việc họ từ chối 105 nhưng nhận 104 đẩy ước lượng về sát 105. Đó đúng là giá trị thật. Bài học: trong trò thắt chặt, mỗi lần đối phương không giao dịch cũng là một mẩu thông tin.</p>
+</details>
+
+<div class="note"><b>Ghi nhớ.</b> Cả ba trò chơi đều kiểm tra bốn kỹ năng giống nhau. Một: giá trị lý thuyết bảo vệ được, kèm giả định nói rõ. Hai: khoảng tin cậy có độ rộng khớp với mức độ không chắc chắn của bạn. Ba: điều chỉnh giá sau mỗi giao dịch, dịch nhiều lúc đầu và dịch ít khi giá trị đã bị kẹp hai phía. Bốn: giữ sổ vị thế và lãi/lỗ chính xác. Hãy tập ghép cặp giao dịch thành tiếng, chẳng hạn “bán 86, mua 85, được 1”.</div>
+
+<p>Kỹ năng thứ tư cần luyện tập có chủ đích. Hình 18.2 là một bài tập nhỏ không có trong bài gốc, giúp bạn rèn thói quen đó.</p>
 
 <figure class="demo">
   <div class="stage" id="demo2-18" style="min-height:0"></div>
   <div class="controls" id="ctl2-18"></div>
   <div class="readout" id="out2-18"></div>
-  <figcaption><b>Mô hình 18.2 – Luyện trí nhớ giao dịch.</b> Bấm “Ván mới”. Các giao dịch của bạn hiện lần lượt rồi bị che đi. Nhập vị thế và tiền mặt bạn nhớ được, bấm “Kiểm tra”. Lời giải ghép cặp từng giao dịch mua với bán để bạn tự soát lại.</figcaption>
+  <figcaption><b>Hình 18.2 – Luyện trí nhớ giao dịch.</b> Bấm “Ván mới”. Các giao dịch của bạn hiện lần lượt rồi bị che đi. Nhập vị thế và tiền mặt bạn nhớ được, bấm “Kiểm tra”. Lời giải ghép cặp từng lần mua với một lần bán để bạn tự soát lại. Tăng số giao dịch hoặc giảm số giây để làm khó hơn.</figcaption>
 </figure>
 
-<h4>Lưu ý khi phỏng vấn</h4>
-<ul>
-  <li>Nói giả định ra thành tiếng trước khi yết giá: số trận trong mùa, nguồn số liệu, lý do điều chỉnh. Một con số có lập luận tốt hơn một con số đúng may mắn.</li>
-  <li>Sau mỗi giao dịch, nhẩm lại vị thế và tiền mặt. Luyện thói quen ghép cặp mua với bán thành tiếng, như “bán 86, mua 85, được 1”.</li>
-  <li>Kiểm tra nhanh: hai lần bán và hai lần mua thì phẳng vị thế. Ví dụ bán 52, mua 48, bán 55, mua 50 cho tiền mặt +9, cũng là lãi +9.</li>
-  <li>Trong trò chơi thắt chặt, đừng giao dịch trên một thị trường làm bạn lỗ ở cả hai phía. Hãy dùng nó như tín hiệu về giá trị của đối phương.</li>
-</ul>
+<h4>Trong code</h4>
+<p>Toàn bộ phần chấm điểm gói gọn trong vài dòng. Mỗi giao dịch ghi từ phía của bạn: mua cộng một vào vị thế và trừ giá khỏi tiền mặt, bán thì ngược lại. Khi vị thế khác 0, lãi/lỗ chỉ xác định được nếu biết giá thanh toán.</p>
+<pre class="code"><code>type Side = "buy" | "sell";
+type Trade = [Side, number]; <span class="c">// giao dịch của CHÍNH BẠN</span>
+
+function score(trades: Trade[], settle?: number) {
+  let pos = 0, cash = 0;
+  for (const [side, px] of trades) {
+    pos += side === "buy" ? 1 : -1;     <span class="c">// mua: thêm một hợp đồng</span>
+    cash += side === "buy" ? -px : px;  <span class="c">// mua: trả tiền; bán: nhận tiền</span>
+  }
+  <span class="c">// Phẳng vị thế thì lãi/lỗ đã chốt; còn mở thì cần giá thanh toán.</span>
+  const pnl = settle !== undefined ? cash + pos * settle : pos === 0 ? cash : null;
+  return { pos, cash, pnl };
+}
+
+const redSox: Trade[] = [["sell", 86], ["sell", 91], ["buy", 85], ["sell", 93], ["buy", 84]];
+console.log(score(redSox, 90));   <span class="c">// { pos: -1, cash: 101, pnl: 11 }</span>
+
+const tanzania: Trade[] = [["sell", 30], ["buy", 60], ["sell", 60], ["buy", 50]];
+console.log(score(tanzania));     <span class="c">// { pos: 0, cash: -20, pnl: -20 }</span></code></pre>
+<p>Kết quả khớp với phần tính tay: ở ván Red Sox, bạn bán khống một hợp đồng với PnL = 101 − W, nên thắng 90 trận cho lãi 11; ở ván Tanzania, bạn phẳng vị thế và lỗ 20.</p>
+
+<h4>Tự kiểm tra</h4>
+<details class="qa"><summary>Bạn bán ở 52, mua ở 48, bán ở 55 rồi mua ở 50. Vị thế và lãi/lỗ của bạn là bao nhiêu? (A) Phẳng, +9 · (B) Phẳng, −9 · (C) Bán khống 2, +9 · (D) Mua 2, +9</summary>
+<p><b>Đáp án A.</b> Hai lần bán và hai lần mua triệt tiêu nhau, nên vị thế bằng 0. Tiền mặt: +52 − 48 + 55 − 50 = +9. Vì đã phẳng vị thế, lãi/lỗ chính là tiền mặt, tức +9. Kiểm tra bằng cách ghép cặp: bán 52 / mua 48 được +4, bán 55 / mua 50 được +5, tổng +9.</p>
+</details>
 
 <script>
 (()=>{
@@ -78,7 +163,7 @@
         {who:'me',bid:76,ask:86,act:'buy',why:'Mở quanh 81 trận, rộng 10 theo yêu cầu.'},
         {who:'me',bid:81,ask:91,act:'buy',why:'Bị mua khi chưa biết gì: dịch lên nửa độ rộng.'},
         {who:'me',bid:85,ask:95,act:'sell',why:'Bị mua lần nữa: dịch thêm 4 điểm.'},
-        {who:'me',bid:83,ask:93,act:'buy',why:'Họ mua ở 91 nhưng bán ở 85: giá trị bị kẹp, lùi về trung điểm 88.'},
+        {who:'me',bid:83,ask:93,act:'buy',why:'Họ đã mua ở 86 rồi lại bán ở 85: giá trị của họ bị kẹp, khoảng 86 đến 90, nên đặt tâm gần 88.'},
         {who:'me',bid:84,ask:94,act:'sell',why:'Đã có giao dịch hai phía: chỉ dịch 1 điểm.'}]},
     tz:{name:'Tanzania', lo:10, hi:100, tick:10, xr:[20,100], x0:56, unit:'triệu dân',
       refs:[{v:56,t:'đáp số bài gốc ≈ 56'}],

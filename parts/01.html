@@ -2,48 +2,151 @@
 <header>
   <span class="num">01</span>
   <h3>Xác suất có điều kiện và định lý Bayes</h3>
-  <p class="meta">12 phút · Ứng dụng: cập nhật giá trị hợp lý khi lệnh của mình bị khớp · <a href="https://hft.md/learn/bayes/">Bài gốc (tiếng Anh)</a></p>
+  <p class="meta">Phần 1 · Xác suất · Bài 1 · 12 phút · <a href="https://hft.md/learn/bayes/">Bài gốc (tiếng Anh)</a></p>
 </header>
 
-<p>Mỗi lần lệnh của nhà tạo lập thị trường bị khớp là một lần nhận thêm bằng chứng về giá trị thật của tài sản. Định lý Bayes cho biết phải điều chỉnh niềm tin bao nhiêu. Đây cũng là ý tưởng xuất hiện nhiều nhất trong các vòng phỏng vấn quant.</p>
+<p><i>Bài này nói về cách sửa một niềm tin khi có bằng chứng mới, và vì sao một tỉ lệ nền nhỏ có thể thắng cả một nhân chứng rất đáng tin.</i></p>
 
-<h4>Ý chính</h4>
+<p>Công việc của người giao dịch, xét cho cùng, là liên tục điều chỉnh niềm tin trong điều kiện bất định, có khi nhiều lần trong một giây. Nhà tạo lập thị trường (market maker) treo giá mua và giá bán. Có người khớp vào giá đó. Ngay lập tức phải tự hỏi: chuyện vừa xảy ra nói gì về giá trị thật của tài sản? Câu hỏi này có một đáp án chính xác về mặt toán học, và đó cũng là ý tưởng bị hỏi nhiều nhất trong các vòng phỏng vấn quant.</p>
+
+<h4>Xác suất có điều kiện: thu hẹp thế giới</h4>
+<p>Hiếm khi hai sự kiện hoàn toàn không liên quan đến nhau. Khả năng một người đang ốm sẽ khác đi khi ta biết người đó đang ho. Khả năng giá cổ phiếu tăng trong một phút tới sẽ khác đi khi ta biết vừa có một lệnh mua lớn quét qua sổ lệnh. Để đo sự thay đổi này, ta dùng <b>xác suất có điều kiện</b> (conditional probability). Với hai sự kiện A và B, xác suất của A khi đã biết B xảy ra là:</p>
+<div class="formula"><span class="lbl">Định nghĩa xác suất có điều kiện</span>P(A | B) = <span class="frac"><span>P(A ∩ B)</span><span>P(B)</span></span>,&nbsp;&nbsp; với P(B) &gt; 0</div>
+<p>Cách hiểu dễ nhất là hình học. Hãy coi không gian mẫu như một tấm bản đồ chứa mọi kết quả có thể xảy ra. Khi biết chắc B đã xảy ra, toàn bộ phần bản đồ nằm ngoài B bị xoá bỏ, vì những kết quả đó không còn khả thi. Thế giới của ta co lại, chỉ còn đúng vùng B. Khi đó P(A | B) chỉ đơn giản là tỉ trọng của phần A nằm bên trong thế giới mới ấy. Phép chia cho P(B) có vai trò chuẩn hoá lại, để thế giới mới vẫn có tổng xác suất bằng 1.</p>
+<p>Điều kiện P(B) &gt; 0 không phải chi tiết thừa. Nếu B không bao giờ xảy ra thì không có thế giới nào để thu hẹp vào, và câu hỏi “biết B rồi thì sao” trở nên vô nghĩa.</p>
+
+<h4>Định lý Bayes: đảo chiều điều kiện</h4>
+<p>Phần giao A ∩ B có thể viết theo hai cách, tuỳ ta chọn điều kiện theo sự kiện nào:</p>
+<div class="formula">P(A | B) · P(B) = P(A ∩ B) = P(B | A) · P(A)</div>
+<p>Chia hai vế cho P(B), rồi đổi tên A thành giả thuyết H (hypothesis) và B thành bằng chứng E (evidence), ta được <b>định lý Bayes</b> (Bayes’ theorem):</p>
+<div class="formula"><span class="lbl">Hậu nghiệm = hợp lý × tiên nghiệm / bằng chứng</span>P(H | E) = <span class="frac"><span>P(E | H) · P(H)</span><span>P(E | H) · P(H) + P(E | ¬H) · P(¬H)</span></span></div>
+<p>Mỗi thành phần có một tên gọi riêng:</p>
 <ul>
-  <li><b>Xác suất có điều kiện</b> (conditional probability): biết B đã xảy ra thì không gian mẫu thu hẹp lại còn B. P(A | B) là tỉ trọng của A ∩ B bên trong B.</li>
-  <li><b>Định lý Bayes</b> đảo chiều điều kiện. Từ P(E | H), vốn là tính chất của phép đo, ta suy ra P(H | E), là điều cần biết.</li>
-  <li>Mẫu số là <b>luật xác suất toàn phần</b> (law of total probability). Bằng chứng E có thể xuất hiện khi H đúng hoặc khi H sai, nên phải cộng cả hai nhánh.</li>
-  <li><b>Xác suất tiên nghiệm</b> (prior) thấp có thể lấn át một bằng chứng có vẻ rất mạnh. Đây là lỗi bỏ qua tỉ lệ nền (base-rate neglect).</li>
-  <li>Khi có k bằng chứng độc lập cùng chiều, các tỉ số hợp lý được nhân với nhau, nên xác suất hậu nghiệm tăng rất nhanh.</li>
+  <li><b>P(H)</b> là <b>xác suất tiên nghiệm</b> (prior): niềm tin vào H trước khi nhìn thấy bằng chứng.</li>
+  <li><b>P(E | H)</b> là <b>hàm hợp lý</b> (likelihood): nếu H đúng thì bằng chứng này xuất hiện thường xuyên đến đâu.</li>
+  <li><b>P(H | E)</b> là <b>xác suất hậu nghiệm</b> (posterior): niềm tin vào H sau khi đã tính tới bằng chứng.</li>
+  <li>Mẫu số là xác suất của bằng chứng, P(E). Nó được tính bằng <b>luật xác suất toàn phần</b> (law of total probability): bằng chứng có thể đến từ con đường “H đúng” hoặc con đường “H sai”, nên ta cộng cả hai con đường lại.</li>
 </ul>
-
-<h4>Công thức</h4>
-<div class="formula"><span class="lbl">Xác suất có điều kiện</span>P(A | B) = <span class="frac"><span>P(A ∩ B)</span><span>P(B)</span></span>,&nbsp;&nbsp; P(B) &gt; 0</div>
-<div class="formula"><span class="lbl">Định lý Bayes: hậu nghiệm = hợp lý × tiên nghiệm / bằng chứng</span>P(H | E) = <span class="frac"><span>P(E | H) · P(H)</span><span>P(E | H) · P(H) + P(E | ¬H) · P(¬H)</span></span></div>
-<div class="formula"><span class="lbl">Dạng tỉ lệ cược (odds): tiện cho việc tính nhẩm</span><span class="frac"><span>P(H | E)</span><span>P(¬H | E)</span></span> = <span class="frac"><span>P(H)</span><span>P(¬H)</span></span> × <span class="frac"><span>P(E | H)</span><span>P(E | ¬H)</span></span></div>
-
-<h4>Ví dụ minh hoạ: nhân chứng và chiếc taxi</h4>
-<p>Trong thành phố, 15% taxi màu xanh dương và 85% màu xanh lá. Một nhân chứng nói chiếc taxi gây tai nạn có màu xanh dương. Kiểm tra cho thấy người này nhận đúng màu trong 80% trường hợp.</p>
-<ol>
-  <li>Xét 100 chiếc taxi. Có 15 chiếc xanh dương, nhân chứng gọi đúng 0,8 × 15 = 12 chiếc.</li>
-  <li>Có 85 chiếc xanh lá, nhân chứng gọi nhầm thành xanh dương 0,2 × 85 = 17 chiếc.</li>
-  <li>Trong 12 + 17 = 29 lần nhân chứng nói “xanh dương”, chỉ có 12 lần đúng. Vậy P(xanh dương | nói xanh dương) = 12/29 ≈ 41%, chứ không phải 80%.</li>
-</ol>
-<p>Bài toán xét nghiệm có cùng cấu trúc. Bệnh có tỉ lệ mắc 1%, xét nghiệm phát hiện đúng 99% người bệnh và báo dương tính nhầm 1% người khoẻ. Một kết quả dương tính chỉ cho xác suất mắc bệnh là 50%. Kết quả dương tính độc lập thứ hai nâng con số lên khoảng 99%.</p>
+<p>Ở đây H có thể là “chiếc taxi màu xanh dương” hay “đồng xu này bị gian”, còn E là điều ta quan sát được. Giá trị thực tế của định lý nằm ở chỗ vế phải thường dễ biết, còn vế trái thì không. “Một nhân chứng giỏi nói đúng màu bao nhiêu phần trăm?” là đặc tính của nhân chứng, có thể kiểm tra trong phòng thí nghiệm. “Trong thành phố có bao nhiêu taxi xanh dương?” là một con số thống kê về thành phố. Không ai trực tiếp cho ta biết “khả năng chiếc xe này màu xanh dương”, nhưng Bayes ghép hai con số dễ có thành đúng con số ta cần.</p>
+<p>Một cách hình dung giúp tránh hầu hết sai lầm: thay vì nghĩ bằng xác suất, hãy nghĩ bằng <b>số đếm</b>. Lấy một quần thể giả định gồm 1.000 cá thể. Đếm xem bao nhiêu cá thể thuộc nhóm H và cho ra bằng chứng, bao nhiêu cá thể thuộc nhóm ¬H mà vẫn cho ra bằng chứng. Hậu nghiệm là tỉ lệ của nhóm thứ nhất trong tổng số cá thể cho ra bằng chứng. Hai hình dưới đây là đúng phép đếm ấy.</p>
 
 <figure class="demo">
   <div class="stage" id="demo-01"></div>
   <div class="controls" id="ctl-01"></div>
   <div class="readout" id="out-01"></div>
-  <figcaption><b>Mô hình 1.1 – Quần thể 1.000 cá thể trong không gian 3D.</b> Mỗi khối là một cá thể. Khối xanh dương là nhóm có giả thuyết H đúng, khối cam là nhóm H sai. Khối nào cho ra bằng chứng E thì được nâng lên. Xác suất hậu nghiệm chính là tỉ lệ khối xanh dương trong số các khối được nâng. Kéo để xoay; dùng các phương án mẫu hoặc thanh trượt để thay đổi tham số.</figcaption>
+  <figcaption><b>Hình 1.1 – Quần thể 1.000 cá thể trong không gian 3D.</b> Mỗi khối là một cá thể: một người, một chiếc taxi hay một đồng xu. Nhóm H đúng là khối xanh dương ở bên trái, nhóm H sai là khối cam. Cá thể nào cho ra bằng chứng E thì được nâng lên. Hậu nghiệm chỉ là câu hỏi: trong các khối được nâng, bao nhiêu phần là màu xanh dương? Bấm các phương án mẫu, nhất là “1.000 đồng xu”, rồi kéo để xoay và so sánh hai nhóm khối được nâng. Thanh trượt k cho biết số bằng chứng độc lập cùng chiều.</figcaption>
 </figure>
 
-<h4>Lưu ý khi phỏng vấn</h4>
+<figure class="demo">
+  <div class="stage" id="demo2-01"></div>
+  <div class="controls" id="ctl2-01"></div>
+  <div class="readout" id="out2-01"></div>
+  <figcaption><b>Hình 1.2 – Cùng ý tưởng ấy, biểu diễn bằng diện tích.</b> Hình vuông là toàn bộ quần thể, có diện tích 1. Đường cắt dọc chia theo tiên nghiệm: cột xanh dương là H đúng, cột cam là H sai. Trong mỗi cột, phần tô đậm từ dưới lên là tỉ lệ cá thể cho ra bằng chứng, tức P(E | H) và P(E | ¬H). Hậu nghiệm bằng diện tích đậm màu xanh chia cho tổng diện tích đậm. Thanh ngang bên phải phóng to riêng hai phần diện tích đậm để dễ so sánh khi chúng quá nhỏ. Hãy thử các phương án mẫu.</figcaption>
+</figure>
+
+<h4>Ba cái bẫy kinh điển</h4>
+<p>Ba bài toán dưới đây có cùng một cấu trúc. Trực giác của hầu hết mọi người chỉ nhìn vào độ chính xác của bằng chứng và quên mất tỉ lệ nền. Sai lầm này có tên là <b>bỏ qua tỉ lệ nền</b> (base-rate neglect).</p>
+
+<h5>Taxi và nhân chứng</h5>
+<p>Một chiếc taxi gây tai nạn vào ban đêm rồi bỏ chạy. Trong thành phố có 85% taxi màu xanh lá và 15% taxi màu xanh dương. Một nhân chứng khai rằng chiếc xe màu xanh dương. Thử nghiệm trong điều kiện ánh sáng tương tự cho thấy người này nhận đúng màu 80% số lần. Câu trả lời buột miệng thường là “80% là xe xanh dương”. Hãy làm đúng từng bước.</p>
+<ol>
+  <li>Tiên nghiệm: P(xanh dương) = 0,15 và P(xanh lá) = 0,85.</li>
+  <li>Hàm hợp lý: P(nói xanh dương | xanh dương) = 0,8. Nhân chứng nhầm 20% số lần, nên P(nói xanh dương | xanh lá) = 0,2.</li>
+  <li>Tử số: 0,8 × 0,15 = 0,12. Mẫu số: 0,12 + 0,2 × 0,85 = 0,12 + 0,17 = 0,29.</li>
+  <li>Hậu nghiệm: P(xanh dương | nói xanh dương) = 0,12 / 0,29 ≈ 0,41.</li>
+</ol>
+<p>Nói theo số đếm: cứ 100 chiếc taxi thì có 12 chiếc xanh dương được gọi đúng là xanh dương, nhưng có tới 17 chiếc xanh lá bị gọi nhầm thành xanh dương. Nhóm xe xanh lá đông gấp gần sáu lần, nên dù tỉ lệ nhầm chỉ 20%, số lần nhầm vẫn nhiều hơn số lần đúng. Tỉ lệ nền nhỏ đã thắng. Nhân chứng vẫn có ích: niềm tin tăng từ 15% lên 41%. Chỉ là chưa đủ để kết luận.</p>
+
+<h5>Steve, người thủ thư</h5>
+<p>Steve là người nhút nhát, ngăn nắp và rất chú ý đến chi tiết. Anh ấy là thủ thư hay nông dân? Mô tả này rõ ràng hợp với hình ảnh thủ thư hơn. Giả sử 40% thủ thư khớp với mô tả, trong khi chỉ 10% nông dân khớp. Nhưng cứ một thủ thư thì có khoảng 20 nông dân.</p>
+<ol>
+  <li>Lấy nhóm 21 người: 1 thủ thư và 20 nông dân.</li>
+  <li>Số thủ thư kỳ vọng khớp mô tả: 1 × 0,4 = 0,4.</li>
+  <li>Số nông dân kỳ vọng khớp mô tả: 20 × 0,1 = 2.</li>
+  <li>Trong 2,4 người khớp mô tả, có 2 người là nông dân. Vậy P(nông dân | khớp mô tả) = 2 / 2,4 ≈ 83%, và P(thủ thư | khớp mô tả) ≈ 17%.</li>
+</ol>
+<p>Mô tả khớp với thủ thư gấp bốn lần, nhưng nông dân đông gấp hai mươi lần. Hai lực kéo này nhân với nhau, và tỉ lệ nền thắng. Bài toán này cho thấy một điểm tinh tế: một câu chuyện “nghe rất giống” chỉ cho biết hàm hợp lý, không cho biết hậu nghiệm.</p>
+
+<h5>Xét nghiệm chính xác 99%</h5>
+<p>Có 1% dân số mắc một căn bệnh. Xét nghiệm phát hiện được 99% người bệnh và báo dương tính nhầm 1% người khoẻ. Bạn nhận kết quả dương tính. Khả năng bạn mắc bệnh là:</p>
+<div class="formula">P(bệnh | +) = <span class="frac"><span>0,99 × 0,01</span><span>0,99 × 0,01 + 0,01 × 0,99</span></span> = 0,5</div>
+<p>Một xét nghiệm “chính xác 99%” mà kết luận chỉ ngang tung đồng xu. Lý do: trong 10.000 người, có 100 người bệnh và 99 người trong số đó dương tính; có 9.900 người khoẻ và 99 người trong số đó cũng dương tính. Hai nhóm dương tính bằng đúng nhau.</p>
+<p>Làm thêm một xét nghiệm độc lập thứ hai thì tình hình thay đổi rất nhanh. Với k kết quả dương tính độc lập, mỗi hàm hợp lý được nâng lên luỹ thừa k:</p>
+<div class="formula"><span class="lbl">Với k = 2</span>P(bệnh | + +) = <span class="frac"><span>0,99<sup>2</sup> × 0,01</span><span>0,99<sup>2</sup> × 0,01 + 0,01<sup>2</sup> × 0,99</span></span> = <span class="frac"><span>0,99</span><span>0,99 + 0,01</span></span> = 0,99</div>
+<p>Hai lần dương tính đã cho xác suất 99%. Hãy kéo thanh trượt k trong Hình 1.1 hoặc Hình 1.2 lên 2 để thấy khối cam được nâng gần như biến mất.</p>
+
+<details class="qa"><summary>Trong phỏng vấn: có 1.000 đồng xu, một đồng có hai mặt đều là ngửa. Bạn rút ngẫu nhiên một đồng, tung 10 lần và được 10 lần ngửa. Xác suất đó là đồng xu gian là bao nhiêu?</summary>
+<p>Đây là câu hỏi kinh điển của vòng phỏng vấn qua điện thoại. Người phỏng vấn muốn nghe bạn nói rõ tiên nghiệm và hàm hợp lý trước khi tính.</p>
+<ol>
+  <li>Tiên nghiệm: P(gian) = 1/1.000, P(thường) = 999/1.000.</li>
+  <li>Hàm hợp lý: đồng xu gian luôn ra ngửa, nên P(10 ngửa | gian) = 1. Đồng xu thường cho P(10 ngửa | thường) = (1/2)<sup>10</sup> = 1/1.024.</li>
+  <li>Thay vào Bayes:</li>
+</ol>
+<div class="formula">P(gian | 10 ngửa) = <span class="frac"><span>1 · <span class="frac"><span>1</span><span>1000</span></span></span><span>1 · <span class="frac"><span>1</span><span>1000</span></span> + (<span class="frac"><span>1</span><span>2</span></span>)<sup>10</sup> · <span class="frac"><span>999</span><span>1000</span></span></span></span> = <span class="frac"><span>1</span><span>1 + <span class="frac"><span>999</span><span>1024</span></span></span></span> ≈ 0,506</div>
+<p>Mẹo tính nhẩm: 2<sup>10</sup> = 1.024 gần bằng 1.000, nên bằng chứng gần như cân bằng chính xác với tiên nghiệm. Đáp số vì thế chỉ nhỉnh hơn một nửa. Nói được nhận xét này trước khi ra con số chính xác là điểm cộng lớn.</p>
+</details>
+
+<h4>Cách nhanh: tỉ lệ cược nhân tỉ số hợp lý</h4>
+<p>Viết Bayes dưới dạng <b>tỉ lệ cược</b> (odds) thì gọn hơn nhiều. Viết công thức cho H, viết công thức cho ¬H, rồi chia vế cho vế. Hai công thức có chung mẫu số P(E), nên mẫu số triệt tiêu:</p>
+<div class="formula"><span class="lbl">Dạng tỉ lệ cược của định lý Bayes</span><span class="frac"><span>P(H | E)</span><span>P(¬H | E)</span></span> = <span class="frac"><span>P(H)</span><span>P(¬H)</span></span> × <span class="frac"><span>P(E | H)</span><span>P(E | ¬H)</span></span></div>
+<p>Đọc thành lời: <b>tỉ lệ cược hậu nghiệm bằng tỉ lệ cược tiên nghiệm nhân với tỉ số hợp lý</b> (likelihood ratio). Tỉ số hợp lý đo “sức mạnh” của bằng chứng: bằng chứng này xuất hiện dưới H thường gấp bao nhiêu lần dưới ¬H.</p>
 <ul>
-  <li>Luôn hỏi lại hoặc tự xác định <b>tỉ lệ nền</b> trước khi dùng độ chính xác của bằng chứng.</li>
-  <li>Cách nhanh nhất là đếm trên một quần thể giả định, chẳng hạn 100 hoặc 1.000 cá thể, thay vì thay số vào công thức.</li>
-  <li>Bài toán kinh điển: có 1.000 đồng xu, trong đó 1 đồng có hai mặt ngửa. Rút ngẫu nhiên một đồng, tung 10 lần đều ra ngửa. Tỉ số hợp lý là 2<sup>10</sup> = 1.024 so với tỉ lệ cược tiên nghiệm 1 : 999, nên P(đồng hai mặt ngửa) = 1.024 / (1.024 + 999) ≈ 50,6%.</li>
-  <li>Áp vào giao dịch: lệnh mua khớp vào giá chào bán của mình là bằng chứng cho thấy giá trị thật có thể cao hơn. Cần dịch giá trị hợp lý lên theo đúng mức thông tin mà loại lệnh đó mang theo.</li>
+  <li>Bài đồng xu: tỉ lệ cược tiên nghiệm 1 : 999, tỉ số hợp lý 1.024 : 1, nên tỉ lệ cược hậu nghiệm là 1.024 : 999. Đổi về xác suất: 1.024 / 2.023 ≈ 0,506.</li>
+  <li>Bài taxi: tỉ lệ cược tiên nghiệm 15 : 85, tỉ số hợp lý 0,8 / 0,2 = 4, nên hậu nghiệm là 60 : 85 = 12 : 17, tức 12/29 ≈ 0,41.</li>
+  <li>Bài Steve: tỉ lệ cược thủ thư so với nông dân là 1 : 20, tỉ số hợp lý 4, nên hậu nghiệm 4 : 20 = 1 : 5, tức 1/6 ≈ 17% là thủ thư.</li>
 </ul>
+<p>Lợi thế lớn nhất của dạng này: các bằng chứng độc lập chỉ cần <b>nhân</b> tỉ số hợp lý với nhau. Hai lần xét nghiệm dương tính có tỉ số hợp lý 99 × 99 = 9.801, nhân với tỉ lệ cược tiên nghiệm 1 : 99 cho 99 : 1, tức 99%. Đây là cách người làm nghề tính Bayes trong đầu. Nếu lấy logarit thì phép nhân thành phép cộng: mỗi bằng chứng cộng thêm một lượng “điểm” vào log tỉ lệ cược.</p>
+
+<div class="note"><b>Ứng dụng trên bàn giao dịch.</b>
+<ul>
+  <li><b>Lựa chọn bất lợi</b> (adverse selection). Khi có người bán vào giá mua của bạn, đó là bằng chứng cho thấy họ nghĩ giá trị thật thấp hơn. Giá trị hợp lý của nhà tạo lập thị trường sau mỗi lần khớp là một bước cập nhật Bayes. Đây là lý do giá yết luôn dịch ra xa phía vừa bị khớp.</li>
+  <li><b>Đọc dòng lệnh</b> (order flow). Một người mua lớn đã quét qua ba sàn khác nhau có nhiều khả năng nắm thông tin hơn người chỉ mua ở một sàn. Mỗi sàn bị quét nhân thêm một tỉ số hợp lý vào tỉ lệ cược “người này có thông tin”.</li>
+  <li><b>Lọc tín hiệu</b>. Bộ lọc Kalman (Kalman filter), dùng để theo dõi tỉ lệ phòng hộ (hedge ratio) hoặc một mức giá “thật” không quan sát được, chính là định lý Bayes áp dụng ở mỗi nhịp giá (tick), với giả định các phân phối đều là phân phối chuẩn.</li>
+</ul></div>
+
+<h4>Viết bằng code</h4>
+<p>Đoạn TypeScript dưới đây tính hậu nghiệm qua dạng tỉ lệ cược, với k bằng chứng độc lập giống nhau, rồi kiểm tra lại bài taxi bằng mô phỏng một triệu chiếc xe. Chạy bằng <span class="kbd">bun bayes.ts</span>.</p>
+<pre class="code"><code><span class="c">// Hậu nghiệm sau k bằng chứng độc lập, tính qua tỉ lệ cược</span>
+function posterior(prior: number, pEgivenH: number, pEgivenNotH: number, k = 1): number {
+  const priorOdds = prior / (1 - prior);
+  const lr = (pEgivenH / pEgivenNotH) ** k;      <span class="c">// tỉ số hợp lý</span>
+  const postOdds = priorOdds * lr;
+  return postOdds / (1 + postOdds);
+}
+
+console.log(posterior(0.15, 0.8, 0.2).toFixed(3));        <span class="c">// taxi: 0.414</span>
+console.log(posterior(1 / 21, 0.4, 0.1).toFixed(3));      <span class="c">// Steve là thủ thư: 0.167</span>
+console.log(posterior(0.01, 0.99, 0.01).toFixed(3));      <span class="c">// một lần dương tính: 0.500</span>
+console.log(posterior(0.01, 0.99, 0.01, 2).toFixed(3));   <span class="c">// hai lần dương tính: 0.990</span>
+console.log(posterior(1 / 1000, 1, 0.5, 10).toFixed(3));  <span class="c">// 1.000 đồng xu: 0.506</span>
+
+<span class="c">// Kiểm tra bài taxi bằng mô phỏng (bộ sinh số có hạt giống mulberry32)</span>
+function rng(seed: number) {
+  return () =&gt; {
+    seed = (seed + 0x6d2b79f5) | 0;
+    let t = Math.imul(seed ^ (seed &gt;&gt;&gt; 15), 1 | seed);
+    t = (t + Math.imul(t ^ (t &gt;&gt;&gt; 7), 61 | t)) ^ t;
+    return ((t ^ (t &gt;&gt;&gt; 14)) &gt;&gt;&gt; 0) / 4294967296;
+  };
+}
+const rand = rng(42);
+let saidBlue = 0, saidBlueAndBlue = 0;
+for (let i = 0; i &lt; 1_000_000; i++) {
+  const blue = rand() &lt; 0.15;
+  const says = blue ? rand() &lt; 0.8 : rand() &lt; 0.2;
+  if (says) { saidBlue++; if (blue) saidBlueAndBlue++; }
+}
+console.log((saidBlueAndBlue / saidBlue).toFixed(3));    <span class="c">// ≈ 0.414</span></code></pre>
+
+<details class="qa"><summary>Tự kiểm tra: một sự kiện hiếm có xác suất tiên nghiệm 1%. Một tín hiệu báo đúng 90% số lần khi sự kiện sắp xảy ra, và báo nhầm 9% số lần khi nó không xảy ra. Tín hiệu vừa báo. Khả năng sự kiện xảy ra bây giờ là bao nhiêu: khoảng 90%, 50%, 9% hay 1%?</summary>
+<p>Đáp án: <b>khoảng 9%</b>.</p>
+<ol>
+  <li>Tỉ lệ cược tiên nghiệm: 1 : 99.</li>
+  <li>Tỉ số hợp lý: 0,9 / 0,09 = 10.</li>
+  <li>Tỉ lệ cược hậu nghiệm: 10 : 99, nên P ≈ 10 / 109 ≈ 9,2%.</li>
+</ol>
+<p>Tín hiệu đã làm xác suất tăng gần mười lần, từ 1% lên 9%. Nhưng với một sự kiện hiếm, một tín hiệu nghe rất mạnh vẫn để bạn sai trong phần lớn trường hợp. Người chọn 90% đã nhầm hàm hợp lý P(tín hiệu | sự kiện) với hậu nghiệm P(sự kiện | tín hiệu).</p>
+</details>
 
 <script>
 (()=>{
@@ -60,8 +163,8 @@
     let a=0,b=0;
     for(let i=0;i<N;i++){ const isH=i<nH; const on=u[i]<(isH?pH:pN); target[i]=on?1:0; if(on){ if(isH)a++; else b++; } }
     const post=pH*S.prior/(pH*S.prior+pN*(1-S.prior));
-    out.textContent=`Số khối được nâng: ${a} xanh dương + ${b} cam (trên quần thể 1.000)\n`+
-      `P(H | E) lý thuyết = ${Q.fmt(pH,3)}×${Q.fmt(S.prior,3)} / (${Q.fmt(pH,3)}×${Q.fmt(S.prior,3)} + ${Q.fmt(pN,3)}×${Q.fmt(1-S.prior,3)}) = ${Q.pct(post,1)}`;
+    out.textContent=`Số khối được nâng: ${a} xanh dương + ${b} cam (trên quần thể 1.000); tỉ lệ xanh trong nhóm nâng = ${a+b?Q.pct(a/(a+b),1):'—'}\n`+
+      `P(H | E) lý thuyết = ${Q.fmt(pH,4)}×${Q.fmt(S.prior,3)} / (${Q.fmt(pH,4)}×${Q.fmt(S.prior,3)} + ${Q.fmt(pN,4)}×${Q.fmt(1-S.prior,3)}) = ${Q.pct(post,1)}`;
     return nH;
   }
   let nH=compute(); lift.set(target);
@@ -100,11 +203,63 @@
   const sP=Q.slider(ctl,'Tiên nghiệm P(H)',0.001,0.5,0.001,S.prior,v=>{S.prior=v;nH=compute();},f2);
   const sH=Q.slider(ctl,'P(E | H)',0.5,1,0.01,S.hit,v=>{S.hit=v;compute();},f2);
   const sF=Q.slider(ctl,'P(E | ¬H)',0,0.5,0.005,S.fa,v=>{S.fa=v;compute();},f2);
-  const sK=Q.slider(ctl,'Số bằng chứng độc lập k',1,3,1,S.k,v=>{S.k=v;compute();},v=>v);
-  function preset(p,h,f){ S.prior=p;S.hit=h;S.fa=f; [[sP,p],[sH,h],[sF,f]].forEach(([s,v])=>{s.value=v;s.dispatchEvent(new Event('input'));}); }
-  Q.button(ctl,'Taxi và nhân chứng',()=>preset(0.15,0.8,0.2));
-  Q.button(ctl,'Xét nghiệm 99%',()=>preset(0.01,0.99,0.01));
-  Q.button(ctl,'Thủ thư hay nông dân',()=>preset(0.048,0.4,0.1));
+  const sK=Q.slider(ctl,'Số bằng chứng độc lập k',1,10,1,S.k,v=>{S.k=v;compute();},v=>v);
+  function preset(p,h,f,k){ [[sP,p],[sH,h],[sF,f],[sK,k]].forEach(([s,v])=>{s.value=v;s.dispatchEvent(new Event('input'));}); }
+  Q.button(ctl,'Taxi và nhân chứng',()=>preset(0.15,0.8,0.2,1));
+  Q.button(ctl,'Thủ thư hay nông dân',()=>preset(0.048,0.4,0.1,1));
+  Q.button(ctl,'Xét nghiệm 99%',()=>preset(0.01,0.99,0.01,1));
+  Q.button(ctl,'1.000 đồng xu',()=>preset(0.001,1,0.5,10));
+})();
+</script>
+<script>
+(()=>{
+  /* Hình 1.2: hình vuông Bayes. Cột trái rộng P(H), cột phải rộng 1 − P(H); phần đậm cao P(E|·)^k. */
+  const stage=document.getElementById('demo2-01'), ctl=document.getElementById('ctl2-01'), out=document.getElementById('out2-01');
+  const S={prior:0.15, hit:0.8, fa:0.2, k:1};
+  const FONT='px Be Vietnam Pro,-apple-system,sans-serif', MONO='px JetBrains Mono,ui-monospace,monospace';
+  const c=Q.canvas(stage,340,draw);
+  function nums(){ const pH=Math.pow(S.hit,S.k), pN=Math.pow(S.fa,S.k);
+    const a=S.prior*pH, b=(1-S.prior)*pN; return {pH,pN,a,b,post:a/(a+b)}; }
+  function draw(ctx,w,h){
+    const C=Q.colors(), R=nums(); ctx.clearRect(0,0,w,h);
+    const narrow=w<620, side=Math.min(narrow?w-48:h-70, 270), x0=28, y0=34;
+    // khung hình vuông
+    const wb=Math.max(S.prior*side,1), wo=side-wb;
+    const hb=R.pH*side, ho=R.pN*side;
+    ctx.globalAlpha=0.2; ctx.fillStyle=C.c; ctx.fillRect(x0,y0,wb,side); ctx.fillStyle=C.b; ctx.fillRect(x0+wb,y0,wo,side);
+    ctx.globalAlpha=1; ctx.fillStyle=C.c; ctx.fillRect(x0,y0+side-hb,wb,hb); ctx.fillStyle=C.b; ctx.fillRect(x0+wb,y0+side-ho,wo,ho);
+    ctx.strokeStyle=C.ink; ctx.lineWidth=1; ctx.strokeRect(x0,y0,side,side);
+    ctx.beginPath(); ctx.moveTo(x0+wb,y0-6); ctx.lineTo(x0+wb,y0+side+6); ctx.stroke();
+    ctx.fillStyle=C.muted; ctx.font='12'+FONT; ctx.textAlign='left';
+    ctx.fillText('P(H) = '+Q.pct(S.prior,1)+'  |  P(¬H) = '+Q.pct(1-S.prior,1), x0, y0-12);
+    ctx.fillText('Cao của phần đậm: P(E|H)^k = '+Q.pct(R.pH,1)+', P(E|¬H)^k = '+Q.pct(R.pN,2), x0, y0+side+20);
+    if(narrow) return;
+    // thanh so sánh hai diện tích đậm, đã chuẩn hoá về tổng = 1
+    const bx=x0+side+48, bw=Math.min(w-bx-24, 380), by=y0+70, bh=46;
+    ctx.fillStyle=C.ink; ctx.font='600 13'+FONT; ctx.fillText('Chỉ giữ lại phần đậm (cá thể cho ra bằng chứng E):', bx, by-18);
+    const wa=bw*R.post; ctx.fillStyle=C.c; ctx.fillRect(bx,by,wa,bh); ctx.fillStyle=C.b; ctx.fillRect(bx+wa,by,bw-wa,bh);
+    ctx.strokeStyle=C.ink; ctx.strokeRect(bx,by,bw,bh);
+    ctx.font='12'+MONO; ctx.fillStyle=C.ink;
+    ctx.fillText('xanh: P(H)·P(E|H)^k  = '+Q.fmt(R.a,5), bx, by+bh+24);
+    ctx.fillText('cam : P(¬H)·P(E|¬H)^k = '+Q.fmt(R.b,5), bx, by+bh+44);
+    ctx.font='600 22'+MONO; ctx.fillStyle=C.c; ctx.fillText('P(H | E) = '+Q.pct(R.post,1), bx, by+bh+84);
+    ctx.font='12'+FONT; ctx.fillStyle=C.muted;
+    ctx.fillText('Tỉ lệ cược hậu nghiệm = '+Q.fmt(R.a/R.b,3)+' : 1', bx, by+bh+108);
+  }
+  function upd(){ const R=nums(); c.redraw();
+    out.textContent=`Diện tích đậm xanh = ${Q.fmt(S.prior,3)} × ${Q.fmt(R.pH,4)} = ${Q.fmt(R.a,5)};  diện tích đậm cam = ${Q.fmt(1-S.prior,3)} × ${Q.fmt(R.pN,4)} = ${Q.fmt(R.b,5)}\n`+
+      `P(H | E) = ${Q.fmt(R.a,5)} / (${Q.fmt(R.a,5)} + ${Q.fmt(R.b,5)}) = ${Q.pct(R.post,1)}`; }
+  const f2=v=>Q.pct(v,1);
+  const sP=Q.slider(ctl,'Tiên nghiệm P(H)',0.001,0.5,0.001,S.prior,v=>{S.prior=v;upd();},f2);
+  const sH=Q.slider(ctl,'P(E | H)',0.5,1,0.01,S.hit,v=>{S.hit=v;upd();},f2);
+  const sF=Q.slider(ctl,'P(E | ¬H)',0.005,0.5,0.005,S.fa,v=>{S.fa=v;upd();},f2);
+  const sK=Q.slider(ctl,'Số lần lặp k',1,10,1,S.k,v=>{S.k=v;upd();},v=>v);
+  function preset(p,h,f,k){ [[sP,p],[sH,h],[sF,f],[sK,k]].forEach(([s,v])=>{s.value=v;s.dispatchEvent(new Event('input'));}); }
+  Q.button(ctl,'Taxi',()=>preset(0.15,0.8,0.2,1));
+  Q.button(ctl,'Steve',()=>preset(0.048,0.4,0.1,1));
+  Q.button(ctl,'Xét nghiệm 99%',()=>preset(0.01,0.99,0.01,1));
+  Q.button(ctl,'1.000 đồng xu',()=>preset(0.001,1,0.5,10));
+  upd();
 })();
 </script>
 </section>

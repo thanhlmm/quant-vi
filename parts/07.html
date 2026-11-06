@@ -2,57 +2,124 @@
 <header>
   <span class="num">07</span>
   <h3>Khoảng tin cậy</h3>
-  <p class="meta">10 phút · Ứng dụng: thanh sai số cho hệ số Sharpe và độ mạnh của tín hiệu · <a href="https://hft.md/learn/confidence-intervals/">Bài gốc (tiếng Anh)</a></p>
+  <p class="meta">Phần 2 · Thống kê · Bài 7 · 10 phút · <a href="https://hft.md/learn/confidence-intervals/">Bài gốc (tiếng Anh)</a></p>
 </header>
 
-<p>Một ước lượng không kèm sai số mới chỉ là nửa câu trả lời. Trên sàn giao dịch, người ta còn hỏi thẳng: “cho tôi khoảng 90% của số cửa sổ trong toà nhà này”. Khoảng tin cậy là cách nói rõ mình chắc chắn đến đâu.</p>
+<p><i>Câu “tin cậy 95%” thực sự cam kết điều gì, kiểm chứng bằng cách lặp lại cùng một thí nghiệm hàng trăm lần.</i></p>
 
-<h4>Ý chính</h4>
-<ul>
-  <li><b>Khoảng tin cậy</b> (confidence interval) mức 1 − α là một khoảng được tính từ dữ liệu. Nó chứa tham số thật với xác suất ít nhất 1 − α, dù tham số thật là bao nhiêu.</li>
-  <li>Cái ngẫu nhiên là khoảng, còn tham số thì cố định. “95%” là tính chất của <b>quy trình</b>: lặp lại thí nghiệm nhiều lần thì khoảng 95% số khoảng dựng được sẽ chứa tham số. Một khoảng cụ thể thì hoặc chứa, hoặc không.</li>
-  <li>Cách dựng thông dụng: tâm lấy từ trung bình mẫu (luật số lớn), độ rộng lấy từ định lý giới hạn trung tâm. Phân vị chuẩn q là 1,645 cho mức 90%, 1,96 cho 95% và 2,576 cho 99%.</li>
-  <li>Vướng mắc: σ thường phụ thuộc vào chính tham số chưa biết. Với biến Bernoulli, σ = √(p(1 − p)). Có hai cách xử lý: chặn trên <b>bảo thủ</b> (conservative) hoặc <b>thay thế</b> (plug-in) p bằng p̂.</li>
-  <li>Độ rộng tỉ lệ với 1/√n. Mức tin cậy càng cao thì khoảng càng rộng. Một khoảng quá rộng thì luôn đúng nhưng vô dụng.</li>
-</ul>
+<p>Một ước lượng không kèm thanh sai số mới chỉ là nửa câu trả lời. Nói “tín hiệu này đúng 54% số ngày” chưa giúp ai ra quyết định; người nghe cần biết con số thật có thể nằm ở đâu. <b>Khoảng tin cậy</b> (confidence interval) trả lời đúng câu hỏi đó: một vùng giá trị mà tham số thật có thể nằm trong, kèm một mức độ cam kết rõ ràng. Đây cũng là định dạng mà các công ty giao dịch dùng để hỏi ứng viên. Một câu quen thuộc trong phỏng vấn là: “Cho tôi một khoảng 90% cho số cửa sổ của toà nhà này.”</p>
 
-<h4>Công thức</h4>
-<div class="formula"><span class="lbl">Định nghĩa: khoảng ngẫu nhiên I phủ θ với xác suất ít nhất 1 − α</span>P<sub>θ</sub>( θ ∈ I ) ≥ 1 − α &nbsp;&nbsp; với mọi θ</div>
-<div class="formula"><span class="lbl">Khoảng dựa trên CLT, q = q<sub>α/2</sub> là phân vị 1 − α/2 của N(0, 1)</span>I = [ θ̂ − <span class="frac"><span>q · σ</span><span>√n</span></span> ,&nbsp; θ̂ + <span class="frac"><span>q · σ</span><span>√n</span></span> ]</div>
-<div class="formula"><span class="lbl">Tỉ lệ Bernoulli: bảo thủ (vì p(1 − p) ≤ 1/4) và thay thế (định lý Slutsky)</span>p̂ ± <span class="frac"><span>q</span><span>2√n</span></span> &nbsp;&nbsp;&nbsp;&nbsp; p̂ ± q · √<span style="text-decoration:overline">p̂(1 − p̂) / n</span></div>
-<div class="formula"><span class="lbl">Cỡ mẫu để sai số biên không quá m (dạng bảo thủ), và sai số chuẩn xấp xỉ của Sharpe năm ước lượng từ T năm dữ liệu ngày</span>n ≥ ( <span class="frac"><span>q</span><span>2m</span></span> )<sup>2</sup> &nbsp;&nbsp;&nbsp;&nbsp; SE(Ŝ) ≈ <span class="frac"><span>1</span><span>√T</span></span></div>
+<h4>Định nghĩa</h4>
+<p>Cho θ là một tham số chưa biết. Một khoảng tin cậy mức 1 − α cho θ là một khoảng <b>ngẫu nhiên</b> I, được tính hoàn toàn từ dữ liệu, sao cho</p>
+<div class="formula"><span class="lbl">Định nghĩa: I phủ θ với xác suất ít nhất 1 − α, dù θ thật là bao nhiêu</span>P<sub>θ</sub>( I ∋ θ ) ≥ 1 − α &nbsp;&nbsp; với mọi giá trị θ có thể</div>
+<p>Chữ “với mọi” rất quan trọng: ta không biết θ, nên cam kết phải đứng vững trong mọi kịch bản. Ký hiệu P<sub>θ</sub> nhắc rằng xác suất được tính khi dữ liệu sinh ra từ mô hình có tham số θ.</p>
+<p>Cần cẩn thận với cách diễn đạt. Trong định nghĩa này, <b>khoảng là ngẫu nhiên, còn tham số cố định</b>. Trước khi thu dữ liệu, ta chưa biết khoảng sẽ rơi vào đâu. Sau khi thu dữ liệu, khoảng đã thành hai con số cụ thể, và nó hoặc chứa θ, hoặc không; không còn xác suất nào để nói. Vì vậy “tin cậy 95%” là tính chất của <b>quy trình</b> dựng khoảng: nếu lặp lại toàn bộ thí nghiệm nhiều lần, mỗi lần dựng một khoảng mới, thì khoảng 95% số khoảng đó sẽ chứa θ. Một phép so sánh dễ nhớ: một người ném vòng trúng cọc 95% số lần. Sau một lần ném, vòng đã nằm yên, trúng hoặc trượt; con số 95% mô tả tay nghề của người ném chứ không mô tả chiếc vòng.</p>
 
-<h4>Ví dụ minh hoạ: tín hiệu đoán chiều và thanh sai số của Sharpe</h4>
-<p>Một tín hiệu đoán đúng chiều giá trong 540 trên 1.000 ngày. Nó có thật sự tốt hơn tung đồng xu không?</p>
-<ol>
-  <li>Ước lượng p̂ = 540 / 1.000 = 0,54.</li>
-  <li>Sai số chuẩn theo cách thay thế: √(0,54 × 0,46 / 1.000) ≈ 0,0158.</li>
-  <li>Khoảng 95%: 0,54 ± 1,96 × 0,0158 = 0,54 ± 0,031, tức [0,509; 0,571]. Cách bảo thủ cho 1,96 / (2√1.000) ≈ 0,031, gần như trùng khớp vì p̂ gần 0,5.</li>
-  <li>Khoảng không chứa 0,5, nhưng cận dưới chỉ cách 0,5 chưa tới 1 điểm phần trăm. Muốn sai số biên còn ±0,01 thì cần n ≥ (1,96 / 0,02)<sup>2</sup> ≈ 9.604 ngày.</li>
-</ol>
-<p>Với hệ số Sharpe: backtest 3 năm cho Ŝ = 1,2. Sai số chuẩn khoảng 1/√3 ≈ 0,58, nên khoảng 95% là 1,2 ± 1,13, tức [0,07; 2,33]. Khoảng này chỉ vừa đủ loại trừ 0. Cần T &gt; (1,96 / 1,2)<sup>2</sup> ≈ 2,7 năm để đạt điều đó.</p>
+<h4>Dựng khoảng tin cậy từ định lý giới hạn trung tâm</h4>
+<p>Ước lượng thường là một trung bình. Theo bài 06, tâm của nó đến từ luật số lớn (trung bình tiến về giá trị thật), còn độ rộng đến từ định lý giới hạn trung tâm (sai số xấp xỉ chuẩn với độ lệch chuẩn σ/√n). Ghép hai ý đó lại: với n lớn, đại lượng √n(θ̂ − θ)/σ xấp xỉ N(0, 1), nên nó nằm trong [−q, q] với xác suất 1 − α, trong đó q = q<sub>α/2</sub> là phân vị mức 1 − α/2 của phân phối chuẩn tắc. Giải bất đẳng thức đó theo θ, ta được:</p>
+<div class="formula"><span class="lbl">Khoảng tin cậy dựa trên CLT</span>I = [ θ̂ − <span class="frac"><span>q<sub>α/2</sub> · σ</span><span>√n</span></span> ,&nbsp; θ̂ + <span class="frac"><span>q<sub>α/2</sub> · σ</span><span>√n</span></span> ]</div>
+<p>Ba phân vị nên thuộc lòng:</p>
+<table class="t">
+  <tr><th>Mức tin cậy 1 − α</th><th>90%</th><th>95%</th><th>99%</th></tr>
+  <tr><th>Phân vị q<sub>α/2</sub></th><td>1,645</td><td>1,96</td><td>2,576</td></tr>
+</table>
+<p>Độ rộng khoảng tỉ lệ với 1/√n, nên muốn khoảng hẹp đi một nửa cần dữ liệu gấp bốn. Mức tin cậy càng cao thì q càng lớn và khoảng càng rộng: muốn chắc chắn hơn thì phải chấp nhận nói kém chính xác hơn.</p>
+<p><b>Một vướng mắc.</b> Công thức trên cần σ, mà σ thường lại phụ thuộc vào chính tham số đang cần ước lượng. Với biến Bernoulli, σ = √(p(1 − p)), tức muốn biết độ rộng thì phải biết p. Có hai cách xử lý chuẩn.</p>
+<h5>Cách 1: chặn trên bảo thủ</h5>
+<p>Hàm p(1 − p) đạt cực đại 1/4 tại p = 1/2, nên luôn có p(1 − p) ≤ 1/4, tức σ ≤ 1/2. Thay σ bằng cận trên này, ta được khoảng</p>
+<div class="formula"><span class="lbl">Khoảng bảo thủ (conservative) cho tỉ lệ</span>p̂ ± <span class="frac"><span>q<sub>α/2</sub></span><span>2√n</span></span></div>
+<p>Khoảng này hợp lệ với mọi p, vì nó không bao giờ hẹp hơn khoảng “đúng”. Cái giá phải trả là nó hơi rộng quá mức cần thiết, nhất là khi p xa 1/2. Ưu điểm lớn: độ rộng không phụ thuộc dữ liệu, nên dùng được để tính cỡ mẫu trước khi thu dữ liệu. Muốn sai số biên (margin of error) không quá m, cần n ≥ (q/(2m))<sup>2</sup>.</p>
+<h5>Cách 2: thay thế (định lý Slutsky)</h5>
+<p>Thay p trong công thức phương sai bằng chính ước lượng p̂:</p>
+<div class="formula"><span class="lbl">Khoảng thay thế (plug-in) cho tỉ lệ</span>p̂ ± q<sub>α/2</sub> · √<span style="text-decoration:overline">p̂(1 − p̂) / n</span></div>
+<p><b>Định lý Slutsky</b> bảo đảm rằng phép thay này không phá vỡ kết luận của CLT khi n → ∞: vì p̂ hội tụ về p, tỉ số giữa sai số chuẩn ước lượng và sai số chuẩn thật hội tụ về 1, nên đại lượng chuẩn hoá vẫn tiến về N(0, 1). Tuy nhiên đây chỉ là kết quả tiệm cận. Khi n nhỏ, hoặc p gần 0 hay 1, độ phủ thật thấp hơn mức danh nghĩa. Trường hợp cực đoan: nếu mẫu không có lần thành công nào thì p̂ = 0, khoảng thay thế co lại thành một điểm, và chắc chắn trượt.</p>
+<p><b>Ví dụ.</b> Một tín hiệu đoán đúng chiều giá trong 540 trên 1.000 ngày. Ước lượng p̂ = 0,54. Sai số chuẩn theo cách thay thế là √(0,54 · 0,46 / 1.000) ≈ 0,0158, nên khoảng 95% là 0,54 ± 1,96 · 0,0158 = 0,54 ± 0,031, tức [0,509; 0,571]. Cách bảo thủ cho nửa độ rộng 1,96/(2√1.000) ≈ 0,031, gần như trùng vì p̂ gần 0,5. Khoảng không chứa 0,5, nhưng cận dưới chỉ hơn 0,5 chưa tới một điểm phần trăm. Muốn sai số biên chỉ còn ±0,01 thì cần n ≥ (1,96/0,02)<sup>2</sup> ≈ 9.604 ngày, gần 40 năm giao dịch.</p>
 
 <figure class="demo">
   <div class="stage" id="demo-07"></div>
   <div class="controls" id="ctl-07"></div>
   <div class="readout" id="out-07"></div>
-  <figcaption><b>Mô hình 7.1 – Cỗ máy đo độ phủ.</b> Vạch dọc là tỉ lệ thật p. Mỗi đoạn ngang là một khoảng tin cậy dựng từ một mẫu mới gồm n lần tung. Đoạn màu xanh chứa p, đoạn màu cam trượt. Rút nhiều lần để xem tỉ lệ phủ tích luỹ tiến về đâu. Phần đọc số còn cho độ phủ chính xác, tính bằng phân phối nhị thức. Hãy thử n nhỏ hoặc p gần 0 với cách thay thế: độ phủ thật thấp hơn mức danh nghĩa.</figcaption>
+  <figcaption><b>Hình 7.1 – Cỗ máy đo độ phủ.</b> Mặc định tỉ lệ thật là p = 0,55 (vạch dọc), mỗi mẫu gồm n = 50 lần tung. Mỗi đoạn ngang là một khoảng tin cậy dựng từ một mẫu mới; đoạn xanh chứa p, đoạn cam trượt. Bấm “Rút 20 khoảng” vài lần, hoặc “Rút nhanh 1.000”, và theo dõi độ phủ tích luỹ dừng lại gần mức bạn chọn. Khung số còn cho độ phủ chính xác tính bằng phân phối nhị thức. Với n nhỏ, cách thay thế phủ thiếu một chút; cách bảo thủ phủ thừa. Kéo p về gần 0 để thấy cách thay thế hỏng nặng.</figcaption>
 </figure>
+<p>Với cấu hình mặc định (p = 0,55, n = 50, mức 95%), độ phủ chính xác là 93,4% với cách thay thế và 95,5% với cách bảo thủ. Ở n = 200, cách thay thế đã lên 94,5%. Còn với p = 0,1 và n = 10, cách thay thế chỉ phủ khoảng 65%, kém xa mức 95% danh nghĩa.</p>
+
+<h4>Khoảng tin cậy trên sàn giao dịch</h4>
+<p>Trong phỏng vấn giao dịch, một khoảng là cách bạn thể hiện sự trung thực về mức độ không chắc chắn của mình. Có hai dạng câu hỏi.</p>
+<details class="qa"><summary>Một đại lượng có phân phối chuẩn, trung bình 100, độ lệch chuẩn 10. Hãy cho một khoảng 95%.</summary>
+<p>Khoảng 95% của phân phối chuẩn là trung bình ± 1,96 độ lệch chuẩn: 100 ± 19,6, tức [80,4; 119,6]. Khi trả lời miệng, làm tròn thành “khoảng 80 đến 120”, tức ±2σ. Nếu được hỏi mức 90%, dùng 1,645: 100 ± 16,45, khoảng 84 đến 116.</p>
+</details>
+<details class="qa"><summary>Cho một khoảng 90% cho số cửa sổ của toà nhà này.</summary>
+<p>Không có công thức nào cho câu này. Người phỏng vấn kiểm tra hai điều: khoảng có rộng tương xứng với mức hiểu biết của bạn không, và nó có thực tế không.</p>
+<p><b>Cách làm.</b> Chia đại lượng thành các thừa số dễ đoán, cho mỗi thừa số một khoảng, rồi nhân lại. Ví dụ: toà nhà có từ 15 đến 30 tầng; mỗi mặt tiền mỗi tầng có 8 đến 15 cửa sổ; toà nhà có 4 mặt. Nhân các cận dưới: 15 · 8 · 4 = 480. Nhân các cận trên: 30 · 15 · 4 = 1.800. Khoảng [480; 1.800], với điểm giữa theo thang nhân (trung bình nhân) khoảng √(480 · 1.800) ≈ 930.</p>
+<p><b>Lưu ý.</b> Nhân trực tiếp các cận như vậy cho khoảng hơi rộng hơn mức 90%, vì khó có chuyện mọi thừa số cùng rơi vào đầu mút một lúc; nếu đã khá tự tin, có thể thu hẹp lại đôi chút. Ngược lại, nếu bạn biết rất ít về toà nhà, khoảng phải rộng hơn. Câu “từ 0 đến một tỉ” chắc chắn chứa đáp án nhưng vô dụng, giống hệt một nhà tạo lập thị trường yết giá 0 @ 1 tỉ (bài 17): không ai giao dịch được với nó.</p>
+</details>
+
+<h4>Ứng dụng trên bàn giao dịch</h4>
+<ul>
+  <li><b>Định cỡ một tín hiệu.</b> Một tín hiệu có tương quan ước lượng 0,03 với lợi suất ngày hôm sau, đo trên 2.000 ngày. Sai số chuẩn của hệ số tương quan khi tương quan thật nhỏ là khoảng 1/√n = 1/√2.000 ≈ 0,022. Khoảng 95% là 0,03 ± 0,044, tức [−0,014; 0,074], chứa 0. Chưa nên giao dịch theo nó. Muốn một tương quan 0,03 tách khỏi 0 cần n &gt; (1,96/0,03)<sup>2</sup> ≈ 4.270 ngày, tức khoảng 17 năm.</li>
+  <li><b>Yết giá.</b> Một khoảng 90% gần với vùng mà nhà tạo lập thị trường thấy thoải mái khi yết giá hai chiều cho một đại lượng không chắc chắn: giá mua ở gần cận dưới, giá bán ở gần cận trên.</li>
+  <li><b>Kiểm định A/B cho thuật toán khớp lệnh.</b> Để so sánh hai thuật toán, ta so độ trượt giá (slippage) trung bình của chúng bằng khoảng tin cậy hai mẫu: (x̄<sub>1</sub> − x̄<sub>2</sub>) ± q√(s<sub>1</sub><sup>2</sup>/n<sub>1</sub> + s<sub>2</sub><sup>2</sup>/n<sub>2</sub>) (xem thêm bài 13). Ví dụ: thuật toán A có độ trượt trung bình 2,1 điểm cơ bản trên 400 lệnh, B có 1,6 điểm cơ bản trên 400 lệnh, cả hai có độ lệch chuẩn 3. Chênh lệch 0,5 ± 1,96 · √(9/400 + 9/400) = 0,5 ± 0,42, tức [0,08; 0,92]. Khoảng nằm hẳn trên 0, nên B rẻ hơn A một cách có ý nghĩa.</li>
+  <li><b>Thanh sai số cho hệ số Sharpe.</b> Với lợi suất ngày, sai số chuẩn của Sharpe năm ước lượng từ T năm dữ liệu xấp xỉ 1/√T (đây là cùng phép tính t ≈ S√T của bài 06). Một backtest 3 năm cho Ŝ = 1,2 có sai số chuẩn 1/√3 ≈ 0,58 và khoảng 95% là 1,2 ± 1,13, tức [0,07; 2,33]. Khoảng chỉ vừa đủ loại trừ 0; điều kiện để loại trừ 0 là T &gt; (1,96/1,2)<sup>2</sup> ≈ 2,7 năm.</li>
+</ul>
 
 <figure class="demo">
   <div class="stage" id="demo2-07"></div>
   <div class="controls" id="ctl2-07"></div>
   <div class="readout" id="out2-07"></div>
-  <figcaption><b>Mô hình 7.2 – Thanh sai số cho hệ số Sharpe.</b> 30 chiến lược có cùng hệ số Sharpe thật S, mỗi chiến lược được backtest trên T năm lợi suất ngày ngẫu nhiên. Mỗi cột là Sharpe ước lượng kèm khoảng 95%. Đường đứt nét là S thật, đường liền là 0. Kéo T để xem cần bao nhiêu năm thì phần lớn các khoảng mới tách khỏi 0.</figcaption>
+  <figcaption><b>Hình 7.2 – Thanh sai số cho hệ số Sharpe.</b> Mô hình bổ sung cho mục ứng dụng. 30 chiến lược có cùng hệ số Sharpe thật S, mỗi chiến lược được backtest trên T năm lợi suất ngày ngẫu nhiên. Mỗi cột là Sharpe ước lượng kèm khoảng 95%; cột xanh là khoảng nằm hẳn trên 0. Đường đứt nét là S thật, đường liền là 0. Kéo T để xem cần bao nhiêu năm thì phần lớn các khoảng mới tách khỏi 0.</figcaption>
 </figure>
 
-<h4>Lưu ý khi phỏng vấn</h4>
-<ul>
-  <li>Bẫy diễn đạt: câu “có 95% xác suất giá trị thật nằm trong [a, b]” là sai theo nghĩa tần suất. Câu đúng: lặp lại quy trình nhiều lần thì khoảng 95% số khoảng chứa giá trị thật. Cách hiểu thứ nhất chỉ đúng với khoảng khả tín (credible interval) của Bayes, vốn cần một tiên nghiệm.</li>
-  <li>Đừng nhầm khoảng tin cậy của trung bình với khoảng chứa các quan sát riêng lẻ. Khoảng cho lợi suất trung bình ngày không nói gì về lợi suất của một ngày cụ thể.</li>
-  <li>Đại lượng chuẩn có trung bình 100, độ lệch chuẩn 10: khoảng 95% là 100 ± 19,6, tức khoảng 80 đến 120. Với câu hỏi ước lượng kiểu Fermi, khoảng phải rộng khi mình biết ít, nhưng vẫn phải sát thực tế. Khoảng “từ 0 đến một tỉ” cũng vô dụng như một thị trường yết giá 0 @ 1 tỉ.</li>
-  <li>Một tín hiệu có tương quan 0,03 với lợi suất ngày hôm sau, đo trên 2.000 ngày, có sai số chuẩn khoảng 1/√2.000 ≈ 0,022. Khoảng 95% chứa 0, nên chưa nên giao dịch theo nó.</li>
-</ul>
+<h4>Trong code</h4>
+<p>Đoạn TypeScript sau tự tính phân vị 1,96 bằng cách chia đôi trên hàm phân phối chuẩn, rồi lặp lại thí nghiệm của Hình 7.1 mười nghìn lần với cách thay thế.</p>
+<pre class="code"><code>function rng(seed: number) {
+  let s = seed &gt;&gt;&gt; 0;
+  return () =&gt; {
+    s = (s + 0x6d2b79f5) | 0;
+    let t = Math.imul(s ^ (s &gt;&gt;&gt; 15), 1 | s);
+    t = (t + Math.imul(t ^ (t &gt;&gt;&gt; 7), 61 | t)) ^ t;
+    return ((t ^ (t &gt;&gt;&gt; 14)) &gt;&gt;&gt; 0) / 4294967296;
+  };
+}
+<span class="c">// Hàm phân phối chuẩn tắc Φ (xấp xỉ erf của Abramowitz–Stegun, sai số &lt; 1e-7)</span>
+const Phi = (x: number) =&gt; {
+  const t = 1 / (1 + 0.3275911 * Math.abs(x) / Math.SQRT2);
+  const y = 1 - t * (0.254829592 + t * (-0.284496736 + t * (1.421413741 + t * (-1.453152027 + t * 1.061405429)))) * Math.exp(-x * x / 2);
+  return x &gt;= 0 ? (1 + y) / 2 : (1 - y) / 2;
+};
+<span class="c">// Phân vị: tìm q với Φ(q) = 1 − α/2 bằng chia đôi</span>
+const quantile = (u: number) =&gt; {
+  let lo = -10, hi = 10;
+  for (let i = 0; i &lt; 100; i++) { const m = (lo + hi) / 2; Phi(m) &lt; u ? (lo = m) : (hi = m); }
+  return (lo + hi) / 2;
+};
+
+const u = rng(5);
+const p = 0.55, n = 50, level = 0.95;
+const q = quantile(1 - (1 - level) / 2);
+console.log(q.toFixed(3)); <span class="c">// 1.960</span>
+
+let hits = 0;
+for (let r = 0; r &lt; 10_000; r++) {
+  let k = 0;
+  for (let i = 0; i &lt; n; i++) if (u() &lt; p) k++;
+  const ph = k / n;
+  const half = q * Math.sqrt((ph * (1 - ph)) / n); <span class="c">// thay thế (Slutsky)</span>
+  if (ph - half &lt;= p &amp;&amp; p &lt;= ph + half) hits++;
+}
+console.log(hits / 10_000); <span class="c">// 0.9353: hơi thấp hơn 95% khi n = 50</span></code></pre>
+<p>Kết quả mô phỏng 0,9353 khớp với độ phủ chính xác 93,4% tính bằng phân phối nhị thức ở Hình 7.1. Phần thiếu hụt khoảng 1,6 điểm phần trăm không phải do mô phỏng, mà là sai số thật của phép xấp xỉ thay thế ở cỡ mẫu nhỏ.</p>
+
+<h4>Tự kiểm tra</h4>
+<p>Một khoảng tin cậy 95% cho lợi suất ngày trung bình của một chiến lược là [0,01%; 0,09%]. Khẳng định nào đúng?</p>
+<ol type="A">
+  <li>Có 95% xác suất lợi suất trung bình thật nằm trong [0,01%; 0,09%].</li>
+  <li>Nếu lặp lại toàn bộ quy trình nhiều lần, khoảng 95% số khoảng dựng được sẽ chứa lợi suất trung bình thật.</li>
+  <li>95% số ngày có lợi suất nằm trong [0,01%; 0,09%].</li>
+  <li>Chiến lược có lãi với xác suất 95% trong một ngày bất kỳ.</li>
+</ol>
+<details class="qa"><summary>Đáp án và lời giải</summary>
+<p>Đáp án <b>B</b>. Tham số là cố định, khoảng mới là ngẫu nhiên; con số 95% mô tả quy trình qua nhiều lần lặp. Phương án A là cách hiểu sai phổ biến nhất theo nghĩa tần suất. Nó chỉ đúng với <b>khoảng khả tín</b> (credible interval) của thống kê Bayes, và muốn có khoảng đó cần một phân phối tiên nghiệm (prior). Phương án C và D nhầm trung bình với từng ngày riêng lẻ: khoảng cho lợi suất trung bình hẹp hơn rất nhiều so với dao động của lợi suất một ngày, và một chiến lược có kỳ vọng dương vẫn có thể lỗ gần một nửa số ngày.</p>
+</details>
 
 <script>
 (()=>{
@@ -147,5 +214,6 @@
   Q.slider(ctl,'Số năm backtest T',0.5,10,0.5,S.T,v=>{S.T=v;sim();c.redraw();},v=>Q.fmt(v,1));
   Q.button(ctl,'Mô phỏng lại',()=>{S.seed++;sim();c.redraw();},true);
 })();
+
 </script>
 </section>

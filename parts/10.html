@@ -2,68 +2,202 @@
 <header>
   <span class="num">10</span>
   <h3>Hồi quy tuyến tính: β, ma trận chiếu (hat matrix), kiểm định t và F</h3>
-  <p class="meta">16 phút · Ứng dụng: Mô hình nhân tố, tỉ lệ phòng ngừa, hệ số beta · <a href="https://hft.md/learn/regression/">Bài gốc (tiếng Anh)</a></p>
+  <p class="meta">Phần 3 · Khoa học dữ liệu · Bài 10 · 16 phút · <a href="https://hft.md/learn/regression/">Bài gốc (tiếng Anh)</a></p>
 </header>
 
-<p>Hệ số beta của cổ phiếu, tỉ lệ phòng ngừa trong giao dịch cặp, mô hình nhân tố và phần lớn tín hiệu alpha đầu tiên đều là hồi quy. Nếu chỉ thuộc lòng một công thức trước buổi phỏng vấn, hãy chọn β̂ = (XᵀX)⁻¹Xᵀy.</p>
+<p><i>Bài này đi qua công thức nên thuộc lòng nhất của nghề quant, ý nghĩa hình học của các hình vuông phần dư, và cách phân biệt một hệ số thật với một hệ số chỉ là nhiễu.</i></p>
 
-<h4>Ý chính</h4>
+<p>Nếu trước buổi phỏng vấn quant chỉ kịp học thuộc một công thức, hãy chọn β̂ = (XᵀX)<sup>−1</sup>Xᵀy. Hồi quy tuyến tính là con ngựa thồ của nghiên cứu định lượng. Hệ số beta của cổ phiếu, tỉ lệ phòng ngừa (hedge ratio) trong giao dịch cặp, mô hình nhân tố, phép thử một tín hiệu mới, và phần lớn mô hình alpha đầu tay đều là hồi quy dưới lớp áo khác nhau. Hiểu kỹ nó thì các bài sau (ridge, lasso, PCA, kinh tế lượng) chỉ là biến thể.</p>
+
+<h4>Nghiệm dạng đóng</h4>
+<p>Có N quan sát và p biến giải thích. Xếp chúng thành ma trận thiết kế X kích thước N × (p + 1): mỗi hàng là một quan sát, cột đầu toàn số 1 để mô hình có <b>hệ số chặn</b> (intercept). Biến cần giải thích xếp thành vectơ y dài N. Mô hình là y = Xβ + ε.</p>
+<p><b>Bình phương tối thiểu thông thường</b> (ordinary least squares, OLS) chọn β để <b>tổng bình phương phần dư</b> (residual sum of squares, RSS) nhỏ nhất:</p>
+<div class="formula"><span class="lbl">Hàm mục tiêu và điều kiện bậc nhất</span>RSS(β) = (y − Xβ)ᵀ(y − Xβ),&nbsp;&nbsp;&nbsp; <span class="frac"><span>∂RSS</span><span>∂β</span></span> = −2Xᵀ(y − Xβ) = 0</div>
+<p>Khai triển ra cho dễ thấy: RSS(β) = yᵀy − 2βᵀXᵀy + βᵀXᵀXβ. Đây là một hàm bậc hai theo β, với “hệ số bậc hai” XᵀX nửa xác định dương, nên nó là một cái bát úp ngửa và điểm có đạo hàm bằng 0 chính là đáy bát. Đạo hàm của βᵀXᵀXβ là 2XᵀXβ, của 2βᵀXᵀy là 2Xᵀy. Cho tổng bằng 0 được <b>hệ phương trình chuẩn</b> (normal equations) XᵀXβ = Xᵀy. Khi XᵀX khả nghịch:</p>
+<div class="formula"><span class="lbl">Nghiệm OLS</span><span style="border:1.5px solid currentColor;padding:2px 10px;border-radius:4px"><b>β̂ = (XᵀX)<sup>−1</sup>Xᵀy</b></span></div>
+
+<h5>Ma trận chiếu và hình học của bình phương tối thiểu</h5>
+<p>Giá trị khớp là ŷ = Xβ̂ = X(XᵀX)<sup>−1</sup>Xᵀy. Gom phần nhân trước y lại thành một ma trận:</p>
+<div class="formula"><span class="lbl">Ma trận chiếu: “đội mũ” cho y</span>ŷ = Hy,&nbsp;&nbsp;&nbsp; H = X(XᵀX)<sup>−1</sup>Xᵀ</div>
+<p>Tên gọi “hat matrix” đến từ việc H biến y thành ŷ, tức là đội cho y một cái mũ. Về hình học, H là <b>phép chiếu vuông góc</b> lên không gian cột của X, tức là tập mọi vectơ dạng Xb mà các đặc trưng của ta có thể tạo ra. Bình phương tối thiểu tìm trong tập đó điểm gần y nhất theo khoảng cách Euclid. Ba tính chất đi kèm:</p>
 <ul>
-  <li><b>Bình phương tối thiểu thông thường</b> (ordinary least squares, OLS) chọn β để tổng bình phương phần dư (residual sum of squares, RSS) nhỏ nhất. Cho đạo hàm bằng 0 ta được nghiệm đóng.</li>
-  <li><b>Ma trận chiếu</b> H (hat matrix) biến y thành ŷ. Về hình học, ŷ là hình chiếu vuông góc của y lên không gian cột của X. Phần dư vuông góc với mọi biến giải thích.</li>
-  <li>Khi một cột của X là tổ hợp tuyến tính của các cột khác, XᵀX suy biến. Hình chiếu ŷ vẫn duy nhất, nhưng hệ số β thì không.</li>
-  <li><b>Kiểm định t</b> (t-test) hỏi từng hệ số có khác 0 thật không. <b>Kiểm định F</b> (F-test) hỏi cả một nhóm hệ số cùng lúc. Nhóm biến tương quan có thể “cùng có ích” dù từng biến đều có |t| nhỏ.</li>
-  <li><b>Định lý Frisch–Waugh–Lovell</b>: hệ số của x<sub>j</sub> trong hồi quy bội chỉ dùng phần của x<sub>j</sub> mà các biến khác không giải thích được. Đó là tác động của x<sub>j</sub> sau khi đã kiểm soát mọi biến còn lại.</li>
-  <li><b>Đa cộng tuyến</b> (multicollinearity): nếu x<sub>j</sub> gần như được các biến khác giải thích hết, phần còn lại rất nhỏ nên sai số chuẩn (standard error) của β̂<sub>j</sub> phình to.</li>
+  <li>H đối xứng và luỹ đẳng: H<sup>2</sup> = H. Chiếu một lần hay hai lần cũng như nhau.</li>
+  <li>Vết của H bằng p + 1, đúng số tham số. Đây là một cách định nghĩa “số bậc tự do” mà mô hình dùng.</li>
+  <li>Phần dư e = y − ŷ = (I − H)y vuông góc với mọi cột của X: Xᵀe = 0. Đây chính là hệ phương trình chuẩn viết lại. Vì cột đầu toàn số 1, hệ quả trực tiếp là tổng các phần dư bằng 0.</li>
 </ul>
-
-<h4>Công thức</h4>
-<div class="formula"><span class="lbl">Nghiệm OLS (X có kích thước N × (p + 1), cột đầu toàn số 1 cho hệ số chặn)</span>RSS(β) = (y − Xβ)ᵀ(y − Xβ),&nbsp;&nbsp; ∂RSS/∂β = −2Xᵀ(y − Xβ) = 0<br>⟹&nbsp; <b>β̂ = (XᵀX)<sup>−1</sup>Xᵀy</b></div>
-<div class="formula"><span class="lbl">Ma trận chiếu: đối xứng, luỹ đẳng (H² = H), vết bằng số tham số p + 1</span>ŷ = Xβ̂ = Hy,&nbsp;&nbsp; H = X(XᵀX)<sup>−1</sup>Xᵀ,&nbsp;&nbsp; Xᵀ(y − ŷ) = 0</div>
-<div class="formula"><span class="lbl">Một biến giải thích: độ dốc là hiệp phương sai chia phương sai</span>β̂<sub>1</sub> = <span class="frac"><span>Cov(X, Y)</span><span>Var(X)</span></span>,&nbsp;&nbsp; β̂<sub>0</sub> = ȳ − β̂<sub>1</sub>x̄</div>
-<div class="formula"><span class="lbl">Ước lượng phương sai nhiễu và thống kê t, với v<sub>j</sub> = [(XᵀX)<sup>−1</sup>]<sub>jj</sub></span>σ̂² = <span class="frac"><span>1</span><span>N − p − 1</span></span> Σ<sub>i</sub> (y<sub>i</sub> − ŷ<sub>i</sub>)²,&nbsp;&nbsp; Var(β̂) = σ²(XᵀX)<sup>−1</sup>,&nbsp;&nbsp; t<sub>j</sub> = <span class="frac"><span>β̂<sub>j</sub></span><span>σ̂ √v<sub>j</sub></span></span> ~ t<sub>N−p−1</sub></div>
-<div class="formula"><span class="lbl">Kiểm định F cho một nhóm: mô hình đầy đủ (p<sub>1</sub> biến) so với mô hình bỏ nhóm (p<sub>0</sub> biến)</span>F = <span class="frac"><span>(RSS<sub>0</sub> − RSS<sub>1</sub>) / (p<sub>1</sub> − p<sub>0</sub>)</span><span>RSS<sub>1</sub> / (N − p<sub>1</sub> − 1)</span></span></div>
-<div class="formula"><span class="lbl">Frisch–Waugh–Lovell: z<sub>j</sub> là phần dư khi hồi quy x<sub>j</sub> theo các biến còn lại</span>β̂<sub>j</sub> = <span class="frac"><span>⟨z<sub>j</sub>, y⟩</span><span>⟨z<sub>j</sub>, z<sub>j</sub>⟩</span></span>,&nbsp;&nbsp; se(β̂<sub>j</sub>) ≈ <span class="frac"><span>σ<sub>ε</sub></span><span>√N · σ<sub>X<sub>j</sub></sub> · √(1 − R<sub>j</sub>²)</span></span></div>
-<p>Ở công thức cuối, R<sub>j</sub>² là hệ số xác định khi hồi quy x<sub>j</sub> theo các biến còn lại. Thừa số 1/(1 − R<sub>j</sub>²) gọi là hệ số phóng đại phương sai (variance inflation factor, VIF). Sai số chuẩn nhỏ đi khi có nhiều dữ liệu, ít nhiễu và biến giải thích trải rộng.</p>
-
-<h4>Ví dụ minh hoạ: tính tay một hồi quy năm điểm</h4>
-<p>Cho x = (1, 2, 3, 4, 5) và y = (2, 4, 5, 4, 5). Hãy ước lượng đường thẳng, thống kê t của độ dốc, rồi xem điều gì xảy ra khi nhân đôi dữ liệu.</p>
-<ol>
-  <li>Trung bình: x̄ = 3, ȳ = 4. Các độ lệch của x là (−2, −1, 0, 1, 2), của y là (−2, 0, 1, 0, 1).</li>
-  <li>S<sub>xy</sub> = Σ(x − x̄)(y − ȳ) = 4 + 0 + 0 + 0 + 2 = 6. S<sub>xx</sub> = 4 + 1 + 0 + 1 + 4 = 10. S<sub>yy</sub> = 4 + 0 + 1 + 0 + 1 = 6.</li>
-  <li>β̂<sub>1</sub> = 6/10 = 0,6 và β̂<sub>0</sub> = 4 − 0,6 × 3 = 2,2. Giá trị khớp là (2,8; 3,4; 4,0; 4,6; 5,2).</li>
-  <li>Phần dư là (−0,8; 0,6; 1,0; −0,6; −0,2). Tổng của chúng bằng 0, đúng như điều kiện Xᵀ(y − ŷ) = 0. RSS = 2,4.</li>
-  <li>Có N − 2 = 3 bậc tự do, nên σ̂² = 2,4/3 = 0,8. Sai số chuẩn se(β̂<sub>1</sub>) = √(0,8/10) ≈ 0,283, suy ra t ≈ 0,6/0,283 ≈ 2,12.</li>
-  <li>Với 3 bậc tự do, ngưỡng hai phía 5% của phân phối t là 3,18. Quy tắc nhanh |t| &gt; 2 chỉ đúng khi N lớn. Ở đây độ dốc chưa có ý nghĩa thống kê.</li>
-  <li>Hồi quy ngược x theo y: độ dốc là S<sub>xy</sub>/S<sub>yy</sub> = 1. Tích hai độ dốc là 0,6 × 1 = 0,6 = r² = 36/60, chứ không phải 1.</li>
-  <li>Nhân đôi mọi điểm: S<sub>xx</sub> = 20, RSS = 4,8, bậc tự do 8. β̂<sub>1</sub> vẫn là 0,6, nhưng se = √(0,6/20) ≈ 0,173 và t ≈ 3,46. Ý nghĩa thống kê này là giả.</li>
-</ol>
+<p>Với đúng một biến giải thích, công thức ma trận thu gọn thành hai đại lượng quen thuộc của bài 05:</p>
+<div class="formula"><span class="lbl">Hồi quy đơn: độ dốc là hiệp phương sai chia phương sai</span>β̂<sub>1</sub> = <span class="frac"><span>Cov(X, Y)</span><span>Var(X)</span></span>,&nbsp;&nbsp;&nbsp; β̂<sub>0</sub> = ȳ − β̂<sub>1</sub>x̄</div>
+<p>Công thức thứ hai nói rằng đường hồi quy luôn đi qua điểm trung bình (x̄, ȳ). Công thức thứ nhất nói rằng độ dốc là “bao nhiêu đơn vị Y đi cùng mỗi đơn vị X”, đo bằng hiệp phương sai rồi chuẩn hoá theo độ trải của X.</p>
 
 <figure class="demo">
   <div class="stage" id="demo-10"></div>
   <div class="controls" id="ctl-10"></div>
   <div class="readout" id="out-10"></div>
-  <figcaption><b>Mô hình 10.1 – Mặt phẳng hồi quy và phân bố của (β̂<sub>1</sub>, β̂<sub>2</sub>).</b> Bên trái là đám mây 3D với y = 0,5 + 1,0·x<sub>1</sub> + 0,6·x<sub>2</sub> + nhiễu. Lưới xanh lá là mặt phẳng OLS, các que cam là phần dư theo phương thẳng đứng, các khung mờ là mặt phẳng của những lần lấy mẫu trước. Bên phải, mỗi chấm là một cặp ước lượng (β̂<sub>1</sub>, β̂<sub>2</sub>); dấu chữ thập là giá trị thật. Đẩy tương quan ρ giữa x<sub>1</sub> và x<sub>2</sub> lên gần 1: các mặt phẳng xoay quanh đường chéo, đám chấm kéo dài thành một elip dốc xuống. Đó là đa cộng tuyến. Kéo để xoay.</figcaption>
+  <figcaption><b>Hình 10.1 – Mặt phẳng hồi quy xuyên qua đám mây 3D.</b> Hai đầu vào, một đầu ra: dữ liệu sinh từ y = 0,5 + 1,0·x<sub>1</sub> + 0,6·x<sub>2</sub> + nhiễu. Lưới xanh lá là mặt phẳng OLS, các que cam là phần dư theo phương thẳng đứng. Mỗi lần bấm “Lấy mẫu mới”, mặt phẳng cũ để lại một khung mờ như bóng ma. Bên phải, mỗi chấm là một cặp ước lượng (β̂<sub>1</sub>, β̂<sub>2</sub>), dấu chữ thập là giá trị thật. Đẩy tương quan ρ giữa x<sub>1</sub> và x<sub>2</sub> lên gần 1: các bóng ma xoè ra quanh đường chéo x<sub>1</sub> = x<sub>2</sub>, đám chấm kéo dài thành một elip dốc xuống. Đó là đa cộng tuyến nhìn tận mắt. Kéo để xoay.</figcaption>
 </figure>
 
 <figure class="demo">
   <div class="stage" id="demo2-10"></div>
   <div class="controls" id="ctl2-10"></div>
   <div class="readout" id="out2-10"></div>
-  <figcaption><b>Mô hình 10.2 – Hai đường hồi quy và dữ liệu nhân đôi.</b> Đường xanh lá là hồi quy y theo x, đoạn cam là phần dư theo chiều dọc. Bật “x theo y” để thấy đường tím, cực tiểu hoá phần dư theo chiều ngang. Hai đường chỉ trùng khi |r| = 1. Bấm vào khung để thêm điểm và xem một điểm xa trung tâm kéo đường thẳng mạnh thế nào. Nút “Nhân đôi dữ liệu” chép lại mọi điểm: β̂ giữ nguyên còn t tăng lên.</figcaption>
+  <figcaption><b>Hình 10.2 – Kéo điểm, xem hồi quy thay đổi.</b> Kéo một điểm bất kỳ, hoặc bấm vào chỗ trống để thêm điểm. Bình phương tối thiểu chọn đường thẳng làm tổng diện tích các hình vuông cam nhỏ nhất; cạnh mỗi hình vuông là một phần dư theo chiều dọc. Ô số liệu cho độ dốc, sai số chuẩn và thống kê t của nó. Thử hai câu đố ở cuối bài: bật “Hồi quy thêm x theo y” (đường tím, cực tiểu hoá phần dư theo chiều ngang) và bấm “Đếm mỗi điểm hai lần” (độ dốc giữ nguyên, t tăng lên). Kéo một điểm ra xa trung tâm theo chiều ngang để thấy nó bẻ đường thẳng mạnh thế nào.</figcaption>
 </figure>
 
-<h4>Lưu ý khi phỏng vấn</h4>
+<h5>Khi XᵀX không khả nghịch</h5>
+<p>Nếu một cột của X đúng bằng một tổ hợp tuyến tính của các cột khác, XᵀX suy biến và không có nghịch đảo. Hai tình huống điển hình:</p>
 <ul>
-  <li><b>Giả định của hồi quy tuyến tính</b>: tuyến tính theo tham số (vẫn dùng được x² hay log x), nhiễu có kỳ vọng 0 khi biết X, không đa cộng tuyến hoàn hảo, phương sai nhiễu không đổi (homoskedasticity), nhiễu không tự tương quan. Nhiễu chuẩn chỉ cần cho kiểm định t chính xác. Nếu phương sai thay đổi, dùng sai số chuẩn vững (robust standard errors).</li>
-  <li><b>Hồi quy y theo x rồi x theo y, có β̂<sub>1</sub> = 1/β̂<sub>2</sub> không?</b> Không. β̂<sub>1</sub>β̂<sub>2</sub> = Cov(X, Y)²/(Var X · Var Y) = ρ². Câu hỏi của Citadel yêu cầu chặn tích này: đáp án chặt là [0, 1], không phải [−1, 1].</li>
-  <li><b>Nhân đôi dữ liệu</b>: XᵀX và Xᵀy cùng gấp đôi nên β̂ không đổi. Sai số chuẩn giảm khoảng √2 lần. Cửa sổ lợi suất chồng lấn (overlapping returns) gây ra đúng hiện tượng này.</li>
-  <li><b>Ba biến tương quan mạnh, một biến có sai số chuẩn rất lớn</b>: đó là đa cộng tuyến. Có thể bỏ bớt biến, gộp chúng (trung bình hoặc thành phần chính), hoặc dùng ridge, lasso, hồi quy thành phần chính. Trước khi bỏ cả nhóm có |t| &lt; 2, hãy kiểm định F cho nhóm đó.</li>
+  <li>Một biến là bội của biến khác, chẳng hạn x<sub>2</sub> = 3x<sub>1</sub> (cùng một đại lượng đo bằng hai đơn vị).</li>
+  <li><b>Bẫy biến giả</b> (dummy variable trap): đưa vào đủ năm biến giả cho năm ngày giao dịch trong tuần, cộng thêm hệ số chặn. Tổng năm cột giả luôn bằng cột số 1.</li>
 </ul>
+<p>Điều đáng nhớ: giá trị khớp ŷ vẫn duy nhất, vì hình chiếu vuông góc của y lên một không gian con là duy nhất, bất kể không gian đó được sinh bởi bao nhiêu vectơ. Chỉ có hệ số β là mất tính duy nhất. Với x<sub>2</sub> = 3x<sub>1</sub>, mọi cặp (β<sub>1</sub>, β<sub>2</sub>) có cùng giá trị β<sub>1</sub> + 3β<sub>2</sub> cho ra cùng một ŷ. Dự báo vẫn dùng được, nhưng đừng diễn giải từng hệ số. Cách sửa là bỏ cột thừa (bỏ một ngày, hoặc bỏ hệ số chặn).</p>
+
+<h4>Hệ số có thật không? Kiểm định t</h4>
+<p>Ước lượng được β̂<sub>j</sub> = 0,3 chưa nói lên gì nếu không biết nó dao động bao nhiêu giữa các mẫu. Trước hết cần ước lượng phương sai nhiễu:</p>
+<div class="formula"><span class="lbl">Phương sai nhiễu ước lượng với N − p − 1 bậc tự do</span>σ̂<sup>2</sup> = <span class="frac"><span>1</span><span>N − p − 1</span></span> Σ<sub>i=1</sub><sup>N</sup> (y<sub>i</sub> − ŷ<sub>i</sub>)<sup>2</sup></div>
+<p>Chia cho N − p − 1 chứ không chia cho N, vì mỗi hệ số (kể cả hệ số chặn) đã “tiêu” một bậc tự do: phần dư bị buộc phải vuông góc với p + 1 cột của X, nên chỉ còn N − p − 1 chiều tự do. Chia cho N sẽ cho phương sai nhiễu thấp hơn thực tế, và mô hình càng nhiều tham số càng thấp.</p>
+<p>Tiếp theo là phương sai của chính β̂. Thay y = Xβ + ε vào công thức nghiệm: β̂ = β + (XᵀX)<sup>−1</sup>Xᵀε. Nếu nhiễu không tương quan với nhau và có cùng phương sai σ<sup>2</sup>, tức Var(ε) = σ<sup>2</sup>I, thì:</p>
+<div class="formula"><span class="lbl">Ma trận hiệp phương sai của β̂</span>Var(β̂) = (XᵀX)<sup>−1</sup>Xᵀ(σ<sup>2</sup>I)X(XᵀX)<sup>−1</sup> = (XᵀX)<sup>−1</sup>σ<sup>2</sup></div>
+<p>Để kiểm định giả thuyết H<sub>0</sub>: β<sub>j</sub> = 0, chuẩn hoá hệ số theo sai số chuẩn (standard error) của nó:</p>
+<div class="formula"><span class="lbl">Thống kê t (z-score) của hệ số thứ j</span>z<sub>j</sub> = <span class="frac"><span>β̂<sub>j</sub></span><span>σ̂ √v<sub>j</sub></span></span>,&nbsp;&nbsp;&nbsp; v<sub>j</sub> = [(XᵀX)<sup>−1</sup>]<sub>jj</sub>,&nbsp;&nbsp;&nbsp; z<sub>j</sub> ~ t<sub>N−p−1</sub> dưới H<sub>0</sub></div>
+<p>Dưới giả thuyết không, z<sub>j</sub> theo <b>phân phối t</b> (Student) với N − p − 1 bậc tự do. Quy tắc nhanh: |z<sub>j</sub>| &gt; 2 thì coi là “có ý nghĩa”, và β̂<sub>j</sub> ± 2·se(β̂<sub>j</sub>) là khoảng tin cậy 95% xấp xỉ. Con số chính xác với phân phối chuẩn là 1,96; với 94 bậc tự do là 1,99. Khi N nhỏ, ngưỡng cao hơn hẳn, như ví dụ dưới đây cho thấy.</p>
+<p>Với một biến giải thích, sai số chuẩn có dạng gần đúng rất dễ nhớ:</p>
+<div class="formula"><span class="lbl">Độ chính xác của độ dốc trong hồi quy đơn</span>se(β̂) ≈ <span class="frac"><span>σ<sub>ε</sub></span><span>√n · σ<sub>X</sub></span></span></div>
+<p>Ba cách để ước lượng chính xác hơn: thêm dữ liệu (n lớn), giảm nhiễu (σ<sub>ε</sub> nhỏ), và quan sát X trên một khoảng rộng hơn (σ<sub>X</sub> lớn). Cái cuối hay bị quên: một biến đầu vào gần như không đổi trong mẫu thì không thể cho biết y phản ứng với nó ra sao.</p>
+
+<h5>Ví dụ có lời giải: tính tay một hồi quy năm điểm</h5>
+<p>Cho x = (1, 2, 3, 4, 5) và y = (2, 4, 5, 4, 5). Hãy ước lượng đường thẳng, thống kê t của độ dốc, rồi xem điều gì xảy ra khi nhân đôi dữ liệu.</p>
+<ol>
+  <li>Trung bình: x̄ = 3, ȳ = 4. Các độ lệch của x là (−2, −1, 0, 1, 2), của y là (−2, 0, 1, 0, 1).</li>
+  <li>S<sub>xy</sub> = Σ(x − x̄)(y − ȳ) = 4 + 0 + 0 + 0 + 2 = 6. S<sub>xx</sub> = 4 + 1 + 0 + 1 + 4 = 10. S<sub>yy</sub> = 4 + 0 + 1 + 0 + 1 = 6.</li>
+  <li>β̂<sub>1</sub> = 6/10 = 0,6 và β̂<sub>0</sub> = 4 − 0,6 × 3 = 2,2. Giá trị khớp là (2,8; 3,4; 4,0; 4,6; 5,2).</li>
+  <li>Phần dư là (−0,8; 0,6; 1,0; −0,6; −0,2). Tổng của chúng bằng 0, đúng như điều kiện Xᵀe = 0. RSS = 0,64 + 0,36 + 1 + 0,36 + 0,04 = 2,4.</li>
+  <li>Có N − 2 = 3 bậc tự do, nên σ̂<sup>2</sup> = 2,4/3 = 0,8. Sai số chuẩn se(β̂<sub>1</sub>) = √(σ̂<sup>2</sup>/S<sub>xx</sub>) = √0,08 ≈ 0,283, suy ra t ≈ 0,6/0,283 ≈ 2,12.</li>
+  <li>Với 3 bậc tự do, ngưỡng hai phía 5% của phân phối t là 3,18 (giá trị p ≈ 0,12). Quy tắc |t| &gt; 2 chỉ đúng khi N đủ lớn. Ở đây độ dốc chưa có ý nghĩa thống kê.</li>
+</ol>
+<p>Ví dụ này sẽ được dùng lại ở phần câu đố.</p>
+
+<h4>Kiểm định một nhóm: thống kê F</h4>
+<p>Ba đặc trưng tương quan mạnh với nhau có thể đều có |t| nhỏ, trong khi gộp lại chúng mang thông tin thật. Lý do: mỗi kiểm định t hỏi “biến này có thêm gì sau khi đã biết hai biến kia không?”, và khi ba biến gần như trùng nhau, câu trả lời cho từng biến là “không nhiều”. Câu hỏi đúng là hỏi cả nhóm cùng lúc.</p>
+<p>So sánh mô hình đầy đủ (RSS<sub>1</sub>, p<sub>1</sub> hệ số ngoài hệ số chặn) với mô hình bỏ nhóm đó đi (RSS<sub>0</sub>, p<sub>0</sub> hệ số):</p>
+<div class="formula"><span class="lbl">Thống kê F, theo phân phối F<sub>p<sub>1</sub>−p<sub>0</sub>, N−p<sub>1</sub>−1</sub> dưới giả thuyết cả nhóm bằng 0</span>F = <span class="frac"><span>(RSS<sub>0</sub> − RSS<sub>1</sub>) / (p<sub>1</sub> − p<sub>0</sub>)</span><span>RSS<sub>1</sub> / (N − p<sub>1</sub> − 1)</span></span></div>
+<p>Tử số là mức giảm RSS trung bình trên mỗi biến được thêm vào. Mẫu số là phương sai nhiễu ước lượng từ mô hình đầy đủ. Nếu nhóm biến chỉ là nhiễu, mỗi biến thêm vào chỉ giảm RSS khoảng một σ<sup>2</sup>, và F quanh 1. F lớn nghĩa là nhóm bị bỏ đi mang thông tin thật. Khi nhóm chỉ có một biến, F đúng bằng t<sup>2</sup> của biến đó.</p>
+<p><b>Ví dụ.</b> N = 100, mô hình đầy đủ có p<sub>1</sub> = 5 biến với RSS<sub>1</sub> = 100. Ba biến tương quan đều có |t| &lt; 2. Bỏ cả ba (p<sub>0</sub> = 2) thì RSS<sub>0</sub> = 120. F = (20/3) / (100/94) ≈ 6,67 / 1,064 ≈ 6,27. Ngưỡng 5% của F<sub>3, 94</sub> khoảng 2,70, giá trị p khoảng 0,0006. Nhóm này phải giữ lại.</p>
+<p>Quy trình thường dùng: chạy kiểm định t cho từng hệ số, gom mọi biến có |z| &lt; 2 thành một nhóm, rồi kiểm định F cho nhóm đó trước khi quyết định xoá.</p>
+
+<h4>Hồi quy bội là chuỗi các hồi quy đơn</h4>
+<p>Hệ số trong hồi quy bội thật ra có nghĩa là gì? Thuật toán <b>trực giao hoá liên tiếp</b> (successive orthogonalisation, chính là Gram–Schmidt) trả lời rõ ràng. Hồi quy x<sub>j</sub> theo tất cả các biến đầu vào còn lại và giữ lấy phần dư z<sub>j</sub>: đó là phần của x<sub>j</sub> mà không biến nào khác giải thích được. Khi đó:</p>
+<div class="formula"><span class="lbl">Hệ số hồi quy bội như một hồi quy đơn của y theo phần dư z<sub>j</sub></span>β̂<sub>j</sub> = <span class="frac"><span>⟨z<sub>j</sub>, y⟩</span><span>⟨z<sub>j</sub>, z<sub>j</sub>⟩</span></span></div>
+<p>Vậy β̂<sub>j</sub> là tác động của x<sub>j</sub> <b>sau khi đã điều chỉnh theo mọi biến đầu vào khác</b>. Các nhà kinh tế lượng gọi đây là “giải phẫu hồi quy” (regression anatomy), hay <b>định lý Frisch–Waugh–Lovell</b>. Trực giác: phần của x<sub>j</sub> trùng với các biến khác đã được các biến đó “nhận công”, nên chỉ phần riêng z<sub>j</sub> mới được dùng để đo tác động của x<sub>j</sub>.</p>
+<p>Công thức này cũng giải thích đa cộng tuyến (multicollinearity). Var(β̂<sub>j</sub>) = σ<sup>2</sup>/⟨z<sub>j</sub>, z<sub>j</sub>⟩. Nếu x<sub>j</sub> gần như được các biến khác giải thích hết, z<sub>j</sub> rất nhỏ, ⟨z<sub>j</sub>, z<sub>j</sub>⟩ nhỏ, và sai số chuẩn bùng nổ. Gọi R<sub>j</sub><sup>2</sup> là hệ số xác định khi hồi quy x<sub>j</sub> theo các biến còn lại; khi đó ⟨z<sub>j</sub>, z<sub>j</sub>⟩ = (1 − R<sub>j</sub><sup>2</sup>)·Nσ<sub>X<sub>j</sub></sub><sup>2</sup>, nên:</p>
+<div class="formula"><span class="lbl">Sai số chuẩn khi có đa cộng tuyến; 1/(1 − R<sub>j</sub><sup>2</sup>) là hệ số phóng đại phương sai (VIF)</span>se(β̂<sub>j</sub>) ≈ <span class="frac"><span>σ<sub>ε</sub></span><span>√N · σ<sub>X<sub>j</sub></sub> · √(1 − R<sub>j</sub><sup>2</sup>)</span></span></div>
+<p>Với hai biến có tương quan 0,9, R<sub>j</sub><sup>2</sup> = 0,81, VIF ≈ 5,3 và sai số chuẩn gấp khoảng 2,3 lần so với khi hai biến độc lập. Với tương quan 0,99, VIF ≈ 50 và sai số chuẩn gấp khoảng 7 lần. Hình 10.1 cho thấy đúng hiện tượng này: kéo ρ lên 0,99 và đếm xem các bóng ma xoè rộng đến đâu.</p>
+
+<h4>Các câu đố người phỏng vấn hay hỏi</h4>
+<details class="qa"><summary>Hồi quy tuyến tính giả định những gì?</summary>
+<ul>
+  <li><b>Tuyến tính theo tham số.</b> Quan hệ phải tuyến tính theo β, không nhất thiết theo x: vẫn dùng được x<sup>2</sup> hay log x làm đặc trưng.</li>
+  <li><b>Nhiễu có trung bình 0 khi biết đầu vào</b>: E[ε | X] = 0, nên không có độ chệch hệ thống. Nhiễu phân phối chuẩn tiện cho kiểm định t chính xác ở mẫu nhỏ, nhưng không bắt buộc; mẫu lớn thì định lý giới hạn trung tâm lo phần đó.</li>
+  <li><b>Không có đa cộng tuyến hoàn hảo</b>, và tốt nhất là cũng không nhiều đa cộng tuyến không hoàn hảo.</li>
+  <li><b>Phương sai không đổi</b> (homoskedasticity): phương sai của nhiễu không phụ thuộc vào đầu vào. Nếu vi phạm (heteroskedasticity), hệ số vẫn không chệch nhưng sai số chuẩn thông thường sai; dùng sai số chuẩn vững với phương sai thay đổi (heteroskedasticity-robust standard errors).</li>
+  <li><b>Nhiễu không tương quan</b> với nhau (không tự tương quan, autocorrelation) và với các đầu vào.</li>
+</ul>
+</details>
+
+<details class="qa"><summary>Hồi quy Y theo X được độ dốc β<sub>1</sub>, rồi hồi quy X theo Y được β<sub>2</sub>. Có phải β<sub>1</sub> = 1/β<sub>2</sub>? Tích β<sub>1</sub>β<sub>2</sub> nằm trong khoảng nào? <span class="firm">(Citadel)</span></summary>
+<p><b>Không.</b> Hồi quy thứ nhất cực tiểu hoá khoảng cách theo chiều dọc, hồi quy thứ hai cực tiểu hoá khoảng cách theo chiều ngang. Đó là hai bài toán khác nhau nên ra hai đường khác nhau.</p>
+<p>Tính cụ thể: β<sub>1</sub> = Cov(X, Y)/Var(X) và β<sub>2</sub> = Cov(X, Y)/Var(Y). Nhân lại:</p>
+<div class="formula">β<sub>1</sub>β<sub>2</sub> = <span class="frac"><span>Cov(X, Y)<sup>2</sup></span><span>Var(X) Var(Y)</span></span> = ρ<sup>2</sup> ∈ [0, 1]</div>
+<p>Hai độ dốc là nghịch đảo của nhau chỉ khi ρ<sup>2</sup> = 1, tức dữ liệu nằm hoàn toàn trên một đường thẳng. Trong mọi trường hợp khác, vẽ trên cùng một mặt phẳng, đường y theo x thoải hơn “đường độ lệch chuẩn” có độ dốc σ<sub>Y</sub>/σ<sub>X</sub>, còn đường x theo y lại dốc hơn nó. Mỗi hồi quy co về trung bình theo chiều của biến mà nó dự báo. Kiểm tra trên ví dụ năm điểm: β<sub>1</sub> = S<sub>xy</sub>/S<sub>xx</sub> = 0,6, β<sub>2</sub> = S<sub>xy</sub>/S<sub>yy</sub> = 1, tích bằng 0,6 = 36/60 = r<sup>2</sup>, không phải 1. Bật “Hồi quy thêm x theo y” trong Hình 10.2 để thấy hai đường tách nhau.</p>
+<p class="note"><b>Đính chính so với tài liệu gốc.</b> Phiên bản câu hỏi của Citadel yêu cầu chặn tích hai độ dốc. Tài liệu nguồn ghi tích nằm giữa −1 và 1. Vì tích bằng ρ<sup>2</sup>, bình phương của một cosin, nên cận chặt là 0 và 1. Tích không bao giờ âm, vì hai độ dốc luôn cùng dấu với Cov(X, Y).</p>
+</details>
+
+<details class="qa"><summary>Nhân đôi mọi điểm dữ liệu rồi chạy lại hồi quy. Điều gì thay đổi?</summary>
+<p><b>Hệ số β̂ không đổi.</b> XᵀX và Xᵀy đều gấp đôi, nên trong (2XᵀX)<sup>−1</sup>(2Xᵀy) hai thừa số 2 triệt tiêu nhau.</p>
+<p><b>Sai số chuẩn nhỏ đi khoảng √2 lần</b>, nên thống kê t lớn lên khoảng √2 lần. Lý do: RSS gấp đôi, số bậc tự do từ N − p − 1 thành 2N − p − 1, nên σ̂<sup>2</sup> gần như không đổi; trong khi (XᵀX)<sup>−1</sup> chỉ còn một nửa.</p>
+<p>Trên ví dụ năm điểm: nhân đôi thì S<sub>xx</sub> = 20, RSS = 4,8, bậc tự do 8, σ̂<sup>2</sup> = 0,6. β̂<sub>1</sub> vẫn là 0,6, nhưng se = √(0,6/20) ≈ 0,173 và t ≈ 3,46, vượt ngưỡng 2,31 của t<sub>8</sub> (giá trị p ≈ 0,009). Một độ dốc vốn không có ý nghĩa bỗng trở nên “rất có ý nghĩa” mà không có thêm chút thông tin nào.</p>
+<p>Bài học thực tế: quan sát bị lặp hoặc chồng lấn tạo ra ý nghĩa thống kê giả. Đây là mối nguy có thật với lợi suất trên các cửa sổ chồng lấn, ví dụ lợi suất 20 ngày tính lại mỗi ngày. Các quan sát liền kề chia sẻ 19 ngày chung, nên số quan sát độc lập ít hơn nhiều so với số dòng dữ liệu.</p>
+</details>
+
+<details class="qa"><summary>Ba đặc trưng tương quan rất mạnh với nhau. Hai trong số đó trông ổn, còn đặc trưng thứ ba có sai số chuẩn khổng lồ. Bạn xử lý thế nào?</summary>
+<p>Đây là đa cộng tuyến: theo Frisch–Waugh–Lovell, phần riêng của đặc trưng thứ ba sau khi trừ hai đặc trưng kia gần như bằng 0, nên sai số chuẩn của nó phình to. Các lựa chọn:</p>
+<ul>
+  <li><b>Bỏ đặc trưng thứ ba.</b> Đơn giản, nhưng có thể mất thông tin riêng của nó. Kiểm định F cho biết việc bỏ có làm mô hình xấu đi đáng kể không.</li>
+  <li><b>Gộp các đặc trưng</b>: lấy trung bình, hoặc lấy thành phần chính đầu tiên của cả ba.</li>
+  <li><b>Biến đổi</b>: chuẩn hoá về tâm, lấy hiệu hoặc tỉ số giữa các đặc trưng để tách phần chung khỏi phần riêng.</li>
+  <li><b>Đổi phương pháp</b>: ridge, lasso hoặc hồi quy thành phần chính (principal components regression), chủ đề của hai bài tiếp theo.</li>
+</ul>
+</details>
+
+<h4>Ứng dụng trên bàn giao dịch</h4>
+<ul>
+  <li><b>Beta và tỉ lệ phòng ngừa.</b> Beta thị trường của một cổ phiếu là Cov(r<sub>cổ phiếu</sub>, r<sub>thị trường</sub>) / Var(r<sub>thị trường</sub>), tức độ dốc của một hồi quy đơn. Tỉ lệ giữa hai chân của một giao dịch cặp cũng vậy: bán bao nhiêu đơn vị B cho mỗi đơn vị A để triệt tiêu phần biến động chung.</li>
+  <li><b>Mô hình nhân tố.</b> Hồi quy lợi suất theo các nhân tố giá trị (value), xu hướng (momentum), quy mô (size) và các nhân tố khác. Hệ số chặn là phần “alpha” còn lại sau khi đã trừ mọi phơi nhiễm nhân tố, và thống kê t của nó là thứ đầu tiên mọi người kiểm tra.</li>
+  <li><b>Nghiên cứu tín hiệu.</b> Hồi quy lợi suất kỳ sau theo tín hiệu mới cùng các nhân tố đã biết. Theo Frisch–Waugh, hệ số của tín hiệu đo đúng phần giá trị nó mang thêm ngoài những gì ta đã có. Một tín hiệu có t cao khi đứng một mình nhưng t gần 0 khi có mặt nhân tố momentum chỉ là momentum đội lốt.</li>
+</ul>
+
+<h4>Trong code</h4>
+<p>Đoạn TypeScript dưới đây sinh 200 quan sát với ba biến giải thích và β thật = (1, 2, 0, −1), giải hệ phương trình chuẩn, tính σ̂<sup>2</sup>, sai số chuẩn và thống kê t, rồi kiểm tra hiệu ứng nhân đôi dữ liệu. Chạy bằng <span class="kbd">bun reg.ts</span>.</p>
+<pre class="code"><code><span class="c">// Sinh dữ liệu: N = 200 quan sát, 3 biến giải thích chuẩn tắc, β thật = (1, 2, 0, −1)</span>
+function rng(seed: number) {
+  let s = seed &gt;&gt;&gt; 0;
+  return () =&gt; { s = (s + 0x6d2b79f5) | 0; let t = Math.imul(s ^ (s &gt;&gt;&gt; 15), 1 | s);
+    t = (t + Math.imul(t ^ (t &gt;&gt;&gt; 7), 61 | t)) ^ t; return ((t ^ (t &gt;&gt;&gt; 14)) &gt;&gt;&gt; 0) / 2 ** 32; };
+}
+const r = rng(8);
+const gauss = () =&gt; Math.sqrt(-2 * Math.log(1 - r())) * Math.cos(2 * Math.PI * r());
+const N = 200, p = 3, betaTrue = [1, 2, 0, -1];
+const X = Array.from({ length: N }, () =&gt; [1, gauss(), gauss(), gauss()]);
+const dot = (a: number[], b: number[]) =&gt; a.reduce((s, v, i) =&gt; s + v * b[i], 0);
+const y = X.map(row =&gt; dot(row, betaTrue) + gauss());
+
+<span class="c">// XᵀX và Xᵀy</span>
+const k = p + 1;
+const XtX = (A: number[][]) =&gt; Array.from({ length: k }, (_, i) =&gt;
+  Array.from({ length: k }, (_, j) =&gt; A.reduce((s, row) =&gt; s + row[i] * row[j], 0)));
+const Xty = (A: number[][], v: number[]) =&gt; Array.from({ length: k }, (_, i) =&gt;
+  A.reduce((s, row, n) =&gt; s + row[i] * v[n], 0));
+
+<span class="c">// Nghịch đảo bằng khử Gauss–Jordan (đủ tốt cho ma trận 4 × 4 xác định dương)</span>
+function inverse(M: number[][]): number[][] {
+  const A = M.map((row, i) =&gt; [...row, ...row.map((_, j) =&gt; (i === j ? 1 : 0))]);
+  for (let c = 0; c &lt; k; c++) {
+    const piv = A[c][c];
+    for (let j = 0; j &lt; 2 * k; j++) A[c][j] /= piv;
+    for (let i = 0; i &lt; k; i++) if (i !== c) {
+      const f = A[i][c];
+      for (let j = 0; j &lt; 2 * k; j++) A[i][j] -= f * A[c][j];
+    }
+  }
+  return A.map(row =&gt; row.slice(k));
+}
+
+const V = inverse(XtX(X));                          <span class="c">// (XᵀX)⁻¹</span>
+const beta = V.map(row =&gt; dot(row, Xty(X, y)));     <span class="c">// β̂ = (XᵀX)⁻¹Xᵀy</span>
+const resid = y.map((v, i) =&gt; v - dot(X[i], beta));
+const sigma2 = dot(resid, resid) / (N - p - 1);     <span class="c">// σ̂² với N − p − 1 bậc tự do</span>
+const se = V.map((row, j) =&gt; Math.sqrt(row[j] * sigma2));
+console.log(beta.map(b =&gt; b.toFixed(3)).join(" "));               <span class="c">// 0.915 2.070 0.017 -0.989</span>
+console.log(beta.map((b, j) =&gt; (b / se[j]).toFixed(1)).join(" ")); <span class="c">// 12.1 28.3 0.2 -12.8</span>
+
+<span class="c">// Nhân đôi dữ liệu: β̂ không đổi, sai số chuẩn nhỏ đi khoảng √2 lần</span>
+const X2 = [...X, ...X], y2 = [...y, ...y];
+const V2 = inverse(XtX(X2));
+const beta2 = V2.map(row =&gt; dot(row, Xty(X2, y2)));
+console.log(beta2.every((b, j) =&gt; Math.abs(b - beta[j]) &lt; 1e-9)); <span class="c">// true</span>
+const r2 = y2.map((v, i) =&gt; v - dot(X2[i], beta2));
+const se2 = V2.map((row, j) =&gt; Math.sqrt(row[j] * dot(r2, r2) / (2 * N - p - 1)));
+console.log((se[1] / se2[1]).toFixed(3));                          <span class="c">// 1.421, gần √2 ≈ 1.414</span></code></pre>
+<p>Hệ số thật bằng 0 (biến thứ hai) có |t| = 0,2, xa dưới ngưỡng 2; ba hệ số thật khác 0 đều có |t| trên 12. Tỉ số sai số chuẩn 1,421 lớn hơn √2 một chút, vì số bậc tự do tăng từ 196 lên 396 chứ không gấp đôi đúng. Trong thực tế nên giải hệ XᵀXβ = Xᵀy bằng phân rã Cholesky hoặc QR thay vì nghịch đảo tường minh; ở đây cần (XᵀX)<sup>−1</sup> để lấy sai số chuẩn nên ta tính luôn.</p>
+
+<h4>Tự kiểm tra</h4>
+<details class="qa"><summary>Hồi quy y theo x<sub>1</sub> và x<sub>2</sub>, trong đó x<sub>2</sub> tương quan gần như hoàn hảo với x<sub>1</sub>. Sai số chuẩn se(β̂<sub>1</sub>) thay đổi thế nào? (A) giảm, vì x<sub>2</sub> bổ sung thông tin; (B) không đổi; (C) tăng, vì sau khi điều chỉnh theo x<sub>2</sub> thì x<sub>1</sub> chẳng còn lại bao nhiêu; (D) bằng đúng 0.</summary>
+<p><b>Đáp án: C.</b> Theo giải phẫu hồi quy, β̂<sub>1</sub> chỉ dùng phần dư z<sub>1</sub> của x<sub>1</sub> sau khi hồi quy theo x<sub>2</sub>. Tương quan gần hoàn hảo nghĩa là R<sub>1</sub><sup>2</sup> gần 1, nên z<sub>1</sub> rất nhỏ, ⟨z<sub>1</sub>, z<sub>1</sub>⟩ nhỏ, và se(β̂<sub>1</sub>) = σ/√⟨z<sub>1</sub>, z<sub>1</sub>⟩ rất lớn. Đó là đa cộng tuyến.</p>
+<p>(A) sai vì x<sub>2</sub> gần như không mang thông tin mới, nó chỉ “chia công” với x<sub>1</sub>. (B) sai vì hệ số phóng đại phương sai 1/(1 − R<sub>1</sub><sup>2</sup>) tăng vọt. (D) sai vì sai số chuẩn chỉ bằng 0 khi không có nhiễu, và ở đây nó đi theo chiều ngược lại.</p>
+</details>
 
 <script>
 (()=>{
-  /* ---------- Mô hình 10.1: mặt phẳng hồi quy 3D ---------- */
+  /* ---------- Hình 10.1: mặt phẳng hồi quy 3D ---------- */
   const stage=document.getElementById('demo-10'), ctl=document.getElementById('ctl-10'), out=document.getElementById('out-10');
   const S={rho:0.3, sig:1, n:60, seed:1};
   const B=[0.5,1.0,0.6];
@@ -187,70 +321,78 @@
   Q.button(ctl,'Xoá lịch sử',reset);
 })();
 (()=>{
-  /* ---------- Mô hình 10.2: hồi quy y theo x, x theo y, nhân đôi dữ liệu ---------- */
+  /* ---------- Hình 10.2: kéo điểm, hình vuông phần dư, x theo y, nhân đôi dữ liệu ---------- */
   const stage=document.getElementById('demo2-10'), ctl=document.getElementById('ctl2-10'), out=document.getElementById('out2-10');
-  const S={rho:0.6, n:25, seed:3, xy:false};
-  let pts=[], c=null, dupCount=1;
-  const XR=3.2;
+  const S={rho:0.6, n:20, seed:3, xy:false, sq:true};
+  const YR=3.2, H=360;
+  let base=[], dup=1, c=null, drag=-1;
   function gen(){
-    const r=Q.rng(S.seed*104729+5), sq=Math.sqrt(1-S.rho*S.rho); pts=[]; dupCount=1;
-    for(let i=0;i<S.n;i++){ const x=Q.normal(r); pts.push([x, S.rho*x+sq*Q.normal(r)]); }
+    const r=Q.rng(S.seed*104729+5), s=Math.sqrt(1-S.rho*S.rho); base=[]; dup=1;
+    for(let i=0;i<S.n;i++){ const x=Q.normal(r); base.push([x, S.rho*x+s*Q.normal(r)]); }
   }
+  // thống kê trên dữ liệu đã lặp dup lần: mọi tổng đều nhân dup
   function stats(){
-    const n=pts.length; if(n<3) return null;
-    let mx=0,my=0; pts.forEach(p=>{mx+=p[0];my+=p[1];}); mx/=n; my/=n;
-    let sxx=0,syy=0,sxy=0; pts.forEach(p=>{ const a=p[0]-mx,b=p[1]-my; sxx+=a*a; syy+=b*b; sxy+=a*b; });
+    const m=base.length, n=m*dup; if(m<3) return null;
+    let mx=0,my=0; base.forEach(p=>{mx+=p[0];my+=p[1];}); mx/=m; my/=m;
+    let sxx=0,syy=0,sxy=0; base.forEach(p=>{ const a=p[0]-mx,b=p[1]-my; sxx+=a*a; syy+=b*b; sxy+=a*b; });
+    sxx*=dup; syy*=dup; sxy*=dup;
     if(sxx<1e-12||syy<1e-12) return null;
     const b1=sxy/sxx, a1=my-b1*mx, b2=sxy/syy, a2=mx-b2*my;
     const rss=Math.max(0,syy-sxy*sxy/sxx), se=Math.sqrt(rss/(n-2)/sxx);
-    return {n,mx,my,b1,a1,b2,a2,se,t:b1/se,r2:sxy*sxy/(sxx*syy)};
+    return {n,b1,a1,b2,a2,se,t:b1/se,rss,r2:sxy*sxy/(sxx*syy)};
   }
+  function geom(w,h){ const pad=24, k=(h/2-pad)/YR; return {k, sx:v=>w/2+v*k, sy:v=>h/2-v*k, ix:px=>(px-w/2)/k, iy:py=>(h/2-py)/k, XR:(w/2-pad)/k}; }
   function report(st){
-    if(!st){ out.textContent='Cần ít nhất 3 điểm không thẳng hàng theo một trục.'; return; }
-    out.textContent=`y theo x: β̂₁ = ${Q.fmt(st.b1,3)}   se = ${Q.fmt(st.se,3)}   t = ${Q.fmt(st.t,2)}   (N = ${st.n}${dupCount>1?', mỗi điểm lặp '+dupCount+' lần':''})\n`+
-      `x theo y: β̂₂ = ${Q.fmt(st.b2,3)}   nên 1/β̂₂ = ${Math.abs(st.b2)>1e-9?Q.fmt(1/st.b2,3):'∞'}, khác β̂₁\n`+
-      `β̂₁ · β̂₂ = ${Q.fmt(st.b1*st.b2,3)} = r² = ${Q.fmt(st.r2,3)}`;
+    if(!st){ out.textContent='Cần ít nhất 3 điểm, và các điểm không được thẳng hàng theo một trục.'; return; }
+    out.textContent=`y theo x: β̂₁ = ${Q.fmt(st.b1,3)}   se(β̂₁) = ${Q.fmt(st.se,3)}   t = ${Q.fmt(st.t,2)}   N = ${st.n}${dup>1?' (mỗi điểm đếm '+dup+' lần)':''}\n`+
+      `Tổng diện tích các hình vuông cam = RSS = ${Q.fmt(st.rss,3)}\n`+
+      `x theo y: β̂₂ = ${Q.fmt(st.b2,3)}, nên 1/β̂₂ = ${Math.abs(st.b2)>1e-9?Q.fmt(1/st.b2,3):'∞'} ≠ β̂₁   ·   β̂₁·β̂₂ = ${Q.fmt(st.b1*st.b2,3)} = r² = ${Q.fmt(st.r2,3)}`;
   }
   function draw(ctx,w,h){
-    const C=Q.colors(); ctx.clearRect(0,0,w,h);
-    const pad=28, sx=v=>w/2+v/XR*(Math.min(w,h*1.6)/2-pad), sy=v=>h/2-v/XR*(h/2-pad);
+    const C=Q.colors(), G=geom(w,h); ctx.clearRect(0,0,w,h);
     ctx.strokeStyle=C.line; ctx.lineWidth=1;
-    for(let t=-3;t<=3;t++){ ctx.beginPath(); ctx.moveTo(sx(t),sy(-XR)); ctx.lineTo(sx(t),sy(XR)); ctx.moveTo(sx(-XR),sy(t)); ctx.lineTo(sx(XR),sy(t)); ctx.stroke(); }
-    ctx.strokeStyle=C.muted; ctx.beginPath(); ctx.moveTo(sx(-XR),sy(0)); ctx.lineTo(sx(XR),sy(0)); ctx.moveTo(sx(0),sy(-XR)); ctx.lineTo(sx(0),sy(XR)); ctx.stroke();
+    for(let t=-Math.floor(G.XR);t<=G.XR;t++){ ctx.beginPath(); ctx.moveTo(G.sx(t),G.sy(-YR)); ctx.lineTo(G.sx(t),G.sy(YR)); ctx.stroke(); }
+    for(let t=-3;t<=3;t++){ ctx.beginPath(); ctx.moveTo(G.sx(-G.XR),G.sy(t)); ctx.lineTo(G.sx(G.XR),G.sy(t)); ctx.stroke(); }
+    ctx.strokeStyle=C.muted; ctx.beginPath(); ctx.moveTo(G.sx(-G.XR),G.sy(0)); ctx.lineTo(G.sx(G.XR),G.sy(0)); ctx.moveTo(G.sx(0),G.sy(-YR)); ctx.lineTo(G.sx(0),G.sy(YR)); ctx.stroke();
     const st=stats(); report(st);
-    const uniq=pts.slice(0,pts.length/dupCount);
     if(st){
-      ctx.strokeStyle=C.b; ctx.globalAlpha=0.6;
-      uniq.forEach(p=>{ ctx.beginPath(); ctx.moveTo(sx(p[0]),sy(p[1])); ctx.lineTo(sx(p[0]),sy(st.a1+st.b1*p[0])); ctx.stroke(); });
-      if(S.xy){ ctx.strokeStyle=C.d; uniq.forEach(p=>{ ctx.beginPath(); ctx.moveTo(sx(p[0]),sy(p[1])); ctx.lineTo(sx(st.a2+st.b2*p[1]),sy(p[1])); ctx.stroke(); }); }
-      ctx.globalAlpha=1; ctx.lineWidth=2.5;
-      ctx.strokeStyle=C.a; ctx.beginPath(); ctx.moveTo(sx(-XR),sy(st.a1-st.b1*XR)); ctx.lineTo(sx(XR),sy(st.a1+st.b1*XR)); ctx.stroke();
-      if(S.xy){ ctx.strokeStyle=C.d; ctx.beginPath(); ctx.moveTo(sx(st.a2-st.b2*XR),sy(-XR)); ctx.lineTo(sx(st.a2+st.b2*XR),sy(XR)); ctx.stroke(); }
+      // hình vuông phần dư: cạnh dọc là phần dư, dựng về phía đường thẳng đi ra xa điểm để ít chồng lên đường
+      base.forEach(p=>{ const yh=st.a1+st.b1*p[0], e=p[1]-yh, s=Math.abs(e)*G.k, x0=G.sx(p[0]), dir=(e>0)===(st.b1>0)?-1:1;
+        const top=Math.min(G.sy(p[1]),G.sy(yh));
+        if(S.sq){ ctx.fillStyle=C.b; ctx.globalAlpha=0.16; ctx.fillRect(dir>0?x0:x0-s,top,s,s); ctx.globalAlpha=0.7; ctx.strokeStyle=C.b; ctx.strokeRect(dir>0?x0:x0-s,top,s,s); }
+        else { ctx.strokeStyle=C.b; ctx.globalAlpha=0.8; ctx.beginPath(); ctx.moveTo(x0,G.sy(p[1])); ctx.lineTo(x0,G.sy(yh)); ctx.stroke(); }
+        ctx.globalAlpha=1; });
+      if(S.xy){ ctx.strokeStyle=C.d; ctx.globalAlpha=0.7; base.forEach(p=>{ ctx.beginPath(); ctx.moveTo(G.sx(p[0]),G.sy(p[1])); ctx.lineTo(G.sx(st.a2+st.b2*p[1]),G.sy(p[1])); ctx.stroke(); }); ctx.globalAlpha=1; }
+      ctx.lineWidth=2.5; ctx.strokeStyle=C.a; ctx.beginPath(); ctx.moveTo(G.sx(-G.XR),G.sy(st.a1-st.b1*G.XR)); ctx.lineTo(G.sx(G.XR),G.sy(st.a1+st.b1*G.XR)); ctx.stroke();
+      if(S.xy){ ctx.strokeStyle=C.d; ctx.beginPath(); ctx.moveTo(G.sx(st.a2-st.b2*YR),G.sy(-YR)); ctx.lineTo(G.sx(st.a2+st.b2*YR),G.sy(YR)); ctx.stroke(); }
       ctx.lineWidth=1;
     }
-    ctx.save(); ctx.beginPath(); ctx.rect(0,0,w,h); ctx.clip();
-    uniq.forEach(p=>{ ctx.fillStyle=C.c; ctx.beginPath(); ctx.arc(sx(p[0]),sy(p[1]),4,0,7); ctx.fill();
-      if(dupCount>1){ ctx.strokeStyle=C.c; ctx.beginPath(); ctx.arc(sx(p[0]),sy(p[1]),7,0,7); ctx.stroke(); } });
-    ctx.restore();
+    base.forEach((p,i)=>{ ctx.fillStyle=C.c; ctx.beginPath(); ctx.arc(G.sx(p[0]),G.sy(p[1]),i===drag?6:4.5,0,7); ctx.fill();
+      if(dup>1){ ctx.strokeStyle=C.c; ctx.beginPath(); ctx.arc(G.sx(p[0]),G.sy(p[1]),8,0,7); ctx.stroke(); } });
+    ctx.fillStyle=C.panel; ctx.globalAlpha=0.85; ctx.fillRect(6,6,Math.min(w-12,430),20); ctx.globalAlpha=1;
     ctx.fillStyle=C.muted; ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif';
-    ctx.fillText('— y theo x'+(S.xy?'    — x theo y':'')+(dupCount>1?'    ◎ điểm được lặp '+dupCount+' lần':''),12,18);
+    ctx.fillText('— y theo x   ▢ bình phương phần dư'+(S.xy?'   — x theo y':'')+(dup>1?'   ◎ điểm đếm '+dup+' lần':''),12,20);
   }
   gen();
-  c=Q.canvas(stage,340,draw);
+  c=Q.canvas(stage,H,draw);
+  const pos=e=>{ const rc=c.cv.getBoundingClientRect(); return [e.clientX-rc.left, e.clientY-rc.top]; };
   c.cv.addEventListener('pointerdown',e=>{
-    const rect=c.cv.getBoundingClientRect(), w=rect.width, h=rect.height, pad=28;
-    const x=(e.clientX-rect.left-w/2)/(Math.min(w,h*1.6)/2-pad)*XR, y=-(e.clientY-rect.top-h/2)/(h/2-pad)*XR;
-    if(Math.abs(x)>XR||Math.abs(y)>XR) return;
-    const uniq=pts.slice(0,pts.length/dupCount); uniq.push([x,y]);
-    pts=[]; for(let k=0;k<dupCount;k++) pts.push(...uniq.map(p=>p.slice()));
-    c.redraw();
+    const [px,py]=pos(e), G=geom(c.w,c.h); let best=-1, bd=14;
+    base.forEach((p,i)=>{ const d=Math.hypot(G.sx(p[0])-px,G.sy(p[1])-py); if(d<bd){bd=d;best=i;} });
+    if(best<0){ const x=G.ix(px), y=G.iy(py); if(Math.abs(x)>G.XR||Math.abs(y)>YR) return; base.push([x,y]); best=base.length-1; }
+    drag=best; try{ c.cv.setPointerCapture(e.pointerId); }catch(_){} c.redraw();
   });
+  c.cv.addEventListener('pointermove',e=>{ if(drag<0) return; const [px,py]=pos(e), G=geom(c.w,c.h);
+    base[drag]=[Math.max(-G.XR,Math.min(G.XR,G.ix(px))),Math.max(-YR,Math.min(YR,G.iy(py)))]; c.redraw(); });
+  const end=()=>{ if(drag>=0){ drag=-1; c.redraw(); } };
+  c.cv.addEventListener('pointerup',end); c.cv.addEventListener('pointercancel',end);
   Q.slider(ctl,'Tương quan ρ',-0.95,0.95,0.05,S.rho,v=>{S.rho=v;gen();c.redraw();},v=>Q.fmt(v,2));
-  Q.slider(ctl,'Số điểm',5,80,1,S.n,v=>{S.n=v;gen();c.redraw();},v=>v);
+  Q.slider(ctl,'Số điểm',3,60,1,S.n,v=>{S.n=v;gen();c.redraw();},v=>v);
   Q.button(ctl,'Lấy mẫu mới',()=>{S.seed++;gen();c.redraw();},true);
-  const bxy=Q.button(ctl,'Bật x theo y',()=>{S.xy=!S.xy; bxy.textContent=S.xy?'Tắt x theo y':'Bật x theo y'; c.redraw();});
-  Q.button(ctl,'Nhân đôi dữ liệu',()=>{ if(pts.length>4000) return; pts=pts.concat(pts.map(p=>p.slice())); dupCount*=2; c.redraw(); });
-  Q.button(ctl,'Bỏ lặp',()=>{ pts=pts.slice(0,pts.length/dupCount); dupCount=1; c.redraw(); });
+  const bsq=Q.button(ctl,'Hiện đoạn thay cho hình vuông',()=>{S.sq=!S.sq; bsq.textContent=S.sq?'Hiện đoạn thay cho hình vuông':'Hiện hình vuông'; c.redraw();});
+  const bxy=Q.button(ctl,'Hồi quy thêm x theo y',()=>{S.xy=!S.xy; bxy.textContent=S.xy?'Tắt hồi quy x theo y':'Hồi quy thêm x theo y'; c.redraw();});
+  const bd=Q.button(ctl,'Đếm mỗi điểm hai lần',()=>{ if(dup>=64) return; dup*=2; c.redraw(); });
+  Q.button(ctl,'Bỏ lặp',()=>{ dup=1; c.redraw(); });
 })();
 </script>
 </section>

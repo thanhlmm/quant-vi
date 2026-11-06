@@ -2,67 +2,156 @@
 <header>
   <span class="num">21</span>
   <h3>Bên trong giao dịch tần suất cao (HFT)</h3>
-  <p class="meta">14 phút · Ứng dụng: Hoạt động kinh doanh cốt lõi của nhà tạo lập thị trường điện tử · <a href="https://hft.md/learn/hft/">Bài gốc (tiếng Anh)</a></p>
+  <p class="meta">Phần 5 · Tạo lập thị trường · Bài 21 · 14 phút · <a href="https://hft.md/learn/hft/">Bài gốc (tiếng Anh)</a></p>
 </header>
 
-<p>Mọi công cụ của giáo trình này gặp nhau ở giao dịch tần suất cao. Một công ty tạo lập thị trường điện tử cập nhật Bayes sau mỗi lần khớp, định giá bằng kỳ vọng, đo rủi ro bằng phương sai và dựa vào luật số lớn để biến lợi thế rất nhỏ thành lợi nhuận đều đặn, tất cả trong vài micro giây.</p>
+<p>Bài cuối đi vào sổ lệnh giới hạn, quyền ưu tiên trong hàng đợi, bài toán kinh tế của nhà tạo lập thị trường, và lý do từng micro giây, thậm chí tốc độ ánh sáng, lại quan trọng đến vậy.</p>
 
-<h4>Ý chính</h4>
+<p>Mọi công cụ trong giáo trình này hội tụ ở một chỗ: giao dịch tần suất cao. Một công ty tạo lập thị trường điện tử hiện đại cập nhật niềm tin theo định lý Bayes sau mỗi lần lệnh của mình được khớp (bài 01), định giá bằng kỳ vọng (bài 02), xác định quy mô bằng phương sai (bài 03 và bài 20), và tin vào luật số lớn (bài 06) để biến những lợi thế cực nhỏ thành lợi nhuận đều đặn. Điểm khác biệt duy nhất là tất cả diễn ra trong vài micro giây, hàng triệu lần mỗi ngày.</p>
+
+<h4>Giao dịch tần suất cao là gì</h4>
+<p>Giao dịch tần suất cao (high-frequency trading, HFT) là các chiến lược tự động ra quyết định và gửi lệnh trong cỡ micro giây, giữ vị thế vài giây hoặc ngắn hơn, và giao dịch với số lần rất lớn mỗi ngày. Không có con người nào trong vòng lặp ra quyết định; con người thiết kế chiến lược, đặt hạn mức và giám sát. Phần lớn hoạt động HFT rơi vào ba nhóm:</p>
 <ul>
-  <li><b>Giao dịch tần suất cao</b> (high-frequency trading) là các chiến lược tự động ra quyết định trong micro giây, giữ vị thế vài giây hoặc ít hơn. Có ba nhóm chính: tạo lập thị trường, <b>kinh doanh chênh lệch giá</b> (arbitrage) giữa các tài sản liên quan, và tín hiệu ngắn hạn đọc từ chính sổ lệnh.</li>
-  <li><b>Sổ lệnh giới hạn</b> (limit order book) xếp mọi lệnh mua và bán đang chờ theo giá. Khoảng cách giữa giá mua cao nhất và giá bán thấp nhất là chênh lệch giá (spread); khối lượng ở mỗi mức giá là độ sâu (depth).</li>
-  <li>Lệnh giới hạn không vượt qua chênh lệch thì nằm chờ và <b>cung cấp thanh khoản</b> (maker). Lệnh thị trường <b>lấy thanh khoản</b> (taker): nó khớp ở mức giá tốt nhất, hết thì sang mức kế tiếp. Đó là “đi xuyên sổ lệnh” (walking the book).</li>
-  <li>Phần lớn sàn dùng <b>ưu tiên giá – thời gian</b> (price–time priority): cùng giá thì lệnh đến trước khớp trước. Vị trí trong hàng đợi có giá trị bằng tiền.</li>
-  <li>Lợi nhuận mỗi lần khớp bằng nửa chênh lệch trừ <b>lựa chọn bất lợi</b> (adverse selection), trừ phí, cộng khoản hoàn phí (rebate). Con số này rất nhỏ, và chỉ thành công việc kinh doanh nhờ hàng triệu lần khớp.</li>
-  <li>Tốc độ mua được ba thứ: chỗ đứng đầu hàng đợi, khả năng huỷ giá cũ trước khi bị “bắt” (picked off), và cơ hội chênh lệch giá cho người thấy trước. Giới hạn cuối cùng là tốc độ ánh sáng.</li>
+  <li><b>Tạo lập thị trường</b> (market making): liên tục yết giá mua và giá bán, thu chênh lệch giá. Đây chính là nội dung các bài 17 đến 19, chỉ khác là chạy ở tốc độ máy.</li>
+  <li><b>Kinh doanh chênh lệch giá</b> (arbitrage): giữ cho các mức giá có liên hệ với nhau luôn nhất quán. Ví dụ cùng một cổ phiếu niêm yết trên nhiều sàn, một quỹ ETF so với rổ cổ phiếu cấu thành, hay một hợp đồng tương lai so với tài sản cơ sở.</li>
+  <li><b>Tín hiệu ngắn hạn</b> (short-term signals): dự báo vài bước giá kế tiếp dựa vào chính sổ lệnh, chẳng hạn từ độ mất cân bằng giữa bên mua và bên bán.</li>
 </ul>
 
-<h4>Công thức</h4>
-<div class="formula"><span class="lbl">Giá vi mô (microprice) và độ mất cân bằng sổ lệnh (imbalance); b, a là giá mua và bán tốt nhất, Q<sub>b</sub>, Q<sub>a</sub> là khối lượng tại đó</span>microprice = <span class="frac"><span>b·Q<sub>a</sub> + a·Q<sub>b</sub></span><span>Q<sub>a</sub> + Q<sub>b</sub></span></span>,&nbsp;&nbsp;&nbsp; I = <span class="frac"><span>Q<sub>b</sub> − Q<sub>a</sub></span><span>Q<sub>b</sub> + Q<sub>a</sub></span></span></div>
-<div class="formula"><span class="lbl">Lãi kỳ vọng mỗi lần khớp của nhà tạo lập (s là chênh lệch giá)</span>E[PnL mỗi lần khớp] ≈ <span class="frac"><span>s</span><span>2</span></span> − E[giá chạy ngược sau khi khớp] − phí + hoàn phí</div>
-<div class="formula"><span class="lbl">Luật số lớn: n lần khớp, mỗi lần lợi thế e và nhiễu σ, độc lập</span>trung bình = n·e,&nbsp;&nbsp; độ lệch chuẩn = √n·σ,&nbsp;&nbsp; P(ngày lỗ) ≈ Φ(−√n · e/σ)</div>
-<div class="formula"><span class="lbl">Độ trễ do khoảng cách d trong môi trường có chiết suất n (cáp quang n ≈ 1,47; không khí n ≈ 1)</span>t = <span class="frac"><span>d·n</span><span>c</span></span>,&nbsp;&nbsp;&nbsp; <span class="frac"><span>1 km × 1,47</span><span>299.792 km/s</span></span> ≈ 4,9 μs</div>
-
-<h4>Ví dụ minh hoạ: đọc sổ lệnh và tính lợi thế</h4>
-<ol>
-  <li><b>Giá vi mô.</b> Giá mua tốt nhất 99,99 với 900 lô, giá bán tốt nhất 100,01 với 100 lô. Giá giữa thường là 100,00.</li>
-  <li>Giá vi mô = (99,99 × 100 + 100,01 × 900) / 1.000 = 100.008 / 1.000 = 100,008. Nó nằm sát giá bán, vì bên mua dày gấp chín lần.</li>
-  <li>Độ mất cân bằng I = (900 − 100) / 1.000 = 0,8. Giao dịch kế tiếp nhiều khả năng sẽ ăn vào giá bán.</li>
-  <li><b>Lợi thế mỗi lần khớp.</b> Nhà tạo lập yết 99,99 @ 100,01, không phí, không hoàn phí. Nửa chênh lệch là 1 cent. Sau khi khớp, giá trung bình chạy ngược 0,6 cent. Lãi kỳ vọng còn 1 − 0,6 = 0,4 cent.</li>
-  <li><b>Luật số lớn.</b> Lấy lợi thế 0,05 cent và nhiễu 5 cent mỗi lần khớp, thì √n·e/σ = 0,01·√n. Với 1.000 lần khớp mỗi ngày, P(ngày lỗ) ≈ Φ(−0,32) ≈ 38%. Với 10.000 lần: Φ(−1) ≈ 16%. Với 100.000 lần: Φ(−3,16) ≈ 0,08%.</li>
-  <li><b>Tốc độ ánh sáng.</b> Chicago (hợp đồng tương lai) cách các trung tâm dữ liệu ở New Jersey (cổ phiếu) khoảng 1.150 km theo đường thẳng. Qua không khí mất 1.150 / 299.792 ≈ 3,84 ms. Trong cáp quang mất 3,84 × 1,47 ≈ 5,64 ms, và tuyến cáp thật còn dài hơn. Vì thế các công ty dựng chuỗi tháp vi ba.</li>
-</ol>
-<table class="t">
-  <tr><th>Bậc thang độ trễ</th><th>Cỡ thời gian</th></tr>
-  <tr><td>Một chu kỳ xung nhịp CPU 3 GHz</td><td>≈ 0,3 ns</td></tr>
-  <tr><td>Một lần đọc bộ nhớ chính (RAM)</td><td>≈ 100 ns</td></tr>
-  <tr><td>Ánh sáng đi qua 1 km cáp quang</td><td>≈ 4,9 μs</td></tr>
-  <tr><td>Chicago – New Jersey, đường thẳng qua không khí / trong cáp quang</td><td>≈ 3,84 ms / 5,64 ms</td></tr>
-  <tr><td>Một cái chớp mắt</td><td>≈ 100–400 ms</td></tr>
-</table>
-<p>Quãng từ lúc gói dữ liệu thị trường đến tới lúc lệnh rời máy gọi là <b>tick-to-trade</b>: nhận gói, giải mã, cập nhật sổ lệnh, ra quyết định, kiểm tra rủi ro, gửi lệnh. Các công ty rút ngắn nó bằng đặt máy chủ cạnh sàn (colocation), mạng bỏ qua nhân hệ điều hành (kernel bypass), C++ viết kỹ, và FPGA chạy toàn bộ vòng lặp trên phần cứng.</p>
+<h4>Sổ lệnh giới hạn</h4>
+<p>Mỗi sàn giao dịch duy trì một <b>sổ lệnh giới hạn</b> (limit order book): danh sách mọi lệnh mua đang chờ (bids) và mọi lệnh bán đang chờ (asks), xếp theo giá. Vài khái niệm cần nắm:</p>
+<ul>
+  <li>Giá mua cao nhất và giá bán thấp nhất gọi chung là <b>giá tốt nhất</b> (best bid and offer, BBO).</li>
+  <li>Khoảng cách giữa hai giá đó là <b>chênh lệch giá</b> (spread).</li>
+  <li>Khối lượng đang chờ ở mỗi mức giá là <b>độ sâu</b> (depth).</li>
+</ul>
+<p>Có hai cách tương tác với sổ lệnh. Một lệnh giới hạn không vượt qua chênh lệch giá, ví dụ lệnh mua ở mức thấp hơn giá bán tốt nhất, sẽ nằm lại trong sổ và <b>bổ sung thanh khoản</b>; người đặt lệnh như vậy gọi là bên tạo thanh khoản (maker). Một lệnh thị trường, hoặc một lệnh giới hạn vượt qua chênh lệch, sẽ <b>lấy đi thanh khoản</b>; người đặt gọi là bên lấy thanh khoản (taker). Lệnh đó khớp với mức giá tốt nhất ở phía bên kia, hết khối lượng ở mức đó thì chuyển sang mức kế tiếp. Hiện tượng này gọi là <b>đi xuyên sổ lệnh</b> (walking the book).</p>
+<p>Ví dụ: phía bán có 100 lô ở 100,01, 150 lô ở 100,02 và 200 lô ở 100,03. Một lệnh thị trường mua 300 lô khớp 100 lô ở 100,01, 150 lô ở 100,02 và 50 lô ở 100,03. Giá khớp trung bình là (100 × 100,01 + 150 × 100,02 + 50 × 100,03) / 300 ≈ 100,018, cao hơn giá bán tốt nhất ban đầu gần 1 cent. Sau lệnh, giá bán tốt nhất là 100,03 và chênh lệch giãn ra, cho đến khi các nhà tạo lập yết lại.</p>
+<p>Phần lớn sàn khớp lệnh theo <b>ưu tiên giá – thời gian</b> (price–time priority): giá tốt hơn được khớp trước; cùng một giá thì lệnh đến trước được khớp trước. Vì vậy vị trí của bạn trong hàng đợi ở một mức giá có giá trị bằng tiền, và tốc độ chính là cách để giành được chỗ đứng tốt.</p>
 
 <figure class="demo">
   <div class="stage" id="demo-21"></div>
   <div class="controls" id="ctl-21"></div>
   <div class="readout" id="out-21"></div>
-  <figcaption><b>Mô hình 21.1 – Sổ lệnh sống trong không gian 3D.</b> Một cổ phiếu giao dịch quanh 100 USD. Cột xanh lá là lệnh mua đang chờ, cột cam là lệnh bán; hàng trước nhất là hiện tại, các hàng phía sau là những thời điểm trước đó. Chấm tím là giao dịch khớp; vạch đen ở hàng trước là giá vi mô. Bấm gửi lệnh thị trường 300 lô để thấy nó ăn qua nhiều mức giá và làm chênh lệch giãn ra, rồi nhà tạo lập lấp đầy lại. Giảm “Tốc độ lấp lại” để chênh lệch hồi phục chậm hơn. Kéo để xoay.</figcaption>
+  <figcaption><b>Hình 21.1 – Một sổ lệnh đang chạy, trong không gian 3D.</b> Sổ lệnh mô phỏng của một cổ phiếu giao dịch quanh 100 USD. Cột xanh lá là lệnh mua đang chờ, cột cam là lệnh bán; hàng trước nhất là hiện tại, mỗi hàng phía sau là một thời điểm sớm hơn, nên cả “địa hình” là lịch sử gần đây của sổ lệnh. Chấm tím là các giao dịch khớp; vạch đen ở hàng trước là giá vi mô. Bấm gửi lệnh thị trường mua 300 lô để thấy nó ăn qua nhiều mức giá và làm chênh lệch giãn ra, rồi các nhà tạo lập lấp đầy lại sau vài bước. Giảm “Tốc độ lấp lại” để chênh lệch hồi phục chậm hơn. Kéo để xoay.</figcaption>
 </figure>
+
+<h5>Đọc sổ lệnh: độ mất cân bằng và giá vi mô</h5>
+<p>Giá giữa thông thường là (b + a)/2, với b và a là giá mua và giá bán tốt nhất. Nhưng giá giữa bỏ qua khối lượng. Giả sử có 900 lô chờ mua mà chỉ 100 lô chờ bán. Hàng đợi bên bán mỏng hơn nhiều, nên nhiều khả năng nó bị ăn hết trước, và giao dịch kế tiếp sẽ khớp ở giá bán. <b>Giá vi mô</b> (microprice) đưa thông tin này vào bằng cách gán cho mỗi phía trọng số là khối lượng của phía <i>bên kia</i>:</p>
+<div class="formula"><span class="lbl">Giá vi mô và độ mất cân bằng sổ lệnh (Q<sub>b</sub>, Q<sub>a</sub> là khối lượng ở giá mua và giá bán tốt nhất)</span>microprice = <span class="frac"><span>b·Q<sub>a</sub> + a·Q<sub>b</sub></span><span>Q<sub>a</sub> + Q<sub>b</sub></span></span>,&nbsp;&nbsp;&nbsp; imbalance = <span class="frac"><span>Q<sub>b</sub> − Q<sub>a</sub></span><span>Q<sub>b</sub> + Q<sub>a</sub></span></span></div>
+<p>Một cách đọc trực quan: viết lại thành microprice = b + s · Q<sub>b</sub>/(Q<sub>a</sub> + Q<sub>b</sub>), với s = a − b. Nếu coi Q<sub>b</sub>/(Q<sub>a</sub> + Q<sub>b</sub>) là xác suất bước giá kế tiếp đi lên, giá vi mô chính là kỳ vọng của mức giá giao dịch kế tiếp.</p>
+<p><b>Ví dụ.</b> Với b = 99,99, a = 100,01, Q<sub>b</sub> = 900 và Q<sub>a</sub> = 100:</p>
+<ul>
+  <li>Giá giữa: 100,00.</li>
+  <li>Giá vi mô: (99,99 × 100 + 100,01 × 900) / 1.000 = 100,008, rất sát giá bán.</li>
+  <li>Độ mất cân bằng: (900 − 100) / 1.000 = 0,8, nghiêng mạnh về phía mua.</li>
+</ul>
+<p>Độ mất cân bằng sổ lệnh là một trong những tín hiệu ngắn hạn nổi tiếng nhất trong nghiên cứu HFT. Một nhà tạo lập yết quanh giá vi mô thay vì giá giữa sẽ ít bị bán rẻ ngay trước khi giá nhích lên.</p>
+
+<h4>Kinh tế học của nhà tạo lập thị trường</h4>
+<p>Mỗi lần nhà tạo lập mua ở giá chào mua rồi sau đó bán ở giá chào bán, họ thu trọn chênh lệch giá. Tính theo từng lần khớp, mỗi phía đóng góp nửa chênh lệch. Nhưng phải trừ đi phần giá chạy ngược ngay sau khi khớp, cộng trừ chi phí sàn:</p>
+<div class="formula"><span class="lbl">Lãi kỳ vọng mỗi lần khớp (s là chênh lệch giá)</span>E[PnL mỗi lần khớp] ≈ <span class="frac"><span>s</span><span>2</span></span><sub>&nbsp;nửa chênh lệch</sub> − E[giá chạy ngược sau khi khớp]<sub>&nbsp;lựa chọn bất lợi</sub> − phí + hoàn phí</div>
+<p>Số hạng thứ hai là <b>lựa chọn bất lợi</b> (adverse selection), và nó chính là định lý Bayes của bài 01. Việc lệnh của bạn được khớp tự nó là bằng chứng: người ở phía bên kia có thể biết điều bạn chưa biết. Xác suất có điều kiện để giá chạy ngược, khi đã biết bạn vừa bị khớp, cao hơn xác suất không điều kiện. Khoản hoàn phí (rebate) là tiền một số sàn trả cho bên tạo thanh khoản để khuyến khích họ yết giá.</p>
+<p>Lợi thế mỗi lần khớp cực kỳ nhỏ, thường chỉ một phần nhỏ của một cent trên mỗi cổ phiếu, trong khi nhiễu của từng giao dịch lớn hơn nhiều lần. Nó chỉ trở thành một công việc kinh doanh nhờ luật số lớn (bài 06). Với n lần khớp độc lập, mỗi lần có lợi thế e và độ lệch chuẩn σ:</p>
+<div class="formula"><span class="lbl">Lãi/lỗ một ngày gồm n lần khớp</span>trung bình = n·e,&nbsp;&nbsp; độ lệch chuẩn = √n·σ,&nbsp;&nbsp; P(ngày lỗ) ≈ Φ(−√n · e/σ)</div>
+<p>Trung bình tăng theo n, còn nhiễu chỉ tăng theo √n, nên tỉ số giữa chúng tăng theo √n. Lấy e = 0,05 cent và σ = 5 cent, ta có √n·e/σ = 0,01·√n:</p>
+<table class="t">
+  <tr><th>Số lần khớp mỗi ngày</th><th>√n · e/σ</th><th>Tỉ lệ ngày lỗ Φ(−√n·e/σ)</th></tr>
+  <tr><td>1.000</td><td>0,32</td><td>≈ 38%</td></tr>
+  <tr><td>10.000</td><td>1</td><td>≈ 16%</td></tr>
+  <tr><td>100.000</td><td>3,16</td><td>≈ 0,08%</td></tr>
+</table>
+<p>Cùng một lợi thế, chỉ khác quy mô, biến một trò may rủi thành một dòng thu nhập gần như chắc chắn. Đây là lý do khối lượng và tốc độ quan trọng đến thế.</p>
+
+<h4>Vì sao tốc độ quan trọng</h4>
+<p>Tốc độ không nhằm giao dịch nhiều hơn cho vui. Nó mua được ba thứ:</p>
+<ol>
+  <li><b>Vị trí trong hàng đợi.</b> Ở cùng một mức giá, lệnh đứng đầu hàng được khớp trước. Các lần khớp ở đầu hàng còn ít bị lựa chọn bất lợi hơn: lệnh ở cuối hàng chỉ được khớp khi có một lệnh lớn ăn sạch cả mức giá, mà lệnh lớn thường mang thông tin.</li>
+  <li><b>Không bị “bắt bài”.</b> Khi thị trường dịch chuyển, một mức giá đã cũ là tiền miễn phí cho ai chạm vào nó trước. Nhà tạo lập phải huỷ giá cũ nhanh hơn tốc độ người khác giao dịch được với nó.</li>
+  <li><b>Kinh doanh chênh lệch giá.</b> Khi giá ở hai nơi lệch nhau, chỉ người đầu tiên thấy cả hai và hành động mới thu được phần chênh.</li>
+</ol>
+<p>Quãng đường từ lúc dữ liệu thị trường đến tới lúc lệnh rời máy gọi là <b>tick-to-trade</b>: nhận gói tin, giải mã, cập nhật sổ lệnh, ra quyết định, kiểm tra rủi ro, rồi gửi lệnh. Các công ty rút ngắn nó bằng nhiều cách: đặt máy chủ ngay trong trung tâm dữ liệu của sàn (colocation), dùng mạng bỏ qua nhân hệ điều hành (kernel bypass), viết C++ cẩn thận để tránh mọi lần cấp phát bộ nhớ hay trượt bộ nhớ đệm, và dùng FPGA để chạy toàn bộ vòng lặp trên phần cứng.</p>
+
+<figure class="demo">
+  <div class="stage" id="demo3-21"></div>
+  <div class="controls" id="ctl3-21"></div>
+  <div class="readout" id="out3-21"></div>
+  <figcaption><b>Hình 21.2 – Bậc thang độ trễ.</b> Từ một chu kỳ xung nhịp đến một cái chớp mắt, trên thang log: mỗi vạch đậm cách nhau ×1.000 (ns, μs, ms, s). HFT sống ở nửa trái của biểu đồ (vùng tô màu). Chấm xanh lá thuộc vùng HFT, chấm cam nằm ngoài. Bấm vào một dòng để đọc giải thích. Kéo thanh “Khoảng cách cáp quang” để thấy dòng cuối dịch chuyển: chấm tím là thời gian truyền trong cáp quang, chấm xanh dương là thời gian truyền qua không khí trên cùng quãng đường, và đoạn nối giữa chúng là phần mà mạng vi ba tiết kiệm được.</figcaption>
+</figure>
+
+<h5>Giới hạn vật lý</h5>
+<p>Không gì nhanh hơn ánh sáng. Trong sợi thuỷ tinh có chiết suất khoảng 1,47, ánh sáng chậm lại còn c/1,47, xấp xỉ 204.000 km/s. Như vậy mỗi kilômét cáp quang tốn khoảng 4,9 micro giây:</p>
+<div class="formula"><span class="lbl">Thời gian truyền qua quãng đường d trong môi trường chiết suất n</span>t = <span class="frac"><span>d·n</span><span>c</span></span>,&nbsp;&nbsp;&nbsp; <span class="frac"><span>1 km × 1,47</span><span>299.792 km/s</span></span> ≈ 4,9 μs</div>
+<p>Không khí có chiết suất gần bằng 1. Đó là lý do các công ty dựng những chuỗi tháp vi ba nối Chicago, nơi giao dịch hợp đồng tương lai, với các trung tâm dữ liệu ở New Jersey, nơi giao dịch cổ phiếu. Trên quãng đường thẳng khoảng 1.150 km, tín hiệu qua không khí mất khoảng 3,84 ms, còn trong cáp quang đi thẳng là 5,64 ms; tuyến cáp thật còn phải vòng theo địa hình nên dài hơn. Đường truyền thẳng hơn qua không khí giúp tiết kiệm cỡ mili giây, và một mili giây tương đương hàng nghìn quyết định của một FPGA.</p>
+
+<div class="note"><b>Ứng dụng trên bàn giao dịch.</b> Citadel Securities, Jane Street, Virtu, HRT, Jump, Optiver, IMC, Tower và DRW đều vận hành mảng tạo lập thị trường hoặc kinh doanh chênh lệch giá tần suất cao. Các nhà tạo lập điện tử cung cấp một phần lớn thanh khoản hiển thị trên thị trường cổ phiếu, hợp đồng tương lai và quyền chọn ở Mỹ. Kiểm soát rủi ro là một phần cốt lõi của công việc: mọi lệnh đều đi qua các bước kiểm tra trước giao dịch (hạn mức vị thế, giới hạn kích thước lệnh, biên giá cho phép), và các công ty luôn có nút ngắt khẩn cấp (kill switch). Ngày 1 tháng 8 năm 2012, Knight Capital mất khoảng 440 triệu USD trong chừng 45 phút sau khi một lần triển khai phần mềm lỗi tung ra hàng loạt lệnh ngoài ý muốn. Đó là bài học cảnh tỉnh kinh điển của cả ngành.</div>
+
+<div class="note"><b>Trong phỏng vấn.</b> Các công ty HFT phỏng vấn cả toán lẫn hệ thống. Hãy chờ đợi câu hỏi xác suất và kỳ vọng, tính nhẩm nhanh, và với vị trí lập trình là các câu hỏi tầng thấp: hành vi của bộ nhớ đệm, cấu trúc dữ liệu cho sổ lệnh, cách đo độ trễ. Câu hỏi về giá trị nhỏ nhất đang chạy (running minimum) được ghi nhận từ Virtu và các câu hỏi về sổ lệnh từ Citadel là những ví dụ điển hình. Hai lời giải mẫu dưới đây là phần bổ sung.</div>
+
+<details class="qa"><summary>Thiết kế cấu trúc dữ liệu cho một sổ lệnh giới hạn: thêm lệnh, huỷ lệnh, khớp lệnh thị trường. <span class="firm">(dạng câu hỏi của Citadel)</span></summary>
+<p><b>Ý tưởng.</b> Mỗi phía là một tập các mức giá; mỗi mức giá là một hàng đợi vào trước ra trước (FIFO) để thực thi ưu tiên thời gian.</p>
+<ol>
+  <li><b>Các mức giá.</b> Giá đi theo bước giá (tick) cố định, nên có thể dùng một mảng đánh chỉ số theo số tick tính từ một giá gốc. Truy cập một mức giá là O(1). Giữ thêm chỉ số của giá mua tốt nhất và giá bán tốt nhất; khi một mức bị ăn hết, quét sang mức kế tiếp (thường rất gần). Nếu dải giá quá rộng, dùng một cây có thứ tự (map) các mức giá, truy cập O(log L) với L là số mức đang có lệnh.</li>
+  <li><b>Hàng đợi tại mỗi mức.</b> Một danh sách liên kết đôi các lệnh, kèm tổng khối lượng của mức. Thêm lệnh vào cuối là O(1).</li>
+  <li><b>Huỷ lệnh.</b> Một bảng băm từ mã lệnh tới nút trong danh sách. Huỷ là O(1): tra bảng băm, gỡ nút, trừ khối lượng.</li>
+  <li><b>Khớp lệnh thị trường.</b> Bắt đầu từ mức tốt nhất ở phía đối diện, lấy lệnh từ đầu hàng đợi cho đến khi đủ khối lượng, chuyển sang mức kế tiếp nếu cần. Chi phí tỉ lệ với số lệnh bị khớp.</li>
+</ol>
+<p>Ở tầng hệ thống, nên cấp phát trước các nút trong một vùng nhớ liên tục để tránh cấp phát động và giữ dữ liệu nóng trong bộ nhớ đệm.</p>
+</details>
+
+<details class="qa"><summary>Duy trì giá trị nhỏ nhất đang chạy (running minimum) của một dòng dữ liệu giá. <span class="firm">(dạng câu hỏi của Virtu)</span></summary>
+<p><b>Biến thể 1: nhỏ nhất từ đầu tới giờ.</b> Chỉ cần một biến m, cập nhật m = min(m, x) với mỗi giá mới x. Thời gian O(1) mỗi phần tử, bộ nhớ O(1).</p>
+<p><b>Biến thể 2: ngăn xếp có thao tác lấy nhỏ nhất O(1).</b> Mỗi phần tử đẩy vào lưu kèm giá trị nhỏ nhất tính đến nó: đẩy x thì lưu cặp (x, min(x, min hiện tại)). Lấy ra thì giá trị nhỏ nhất mới tự động là của phần tử ở đỉnh.</p>
+<p><b>Biến thể 3: nhỏ nhất trong cửa sổ trượt k phần tử gần nhất</b>, câu hỏi hay gặp nhất trong bối cảnh giao dịch. Dùng một hàng đợi hai đầu đơn điệu chứa chỉ số, sao cho giá tương ứng tăng dần từ đầu tới cuối. Khi có giá mới x: bỏ mọi phần tử ở cuối có giá ≥ x (chúng không bao giờ còn là nhỏ nhất nữa), đẩy x vào cuối, bỏ phần tử ở đầu nếu nó đã ra khỏi cửa sổ. Giá trị nhỏ nhất luôn nằm ở đầu hàng. Mỗi chỉ số được thêm và bỏ đúng một lần, nên tổng chi phí là O(n), tức O(1) khấu hao cho mỗi giá.</p>
+</details>
+
+<h4>Trong code</h4>
+<p>Đoạn code dưới đây kiểm chứng ba con số của bài: giá vi mô trong ví dụ, độ trễ Chicago – New Jersey, và tỉ lệ ngày lỗ khi số lần khớp tăng dần.</p>
+<pre class="code"><code>const microprice = (bid: number, ask: number, bidSize: number, askSize: number) =&gt;
+  (bid * askSize + ask * bidSize) / (bidSize + askSize);
+console.log(microprice(99.99, 100.01, 900, 100).toFixed(3));  <span class="c">// 100.008: nghiêng về giá bán</span>
+
+<span class="c">// Ánh sáng trong không khí và trong cáp quang, Chicago – New Jersey (≈ 1.150 km đường thẳng)</span>
+const c = 299_792.458;  <span class="c">// km/s</span>
+const d = 1_150;        <span class="c">// km</span>
+console.log(`không khí: ${(d / c * 1e3).toFixed(2)} ms`);          <span class="c">// 3.84 ms</span>
+console.log(`cáp quang: ${(d * 1.47 / c * 1e3).toFixed(2)} ms`);   <span class="c">// 5.64 ms (tuyến thật còn dài hơn)</span>
+
+<span class="c">// Lợi thế nhỏ, rất nhiều lần khớp: luật số lớn</span>
+function rng(seed: number) {
+  return () =&gt; {
+    seed = (seed + 0x6d2b79f5) | 0;
+    let t = Math.imul(seed ^ (seed &gt;&gt;&gt; 15), 1 | seed);
+    t = (t + Math.imul(t ^ (t &gt;&gt;&gt; 7), 61 | t)) ^ t;
+    return ((t ^ (t &gt;&gt;&gt; 14)) &gt;&gt;&gt; 0) / 4294967296;
+  };
+}
+const rand = rng(21);
+const normal = () =&gt; Math.sqrt(-2 * Math.log(1 - rand())) * Math.cos(2 * Math.PI * rand());
+
+const edge = 0.0005, noise = 0.05;     <span class="c">// USD mỗi cổ phiếu mỗi lần khớp</span>
+for (const n of [1_000, 10_000, 100_000]) {   <span class="c">// số lần khớp mỗi ngày</span>
+  let losing = 0;
+  const days = 100_000;
+  for (let k = 0; k &lt; days; k++) {
+    const daily = n * edge + Math.sqrt(n) * noise * normal();   <span class="c">// tổng của n lần khớp</span>
+    if (daily &lt; 0) losing++;
+  }
+  console.log(n, `tỉ lệ ngày lỗ: ${(losing / days).toFixed(3)}`);
+}
+<span class="c">// 1000 0.375   10000 0.159   100000 0.001</span></code></pre>
+<p>Tỉ lệ ngày lỗ mô phỏng khớp với Φ(−0,32) ≈ 0,376, Φ(−1) ≈ 0,159 và Φ(−3,16) ≈ 0,0008 ở bảng trên. Hình 21.3 cho phép bạn tự thay các tham số của bài toán kinh tế này.</p>
 
 <figure class="demo">
   <div class="stage" id="demo2-21"></div>
   <div class="controls" id="ctl2-21"></div>
   <div class="readout" id="out2-21"></div>
-  <figcaption><b>Mô hình 21.2 – Lợi thế nhỏ, số lần khớp lớn.</b> Chọn nửa chênh lệch, lựa chọn bất lợi, phí ròng và nhiễu mỗi lần khớp. Bên trái là phân phối lãi/lỗ một ngày (vùng cam là ngày lỗ). Bên phải là lãi/lỗ cộng dồn của 250 ngày giao dịch mô phỏng. Tăng số lần khớp mỗi ngày để thấy trung bình tăng theo n còn nhiễu chỉ tăng theo √n.</figcaption>
+  <figcaption><b>Hình 21.3 – Lợi thế nhỏ, số lần khớp lớn.</b> Mô hình bổ sung, không có trong bài gốc. Chọn nửa chênh lệch, lựa chọn bất lợi, phí ròng và nhiễu mỗi lần khớp. Bên trái là phân phối lãi/lỗ một ngày (vùng cam là ngày lỗ). Bên phải là lãi/lỗ cộng dồn của 250 ngày giao dịch mô phỏng. Tăng số lần khớp mỗi ngày để thấy trung bình tăng theo n còn nhiễu chỉ tăng theo √n.</figcaption>
 </figure>
 
-<h4>Lưu ý khi phỏng vấn</h4>
-<ul>
-  <li>Công ty HFT phỏng vấn cả toán lẫn hệ thống. Hãy chuẩn bị câu hỏi xác suất, kỳ vọng và tính nhẩm nhanh. Vị trí lập trình còn hỏi về bộ nhớ đệm (cache), cấu trúc dữ liệu cho sổ lệnh và cách đo độ trễ.</li>
-  <li>Cấu trúc sổ lệnh chuẩn: một mảng đánh chỉ số theo giá, hoặc một cây có thứ tự các mức giá, mỗi mức là một hàng đợi vào trước ra trước (FIFO).</li>
-  <li>Kiểm soát rủi ro là một phần của công việc: kiểm tra trước giao dịch (hạn mức vị thế, kích thước lệnh, biên giá) và nút ngắt khẩn cấp (kill switch). Ngày 1/8/2012, Knight Capital mất khoảng 440 triệu USD trong chừng 45 phút vì một lần triển khai phần mềm lỗi.</li>
-  <li>Nói được vì sao lựa chọn bất lợi là định lý Bayes: bị khớp là bằng chứng rằng người bên kia biết điều gì đó. Đây là cầu nối từ bài 01 đến bài này.</li>
-</ul>
+<h4>Tự kiểm tra</h4>
+<details class="qa"><summary>Một nhà tạo lập yết 99,99 @ 100,01, không có phí lẫn hoàn phí. Trung bình sau mỗi lần khớp, giá chạy ngược 0,6 cent. Lãi kỳ vọng mỗi lần khớp là bao nhiêu? (A) 2 cent · (B) 1 cent · (C) 0,4 cent · (D) Lỗ 0,4 cent</summary>
+<p><b>Đáp án C.</b> Chênh lệch giá là 2 cent, nên mỗi lần khớp chỉ thu được nửa chênh lệch, tức 1 cent. Trừ 0,6 cent lựa chọn bất lợi: 1 − 0,6 = 0,4 cent mỗi lần khớp. Đáp án A quên rằng mỗi lần khớp chỉ là một phía của vòng mua – bán; đáp án B quên lựa chọn bất lợi. Con số 0,4 cent rất nhỏ, và đó chính là lý do khối lượng và tốc độ quyết định tất cả.</p>
+</details>
 
 <script>
 (()=>{
@@ -196,6 +285,71 @@
   Q.slider(ctl,'Nhiễu mỗi lần khớp',1,10,0.5,S.noise,v=>{S.noise=v;report();},f2);
   Q.slider(ctl,'Số lần khớp mỗi ngày',2,6,0.1,S.lgn,v=>{S.lgn=v;report();},v=>Q.fmt(Math.round(Math.pow(10,v)),0));
   Q.button(ctl,'Mô phỏng lại',()=>{S.seed++;report();});
+  report();
+})();
+(()=>{
+  const stage=document.getElementById('demo3-21'), ctl=document.getElementById('ctl3-21'), out=document.getElementById('out3-21');
+  // Cỡ thời gian (giây). Giá trị là bậc độ lớn điển hình, không phải số đo chính xác.
+  const ITEMS=[
+    {t:1/3e9, n:'Một chu kỳ xung nhịp CPU 3 GHz', d:'≈ 0,33 ns. Đơn vị nhỏ nhất của mọi tính toán.', hft:true},
+    {t:1e-9, n:'Đọc bộ nhớ đệm L1', d:'≈ 1 ns, vài chu kỳ xung nhịp.', hft:true},
+    {t:1e-7, n:'Đọc bộ nhớ chính (RAM)', d:'≈ 100 ns. Một lần trượt bộ nhớ đệm đắt bằng hàng trăm phép tính, nên mã HFT giữ dữ liệu nóng gọn trong cache.', hft:true},
+    {t:5e-7, n:'Tick-to-trade trên FPGA', d:'Cỡ vài trăm ns: nhận gói tin, quyết định và gửi lệnh hoàn toàn trên phần cứng.', hft:true},
+    {t:4.9e-6, n:'Ánh sáng qua 1 km cáp quang', d:'≈ 4,9 μs = 1,47 / 299.792 km/s.', hft:true},
+    {t:5e-6, n:'Tick-to-trade bằng phần mềm tối ưu', d:'Cỡ vài μs với C++ viết kỹ và mạng bỏ qua nhân hệ điều hành.', hft:true},
+    {t:1e-4, n:'Đọc ngẫu nhiên từ ổ SSD', d:'≈ 100 μs. Quá chậm để nằm trên đường đi của một quyết định giao dịch.', hft:false},
+    {t:3.84e-3, n:'Chicago – New Jersey qua không khí (vi ba)', d:'≈ 3,84 ms trên đường thẳng 1.150 km.', hft:false},
+    {t:5.64e-3, n:'Chicago – New Jersey trong cáp quang', d:'≈ 5,64 ms nếu cáp đi thẳng; tuyến thật dài hơn.', hft:false},
+    {t:2.73e-2, n:'New York – London trong cáp quang', d:'≈ 27 ms cho khoảng 5.570 km đường thẳng.', hft:false},
+    {t:0.3, n:'Một cái chớp mắt', d:'≈ 100 đến 400 ms. Ở thang này, cả nghìn quyết định của FPGA đã diễn ra.', hft:false}
+  ];
+  const S={km:1150, sel:-1};
+  const LO=-10, HI=0; // log10 giây
+  let rows=[];
+  const c=Q.canvas(stage,400,draw);
+  function draw(ctx,w,h){
+    const C=Q.colors(); ctx.clearRect(0,0,w,h);
+    ctx.font='600 12px Be Vietnam Pro,-apple-system,sans-serif'; const lw=Math.max(...ITEMS.map(it=>ctx.measureText(it.n).width),ctx.measureText('Cáp quang 6.000 km (thanh trượt)').width);
+    const narrow=w<640, L=narrow?14:Math.min(Math.round(w*0.42),Math.ceil(lw)+24), R=w-18, T=30, B=h-40, xs=t=>L+(Math.log10(t)-LO)/(HI-LO)*(R-L);
+    const n=ITEMS.length+1, rh=(B-T)/n;
+    // vùng HFT: nửa trái
+    ctx.fillStyle=C.soft; ctx.fillRect(L,T-6,xs(1e-5)-L,B-T+6);
+    ctx.fillStyle=C.a; ctx.font='600 12px Be Vietnam Pro,-apple-system,sans-serif'; ctx.textAlign='left'; ctx.fillText('vùng của HFT',L+6,T-12);
+    // lưới ×1.000
+    const units=[[1e-9,'1 ns'],[1e-6,'1 μs'],[1e-3,'1 ms'],[1,'1 s']];
+    ctx.font='11px JetBrains Mono,ui-monospace,monospace'; ctx.textAlign='center';
+    for(let e=LO;e<=HI;e++){ const x=xs(Math.pow(10,e)); ctx.strokeStyle=C.line; ctx.lineWidth=e%3===0?1.5:0.5; ctx.beginPath(); ctx.moveTo(x,T-6); ctx.lineTo(x,B); ctx.stroke(); }
+    ctx.lineWidth=1; ctx.fillStyle=C.muted;
+    for(const [t,l] of units) ctx.fillText(l,xs(t),B+16);
+    ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif'; ctx.fillText('thời gian (thang log, mỗi vạch đậm là ×1.000)',(L+R)/2,h-6);
+    // các mục
+    const fib=S.km*1.47/299792.458, air=S.km/299792.458;
+    const list=ITEMS.map((it,i)=>({...it,i})).concat([{t:fib,n:`Cáp quang ${Q.fmt(S.km,0)} km (thanh trượt)`,d:'',user:true,i:ITEMS.length}]);
+    rows=[];
+    list.forEach((it,k)=>{
+      const y=T+rh*(k+0.5), x=xs(it.t), on=S.sel===it.i;
+      rows.push({y0:y-rh/2,y1:y+rh/2,i:it.i});
+      if(on){ ctx.fillStyle=C.soft; ctx.globalAlpha=0.9; ctx.fillRect(0,y-rh/2,w,rh); ctx.globalAlpha=1; }
+      ctx.strokeStyle=C.line; ctx.setLineDash([2,3]); ctx.beginPath(); ctx.moveTo(L,y); ctx.lineTo(x,y); ctx.stroke(); ctx.setLineDash([]);
+      if(it.user){ const xa=xs(air); ctx.strokeStyle=C.c; ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(xa,y); ctx.lineTo(x,y); ctx.stroke(); ctx.lineWidth=1;
+        ctx.fillStyle=C.c; ctx.beginPath(); ctx.arc(xa,y,4,0,7); ctx.fill(); }
+      ctx.fillStyle=it.user?C.d:(it.hft?C.a:C.b); ctx.beginPath(); ctx.arc(x,y,on?7:5.5,0,7); ctx.fill();
+      ctx.font=(on?'600 ':'')+'12px Be Vietnam Pro,-apple-system,sans-serif'; ctx.fillStyle=it.user?C.d:C.ink;
+      if(narrow){ ctx.textAlign=x>(L+R)/2?'right':'left'; ctx.fillText(it.n,x+(x>(L+R)/2?-10:10),y-8); }
+      else { ctx.textAlign='right'; ctx.fillText(it.n,L-10,y+4); }
+    });
+  }
+  function report(){
+    const fib=S.km*1.47/299792.458, air=S.km/299792.458, f=t=>t<1e-3?Q.fmt(t*1e6,1)+' μs':Q.fmt(t*1e3,2)+' ms';
+    const it=S.sel>=0&&S.sel<ITEMS.length?ITEMS[S.sel]:null;
+    out.textContent=`Cáp quang ${Q.fmt(S.km,0)} km: ${f(fib)} · qua không khí: ${f(air)} · chênh lệch ${f(fib-air)} ≈ ${Q.fmt((fib-air)/5e-7,0)} lần tick-to-trade của FPGA (≈ 0,5 μs)\n`+
+      (it?`${it.n}: ${it.d}`:'Bấm vào một dòng để xem giải thích.');
+    c.redraw();
+  }
+  c.cv.addEventListener('click',e=>{ const r=c.cv.getBoundingClientRect(), y=e.clientY-r.top; const row=rows.find(o=>y>=o.y0&&y<o.y1); S.sel=row?row.i:-1; report(); });
+  Q.slider(ctl,'Khoảng cách cáp quang',0.1,6000,0.1,S.km,v=>{S.km=v;report();},v=>Q.fmt(v,v<10?1:0)+' km');
+  Q.button(ctl,'1 km',()=>setKm(1)); Q.button(ctl,'Chicago – New Jersey',()=>setKm(1150)); Q.button(ctl,'New York – London',()=>setKm(5570));
+  const sl=ctl.querySelector('input'); function setKm(v){ sl.value=v; sl.dispatchEvent(new Event('input')); }
   report();
 })();
 </script>

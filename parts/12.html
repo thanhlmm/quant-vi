@@ -2,58 +2,135 @@
 <header>
   <span class="num">12</span>
   <h3>Thành phần chính (PCA)</h3>
-  <p class="meta">10 phút · Ứng dụng: Nhân tố đường cong lợi suất, phần dư trong kinh doanh chênh lệch thống kê · <a href="https://hft.md/learn/pca/">Bài gốc (tiếng Anh)</a></p>
+  <p class="meta">Phần 3 · Khoa học dữ liệu · Bài 12 · 10 phút · <a href="https://hft.md/learn/pca/">Bài gốc (tiếng Anh)</a></p>
 </header>
 
-<p>Mười kỳ hạn trên đường cong lợi suất hay năm trăm cổ phiếu thường cùng biến động theo một vài hướng chung. Phân tích thành phần chính (principal component analysis, PCA) tìm ra các hướng đó. Bàn lãi suất dùng chúng để phòng ngừa rủi ro, còn chiến lược chênh lệch thống kê giao dịch phần còn lại.</p>
+<p><i>Bài này xoay hệ toạ độ của dữ liệu theo những hướng mà dữ liệu thật sự biến thiên, rồi chỉ giữ lại các hướng quan trọng.</i></p>
 
-<h4>Ý chính</h4>
+<p>Rất nhiều đầu vào biến động cùng nhau. Mười điểm trên đường cong lợi suất trái phiếu chính phủ gần như luôn lên xuống cùng lúc. Năm trăm cổ phiếu cùng chịu tác động của thị trường chung và của nhóm ngành. Số phòng ngủ, số phòng tắm và diện tích của một căn nhà đều phản ánh một thứ: căn nhà to đến đâu. Trong những trường hợp như vậy, dữ liệu có p cột nhưng phần lớn biến thiên chỉ nằm trên vài hướng. <b>Phân tích thành phần chính</b> (principal component analysis, PCA) là công cụ tìm ra các hướng đó.</p>
+
+<h4>Phân tích giá trị kỳ dị</h4>
+<p>Bắt đầu bằng việc <b>trừ trung bình</b> theo từng cột của ma trận dữ liệu X (N hàng quan sát, p cột biến). Bước này bắt buộc: PCA đo biến thiên quanh tâm của đám mây, không phải quanh gốc toạ độ. Sau đó phân tích X theo <b>phân tích giá trị kỳ dị</b> (singular value decomposition, SVD):</p>
+<div class="formula"><span class="lbl">SVD của ma trận dữ liệu đã trừ trung bình (N × p)</span>X = U D Vᵀ,&nbsp;&nbsp;&nbsp; XᵀX = V D<sup>2</sup> Vᵀ</div>
+<p>Ở đây U (N × p) và V (p × p) có các cột trực chuẩn, còn D là ma trận đường chéo với các <b>giá trị kỳ dị</b> d<sub>1</sub> ≥ d<sub>2</sub> ≥ … ≥ 0. Công thức thứ hai có ngay từ công thức đầu: XᵀX = VDUᵀUDVᵀ = VD<sup>2</sup>Vᵀ, vì UᵀU = I.</p>
+<p>Các cột v<sub>1</sub>, v<sub>2</sub>, … của V là <b>véc-tơ riêng</b> (eigenvector) của XᵀX, tức là của ma trận hiệp phương sai mẫu Σ̂ = XᵀX/(N − 1) sai khác một thừa số N − 1. Chúng là các trục mới, mỗi trục vuông góc với mọi trục trước nó. <b>Các thành phần chính</b> là dữ liệu viết lại trên các trục đó:</p>
+<div class="formula"><span class="lbl">Thành phần chính thứ j và phương sai của nó</span>z<sub>j</sub> = X v<sub>j</sub>,&nbsp;&nbsp;&nbsp; Var(z<sub>j</sub>) = <span class="frac"><span>d<sub>j</sub><sup>2</sup></span><span>N − 1</span></span></div>
+<p>Vì sao phương sai là d<sub>j</sub><sup>2</sup>/(N − 1)? Từ X = UDVᵀ suy ra Xv<sub>j</sub> = d<sub>j</sub>u<sub>j</sub>, nên ‖z<sub>j</sub>‖<sup>2</sup> = d<sub>j</sub><sup>2</sup>. Các cột của X có trung bình 0 nên z<sub>j</sub> cũng vậy, và phương sai mẫu của nó là tổng bình phương chia N − 1. Do d<sub>j</sub> xếp giảm dần, thành phần thứ nhất có phương sai lớn nhất, thành phần thứ hai có phương sai lớn nhất trong phần còn lại, và cứ thế tiếp tục.</p>
+<p><b>Vì sao véc-tơ riêng là hướng có phương sai lớn nhất?</b> Chiếu dữ liệu lên một hướng đơn vị v thì phương sai là vᵀΣ̂v. Cực đại hoá vᵀΣ̂v với ràng buộc vᵀv = 1 bằng nhân tử Lagrange: đạo hàm của vᵀΣ̂v − λ(vᵀv − 1) bằng 0 cho Σ̂v = λv. Vậy điểm dừng là véc-tơ riêng, và tại đó phương sai bằng đúng giá trị riêng λ. Giá trị riêng lớn nhất cho PC1. Lặp lại với ràng buộc thêm “vuông góc với PC1” sẽ ra PC2, và tiếp tục như vậy.</p>
+<p>Từ đó có hai hệ quả dùng hằng ngày:</p>
 <ul>
-  <li>PCA <b>xoay hệ trục</b> của dữ liệu đã trừ trung bình. Trục mới thứ nhất là hướng có phương sai lớn nhất. Trục thứ hai có phương sai lớn nhất trong phần còn lại và vuông góc với trục thứ nhất, cứ thế tiếp tục.</li>
-  <li>Các trục mới là <b>véc-tơ riêng</b> (eigenvector) của ma trận hiệp phương sai. Phương sai dọc mỗi trục là <b>giá trị riêng</b> (eigenvalue) tương ứng. Phân tích giá trị kỳ dị (singular value decomposition, SVD) cho cả hai thứ cùng lúc.</li>
-  <li>Giữ M thành phần đầu là cách <b>xấp xỉ hạng thấp</b> tốt nhất theo nghĩa bình phương. Tỉ lệ phương sai giữ lại bằng tổng M giá trị riêng đầu chia tổng tất cả.</li>
-  <li>Ba cách dùng: nén dữ liệu không cần biến mục tiêu; <b>hồi quy thành phần chính</b> (principal components regression, PCR); và cách nhìn lại ridge. Ridge co mạnh các thành phần nhỏ, còn PCR bỏ hẳn chúng.</li>
-  <li>Với biến động lợi suất trái phiếu, ba thành phần đầu là <b>mức</b> (level), <b>độ dốc</b> (slope) và <b>độ cong</b> (curvature). Với lợi suất cổ phiếu, thành phần đầu thường là cả thị trường, các thành phần kế tiếp là nhóm ngành.</li>
-  <li>PCA nhạy với đơn vị đo. Nếu các biến có thang đo khác nhau, hãy chuẩn hoá trước, tức là làm PCA trên ma trận tương quan.</li>
+  <li><b>Tỉ lệ phương sai được giải thích</b> bởi M thành phần đầu là (λ<sub>1</sub> + … + λ<sub>M</sub>) / (λ<sub>1</sub> + … + λ<sub>p</sub>), với λ<sub>j</sub> = d<sub>j</sub><sup>2</sup>/(N − 1). Tổng mọi λ<sub>j</sub> bằng tổng phương sai của các biến gốc, vì phép xoay không làm mất phương sai.</li>
+  <li><b>Xấp xỉ hạng thấp tốt nhất.</b> Giữ M thành phần đầu, x̂ = Σ<sub>j ≤ M</sub> (xᵀv<sub>j</sub>) v<sub>j</sub>, là cách xấp xỉ dữ liệu bằng một không gian con M chiều có tổng bình phương khoảng cách vuông góc nhỏ nhất. Phần dư x − x̂ = Σ<sub>j &gt; M</sub> (xᵀv<sub>j</sub>) v<sub>j</sub>, có phương sai trung bình bằng tổng các λ<sub>j</sub> bị bỏ đi.</li>
 </ul>
-
-<h4>Công thức</h4>
-<div class="formula"><span class="lbl">SVD của ma trận dữ liệu đã trừ trung bình theo cột (N × p)</span>X = U D Vᵀ,&nbsp;&nbsp; XᵀX = V D² Vᵀ,&nbsp;&nbsp; d<sub>1</sub> ≥ d<sub>2</sub> ≥ … ≥ d<sub>p</sub> ≥ 0</div>
-<div class="formula"><span class="lbl">Thành phần chính thứ j và phương sai của nó</span>z<sub>j</sub> = X v<sub>j</sub>,&nbsp;&nbsp; Var(z<sub>j</sub>) = <span class="frac"><span>d<sub>j</sub>²</span><span>N − 1</span></span> = λ<sub>j</sub>,&nbsp;&nbsp; Σ̂ v<sub>j</sub> = λ<sub>j</sub> v<sub>j</sub></div>
-<div class="formula"><span class="lbl">Tỉ lệ phương sai giữ lại và xấp xỉ hạng M</span><span class="frac"><span>λ<sub>1</sub> + … + λ<sub>M</sub></span><span>λ<sub>1</sub> + … + λ<sub>p</sub></span></span>,&nbsp;&nbsp; x̂ = Σ<sub>j ≤ M</sub> (xᵀv<sub>j</sub>) v<sub>j</sub>,&nbsp;&nbsp; phần dư x − x̂ = Σ<sub>j &gt; M</sub> (xᵀv<sub>j</sub>) v<sub>j</sub></div>
-<div class="formula"><span class="lbl">Ridge nhìn qua PCA: thừa số co của thành phần j. PCR thay nó bằng 1 nếu j ≤ M và 0 nếu j &gt; M</span><span class="frac"><span>d<sub>j</sub>²</span><span>d<sub>j</sub>² + λ</span></span></div>
-
-<h4>Ví dụ minh hoạ: PCA tay cho hai kỳ hạn</h4>
-<p>Biến động ngày của lợi suất 2 năm và 10 năm (đơn vị bp) có phương sai 5 và 2, hiệp phương sai 2. Tìm các thành phần chính và tách một ngày cụ thể.</p>
-<ol>
-  <li>Σ = [[5, 2], [2, 2]]. Vết bằng 7, định thức bằng 5 × 2 − 2 × 2 = 6. Giá trị riêng là nghiệm của λ² − 7λ + 6 = 0, tức λ<sub>1</sub> = 6 và λ<sub>2</sub> = 1.</li>
-  <li>Véc-tơ riêng của λ<sub>1</sub>: (5 − 6)a + 2b = 0 nên b = a/2. Chuẩn hoá: v<sub>1</sub> = (2, 1)/√5 ≈ (0,894; 0,447). Vuông góc với nó là v<sub>2</sub> = (−1, 2)/√5.</li>
-  <li>PC1 giải thích 6/7 ≈ 85,7% phương sai. Cả hai trọng số đều dương, nên đây là nhân tố “mức”: hai kỳ hạn cùng lên hoặc cùng xuống.</li>
-  <li>Một ngày có x = (3, 1) bp so với trung bình. Điểm số: z<sub>1</sub> = (3·2 + 1·1)/√5 = 7/√5 ≈ 3,13 và z<sub>2</sub> = (−3 + 2)/√5 ≈ −0,447.</li>
-  <li>Xấp xỉ bằng PC1: z<sub>1</sub>v<sub>1</sub> = (7/5)·(2, 1) = (2,8; 1,4). Phần dư là (0,2; −0,4), có bình phương độ dài 0,2 = z<sub>2</sub>². Phần dư này chính là thứ chiến lược chênh lệch thống kê đặt cược sẽ hồi về.</li>
-</ol>
 
 <figure class="demo">
   <div class="stage" id="demo-12"></div>
   <div class="controls" id="ctl-12"></div>
   <div class="readout" id="out-12"></div>
-  <figcaption><b>Mô hình 12.1 – Đám mây biến động lợi suất 2, 10 và 30 năm trong không gian 3D.</b> Mỗi chấm là một ngày, sinh từ ba nhân tố mức, độ dốc, độ cong cộng nhiễu. Ba mũi tên là các véc-tơ riêng, dài 2 độ lệch chuẩn. Chọn “Giữ PC1 + PC2” để mọi điểm trượt xuống mặt phẳng mà hai thành phần đầu tạo ra; đoạn mảnh nối mỗi điểm với vị trí cũ là phần dư. Giảm độ lệch của nhân tố độ dốc để thấy PC2 co lại. Kéo để xoay.</figcaption>
+  <figcaption><b>Hình 12.1 – Thành phần chính của một đám mây 3D.</b> Mỗi chấm là một ngày biến động của lợi suất 2, 10 và 30 năm, sinh từ ba nhân tố mức, độ dốc, độ cong cộng nhiễu. Ba mũi tên là các véc-tơ riêng của ma trận hiệp phương sai, mỗi mũi tên dài 2 độ lệch chuẩn của thành phần tương ứng. Chọn “Giữ PC1 + PC2” để mọi điểm trượt xuống mặt phẳng mà hai thành phần đầu tạo ra; đoạn mảnh nối mỗi điểm với vị trí cũ là phần dư. Ô số liệu cho biết bao nhiêu phần trăm phương sai còn lại. Giảm độ lệch của nhân tố độ dốc để thấy PC2 co lại. Kéo để xoay.</figcaption>
 </figure>
+
+<figure class="demo">
+  <div class="stage" id="demo3-12"></div>
+  <div class="controls" id="ctl3-12"></div>
+  <div class="readout" id="out3-12"></div>
+  <figcaption><b>Hình 12.2 – Xoay PCA trong hai chiều.</b> 300 điểm từ một phân phối chuẩn hai chiều. Mũi tên xanh lá là PC1, mũi tên tím là PC2, mỗi mũi tên dài 2σ; cả hai được tính lại từ ma trận hiệp phương sai mẫu mỗi khi đám mây thay đổi. Xoay đám mây bằng thanh “Góc xoay” và ép nó bằng hai thanh độ lệch chuẩn: PC1 luôn tìm ra trục dài, và ô số liệu so góc tìm được với góc thật. Bấm “Chỉ giữ PC1” để xem xấp xỉ một chiều: mỗi điểm chiếu vuông góc xuống trục PC1 (đoạn cam là phần bị bỏ), và đọc tỉ lệ phương sai còn giữ. Cho hai độ lệch chuẩn bằng nhau để thấy PC1 trở nên bất định: đám mây tròn không có trục dài.</figcaption>
+</figure>
+
+<h5>Ví dụ có lời giải: PCA bằng tay cho hai kỳ hạn</h5>
+<p>Biến động ngày của lợi suất 2 năm và 10 năm (đơn vị bp) có phương sai 5 và 2, hiệp phương sai 2. Tìm các thành phần chính và tách một ngày cụ thể.</p>
+<ol>
+  <li>Σ = [[5, 2], [2, 2]]. Vết bằng 7, định thức bằng 5 × 2 − 2 × 2 = 6. Giá trị riêng là nghiệm của λ<sup>2</sup> − 7λ + 6 = 0, tức λ<sub>1</sub> = 6 và λ<sub>2</sub> = 1. Tổng 6 + 1 = 7 đúng bằng tổng hai phương sai gốc.</li>
+  <li>Véc-tơ riêng của λ<sub>1</sub>: (5 − 6)a + 2b = 0 nên b = a/2. Chuẩn hoá: v<sub>1</sub> = (2, 1)/√5 ≈ (0,894; 0,447). Vuông góc với nó là v<sub>2</sub> = (−1, 2)/√5.</li>
+  <li>PC1 giải thích 6/7 ≈ 85,7% phương sai. Cả hai trọng số đều dương, nên đây là nhân tố “mức”: hai kỳ hạn cùng lên hoặc cùng xuống. PC2 có trọng số trái dấu: kỳ hạn ngắn và dài đi ngược nhau, tức nhân tố “độ dốc”.</li>
+  <li>Một ngày có x = (3, 1) bp so với trung bình. Điểm số: z<sub>1</sub> = (3·2 + 1·1)/√5 = 7/√5 ≈ 3,13 và z<sub>2</sub> = (−3 + 2)/√5 ≈ −0,447.</li>
+  <li>Xấp xỉ bằng PC1: z<sub>1</sub>v<sub>1</sub> = (7/5)·(2, 1) = (2,8; 1,4). Phần dư là (0,2; −0,4), có bình phương độ dài 0,04 + 0,16 = 0,2 = z<sub>2</sub><sup>2</sup>. Phần dư này chính là thứ chiến lược chênh lệch thống kê đặt cược sẽ hồi về.</li>
+</ol>
+<p class="note"><b>Ba lưu ý thực hành.</b> Thứ nhất, dấu của véc-tơ riêng là tuỳ ý: đổi dấu cả v<sub>j</sub> lẫn z<sub>j</sub> không thay đổi gì, nên khi theo dõi PCA qua thời gian cần cố định một quy ước dấu. Thứ hai, PCA nhạy với đơn vị đo: nếu các biến có thang đo khác nhau, hãy chuẩn hoá trước, tức là làm PCA trên ma trận tương quan thay vì ma trận hiệp phương sai. Thứ ba, PCA không phải hồi quy: nó cực tiểu khoảng cách vuông góc tới một không gian con và không biết gì về biến mục tiêu.</p>
+
+<h4>Ba cách PCA xuất hiện</h4>
+<ul>
+  <li><b>Nén dữ liệu không giám sát</b> (unsupervised compression). Biến đổi các đầu vào sang M thành phần đầu trước khi khớp bất kỳ mô hình nào. Không cần biến mục tiêu. Mười kỳ hạn lợi suất trở thành ba con số; năm trăm cổ phiếu trở thành vài chục nhân tố.</li>
+  <li><b>Hồi quy thành phần chính</b> (principal components regression, PCR). Hồi quy y theo z<sub>1</sub>, …, z<sub>M</sub> với M &lt; p. Các thành phần vuông góc với nhau, nên đây thực chất là M hồi quy một biến tách rời: θ̂<sub>j</sub> = ⟨z<sub>j</sub>, y⟩/⟨z<sub>j</sub>, z<sub>j</sub>⟩, không hệ số nào ảnh hưởng tới hệ số khác (đúng như giải phẫu hồi quy ở bài 10, khi các đầu vào đã trực giao sẵn). Sau đó đổi ngược các hệ số về đầu vào gốc: β̂<sup>PCR</sup> = Σ<sub>j ≤ M</sub> θ̂<sub>j</sub> v<sub>j</sub>. Vì các thành phần vuông góc, PCR không bao giờ gặp đa cộng tuyến.</li>
+  <li><b>Ridge nhìn qua PCA.</b> Như đã thấy ở bài 11, ridge nhân hệ số trên thành phần thứ j với thừa số d<sub>j</sub><sup>2</sup>/(d<sub>j</sub><sup>2</sup> + λ). Thành phần lớn gần như không bị đụng tới, thành phần nhỏ bị ép mạnh. PCR là phiên bản <b>ngưỡng cứng</b> của cùng ý tưởng: giữ nguyên M thành phần đầu (thừa số 1) và bỏ hẳn phần còn lại (thừa số 0).</li>
+</ul>
+<div class="formula"><span class="lbl">Thừa số co trên thành phần j: ridge co mềm, PCR co cứng</span>ridge: <span class="frac"><span>d<sub>j</sub><sup>2</sup></span><span>d<sub>j</sub><sup>2</sup> + λ</span></span>&nbsp;&nbsp;&nbsp;&nbsp; PCR: 1 nếu j ≤ M, 0 nếu j &gt; M</div>
+<p><b>Ví dụ.</b> Ba thành phần với d<sub>j</sub><sup>2</sup> = 100, 10, 1. Ridge với λ = 10 giữ lại 100/110 ≈ 0,91 của thành phần thứ nhất, 10/20 = 0,5 của thành phần thứ hai và 1/11 ≈ 0,09 của thành phần thứ ba. PCR với M = 2 giữ (1; 1; 0). Hai phương pháp cùng một tinh thần: tin các hướng dữ liệu biến thiên nhiều, nghi ngờ các hướng biến thiên ít. Điểm yếu chung cũng giống nhau: thành phần có phương sai nhỏ vẫn có thể là thành phần dự báo y tốt nhất, và cả hai phương pháp đều sẽ bỏ qua nó.</p>
+
+<h4>Ứng dụng trên bàn giao dịch</h4>
+<ul>
+  <li><b>Đường cong lợi suất.</b> PCA trên biến động ngày của lợi suất trái phiếu chính phủ cho ba thành phần giải thích phần lớn chuyển động: <b>mức</b> (level, mọi lãi suất cùng lên hoặc cùng xuống), <b>độ dốc</b> (slope, kỳ hạn ngắn đi ngược kỳ hạn dài) và <b>độ cong</b> (curvature, phần giữa đi ngược hai đầu). Các bàn lãi suất phòng ngừa rủi ro và báo giá rủi ro đúng theo ba đại lượng này: “danh mục đã trung tính với mức và độ dốc, còn phơi nhiễm với độ cong”.</li>
+  <li><b>Chênh lệch thống kê</b> (statistical arbitrage). Làm PCA trên lợi suất của nhiều cổ phiếu: các thành phần đầu là “thị trường” và các nhóm ngành lớn. Phần dư sau khi bỏ chúng đi là thứ mà các chiến lược chênh lệch thống kê đặt cược sẽ hồi về trung bình.</li>
+  <li><b>Mô hình rủi ro</b> giữ vài chục nhân tố thay cho một ma trận hiệp phương sai 3.000 × 3.000. Ma trận đầy đủ có khoảng 4,5 triệu tham số và rất nhiễu; mô hình nhân tố chỉ cần hệ số tải và phương sai riêng của từng mã.</li>
+</ul>
 
 <figure class="demo">
   <div class="stage" id="demo2-12"></div>
   <div class="controls" id="ctl2-12"></div>
   <div class="readout" id="out2-12"></div>
-  <figcaption><b>Mô hình 12.2 – Hệ số tải theo kỳ hạn và biểu đồ phương sai.</b> PCA trên 1.000 ngày biến động của mười kỳ hạn, từ 3 tháng đến 30 năm. Khung trái vẽ ba véc-tơ riêng đầu theo kỳ hạn: gần phẳng (mức), đơn điệu (độ dốc) và hình bướu (độ cong). Gạch đứt là hình dạng nhân tố dùng để sinh dữ liệu, đã chuẩn hoá. Khung phải là tỉ lệ phương sai của từng thành phần và đường tích luỹ. Tăng nhiễu riêng từng kỳ hạn để thấy PC3 nhoè đi trước tiên.</figcaption>
+  <figcaption><b>Hình 12.3 – Hệ số tải theo kỳ hạn và biểu đồ phương sai.</b> Hình bổ sung cho mục đường cong lợi suất. PCA trên 1.000 ngày biến động của mười kỳ hạn, từ 3 tháng đến 30 năm. Khung trái vẽ ba véc-tơ riêng đầu theo kỳ hạn: gần phẳng (mức), đơn điệu (độ dốc) và hình bướu (độ cong). Gạch đứt là hình dạng nhân tố dùng để sinh dữ liệu, đã chuẩn hoá. Khung phải là tỉ lệ phương sai của từng thành phần và đường tích luỹ. Tăng nhiễu riêng từng kỳ hạn để thấy PC3 nhoè đi trước tiên.</figcaption>
 </figure>
 
-<h4>Lưu ý khi phỏng vấn</h4>
-<ul>
-  <li><b>PCA trên 50 cổ phiếu, PC1 có trọng số dương gần bằng nhau</b>: đó là nhân tố thị trường, danh mục nắm mọi mã cùng lúc. Nó thường giải thích phần phương sai lớn nhất.</li>
-  <li>Dấu của véc-tơ riêng là tuỳ ý. Đổi dấu v<sub>j</sub> và z<sub>j</sub> cùng lúc không thay đổi gì. Khi so sánh qua thời gian, hãy cố định một quy ước dấu.</li>
-  <li>PCA không phải hồi quy. Nó cực tiểu khoảng cách vuông góc tới không gian con và không biết gì về biến mục tiêu. Thành phần có phương sai nhỏ vẫn có thể là thành phần dự báo tốt nhất cho y.</li>
-  <li>Ứng dụng: phòng ngừa danh mục trái phiếu theo ba nhân tố mức, độ dốc, độ cong; mô hình rủi ro dùng vài chục nhân tố thay cho ma trận hiệp phương sai 3.000 × 3.000; chênh lệch thống kê giao dịch phần dư sau khi bỏ vài thành phần đầu.</li>
-</ul>
+<h4>Trong code</h4>
+<p>Đoạn TypeScript dưới đây giả lập 2.500 ngày biến động lợi suất ở sáu kỳ hạn (3 tháng đến 30 năm) từ ba nhân tố mức, độ dốc, độ cong với độ lệch chuẩn 8, 4 và 2 bp, cộng nhiễu riêng 1 bp. Sau khi trừ trung bình, nó lập ma trận hiệp phương sai 6 × 6 và tìm véc-tơ riêng bằng phép quay Jacobi. Với ma trận nhỏ như vậy, cách này cho cùng kết quả với SVD của X. Chạy bằng <span class="kbd">bun pca.ts</span>.</p>
+<pre class="code"><code><span class="c">// Biến động giả của đường cong lợi suất: ba nhân tố mức, độ dốc, độ cong cộng nhiễu</span>
+function rng(seed: number) {
+  let s = seed &gt;&gt;&gt; 0;
+  return () =&gt; { s = (s + 0x6d2b79f5) | 0; let t = Math.imul(s ^ (s &gt;&gt;&gt; 15), 1 | s);
+    t = (t + Math.imul(t ^ (t &gt;&gt;&gt; 7), 61 | t)) ^ t; return ((t ^ (t &gt;&gt;&gt; 14)) &gt;&gt;&gt; 0) / 2 ** 32; };
+}
+const r = rng(10);
+const gauss = () =&gt; Math.sqrt(-2 * Math.log(1 - r())) * Math.cos(2 * Math.PI * r());
+const tenors = [0.25, 1, 2, 5, 10, 30], p = tenors.length, N = 2500;
+const level = tenors.map(() =&gt; 1);
+const slope = tenors.map(t =&gt; (t - 7) / 10);
+const curve = tenors.map(t =&gt; 1.5 - (Math.log(t) - 1.3) ** 2);
+const dY = Array.from({ length: N }, () =&gt; {
+  const f = [8 * gauss(), 4 * gauss(), 2 * gauss()];        <span class="c">// độ lệch chuẩn 8, 4, 2 bp</span>
+  return tenors.map((_, k) =&gt; f[0] * level[k] + f[1] * slope[k] + f[2] * curve[k] + gauss());
+});
+
+<span class="c">// Trừ trung bình theo cột, lập ma trận hiệp phương sai p × p</span>
+const mean = tenors.map((_, k) =&gt; dY.reduce((s, row) =&gt; s + row[k], 0) / N);
+dY.forEach(row =&gt; row.forEach((_, k) =&gt; (row[k] -= mean[k])));
+const S = Array.from({ length: p }, (_, i) =&gt; Array.from({ length: p }, (_, j) =&gt;
+  dY.reduce((s, row) =&gt; s + row[i] * row[j], 0) / (N - 1)));
+
+<span class="c">// Véc-tơ riêng bằng phép quay Jacobi (ma trận đối xứng nhỏ)</span>
+function jacobi(A0: number[][]) {
+  const A = A0.map(r =&gt; r.slice()), n = A.length;
+  const V = A.map((_, i) =&gt; A.map((_, j) =&gt; (i === j ? 1 : 0)));
+  for (let sweep = 0; sweep &lt; 50; sweep++) {
+    for (let a = 0; a &lt; n; a++) for (let b = a + 1; b &lt; n; b++) {
+      if (Math.abs(A[a][b]) &lt; 1e-12) continue;
+      const th = 0.5 * Math.atan2(2 * A[a][b], A[b][b] - A[a][a]), c = Math.cos(th), s = Math.sin(th);
+      for (let k = 0; k &lt; n; k++) {                         <span class="c">// A ← JᵀAJ</span>
+        const x = A[k][a], y = A[k][b]; A[k][a] = c * x - s * y; A[k][b] = s * x + c * y;
+      }
+      for (let k = 0; k &lt; n; k++) {
+        const x = A[a][k], y = A[b][k]; A[a][k] = c * x - s * y; A[b][k] = s * x + c * y;
+      }
+      for (let k = 0; k &lt; n; k++) {                         <span class="c">// V ← VJ</span>
+        const x = V[k][a], y = V[k][b]; V[k][a] = c * x - s * y; V[k][b] = s * x + c * y;
+      }
+    }
+  }
+  const order = A.map((_, i) =&gt; i).sort((i, j) =&gt; A[j][j] - A[i][i]);
+  return { vals: order.map(i =&gt; A[i][i]), vecs: order.map(i =&gt; V.map(row =&gt; row[i])) };
+}
+
+const { vals, vecs } = jacobi(S);
+const total = vals.reduce((s, v) =&gt; s + v, 0);
+console.log(vals.map(v =&gt; (v / total).toFixed(3)).join(" "));   <span class="c">// 0.642 0.219 0.134 0.002 0.002 0.002</span>
+const pc1 = vecs[0][0] &lt; 0 ? vecs[0].map(v =&gt; -v) : vecs[0];   <span class="c">// quy ước dấu: phần tử đầu dương</span>
+console.log(pc1.map(v =&gt; v.toFixed(2)).join(" "));              <span class="c">// 0.55 0.36 0.31 0.30 0.35 0.51</span></code></pre>
+<p>Đọc kết quả: ba thành phần đầu giải thích 64,2% + 21,9% + 13,4% ≈ 99,5% phương sai. Ba giá trị riêng còn lại đều xấp xỉ 1, đúng bằng phương sai của nhiễu riêng: chúng không chứa cấu trúc nào, chỉ là nhiễu. PC1 có trọng số cùng dấu ở mọi kỳ hạn, tức một dịch chuyển song song kiểu “mức”. Trọng số không đều hẳn mà cao hơn ở hai đầu, vì nhân tố độ dốc (t − 7)/10 trong ví dụ này không vuông góc với nhân tố mức và có biên độ lớn ở kỳ hạn 30 năm; PCA chỉ tìm hướng có phương sai lớn nhất, nó không “biết” các nhân tố gốc. Trong dữ liệu thật, PC1 của biến động lợi suất thường gần phẳng hơn.</p>
+
+<h4>Tự kiểm tra</h4>
+<details class="qa"><summary>Chạy PCA trên lợi suất của 50 cổ phiếu, PC1 có trọng số dương xấp xỉ bằng nhau trên mọi cổ phiếu. PC1 là gì? (A) nhiễu; (B) nhân tố thị trường: mọi mã cùng biến động; (C) một giao dịch cặp; (D) cổ phiếu biến động mạnh nhất.</summary>
+<p><b>Đáp án: B.</b> Trọng số dương và gần bằng nhau trên mọi mã nghĩa là PC1 là một danh mục nắm giữ tất cả, gần như một quỹ chỉ số đồng tỉ trọng. Điểm số z<sub>1</sub> của mỗi ngày đo xem hôm đó cả thị trường đi lên hay đi xuống bao nhiêu. Trong một tập cổ phiếu, chuyển động chung này thường giải thích phần phương sai lớn nhất.</p>
+<p>(A) sai vì nhiễu riêng từng mã không có cấu trúc chung, nó rải đều lên các thành phần cuối với giá trị riêng nhỏ (như ba giá trị riêng xấp xỉ 1 trong đoạn code trên). (C) sai vì một giao dịch cặp cần trọng số trái dấu, mua một mã và bán mã kia; trọng số trái dấu là đặc điểm của các thành phần sau, ví dụ nhân tố nhóm ngành. (D) sai vì một cổ phiếu riêng lẻ sẽ cho véc-tơ riêng dồn trọng số vào đúng một mã, không phải trọng số đều.</p>
+</details>
 
 <script>
 (()=>{
@@ -91,7 +168,7 @@
     return vec;
   }
 
-  /* ---------- Mô hình 12.1: đám mây 3D của ba kỳ hạn ---------- */
+  /* ---------- Hình 12.1: đám mây 3D của ba kỳ hạn ---------- */
   {
     const stage=document.getElementById('demo-12'), ctl=document.getElementById('ctl-12'), out=document.getElementById('out-12');
     const LV=[1,1,1], SL=[-1,0.3,1], CV=[-0.6,1,-0.4], N=350;
@@ -167,7 +244,7 @@
     Q.button(ctl,'Lấy mẫu mới',()=>{S.seed++;re();});
   }
 
-  /* ---------- Mô hình 12.2: hệ số tải theo kỳ hạn ---------- */
+  /* ---------- Hình 12.3: hệ số tải theo kỳ hạn ---------- */
   {
     const stage=document.getElementById('demo2-12'), ctl=document.getElementById('ctl2-12'), out=document.getElementById('out2-12');
     const T=[0.25,0.5,1,2,3,5,7,10,20,30], NAMES=['3T','6T','1N','2N','3N','5N','7N','10N','20N','30N'], ND=1000;
@@ -223,6 +300,61 @@
     const bt=Q.button(ctl,'Ẩn nhân tố thật',()=>{ S.truth=!S.truth; bt.textContent=S.truth?'Ẩn nhân tố thật':'Hiện nhân tố thật'; c.redraw(); });
     Q.button(ctl,'Lấy mẫu mới',()=>{S.seed++;re();});
   }
+})();
+(()=>{
+  /* ---------- Hình 12.2: xoay và ép đám mây hai chiều ---------- */
+  const stage=document.getElementById('demo3-12'), ctl=document.getElementById('ctl3-12'), out=document.getElementById('out3-12');
+  const NPT=300, S={ang:30, s1:2, s2:0.6, keep:2, seed:1};
+  let Z=[], pts=[], ev=null, c=null;
+  function base(){ const r=Q.rng(S.seed*7907+3); Z=Array.from({length:NPT},()=>[Q.normal(r),Q.normal(r)]); }
+  function compute(){
+    const a=S.ang*Math.PI/180, ca=Math.cos(a), sa=Math.sin(a);
+    pts=Z.map(([u,v])=>[ca*S.s1*u-sa*S.s2*v, sa*S.s1*u+ca*S.s2*v]);
+    let mx=0,my=0; pts.forEach(p=>{mx+=p[0];my+=p[1];}); mx/=NPT; my/=NPT; pts=pts.map(p=>[p[0]-mx,p[1]-my]);
+    let sxx=0,syy=0,sxy=0; pts.forEach(p=>{sxx+=p[0]*p[0]; syy+=p[1]*p[1]; sxy+=p[0]*p[1];}); sxx/=NPT-1; syy/=NPT-1; sxy/=NPT-1;
+    // trị riêng và véc-tơ riêng của ma trận 2 × 2 đối xứng, dạng đóng
+    const tr=sxx+syy, det=sxx*syy-sxy*sxy, disc=Math.sqrt(Math.max(0,tr*tr/4-det)), l1=tr/2+disc, l2=tr/2-disc;
+    const th=0.5*Math.atan2(2*sxy,sxx-syy), v1=[Math.cos(th),Math.sin(th)], v2=[-Math.sin(th),Math.cos(th)];
+    ev={l1,l2,v1,v2,sxx,syy,sxy};
+    let deg=th*180/Math.PI; if(deg<0) deg+=180;
+    const share=l1/(l1+l2);
+    out.textContent=`Ma trận hiệp phương sai mẫu: [[${Q.fmt(sxx,2)}; ${Q.fmt(sxy,2)}], [${Q.fmt(sxy,2)}; ${Q.fmt(syy,2)}]]\n`+
+      `λ₁ = ${Q.fmt(l1,3)}, λ₂ = ${Q.fmt(l2,3)}   ·   PC1 nằm ở góc ${Q.fmt(deg,1)}° (trục dài thật nằm ở ${Q.fmt(S.s1>=S.s2?S.ang:(S.ang+90)%180,0)}°)\n`+
+      (S.keep===1?`Chỉ giữ PC1: còn lại ${Q.pct(share,1)} phương sai; phần mất đi (độ dài bình phương trung bình của các đoạn chiếu) là ${Q.fmt(l2,3)}`
+                 :`Giữ cả hai thành phần: 100% phương sai. PC1 chiếm ${Q.pct(share,1)}, PC2 chiếm ${Q.pct(1-share,1)}`);
+  }
+  function draw(ctx,w,h){
+    const C=Q.colors(); ctx.clearRect(0,0,w,h);
+    const R=5.2, k=Math.min(w,h)/(2*R), X=v=>w/2+v*k, Y=v=>h/2-v*k;
+    ctx.strokeStyle=C.line; ctx.lineWidth=1;
+    for(let t=-5;t<=5;t++){ ctx.beginPath(); ctx.moveTo(X(t),0); ctx.lineTo(X(t),h); ctx.moveTo(0,Y(t)); ctx.lineTo(w,Y(t)); ctx.stroke(); }
+    ctx.strokeStyle=C.muted; ctx.beginPath(); ctx.moveTo(0,Y(0)); ctx.lineTo(w,Y(0)); ctx.moveTo(X(0),0); ctx.lineTo(X(0),h); ctx.stroke();
+    const {v1,v2,l1,l2}=ev;
+    // đường PC1 kéo dài
+    ctx.strokeStyle=C.a; ctx.globalAlpha=0.35; ctx.setLineDash([5,4]); ctx.beginPath(); ctx.moveTo(X(-9*v1[0]),Y(-9*v1[1])); ctx.lineTo(X(9*v1[0]),Y(9*v1[1])); ctx.stroke(); ctx.setLineDash([]); ctx.globalAlpha=1;
+    pts.forEach(p=>{ const z=p[0]*v1[0]+p[1]*v1[1], q=S.keep===1?[z*v1[0],z*v1[1]]:p;
+      if(S.keep===1){ ctx.strokeStyle=C.b; ctx.globalAlpha=0.35; ctx.beginPath(); ctx.moveTo(X(p[0]),Y(p[1])); ctx.lineTo(X(q[0]),Y(q[1])); ctx.stroke();
+        ctx.globalAlpha=0.25; ctx.fillStyle=C.muted; ctx.beginPath(); ctx.arc(X(p[0]),Y(p[1]),1.8,0,7); ctx.fill(); }
+      ctx.globalAlpha=0.75; ctx.fillStyle=C.c; ctx.beginPath(); ctx.arc(X(q[0]),Y(q[1]),2.6,0,7); ctx.fill(); ctx.globalAlpha=1; });
+    // mũi tên dài 2σ
+    const arrow=(v,len,col,lab)=>{ const x1=X(v[0]*len), y1=Y(v[1]*len), a=Math.atan2(y1-Y(0),x1-X(0));
+      ctx.strokeStyle=col; ctx.fillStyle=col; ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(X(0),Y(0)); ctx.lineTo(x1,y1); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x1-11*Math.cos(a-0.4),y1-11*Math.sin(a-0.4)); ctx.lineTo(x1-11*Math.cos(a+0.4),y1-11*Math.sin(a+0.4)); ctx.closePath(); ctx.fill();
+      ctx.lineWidth=1; ctx.font='600 13px Be Vietnam Pro,-apple-system,sans-serif'; ctx.fillText(lab,x1+8,y1-6); };
+    arrow(v1,2*Math.sqrt(l1),C.a,'PC1');
+    if(S.keep===2) arrow(v2,2*Math.sqrt(Math.max(l2,0)),C.d,'PC2');
+    ctx.fillStyle=C.muted; ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif';
+    ctx.fillText(S.keep===1?'Chỉ giữ PC1: mỗi điểm chiếu vuông góc xuống trục PC1':'Mũi tên: PC1 và PC2, mỗi mũi tên dài 2σ',10,16);
+  }
+  base(); compute();
+  c=Q.canvas(stage,380,draw);
+  const re=()=>{ compute(); c.redraw(); };
+  Q.slider(ctl,'Góc xoay',0,180,1,S.ang,v=>{S.ang=v;re();},v=>v+'°');
+  Q.slider(ctl,'σ trục dài',0.3,3,0.05,S.s1,v=>{S.s1=v;re();},v=>Q.fmt(v,2));
+  Q.slider(ctl,'σ trục ngắn',0.05,3,0.05,S.s2,v=>{S.s2=v;re();},v=>Q.fmt(v,2));
+  const b2=Q.button(ctl,'Giữ cả hai',()=>{S.keep=2; b2.className='primary'; b1.className=''; re();},true);
+  const b1=Q.button(ctl,'Chỉ giữ PC1',()=>{S.keep=1; b1.className='primary'; b2.className=''; re();});
+  Q.button(ctl,'Lấy mẫu mới',()=>{S.seed++; base(); re();});
 })();
 </script>
 </section>

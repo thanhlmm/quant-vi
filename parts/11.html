@@ -2,140 +2,346 @@
 <header>
   <span class="num">11</span>
   <h3>Ridge, lasso và elastic net</h3>
-  <p class="meta">14 phút · Ứng dụng: Kết hợp hàng trăm tín hiệu nhiễu · <a href="https://hft.md/learn/regularization/">Bài gốc (tiếng Anh)</a></p>
+  <p class="meta">Phần 3 · Khoa học dữ liệu · Bài 11 · 14 phút · <a href="https://hft.md/learn/regularization/">Bài gốc (tiếng Anh)</a></p>
 </header>
 
-<p>Một quỹ có vài trăm tín hiệu alpha ứng viên, phần lớn chỉ là nhiễu. Hồi quy OLS sẽ khớp cả nhiễu, còn hồi quy có phạt (penalized regression) cố ý thu nhỏ hệ số để đổi một chút độ chệch lấy mức giảm phương sai lớn hơn nhiều.</p>
+<p><i>Bài này nói về việc cố ý thu nhỏ hệ số hồi quy, và về hình học khiến lasso đưa một số hệ số về đúng bằng 0.</i></p>
 
-<h4>Ý chính</h4>
+<p>Bình phương tối thiểu là ước lượng không chệch. Nghe như một ưu điểm, nhưng khi có nhiều biến đầu vào tương quan với nhau, chính tính không chệch lại là điểm yếu: để giữ trung bình đúng, OLS chấp nhận phương sai rất lớn. Nếu cố ý kéo các hệ số về phía 0, ta thêm vào một chút độ chệch và đổi lại bớt được rất nhiều phương sai. Với vài trăm tín hiệu nhiễu, đó gần như luôn là một giao dịch có lời.</p>
+
+<h4>Vì sao phải co hệ số?</h4>
 <ul>
-  <li>OLS không chệch nhưng có phương sai lớn khi có nhiều biến tương quan. Theo phân tích độ chệch – phương sai (bài 09), <b>co hệ số</b> (shrinkage) về 0 thường làm sai số kiểm tra giảm.</li>
-  <li><b>Chọn tập con</b> (subset selection) giữ k biến và bỏ phần còn lại. Có các biến thể từng bước tiến (forward stepwise), từng bước lùi (backward stepwise) và tiến từng nấc nhỏ (forward stagewise).</li>
-  <li><b>Ridge</b> phạt tổng bình phương hệ số (chuẩn L2). Nó luôn có nghiệm đóng, co mọi hệ số một cách trơn, nhưng không bao giờ đưa hệ số nào về đúng 0.</li>
-  <li><b>Lasso</b> phạt tổng trị tuyệt đối (chuẩn L1). Không có nghiệm đóng, nhưng khi λ đủ lớn nhiều hệ số bằng đúng 0. Lasso vừa co vừa chọn biến.</li>
-  <li>Lý do hình học: hàm phạt L1 có “nếp gấp” trên các trục toạ độ. Điểm cực tiểu của tổng RSS và hàm phạt hay rơi đúng vào nếp gấp đó.</li>
-  <li><b>Elastic net</b> trộn L1 và L2. Nó giữ được tính thưa của lasso, nhưng xử lý ổn định hơn khi có một nhóm biến tương quan mạnh.</li>
+  <li><b>Sai số kiểm tra.</b> Theo bài 09, sai số tổng bằng nhiễu cộng bình phương độ chệch cộng phương sai. OLS nằm ở cực “không chệch”. Ngay cạnh đó, nhích thêm một chút độ chệch thường cắt được một phần lớn phương sai, nên sai số kiểm tra giảm. Ví dụ co rút c · X̄ ở bài 09 đã cho thấy điều này với một tham số duy nhất.</li>
+  <li><b>Khả năng diễn giải.</b> Biết được 5 trong số 200 đầu vào thật sự có tác dụng đáng giá hơn nhiều so với một mô hình 200 hệ số nhỏ li ti. Một mô hình ít biến dễ kiểm tra, dễ giải thích với người quản lý rủi ro, và ít chỗ để hỏng.</li>
 </ul>
 
-<h4>Công thức</h4>
-<div class="formula"><span class="lbl">Ridge: thêm λI vào XᵀX, nên ma trận luôn khả nghịch</span>β̂<sup>ridge</sup> = arg min<sub>β</sub> { Σ<sub>i</sub> (y<sub>i</sub> − β<sub>0</sub> − Σ<sub>j</sub> x<sub>ij</sub>β<sub>j</sub>)² + λ Σ<sub>j</sub> β<sub>j</sub>² } = (XᵀX + λI)<sup>−1</sup>Xᵀy</div>
-<div class="formula"><span class="lbl">Lasso: bài toán quy hoạch toàn phương, giải bằng hạ toạ độ (coordinate descent) hoặc LARS</span>β̂<sup>lasso</sup> = arg min<sub>β</sub> { Σ<sub>i</sub> (y<sub>i</sub> − β<sub>0</sub> − Σ<sub>j</sub> x<sub>ij</sub>β<sub>j</sub>)² + λ Σ<sub>j</sub> |β<sub>j</sub>| }</div>
-<div class="formula"><span class="lbl">Elastic net (α = 1 là ridge, α = 0 là lasso) và họ phạt L<sub>q</sub></span>λ Σ<sub>j</sub> ( α β<sub>j</sub>² + (1 − α) |β<sub>j</sub>| ),&nbsp;&nbsp;&nbsp; λ Σ<sub>j</sub> |β<sub>j</sub>|<sup>q</sup>: q = 0 chọn tập con, q = 1 lasso, q = 2 ridge</div>
-<div class="formula"><span class="lbl">Khi XᵀX = I, mỗi phương pháp là một hàm của ước lượng OLS β̂<sub>j</sub> (với hàm mục tiêu như trên)</span>Tập con cỡ M: β̂<sub>j</sub> · 1{|β̂<sub>j</sub>| ≥ |β̂<sub>(M)</sub>|}&nbsp;&nbsp;·&nbsp;&nbsp; Ridge: <span class="frac"><span>β̂<sub>j</sub></span><span>1 + λ</span></span>&nbsp;&nbsp;·&nbsp;&nbsp; Lasso: sign(β̂<sub>j</sub>) (|β̂<sub>j</sub>| − λ/2)<sub>+</sub></div>
-<div class="formula"><span class="lbl">Bậc tự do hiệu dụng của ridge, d<sub>j</sub> là các giá trị kỳ dị của X</span>df(λ) = Σ<sub>j</sub> <span class="frac"><span>d<sub>j</sub>²</span><span>d<sub>j</sub>² + λ</span></span>,&nbsp;&nbsp; giảm trơn từ p (λ = 0) về 0 (λ → ∞)</div>
-<p>Ba quy tắc ứng với ba kiểu ngưỡng. Tập con là <b>ngưỡng cứng</b> (hard threshold): giữ nguyên hoặc bỏ hẳn. Ridge là <b>co theo tỉ lệ</b>. Lasso là <b>ngưỡng mềm</b> (soft threshold): trừ đi một lượng cố định, chạm 0 thì dừng. Công thức df cho thấy ridge co mạnh nhất theo các hướng có d<sub>j</sub> nhỏ, tức các thành phần chính cuối (bài 12). Luôn chuẩn hoá các biến trước khi phạt, vì hàm phạt phụ thuộc đơn vị đo.</p>
+<h4>Chọn tập con</h4>
+<p>Công cụ thô nhất là <b>chọn tập con</b> (subset selection): giữ lại k đầu vào, bỏ hết phần còn lại, rồi chạy OLS trên k biến đó. Vì có tới C(p, k) tập con cỡ k, thường không thể thử hết, nên người ta dùng các chiến lược tham lam:</p>
+<ul>
+  <li><b>Từng bước tiến</b> (forward stepwise): bắt đầu từ mô hình rỗng; ở mỗi bước, thêm biến làm mô hình khớp tốt lên nhiều nhất.</li>
+  <li><b>Từng bước lùi</b> (backward stepwise): bắt đầu từ mô hình đầy đủ; ở mỗi bước, bỏ biến đóng góp ít nhất, chẳng hạn biến có |t| nhỏ nhất. Cách này cần N &gt; p để mô hình đầy đủ khớp được.</li>
+  <li><b>Tiến từng nấc nhỏ</b> (forward stagewise): bắt đầu với mọi hệ số bằng 0; ở mỗi bước, tìm biến tương quan mạnh nhất với phần dư hiện tại và nhích hệ số của nó một chút theo hướng đó. Cần nhiều bước hơn hẳn, nhưng hành xử tốt khi số chiều rất lớn, và gần với lasso hơn ta tưởng.</li>
+</ul>
+<p>Khi có tới khoảng 30 đầu vào, thuật toán <b>leaps and bounds</b> tìm được tập con tốt nhất cho từng cỡ k một cách hiệu quả, nhờ cắt tỉa các nhánh chắc chắn không thể thắng. Nhược điểm chung của chọn tập con: đây là quyết định rời rạc, giữ hoặc bỏ. Dữ liệu đổi một chút có thể làm tập được chọn đổi hẳn, tức là bản thân quy trình chọn có phương sai cao.</p>
 
-<h4>Ví dụ minh hoạ: ba quy tắc trên cùng một bộ hệ số</h4>
-<p>Giả sử các biến trực chuẩn và OLS cho β̂ = (3; 1,2; −0,4). Chọn λ = 2 và so sánh ba cách co.</p>
-<ol>
-  <li>Ridge chia mọi hệ số cho 1 + λ = 3: được (1; 0,4; −0,13). Không hệ số nào bằng 0, kể cả hệ số rất yếu.</li>
-  <li>Lasso trừ λ/2 = 1 vào trị tuyệt đối, chạm 0 thì dừng: |3| − 1 = 2, |1,2| − 1 = 0,2, còn |−0,4| − 1 &lt; 0 nên về 0. Kết quả (2; 0,2; 0).</li>
-  <li>Tập con cỡ M = 1 chỉ giữ hệ số lớn nhất và không co nó: (3; 0; 0). Cỡ M = 2 cho (3; 1,2; 0).</li>
-  <li>Nhận xét: với hệ số lớn, lasso giữ lại 2/3 còn ridge chỉ giữ 1/3, nhưng lasso loại hẳn tín hiệu yếu. Trong thực tế λ được chọn bằng kiểm định chéo (cross-validation).</li>
-</ol>
+<h4>Hồi quy ridge (L2)</h4>
+<p>Thay vì bỏ hẳn biến, ridge phạt kích thước bình phương của các hệ số:</p>
+<div class="formula"><span class="lbl">Ridge: thêm hàm phạt L2 vào RSS; hệ số chặn β<sub>0</sub> không bị phạt</span>β̂<sup>ridge</sup> = arg min<sub>β</sub> { Σ<sub>i=1</sub><sup>N</sup> (y<sub>i</sub> − β<sub>0</sub> − Σ<sub>j=1</sub><sup>p</sup> x<sub>ij</sub>β<sub>j</sub>)<sup>2</sup> + λ Σ<sub>j=1</sub><sup>p</sup> β<sub>j</sub><sup>2</sup> } = (XᵀX + λI)<sup>−1</sup>Xᵀy</div>
+<p><b>Nghiệm đóng.</b> Sau khi trừ trung bình khỏi các cột của X và khỏi y (để hệ số chặn tách riêng), hàm mục tiêu là (y − Xβ)ᵀ(y − Xβ) + λβᵀβ. Đạo hàm theo β là −2Xᵀ(y − Xβ) + 2λβ. Cho bằng 0 được (XᵀX + λI)β = Xᵀy, tức công thức trên. So với OLS, khác biệt duy nhất là cộng λ vào đường chéo.</p>
+<p>Ma trận XᵀX + λI luôn khả nghịch khi λ &gt; 0, vì mọi trị riêng của XᵀX đều ≥ 0, cộng thêm λ thì đều dương. Đây chính là động cơ ban đầu khi ridge ra đời: làm cho bài toán hồi quy giải được ngay cả khi các cột của X gần phụ thuộc tuyến tính, hoặc khi p &gt; N.</p>
+<p><b>Ridge co mạnh nhất theo hướng nào?</b> Viết phân rã giá trị kỳ dị X = UDVᵀ, với các giá trị kỳ dị d<sub>1</sub> ≥ d<sub>2</sub> ≥ … Khi đó giá trị khớp của ridge là Σ<sub>j</sub> u<sub>j</sub> · d<sub>j</sub><sup>2</sup>/(d<sub>j</sub><sup>2</sup> + λ) · u<sub>j</sub>ᵀy. OLS lấy trọn hình chiếu lên mỗi hướng u<sub>j</sub>; ridge nhân hình chiếu đó với hệ số d<sub>j</sub><sup>2</sup>/(d<sub>j</sub><sup>2</sup> + λ) &lt; 1. Hướng có d<sub>j</sub> nhỏ, tức hướng dữ liệu ít biến thiên, bị co nhiều nhất. Đó là các thành phần chính cuối cùng (bài 12), cũng là các hướng mà OLS ước lượng kém nhất. Ridge co đúng chỗ cần co.</p>
+<div class="formula"><span class="lbl">Bậc tự do hiệu dụng của ridge</span>df(λ) = Σ<sub>j=1</sub><sup>p</sup> <span class="frac"><span>d<sub>j</sub><sup>2</sup></span><span>d<sub>j</sub><sup>2</sup> + λ</span></span>,&nbsp;&nbsp; giảm trơn từ p (λ = 0) về 0 (λ → ∞)</div>
+<p>Ví dụ: ba hướng với d<sub>j</sub><sup>2</sup> = 100, 10, 1. Khi λ = 0, df = 3. Khi λ = 1, df ≈ 2,40. Khi λ = 10, df = 100/110 + 10/20 + 1/11 ≈ 1,50. Khi λ = 100, df ≈ 0,60. “Số tham số” không còn là số nguyên mà trượt dần, nên ta chỉnh được độ phức tạp một cách liên tục thay vì nhảy bậc như chọn tập con.</p>
+<p>Ridge <b>không bao giờ đưa hệ số nào về đúng 0</b> (trừ khi λ → ∞). Mọi biến đều được giữ, chỉ nhỏ đi. Lưu ý thực hành: luôn chuẩn hoá các đầu vào về cùng thang đo trước khi phạt, vì hàm phạt phụ thuộc đơn vị đo. Một biến đo bằng nghìn đồng sẽ có hệ số nhỏ gấp nghìn lần cùng biến đó đo bằng triệu đồng, và bị phạt khác hẳn.</p>
+
+<h4>Lasso (L1)</h4>
+<p>Lasso thay bình phương bằng giá trị tuyệt đối:</p>
+<div class="formula"><span class="lbl">Lasso: hàm phạt L1</span>β̂<sup>lasso</sup> = arg min<sub>β</sub> { Σ<sub>i=1</sub><sup>N</sup> (y<sub>i</sub> − β<sub>0</sub> − Σ<sub>j=1</sub><sup>p</sup> x<sub>ij</sub>β<sub>j</sub>)<sup>2</sup> + λ Σ<sub>j=1</sub><sup>p</sup> |β<sub>j</sub>| }</div>
+<p>Không có nghiệm đóng, vì |β<sub>j</sub>| không khả vi tại 0. Đây là một bài toán <b>quy hoạch toàn phương</b> (quadratic programme): hàm mục tiêu bậc hai, ràng buộc tuyến tính khi viết |β<sub>j</sub>| = β<sub>j</sub><sup>+</sup> + β<sub>j</sub><sup>−</sup>. Trong thực tế người ta giải bằng <b>hạ toạ độ</b> (coordinate descent: lần lượt tối ưu từng hệ số, mỗi bước là một phép ngưỡng mềm, xem mục sau) hoặc bằng <b>hồi quy góc nhỏ nhất</b> (least-angle regression, LAR).</p>
+<p>Phần thưởng là <b>tính thưa</b> (sparsity). Khi λ tăng, từng hệ số chạm đúng 0 và nằm yên ở đó. Lasso vì thế làm cùng lúc hai việc: chọn biến và co hệ số.</p>
+<p><b>Vì sao lại bằng đúng 0?</b> Bài toán có phạt tương đương với bài toán có ràng buộc: cực tiểu RSS với điều kiện Σ|β<sub>j</sub>| ≤ t, mỗi λ ứng với một ngân sách t. Trong không gian hệ số, các đường đồng mức của RSS là những elip quanh nghiệm OLS. Nghiệm có phạt là chỗ elip nhỏ nhất chạm vào miền ngân sách. Với L2, miền là hình tròn, trơn ở mọi chỗ, nên điểm chạm hầu như không bao giờ rơi đúng lên trục. Với L1, miền là hình thoi có các đỉnh nằm trên trục toạ độ. Một elip lớn dần từ bên ngoài rất hay chạm vào đỉnh trước tiên, và tại đỉnh thì một toạ độ bằng 0. Trong nhiều chiều, hình thoi có rất nhiều đỉnh và cạnh nằm trên các mặt toạ độ, nên lasso thường cho nhiều hệ số bằng 0 cùng lúc.</p>
 
 <figure class="demo">
   <div class="stage" id="demo-11"></div>
   <div class="controls" id="ctl-11"></div>
   <div class="readout" id="out-11"></div>
-  <figcaption><b>Mô hình 11.1 – Mặt hàm mục tiêu có phạt trong không gian (β<sub>1</sub>, β<sub>2</sub>).</b> Lưới 3D là RSS(β) + λ·phạt(β). Hai đường cam nằm trên mặt là chỗ β<sub>1</sub> = 0 và β<sub>2</sub> = 0. Chấm cam dưới sàn là nghiệm OLS, chấm xanh là nghiệm có phạt, đường xanh dưới sàn là quỹ đạo nghiệm khi λ tăng từ 0. Với lasso, mặt bị gấp dọc hai trục và quỹ đạo dừng hẳn trên trục: một hệ số bằng đúng 0. Với ridge, mặt trơn và quỹ đạo chỉ lượn dần về gốc. Kéo để xoay.</figcaption>
+  <figcaption><b>Hình 11.1 – Bát RSS và lăng trụ phạt.</b> Lưới cam là cái bát RSS(β<sub>1</sub>, β<sub>2</sub>), đáy bát (chấm cam) là nghiệm OLS. Khối xanh dương là lăng trụ dựng thẳng đứng trên miền ngân sách {phạt(β) ≤ t}, với t là ngân sách ứng với λ đang chọn. Hồi quy có phạt là điểm thấp nhất của bát mà vẫn nằm trong lăng trụ (chấm đen); vòng cam đậm là đường đồng mức của bát đi qua điểm đó, bóng nét đứt của nó nằm dưới sàn. Với lasso, lăng trụ có tiết diện hình thoi, và bát thường chạm nó trước tiên ở một cạnh dựng trên trục: một hệ số bằng đúng 0. Bấm “Ridge” để đổi sang lăng trụ tròn: nghiệm chỉ co lại, không chạm trục. Đường xanh lá dưới sàn là quỹ đạo nghiệm khi λ tăng từ 0 đến 5. Kéo để xoay.</figcaption>
+</figure>
+
+<figure class="demo">
+  <div class="stage" id="demo3-11"></div>
+  <div class="controls" id="ctl3-11"></div>
+  <div class="readout" id="out3-11"></div>
+  <figcaption><b>Hình 11.2 – Cùng bức tranh nhìn từ trên xuống.</b> Hồi quy có phạt tương đương với cực tiểu RSS trong một miền ngân sách. Các elip cam là đường đồng mức RSS quanh nghiệm OLS; nghiệm có phạt (chấm đen) là chỗ elip nhỏ nhất chạm vào miền xanh dương. Hình thoi L1 có đỉnh trên các trục, nên điểm chạm hay là một đỉnh: một hệ số bằng đúng 0. Kéo chấm cam (hoặc bấm vào bất kỳ đâu) để dời nghiệm OLS, đổi ngân sách t, đổi giữa L1, L2 và elastic net, và thay đổi tương quan ρ để elip nghiêng đi. Ô số liệu báo λ tương ứng với ngân sách t.</figcaption>
 </figure>
 
 <figure class="demo">
   <div class="stage" id="demo2-11"></div>
   <div class="controls" id="ctl2-11"></div>
   <div class="readout" id="out2-11"></div>
-  <figcaption><b>Mô hình 11.2 – Quỹ đạo hệ số và sai số ngoài mẫu.</b> Tám tín hiệu đã chuẩn hoá, chỉ có ba tín hiệu thật (đường đậm); x<sub>2</sub> tương quan với x<sub>1</sub>, x<sub>4</sub> tương quan với x<sub>3</sub>. Khung trên vẽ hệ số theo log λ, khung dưới vẽ sai số bình phương kỳ vọng khi dự báo dữ liệu mới, tính chính xác từ mô hình sinh dữ liệu. Kéo thanh λ để di chuyển vạch dọc. Giảm số quan sát huấn luyện để thấy OLS (λ ≈ 0) khớp nhiễu, còn λ vừa phải cho sai số kiểm tra thấp hơn.</figcaption>
+  <figcaption><b>Hình 11.3 – Quỹ đạo hệ số.</b> Tám đầu vào đã chuẩn hoá, chỉ ba đầu vào có tác dụng thật (đường đậm: x<sub>1</sub>, x<sub>3</sub>, x<sub>6</sub>); x<sub>2</sub> tương quan với x<sub>1</sub>, x<sub>4</sub> tương quan với x<sub>3</sub>. Khung trên vẽ hệ số theo log λ: từ trái (gần như không phạt) sang phải (phạt nặng). Với lasso, đọc từ phải sang trái sẽ thấy các hệ số được “bật lên” lần lượt từng cái, còn các biến vô dụng nằm ở 0 trong phần lớn quỹ đạo; ridge co mọi hệ số một cách trơn; elastic net ở giữa. Khung dưới vẽ sai số bình phương kỳ vọng khi dự báo dữ liệu mới, tính chính xác từ mô hình sinh dữ liệu. Kéo thanh λ để dời vạch dọc. Giảm số quan sát huấn luyện để thấy OLS (λ ≈ 0) khớp nhiễu, còn λ vừa phải cho sai số kiểm tra thấp hơn.</figcaption>
 </figure>
 
-<h4>Lưu ý khi phỏng vấn</h4>
+<h4>Ba cách co hệ số</h4>
+<p>Khi các đầu vào trực chuẩn (XᵀX = I), mọi phương pháp tách ra thành từng hệ số riêng rẽ, và mỗi phương pháp chỉ là một hàm đơn giản của ước lượng OLS β̂<sub>j</sub>:</p>
+<table class="t">
+  <tr><th>Phương pháp</th><th>Ước lượng</th><th>Hành vi</th></tr>
+  <tr><td>Tập con tốt nhất cỡ M</td><td>β̂<sub>j</sub> · 1{|β̂<sub>j</sub>| ≥ |β̂<sub>(M)</sub>|}</td><td>ngưỡng cứng: giữ nguyên hoặc bỏ hẳn</td></tr>
+  <tr><td>Ridge</td><td>β̂<sub>j</sub> / (1 + λ)</td><td>co theo tỉ lệ</td></tr>
+  <tr><td>Lasso</td><td>sign(β̂<sub>j</sub>) · (|β̂<sub>j</sub>| − λ/2)<sub>+</sub></td><td>ngưỡng mềm: trừ đi một lượng cố định, chạm 0 thì dừng</td></tr>
+</table>
+<p>Ở đây β̂<sub>(M)</sub> là hệ số có trị tuyệt đối lớn thứ M, và (u)<sub>+</sub> = max(u, 0). <b>Suy ra từng dòng.</b> Khi XᵀX = I, RSS(β) = hằng số + Σ<sub>j</sub> (β<sub>j</sub> − β̂<sub>j</sub>)<sup>2</sup>, nên mỗi hệ số được tối ưu độc lập:</p>
 <ul>
-  <li><b>Lasso hay ridge có độ chệch thấp hơn, phương sai cao hơn?</b> Câu trả lời thường được chờ đợi: với cùng λ, phạt L2 tăng nhanh hơn với hệ số lớn nên ràng buộc chúng mạnh hơn. Do đó lasso thường có độ chệch thấp hơn và phương sai cao hơn. Hãy nói thêm rằng điều này phụ thuộc dữ liệu.</li>
-  <li>Với một nhóm biến yếu, tương quan và gần giống nhau, lasso không ổn định. Dữ liệu thay đổi nhẹ là biến được giữ lại có thể đổi chỗ. Ridge co cả nhóm cùng lúc nên ít bị ảnh hưởng.</li>
-  <li><b>1.000 biến, tin rằng chỉ khoảng 20 biến có tác dụng</b>: chọn lasso hoặc elastic net nghiêng về L1, vì niềm tin đó là một cấu trúc thưa (sparse).</li>
-  <li>Ứng dụng: kết hợp tín hiệu bằng ridge hoặc elastic net, tái tạo chỉ số bằng một rổ nhỏ do lasso chọn. Co ma trận hiệp phương sai Ledoit–Wolf cũng cùng ý tưởng: kéo ước lượng nhiễu về một mục tiêu đơn giản.</li>
+  <li>Ridge: cực tiểu (b − β̂)<sup>2</sup> + λb<sup>2</sup>. Đạo hàm 2(b − β̂) + 2λb = 0 cho b = β̂/(1 + λ).</li>
+  <li>Lasso: cực tiểu (b − β̂)<sup>2</sup> + λ|b|. Nếu b &gt; 0 thì 2(b − β̂) + λ = 0, tức b = β̂ − λ/2, chỉ hợp lệ khi β̂ &gt; λ/2. Đối xứng với b &lt; 0. Khi |β̂| ≤ λ/2, không nghiệm dương hay âm nào hợp lệ, nên b = 0.</li>
+  <li>Tập con: giữ M hệ số lớn nhất về trị tuyệt đối, vì bỏ hệ số j làm RSS tăng đúng β̂<sub>j</sub><sup>2</sup>. Viết ở dạng phạt λ · (số hệ số khác 0) thì quy tắc là giữ khi β̂<sub>j</sub><sup>2</sup> &gt; λ, tức ngưỡng √λ.</li>
+</ul>
+<p class="note">Về quy ước: nhiều tài liệu viết ngưỡng mềm là (|β̂<sub>j</sub>| − λ)<sub>+</sub>. Đó là khi hàm mục tiêu dùng ½·RSS thay vì RSS. Hai cách viết chỉ khác nhau một thừa số 2 trong λ; bài này giữ RSS đầy đủ như công thức lasso ở trên, nên ngưỡng là λ/2.</p>
+
+<figure class="demo">
+  <div class="stage" id="demo4-11"></div>
+  <div class="controls" id="ctl4-11"></div>
+  <div class="readout" id="out4-11"></div>
+  <figcaption><b>Hình 11.4 – Ngưỡng cứng, co theo tỉ lệ và ngưỡng mềm.</b> Mỗi khung vẽ ước lượng đã co (trục dọc) theo ước lượng OLS β̂ (trục ngang), khi các đầu vào trực chuẩn. Đường chéo nét đứt là “để nguyên ước lượng”. Tăng λ để thấy từng quy tắc tác động: chọn tập con cắt hẳn mọi |β̂| dưới √λ nhưng giữ nguyên phần còn lại (có bước nhảy); ridge làm dốc đường thẳng thoải đi; lasso tạo một vùng chết [−λ/2; λ/2] quanh 0, ra ngoài vùng đó thì chạy song song với đường chéo. Kéo “β̂ mẫu” để đọc ba kết quả trên cùng một hệ số.</figcaption>
+</figure>
+
+<h5>Ví dụ có lời giải: ba quy tắc trên cùng một bộ hệ số</h5>
+<p>Giả sử các biến trực chuẩn và OLS cho β̂ = (3; 1,2; −0,4). Chọn λ = 2 và so sánh.</p>
+<ol>
+  <li>Ridge chia mọi hệ số cho 1 + λ = 3: được (1; 0,4; −0,13). Không hệ số nào bằng 0, kể cả hệ số rất yếu.</li>
+  <li>Lasso trừ λ/2 = 1 vào trị tuyệt đối, chạm 0 thì dừng: |3| − 1 = 2, |1,2| − 1 = 0,2, còn |−0,4| − 1 &lt; 0 nên về 0. Kết quả (2; 0,2; 0).</li>
+  <li>Tập con cỡ M = 1 giữ hệ số lớn nhất và không co nó: (3; 0; 0). Cỡ M = 2 cho (3; 1,2; 0). Dạng phạt với ngưỡng √2 ≈ 1,41 cũng cho (3; 0; 0), vì 1,2 &lt; 1,41.</li>
+  <li>Nhận xét: với hệ số lớn, lasso giữ lại 2/3 còn ridge chỉ giữ 1/3, nhưng lasso loại hẳn tín hiệu yếu. Chọn tập con không co gì cả, nên hệ số được giữ vẫn mang nguyên phương sai của OLS. Trong thực tế λ được chọn bằng kiểm định chéo (cross-validation).</li>
+</ol>
+
+<h4>Elastic net và các họ hàng</h4>
+<p>Ridge và lasso là hai trường hợp q = 2 và q = 1 của một họ hàm phạt L<sub>q</sub>:</p>
+<div class="formula"><span class="lbl">Họ hàm phạt L<sub>q</sub>; q = 0 (đếm số hệ số khác 0) là chọn tập con</span>λ Σ<sub>j=1</sub><sup>p</sup> |β<sub>j</sub>|<sup>q</sup></div>
+<p>Khi q &lt; 1, miền ngân sách không lồi và bài toán khó giải. Khi q ≥ 1 nó lồi; q = 1 là giá trị nhỏ nhất vừa giữ được tính lồi vừa có đỉnh nhọn trên trục. Thực nghiệm cho thấy q tốt nhất thường nằm giữa 1 và 2, nhưng với 1 &lt; q &lt; 2 hàm phạt lại khả vi tại 0 nên mất tính thưa. <b>Elastic net</b> xấp xỉ vùng giữa đó bằng một hỗn hợp:</p>
+<div class="formula"><span class="lbl">Elastic net: α = 1 là ridge, α = 0 là lasso</span>λ Σ<sub>j=1</sub><sup>p</sup> ( α β<sub>j</sub><sup>2</sup> + (1 − α) |β<sub>j</sub>| )</div>
+<p>Phần L1 vẫn tạo đỉnh trên trục nên vẫn cho hệ số bằng 0. Phần L2 làm miền cong ra (xem chế độ “Elastic net” ở Hình 11.1 và 11.2) và giúp mô hình xử lý ổn định một nhóm biến tương quan: thay vì chọn ngẫu nhiên một biến trong nhóm như lasso, elastic net có xu hướng giữ cả nhóm với hệ số chia đều.</p>
+<p><b>Hồi quy góc nhỏ nhất</b> (least-angle regression, LAR) cho các hệ số lớn dần một cách liên tục. Nó bắt đầu từ 0, tìm biến tương quan mạnh nhất với phần dư, và cho hệ số biến đó lớn lên cho tới khi một biến khác tương quan với phần dư mạnh ngang bằng. Từ đó hai biến cùng tiến, theo hướng giữ cho tương quan của chúng với phần dư luôn bằng nhau, và cứ thế. Thêm một sửa đổi nhỏ: <b>khi một hệ số đi qua 0 thì loại biến đó khỏi tập đang hoạt động</b>, LAR vẽ ra toàn bộ quỹ đạo lasso với chi phí chỉ cỡ một lần khớp bình phương tối thiểu. Một tính chất đẹp: sau k bước, mô hình có đúng k bậc tự do.</p>
+
+<h4>Trong phỏng vấn</h4>
+<details class="qa"><summary>Lasso hay ridge: phương pháp nào có độ chệch thấp hơn và phương sai cao hơn?</summary>
+<p><b>Câu trả lời được chờ đợi:</b> với cùng một λ, hàm phạt L2 tăng nhanh hơn L1 khi hệ số lớn (β<sup>2</sup> so với |β| khi |β| &gt; 1), nên ridge ràng buộc các hệ số lớn mạnh hơn. Vì vậy lasso thường có độ chệch thấp hơn và phương sai cao hơn.</p>
+<p>Ví dụ trực chuẩn ở trên minh hoạ điều này: với λ = 2, hệ số lớn β̂ = 3 bị ridge kéo xuống 1 (chệch 2), còn lasso chỉ kéo xuống 2 (chệch 1). Ngưỡng mềm trừ một lượng cố định bất kể hệ số lớn hay nhỏ, còn co theo tỉ lệ cắt mạnh nhất chính ở các hệ số lớn.</p>
+<p><b>Điểm cộng:</b> nói rõ rằng điều này phụ thuộc dữ liệu và cách chọn λ. Trong thực tế mỗi phương pháp được chỉnh λ riêng bằng kiểm định chéo, nên so sánh “cùng λ” chỉ có ý nghĩa định tính.</p>
+<p><b>Nguồn phương sai của lasso</b> dễ thấy nhất với một nhóm biến yếu, tương quan và gần giống nhau. Lasso thường chỉ giữ một biến trong nhóm, và một thay đổi nhỏ trong dữ liệu có thể đổi biến được giữ. Ridge co cả nhóm cùng nhau và gần như không nhận ra thay đổi đó. Có thể thấy điều này ở Hình 11.3: bấm “Lấy mẫu mới” vài lần ở chế độ lasso và theo dõi x<sub>1</sub> với x<sub>2</sub>.</p>
+</details>
+
+<h4>Ứng dụng trên bàn giao dịch</h4>
+<ul>
+  <li><b>Kết hợp tín hiệu.</b> Một quỹ có 300 tín hiệu alpha ứng viên khớp lợi suất ngày hôm sau bằng ridge hoặc elastic net, không dùng OLS trần. Phần co là một khoản phòng ngừa: backtest luôn có xu hướng tô đẹp các tín hiệu nhiễu, và co hệ số làm giảm sức nặng của những tín hiệu được tô đẹp nhờ may mắn.</li>
+  <li><b>Tái tạo thưa</b> (sparse replication). Lasso tìm một rổ nhỏ các công cụ có thanh khoản tốt để bám theo một chỉ số hoặc danh mục của khách hàng. Ít mã hơn nghĩa là phí giao dịch thấp hơn và dễ quản lý hơn.</li>
+  <li><b>Co ma trận hiệp phương sai</b> (Ledoit–Wolf) áp dụng cùng ý tưởng cho mô hình rủi ro: kéo ma trận hiệp phương sai mẫu, vốn rất nhiễu khi số tài sản lớn, về phía một mục tiêu đơn giản như ma trận đường chéo hoặc ma trận có tương quan bằng nhau.</li>
 </ul>
 
+<h4>Trong code</h4>
+<p>Đoạn TypeScript dưới đây dựng sáu đầu vào giống Hình 11.3: x<sub>2</sub> tương quan với x<sub>1</sub>, x<sub>4</sub> tương quan với x<sub>3</sub>, và chỉ x<sub>1</sub>, x<sub>3</sub>, x<sub>6</sub> có hệ số thật khác 0 (3; 1,5; −2). Lasso được giải bằng hạ toạ độ với hàm mục tiêu (1/2N)·RSS + λΣ|β<sub>j</sub>|; ridge dùng (XᵀX + λN·I)<sup>−1</sup>Xᵀy để hai λ cùng thang đo. Chạy bằng <span class="kbd">bun shrink.ts</span>.</p>
+<pre class="code"><code><span class="c">// Sáu đầu vào: x2 tương quan với x1, x4 tương quan với x3; chỉ x1, x3, x6 có tác dụng</span>
+function rng(seed: number) {
+  let s = seed &gt;&gt;&gt; 0;
+  return () =&gt; { s = (s + 0x6d2b79f5) | 0; let t = Math.imul(s ^ (s &gt;&gt;&gt; 15), 1 | s);
+    t = (t + Math.imul(t ^ (t &gt;&gt;&gt; 7), 61 | t)) ^ t; return ((t ^ (t &gt;&gt;&gt; 14)) &gt;&gt;&gt; 0) / 2 ** 32; };
+}
+const r = rng(9);
+const gauss = () =&gt; Math.sqrt(-2 * Math.log(1 - r())) * Math.cos(2 * Math.PI * r());
+const N = 80, P = 6, beta = [3, 0, 1.5, 0, 0, -2];
+let X = Array.from({ length: N }, () =&gt; {
+  const z = Array.from({ length: P }, gauss);
+  return [z[0], 0.75 * z[0] + 0.66 * z[1], z[2], 0.8 * z[2] + 0.6 * z[3], z[4], z[5]];
+});
+let y = X.map(x =&gt; x.reduce((s, v, j) =&gt; s + v * beta[j], 0) + 1.6 * gauss());
+
+<span class="c">// Chuẩn hoá: mỗi cột trung bình 0, độ lệch chuẩn 1; y trừ trung bình (hệ số chặn không bị phạt)</span>
+for (let j = 0; j &lt; P; j++) {
+  const m = X.reduce((s, x) =&gt; s + x[j], 0) / N;
+  const sd = Math.sqrt(X.reduce((s, x) =&gt; s + (x[j] - m) ** 2, 0) / N);
+  X.forEach(x =&gt; (x[j] = (x[j] - m) / sd));
+}
+const ym = y.reduce((s, v) =&gt; s + v, 0) / N;
+y = y.map(v =&gt; v - ym);
+
+<span class="c">// Lasso: cực tiểu (1/2N)·RSS + λ·Σ|β_j| bằng hạ toạ độ với ngưỡng mềm</span>
+const soft = (g: number, t: number) =&gt; Math.sign(g) * Math.max(Math.abs(g) - t, 0);
+function lasso(lam: number): number[] {
+  const b = new Array(P).fill(0), res = y.slice();
+  for (let it = 0; it &lt; 1000; it++) {
+    let moved = 0;
+    for (let j = 0; j &lt; P; j++) {
+      let g = 0; for (let i = 0; i &lt; N; i++) g += X[i][j] * (res[i] + X[i][j] * b[j]);
+      const nb = soft(g / N, lam), d = nb - b[j];       <span class="c">// cột chuẩn hoá nên (1/N)Σx² = 1</span>
+      if (d !== 0) { for (let i = 0; i &lt; N; i++) res[i] -= X[i][j] * d; b[j] = nb; moved = Math.max(moved, Math.abs(d)); }
+    }
+    if (moved &lt; 1e-10) break;
+  }
+  return b;
+}
+
+<span class="c">// Ridge: (XᵀX + μI)⁻¹Xᵀy, giải bằng khử Gauss</span>
+function ridge(mu: number): number[] {
+  const A = Array.from({ length: P }, (_, i) =&gt; [
+    ...Array.from({ length: P }, (_, j) =&gt; X.reduce((s, x) =&gt; s + x[i] * x[j], 0) + (i === j ? mu : 0)),
+    X.reduce((s, x, n) =&gt; s + x[i] * y[n], 0)]);
+  for (let c = 0; c &lt; P; c++) for (let i = 0; i &lt; P; i++) if (i !== c) {
+    const f = A[i][c] / A[c][c]; for (let j = c; j &lt;= P; j++) A[i][j] -= f * A[c][j];
+  }
+  return A.map((row, i) =&gt; row[P] / row[i]);
+}
+
+const show = (b: number[]) =&gt; b.map(v =&gt; v.toFixed(2).padStart(6)).join("");
+for (const lam of [0.05, 0.3, 1.0]) {
+  console.log(lam, "lasso", show(lasso(lam)));        <span class="c">// số 0 xuất hiện dần</span>
+  console.log(lam, "ridge", show(ridge(lam * N)));    <span class="c">// mọi hệ số co lại, không cái nào bằng 0</span>
+}
+<span class="c">// Kết quả:
+// 0.05 lasso   2.86  0.35  0.96  0.15  0.01 -1.52
+// 0.05 ridge   2.55  0.62  0.89  0.21  0.05 -1.52
+// 0.3 lasso   2.66  0.28  0.77  0.00  0.00 -1.19
+// 0.3 ridge   1.83  0.97  0.66  0.21  0.04 -1.21
+// 1 lasso   2.16  0.02  0.00  0.00  0.00 -0.38
+// 1 ridge   1.22  0.89  0.40  0.17  0.06 -0.77</span></code></pre>
+<p>Đọc kết quả: với λ = 0,3, lasso đã đưa hai biến vô dụng x<sub>4</sub> và x<sub>5</sub> về đúng 0, còn ridge vẫn giữ chúng ở 0,21 và 0,04. Với λ = 1, lasso chỉ còn giữ đáng kể x<sub>1</sub> và x<sub>6</sub>, và đã loại cả x<sub>3</sub> dù x<sub>3</sub> có tác dụng thật: phạt quá nặng thì lasso cũng bỏ sót tín hiệu. Ridge ở λ = 1 chia phần của x<sub>1</sub> sang biến tương quan x<sub>2</sub> (1,22 và 0,89), đúng kiểu “co cả nhóm” đã nói ở phần phỏng vấn. Các hệ số ở đây tính trên đầu vào đã chuẩn hoá, nên không so trực tiếp với β thật.</p>
+
+<h4>Tự kiểm tra</h4>
+<details class="qa"><summary>Bạn có 1.000 đặc trưng ứng viên và tin rằng chỉ khoảng 20 trong số đó có tác dụng. Hàm phạt nào khớp nhất với niềm tin đó? (A) Ridge; (B) Lasso, hoặc elastic net nghiêng về L1; (C) không phạt; (D) Ridge với λ rất nhỏ.</summary>
+<p><b>Đáp án: B.</b> Niềm tin “chỉ 20 trên 1.000 biến có tác dụng” là một giả định về cấu trúc thưa. Hàm phạt L1 của lasso đưa phần lớn hệ số về đúng 0, nên nó khớp với một sự thật thưa. Nếu trong 20 biến đó có những nhóm tương quan mạnh, elastic net nghiêng về L1 giữ được tính thưa mà vẫn ổn định hơn.</p>
+<p>(A) và (D) sai vì ridge giữ cả 1.000 hệ số ở các giá trị nhỏ khác 0: 980 biến nhiễu vẫn góp phương sai vào dự báo, và mô hình không cho biết biến nào quan trọng. (C) sai rõ ràng: nếu số quan sát không lớn hơn nhiều so với 1.000, OLS có phương sai khổng lồ, còn nếu ít hơn 1.000 quan sát thì XᵀX suy biến và OLS không có nghiệm duy nhất.</p>
+</details>
+
 <script>
+/* Bộ giải dùng chung cho Hình 11.1 và 11.2:
+   cực tiểu (β−b)ᵀA(β−b) + λ[α‖β‖² + (1−α)‖β‖₁], A = [[1,ρ],[ρ,1]], bằng hạ toạ độ */
+window.QV11={
+  soft:(g,t)=>g>t?g-t:(g<-t?g+t:0),
+  solve(b,rho,alpha,lam,init){
+    const Ab1=b[0]+rho*b[1], Ab2=rho*b[0]+b[1]; let x=init?init.slice():b.slice();
+    const t=lam*(1-alpha)/2, d=1+lam*alpha;
+    for(let it=0;it<300;it++){ x[0]=this.soft(Ab1-rho*x[1],t)/d; x[1]=this.soft(Ab2-rho*x[0],t)/d; }
+    return x;
+  },
+  pen:(x,alpha)=>alpha*(x[0]*x[0]+x[1]*x[1])+(1-alpha)*(Math.abs(x[0])+Math.abs(x[1])),
+  rss:(x,b,rho)=>{ const u=x[0]-b[0], v=x[1]-b[1]; return u*u+2*rho*u*v+v*v; },
+  // bán kính biên miền {pen ≤ t} theo hướng (c, s)
+  radius(c,s,alpha,t){ const B=(1-alpha)*(Math.abs(c)+Math.abs(s)); return alpha<1e-9?t/B:(-B+Math.sqrt(B*B+4*alpha*t))/(2*alpha); },
+  // điểm trên elip đồng mức (β−b)ᵀA(β−b) = L
+  ellipse(b,rho,L,th){ const a=Math.sqrt(L/(1+rho)), e=Math.sqrt(L/(1-rho)), u=a*Math.cos(th), v=e*Math.sin(th), k=Math.SQRT1_2; return [b[0]+k*(u+v), b[1]+k*(u-v)]; }
+};
 (()=>{
-  /* ---------- Mô hình 11.1: mặt hàm mục tiêu 3D ---------- */
+  /* ---------- Hình 11.1: bát RSS và lăng trụ phạt ---------- */
+  const V=window.QV11;
   const stage=document.getElementById('demo-11'), ctl=document.getElementById('ctl-11'), out=document.getElementById('out-11');
   const S={alpha:0, lam:1.5, b1:2, b2:0.5, rho:0.4};
   const view={yaw:-0.6,pitch:0.55,dist:7,auto:true};
   const R=3, G=30, K=0.5, ZF=-1.0, ZH=2.0;
-  const soft=(g,t)=>g>t?g-t:(g<-t?g+t:0);
-  function solve(lam,init){
-    // f(β) = (β−b)ᵀA(β−b) + λ[α‖β‖² + (1−α)‖β‖₁], A = [[1,ρ],[ρ,1]]
-    const Ab1=S.b1+S.rho*S.b2, Ab2=S.rho*S.b1+S.b2; let x=init?init.slice():[S.b1,S.b2];
-    const t=lam*(1-S.alpha)/2, d=1+lam*S.alpha;
-    for(let it=0;it<300;it++){ x[0]=soft(Ab1-S.rho*x[1],t)/d; x[1]=soft(Ab2-S.rho*x[0],t)/d; }
-    return x;
-  }
-  function f(x1,x2){ const u=x1-S.b1, v=x2-S.b2;
-    return u*u+2*S.rho*u*v+v*v + S.lam*(S.alpha*(x1*x1+x2*x2)+(1-S.alpha)*(Math.abs(x1)+Math.abs(x2))); }
-  let sol=[0,0], path=[], zeroAt=[null,null], grid=null, fmin=0, fmax=1;
+  let sol=[0,0], path=[], zeroAt=[null,null], grid=null, fmax=1, budget=0;
+  const b=()=>[S.b1,S.b2];
   function compute(){
-    sol=solve(S.lam); path=[]; zeroAt=[null,null]; let x=null;
-    for(let i=0;i<=120;i++){ const l=i/120*5; x=solve(l,x); path.push(x.slice());
+    sol=V.solve(b(),S.rho,S.alpha,S.lam); budget=V.pen(sol,S.alpha);
+    path=[]; zeroAt=[null,null]; let x=null;
+    for(let i=0;i<=120;i++){ const l=i/120*5; x=V.solve(b(),S.rho,S.alpha,l,x); path.push(x.slice());
       for(let j=0;j<2;j++) if(zeroAt[j]===null && Math.abs(x[j])<1e-9 && Math.abs(j?S.b2:S.b1)>1e-9) zeroAt[j]=l; }
-    grid=[]; fmin=Infinity; fmax=-Infinity;
-    for(let i=0;i<=G;i++){ const row=[]; for(let j=0;j<=G;j++){ const v=f(-R+2*R*i/G,-R+2*R*j/G); row.push(v); fmin=Math.min(fmin,v); fmax=Math.max(fmax,v); } grid.push(row); }
-    const fs=f(sol[0],sol[1]); fmin=Math.min(fmin,fs);
-    const name=S.alpha===1?'Ridge':(S.alpha===0?'Lasso':'Elastic net (α = 0,5)');
+    grid=[]; fmax=-Infinity;
+    for(let i=0;i<=G;i++){ const row=[]; for(let j=0;j<=G;j++){ const v=V.rss([-R+2*R*i/G,-R+2*R*j/G],b(),S.rho); row.push(v); fmax=Math.max(fmax,v); } grid.push(row); }
+    const name=S.alpha===1?'Ridge: miền tròn':(S.alpha===0?'Lasso: miền hình thoi':'Elastic net (α = 0,5): thoi bo tròn');
     const zs=sol.filter(v=>Math.abs(v)<1e-9).length;
     const za=j=>Math.abs(j?S.b2:S.b1)<1e-9?'bằng 0 ngay từ OLS':zeroAt[j]===null?'không về 0 khi λ ≤ 5':'bằng 0 từ λ ≈ '+Q.fmt(zeroAt[j],2);
-    out.textContent=`${name}, λ = ${Q.fmt(S.lam,2)}, tương quan giữa hai biến ρ = ${Q.fmt(S.rho,2)}\n`+
-      `Nghiệm OLS: (${Q.fmt(S.b1,2)}; ${Q.fmt(S.b2,2)})   Nghiệm có phạt: (${Q.fmt(sol[0],3)}; ${Q.fmt(sol[1],3)})   Số hệ số bằng 0: ${zs}\n`+
-      `Quỹ đạo: β₁ ${za(0)}; β₂ ${za(1)}`;
+    out.textContent=`${name}, λ = ${Q.fmt(S.lam,2)}, ngân sách tương ứng t = ${Q.fmt(budget,3)}, tương quan ρ = ${Q.fmt(S.rho,2)}\n`+
+      `Đáy bát (OLS): (${Q.fmt(S.b1,2)}; ${Q.fmt(S.b2,2)})   Điểm thấp nhất trong lăng trụ: (${Q.fmt(sol[0],3)}; ${Q.fmt(sol[1],3)})   Số hệ số bằng 0: ${zs}\n`+
+      `Khi λ tăng từ 0 đến 5: β₁ ${za(0)}; β₂ ${za(1)}`;
   }
-  const H=v=>ZF+ZH*Math.min(1,(v-fmin)/(fmax-fmin||1));
+  // độ cao: căn bậc hai của RSS để bát không dựng quá đứng
+  const H=v=>ZF+ZH*Math.min(1,Math.sqrt(Math.max(0,v)/(fmax||1)));
   const W=(x1,x2,z)=>[x1*K,x2*K,z];
   let c=null;
   function draw(ctx,w,h){
     const C=Q.colors(); ctx.clearRect(0,0,w,h);
     const scale=Math.min(w,h*1.4)/5.0, P=p=>Q.project(p,view,w,h,scale);
-    const poly=(pts)=>{ ctx.beginPath(); pts.forEach((p,i)=>{ const q=P(p); i?ctx.lineTo(q[0],q[1]):ctx.moveTo(q[0],q[1]); }); ctx.stroke(); };
+    const poly=(pts,close)=>{ ctx.beginPath(); pts.forEach((p,i)=>{ const q=P(p); i?ctx.lineTo(q[0],q[1]):ctx.moveTo(q[0],q[1]); }); if(close) ctx.closePath(); };
     // sàn
     ctx.strokeStyle=C.line; ctx.lineWidth=1;
-    for(let t=-R;t<=R;t++){ poly([W(t,-R,ZF),W(t,R,ZF)]); poly([W(-R,t,ZF),W(R,t,ZF)]); }
-    ctx.strokeStyle=C.muted; poly([W(-R,0,ZF),W(R,0,ZF)]); poly([W(0,-R,ZF),W(0,R,ZF)]);
+    for(let t=-R;t<=R;t++){ poly([W(t,-R,ZF),W(t,R,ZF)]); ctx.stroke(); poly([W(-R,t,ZF),W(R,t,ZF)]); ctx.stroke(); }
+    ctx.strokeStyle=C.muted; poly([W(-R,0,ZF),W(R,0,ZF)]); ctx.stroke(); poly([W(0,-R,ZF),W(0,R,ZF)]); ctx.stroke();
     ctx.fillStyle=C.muted; ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif';
     let L=P(W(R+0.4,0,ZF)); ctx.fillText('β₁',L[0],L[1]); L=P(W(0,R+0.4,ZF)); ctx.fillText('β₂',L[0],L[1]);
-    // lưới mặt
-    ctx.strokeStyle=C.a; ctx.globalAlpha=0.38;
-    for(let i=0;i<=G;i+=2){ const xs=-R+2*R*i/G; poly(grid[i].map((v,j)=>W(xs,-R+2*R*j/G,H(v)))); poly(grid.map((row,j)=>W(-R+2*R*j/G,xs,H(row[i])))); }
+    // lăng trụ phạt: biên miền {pen ≤ t} kéo thẳng đứng lên
+    const NB=96, bd=[];
+    for(let k=0;k<=NB;k++){ const th=2*Math.PI*k/NB, cc=Math.cos(th), ss=Math.sin(th), r=budget>0?V.radius(cc,ss,S.alpha,budget):0; bd.push([r*cc,r*ss]); }
+    const ZT=ZF+ZH*0.85;
+    ctx.fillStyle=C.c; ctx.globalAlpha=0.16; poly(bd.map(p=>W(p[0],p[1],ZF)),true); ctx.fill();
+    ctx.globalAlpha=0.07; for(let k=0;k<NB;k++){ const a=bd[k], e=bd[k+1]; poly([W(a[0],a[1],ZF),W(e[0],e[1],ZF),W(e[0],e[1],ZT),W(a[0],a[1],ZT)],true); ctx.fill(); }
+    ctx.globalAlpha=0.9; ctx.strokeStyle=C.c; ctx.lineWidth=1.6;
+    poly(bd.map(p=>W(p[0],p[1],ZF))); ctx.stroke(); poly(bd.map(p=>W(p[0],p[1],ZT))); ctx.stroke();
+    ctx.lineWidth=1; ctx.globalAlpha=0.5; for(let k=0;k<NB;k+=12){ const a=bd[k]; poly([W(a[0],a[1],ZF),W(a[0],a[1],ZT)]); ctx.stroke(); }
     ctx.globalAlpha=1;
-    // hai đường trục nâng lên mặt: nơi có nếp gấp của L1
-    ctx.strokeStyle=C.b; ctx.lineWidth=2;
-    const ax=[]; const ay=[]; for(let k=0;k<=60;k++){ const t=-R+2*R*k/60; ax.push(W(t,0,H(f(t,0)))); ay.push(W(0,t,H(f(0,t)))); }
-    poly(ax); poly(ay);
-    // quỹ đạo nghiệm trên sàn
-    ctx.strokeStyle=C.c; ctx.lineWidth=2.5; poly(path.map(p=>W(p[0],p[1],ZF)));
-    ctx.lineWidth=1;
-    // OLS và nghiệm có phạt
+    // bát RSS
+    ctx.strokeStyle=C.b; ctx.globalAlpha=0.32;
+    for(let i=0;i<=G;i+=2){ const xs=-R+2*R*i/G; poly(grid[i].map((v,j)=>W(xs,-R+2*R*j/G,H(v)))); ctx.stroke(); poly(grid.map((row,j)=>W(-R+2*R*j/G,xs,H(row[i])))); ctx.stroke(); }
+    ctx.globalAlpha=1;
+    // đường đồng mức chạm lăng trụ: trên bát và bóng dưới sàn
+    const lev=V.rss(sol,b(),S.rho);
+    if(lev>1e-9){ const el=[]; for(let k=0;k<=96;k++) el.push(V.ellipse(b(),S.rho,lev,2*Math.PI*k/96));
+      ctx.strokeStyle=C.b; ctx.lineWidth=2.4; poly(el.map(p=>W(p[0],p[1],H(lev)))); ctx.stroke();
+      ctx.setLineDash([4,4]); ctx.lineWidth=1.2; poly(el.map(p=>W(p[0],p[1],ZF))); ctx.stroke(); ctx.setLineDash([]); }
+    // quỹ đạo nghiệm dưới sàn
+    ctx.strokeStyle=C.a; ctx.lineWidth=2.2; poly(path.map(p=>W(p[0],p[1],ZF))); ctx.stroke(); ctx.lineWidth=1;
     const dot=(p,col,r)=>{ const q=P(p); ctx.fillStyle=col; ctx.beginPath(); ctx.arc(q[0],q[1],r,0,7); ctx.fill(); };
-    dot(W(S.b1,S.b2,ZF),C.b,5);
-    const top=W(sol[0],sol[1],H(f(sol[0],sol[1])));
-    ctx.strokeStyle=C.c; ctx.setLineDash([4,4]); poly([W(sol[0],sol[1],ZF),top]); ctx.setLineDash([]);
-    dot(W(sol[0],sol[1],ZF),C.c,5.5); dot(top,C.c,4);
+    dot(W(S.b1,S.b2,ZF),C.b,5); dot(W(S.b1,S.b2,H(0)),C.b,4);
+    const top=W(sol[0],sol[1],H(lev));
+    ctx.strokeStyle=C.ink; ctx.setLineDash([3,3]); poly([W(sol[0],sol[1],ZF),top]); ctx.stroke(); ctx.setLineDash([]);
+    dot(W(sol[0],sol[1],ZF),C.ink,5); dot(top,C.ink,4.5);
     ctx.fillStyle=C.muted;
-    ctx.fillText('● OLS   ● nghiệm có phạt   — quỹ đạo khi λ tăng   — mặt cắt β₁ = 0, β₂ = 0',12,18);
+    ctx.fillText('● đáy bát (OLS)   ● nghiệm có phạt   ▮ lăng trụ phạt   — quỹ đạo khi λ tăng',12,18);
   }
   compute();
-  c=Q.canvas(stage,400,draw);
+  c=Q.canvas(stage,420,draw);
   Q.orbit(c.cv,view,()=>c.redraw());
   Q.loop(stage,()=>{ if(view.auto){ view.yaw+=0.003; c.redraw(); } });
   const upd=()=>{ compute(); c.redraw(); };
-  Q.button(ctl,'Lasso',()=>{S.alpha=0;upd();},true);
-  Q.button(ctl,'Ridge',()=>{S.alpha=1;upd();});
-  Q.button(ctl,'Elastic net',()=>{S.alpha=0.5;upd();});
+  const bs=[];
+  const mode=(a,i)=>{ S.alpha=a; bs.forEach((x,k)=>x.className=k===i?'primary':''); upd(); };
+  bs.push(Q.button(ctl,'Lasso',()=>mode(0,0),true), Q.button(ctl,'Ridge',()=>mode(1,1)), Q.button(ctl,'Elastic net',()=>mode(0.5,2)));
   Q.slider(ctl,'λ',0,5,0.05,S.lam,v=>{S.lam=v;upd();},v=>Q.fmt(v,2));
   Q.slider(ctl,'OLS β̂₁',-2.5,2.5,0.1,S.b1,v=>{S.b1=v;upd();},v=>Q.fmt(v,1));
   Q.slider(ctl,'OLS β̂₂',-2.5,2.5,0.1,S.b2,v=>{S.b2=v;upd();},v=>Q.fmt(v,1));
   Q.slider(ctl,'Tương quan ρ',-0.9,0.9,0.05,S.rho,v=>{S.rho=v;upd();},v=>Q.fmt(v,2));
 })();
 (()=>{
-  /* ---------- Mô hình 11.2: quỹ đạo hệ số và sai số kiểm tra ---------- */
+  /* ---------- Hình 11.2: cùng bức tranh nhìn từ trên xuống ---------- */
+  const V=window.QV11;
+  const stage=document.getElementById('demo3-11'), ctl=document.getElementById('ctl3-11'), out=document.getElementById('out3-11');
+  const S={alpha:0, t:1, b:[2,0.8], rho:0.5}, R=3, HH=380;
+  let sol=[0,0], lamStar=0, c=null, drag=false;
+  function compute(){
+    if(V.pen(S.b,S.alpha)<=S.t){ sol=S.b.slice(); lamStar=0; }
+    else { let lo=0, hi=1e4, x=null;
+      for(let i=0;i<70;i++){ const m=Math.sqrt(Math.max(lo,1e-6)*hi); x=V.solve(S.b,S.rho,S.alpha,m,x); if(V.pen(x,S.alpha)>S.t) lo=m; else hi=m; }
+      lamStar=hi; sol=V.solve(S.b,S.rho,S.alpha,hi); }
+    const zs=sol.filter(v=>Math.abs(v)<1e-6).length;
+    const nm=S.alpha===0?'L1 (hình thoi)':S.alpha===1?'L2 (hình tròn)':'elastic net α = 0,5';
+    out.textContent=`Miền ${nm}, ngân sách t = ${Q.fmt(S.t,2)}   OLS = (${Q.fmt(S.b[0],2)}; ${Q.fmt(S.b[1],2)})   ρ = ${Q.fmt(S.rho,2)}\n`+
+      `Điểm chạm: (${Q.fmt(sol[0],3)}; ${Q.fmt(sol[1],3)})${zs?'  ← nằm trên trục: một hệ số bằng đúng 0':''}   RSS tăng thêm = ${Q.fmt(V.rss(sol,S.b,S.rho),3)}   λ tương ứng ≈ ${Q.fmt(lamStar,3)}`;
+  }
+  function geom(w,h){ const k=Math.min(w,h)/(2*R+0.6), cx=w/2, cy=h/2; return {k,X:v=>cx+v*k,Y:v=>cy-v*k,iX:p=>(p-cx)/k,iY:p=>(cy-p)/k}; }
+  function draw(ctx,w,h){
+    const C=Q.colors(), G=geom(w,h); ctx.clearRect(0,0,w,h);
+    ctx.strokeStyle=C.line; ctx.lineWidth=1;
+    for(let t=-R;t<=R;t++){ ctx.beginPath(); ctx.moveTo(G.X(t),G.Y(-R)); ctx.lineTo(G.X(t),G.Y(R)); ctx.moveTo(G.X(-R),G.Y(t)); ctx.lineTo(G.X(R),G.Y(t)); ctx.stroke(); }
+    ctx.strokeStyle=C.muted; ctx.beginPath(); ctx.moveTo(G.X(-R),G.Y(0)); ctx.lineTo(G.X(R),G.Y(0)); ctx.moveTo(G.X(0),G.Y(-R)); ctx.lineTo(G.X(0),G.Y(R)); ctx.stroke();
+    ctx.fillStyle=C.muted; ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif'; ctx.fillText('β₁',G.X(R)+6,G.Y(0)+4); ctx.fillText('β₂',G.X(0)+6,G.Y(R)+4);
+    // miền ngân sách
+    ctx.beginPath();
+    for(let k=0;k<=192;k++){ const th=2*Math.PI*k/192, cc=Math.cos(th), ss=Math.sin(th), r=V.radius(cc,ss,S.alpha,S.t); const x=G.X(r*cc), y=G.Y(r*ss); k?ctx.lineTo(x,y):ctx.moveTo(x,y); }
+    ctx.closePath(); ctx.fillStyle=C.c; ctx.globalAlpha=0.2; ctx.fill(); ctx.globalAlpha=1; ctx.strokeStyle=C.c; ctx.lineWidth=1.8; ctx.stroke();
+    // các đường đồng mức RSS quanh OLS
+    ctx.save(); ctx.beginPath(); ctx.rect(G.X(-R),G.Y(R),2*R*G.k,2*R*G.k); ctx.clip();
+    const lev=V.rss(sol,S.b,S.rho), levels=[0.25,0.5,1,1.5,2,2.5].map(f=>f*Math.max(lev,0.3));
+    const ell=L=>{ ctx.beginPath(); for(let k=0;k<=120;k++){ const p=V.ellipse(S.b,S.rho,L,2*Math.PI*k/120); k?ctx.lineTo(G.X(p[0]),G.Y(p[1])):ctx.moveTo(G.X(p[0]),G.Y(p[1])); } ctx.stroke(); };
+    ctx.strokeStyle=C.b; ctx.lineWidth=1; ctx.globalAlpha=0.45; levels.forEach(ell); ctx.globalAlpha=1;
+    if(lev>1e-9){ ctx.lineWidth=2.4; ell(lev); }
+    ctx.restore();
+    // OLS (kéo được) và điểm chạm
+    ctx.fillStyle=C.b; ctx.beginPath(); ctx.arc(G.X(S.b[0]),G.Y(S.b[1]),drag?8:6.5,0,7); ctx.fill();
+    ctx.strokeStyle=C.panel; ctx.lineWidth=2; ctx.stroke(); ctx.lineWidth=1;
+    ctx.fillStyle=C.ink; ctx.beginPath(); ctx.arc(G.X(sol[0]),G.Y(sol[1]),5,0,7); ctx.fill();
+    ctx.fillStyle=C.muted; ctx.fillText('● OLS (kéo được)   ● nghiệm có phạt   — đường đồng mức RSS',10,16);
+  }
+  compute();
+  c=Q.canvas(stage,HH,draw);
+  const pos=e=>{ const rc=c.cv.getBoundingClientRect(); return [e.clientX-rc.left,e.clientY-rc.top]; };
+  function move(e){ if(!drag) return; const [px,py]=pos(e), G=geom(c.w,c.h);
+    S.b=[Math.max(-R,Math.min(R,G.iX(px))),Math.max(-R,Math.min(R,G.iY(py)))]; compute(); c.redraw(); }
+  c.cv.addEventListener('pointerdown',e=>{ drag=true; try{ c.cv.setPointerCapture(e.pointerId); }catch(_){} move(e); });
+  c.cv.addEventListener('pointermove',move);
+  const end=()=>{ drag=false; c.redraw(); }; c.cv.addEventListener('pointerup',end); c.cv.addEventListener('pointercancel',end);
+  const bs=[]; const mode=(a,i)=>{ S.alpha=a; bs.forEach((x,k)=>x.className=k===i?'primary':''); compute(); c.redraw(); };
+  bs.push(Q.button(ctl,'L1 (lasso)',()=>mode(0,0),true), Q.button(ctl,'L2 (ridge)',()=>mode(1,1)), Q.button(ctl,'Elastic net',()=>mode(0.5,2)));
+  Q.slider(ctl,'Ngân sách t',0.1,3,0.05,S.t,v=>{S.t=v;compute();c.redraw();},v=>Q.fmt(v,2));
+  Q.slider(ctl,'Tương quan ρ',-0.9,0.9,0.05,S.rho,v=>{S.rho=v;compute();c.redraw();},v=>Q.fmt(v,2));
+})();
+(()=>{
+  /* ---------- Hình 11.3: quỹ đạo hệ số và sai số kiểm tra ---------- */
   const stage=document.getElementById('demo2-11'), ctl=document.getElementById('ctl2-11'), out=document.getElementById('out2-11');
   const P=8, TRUE=[1.5,0,0.8,0,0,-1,0,0], SIG=1.5;
   // ma trận hiệp phương sai thật của x
@@ -226,6 +432,44 @@
   Q.slider(ctl,'log₁₀ λ',0,60,1,S.li,v=>{S.li=v;report();c.redraw();},v=>Q.fmt(-3+4*v/60,2));
   Q.slider(ctl,'Số quan sát huấn luyện',12,300,4,S.n,v=>{S.n=v;upd();},v=>v);
   Q.button(ctl,'Lấy mẫu mới',()=>{S.seed++;upd();});
+})();
+(()=>{
+  /* ---------- Hình 11.4: ngưỡng cứng, co theo tỉ lệ và ngưỡng mềm ---------- */
+  const stage=document.getElementById('demo4-11'), ctl=document.getElementById('ctl4-11'), out=document.getElementById('out4-11');
+  const S={lam:1, bh:1.5}, R=3;
+  const rules=[
+    {name:'Chọn tập con: ngưỡng cứng', f:(b,l)=>Math.abs(b)>Math.sqrt(l)?b:0, col:'d'},
+    {name:'Ridge: co theo tỉ lệ', f:(b,l)=>b/(1+l), col:'c'},
+    {name:'Lasso: ngưỡng mềm', f:(b,l)=>Math.sign(b)*Math.max(Math.abs(b)-l/2,0), col:'b'}];
+  function report(){ const b=S.bh, l=S.lam;
+    out.textContent=`λ = ${Q.fmt(l,2)}   β̂ (OLS) = ${Q.fmt(b,2)}\n`+
+      `Tập con (giữ nếu |β̂| > √λ = ${Q.fmt(Math.sqrt(l),2)}): ${Q.fmt(rules[0].f(b,l),3)}   ·   Ridge (β̂/(1 + λ)): ${Q.fmt(rules[1].f(b,l),3)}   ·   Lasso (trừ λ/2 = ${Q.fmt(l/2,2)}): ${Q.fmt(rules[2].f(b,l),3)}`; }
+  function draw(ctx,w,h){
+    const C=Q.colors(); ctx.clearRect(0,0,w,h); ctx.font='12px Be Vietnam Pro,-apple-system,sans-serif';
+    const narrow=w<640, n=3, gap=18;
+    const pw=narrow?Math.min(w-40,260):(w-40-gap*2)/3, ph=narrow?(h-30)/3-30:h-60;
+    const side=Math.min(pw,ph);
+    rules.forEach((ru,i)=>{
+      const x0=narrow?(w-side)/2:20+i*(pw+gap)+(pw-side)/2, y0=narrow?24+i*(side+36):30;
+      const X=v=>x0+(v+R)/(2*R)*side, Y=v=>y0+(R-v)/(2*R)*side;
+      ctx.strokeStyle=C.line; ctx.lineWidth=1; ctx.strokeRect(x0,y0,side,side);
+      ctx.beginPath(); ctx.moveTo(X(-R),Y(0)); ctx.lineTo(X(R),Y(0)); ctx.moveTo(X(0),Y(-R)); ctx.lineTo(X(0),Y(R)); ctx.stroke();
+      ctx.strokeStyle=C.muted; ctx.setLineDash([4,4]); ctx.beginPath(); ctx.moveTo(X(-R),Y(-R)); ctx.lineTo(X(R),Y(R)); ctx.stroke(); ctx.setLineDash([]);
+      ctx.strokeStyle=C[ru.col]; ctx.lineWidth=2.6; ctx.beginPath(); let prev=null;
+      for(let k=0;k<=600;k++){ const b=-R+2*R*k/600, v=ru.f(b,S.lam);
+        if(prev!==null && Math.abs(v-prev)>0.2){ ctx.stroke(); ctx.beginPath(); ctx.moveTo(X(b),Y(v)); } else if(k) ctx.lineTo(X(b),Y(v)); else ctx.moveTo(X(b),Y(v)); prev=v; }
+      ctx.stroke(); ctx.lineWidth=1;
+      const v=ru.f(S.bh,S.lam);
+      ctx.strokeStyle=C.ink; ctx.globalAlpha=0.5; ctx.setLineDash([2,3]); ctx.beginPath(); ctx.moveTo(X(S.bh),Y(0)); ctx.lineTo(X(S.bh),Y(v)); ctx.stroke(); ctx.setLineDash([]); ctx.globalAlpha=1;
+      ctx.fillStyle=C[ru.col]; ctx.beginPath(); ctx.arc(X(S.bh),Y(v),4.5,0,7); ctx.fill();
+      ctx.fillStyle=C.ink; ctx.fillText(ru.name,x0,y0-8);
+      ctx.fillStyle=C.muted; ctx.fillText('β̂ (OLS)',x0+side-48,Y(0)+14); ctx.fillText('ước lượng',X(0)+4,y0+12);
+    });
+  }
+  report();
+  const c=Q.canvas(stage,stage.clientWidth<640?900:320,draw);
+  Q.slider(ctl,'λ',0,4,0.05,S.lam,v=>{S.lam=v;report();c.redraw();},v=>Q.fmt(v,2));
+  Q.slider(ctl,'β̂ mẫu',-3,3,0.05,S.bh,v=>{S.bh=v;report();c.redraw();},v=>Q.fmt(v,2));
 })();
 </script>
 </section>
